@@ -884,11 +884,13 @@ function nowStr(){return new Date().toLocaleString('ja-JP',{year:'numeric',month
 // LINE通知送信（GAS経由）
 function sendLineNotification(lineUserId, message){
   if(!lineUserId||!message) return;
+  // no-corsでCORSエラーを回避（レスポンスは不要）
   fetch(GAS_URL,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
     body:JSON.stringify({lineUserId, message})
-  }).catch(()=>{}); // サイレント失敗（通知は補助機能なのでエラーは無視）
+  }).catch(()=>{});
 }
 
 // ============================================================
