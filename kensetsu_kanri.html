@@ -1,0 +1,3098 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>まち頼 | 地域の頼れる専門家</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#15803d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="まち頼">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root {
+  --primary:#16a34a;--primary-dark:#15803d;--primary-light:#bbf7d0;
+  --accent:#f59e0b;--accent-dark:#d97706;
+  --bg:#f0fdf4;--card:#fff;--text:#1e293b;--text-sub:#64748b;
+  --border:#e2e8f0;--danger:#ef4444;--blue:#3b82f6;
+  --status-none:#6b7280;--status-recruit:#2563eb;--status-active:#d97706;--status-done:#16a34a;
+  --nav-h:64px;--header-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+#app-header{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);background:var(--primary-dark);display:flex;align-items:center;padding:0 12px;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+#app-header .logo{font-size:13px;font-weight:700;color:#fff;line-height:1.3;flex:1;}
+#app-header .logo span{display:block;font-size:11px;font-weight:400;opacity:.85;}
+#header-back{display:none;background:none;border:none;color:#fff;font-size:18px;cursor:pointer;margin-right:8px;padding:4px;}
+.header-icon-btn{position:relative;background:none;border:none;color:#fff;cursor:pointer;padding:6px;display:flex;align-items:center;}
+.header-icon-btn svg{width:24px;height:24px;}
+#notif-badge{position:absolute;top:2px;right:2px;background:var(--danger);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;border:1.5px solid var(--primary-dark);}
+#notif-badge.show{display:flex;}
+#todo-badge{position:absolute;top:2px;right:2px;background:var(--danger);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;border:1.5px solid var(--primary-dark);}
+#todo-badge.show{display:flex;}
+.todo-item{background:white;border-bottom:1px solid #f3f4f6;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.todo-item:last-child{border-bottom:none;}
+.todo-circle{width:22px;height:22px;border-radius:50%;border:2px solid #15803d;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.todo-circle svg{width:12px;height:12px;stroke:#15803d;stroke-width:2.5;fill:none;}
+.todo-text{flex:1;font-size:13px;color:#111827;line-height:1.5;}
+.todo-arrow{font-size:16px;color:#9ca3af;}
+#user-avatar-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:8px;}
+
+/* USER SWITCHER PANEL */
+#user-panel{display:none;position:fixed;top:var(--header-h);right:0;z-index:150;width:min(300px,92vw);background:#fff;border-left:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0 0 0 12px;box-shadow:-4px 4px 20px rgba(0,0,0,.12);}
+#user-panel.open{display:block;}
+.user-panel-header{padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);color:var(--text-sub);}
+.user-account-item{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s;}
+.user-account-item:hover{background:#f8fafc;}
+.user-account-item.active{background:#f0fdf4;}
+.ua-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--primary-dark);flex-shrink:0;}
+.ua-info{flex:1;}
+.ua-name{font-size:14px;font-weight:700;}
+.ua-company{font-size:11px;color:var(--text-sub);}
+.ua-check{color:var(--primary);font-size:16px;}
+
+/* BOTTOM NAV */
+#bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;height:var(--nav-h);background:#fff;border-top:1px solid var(--border);display:flex;box-shadow:0 -2px 8px rgba(0,0,0,.08);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;font-size:10px;color:var(--text-sub);transition:color .15s;position:relative;}
+.nav-btn.active{color:var(--primary);}
+.nav-btn svg{width:22px;height:22px;}
+.nav-btn.center-btn{background:var(--primary);color:#fff;border-radius:50%;width:52px;height:52px;margin:0 auto;margin-top:-14px;box-shadow:0 4px 12px rgba(22,163,74,.4);flex:0 0 52px;align-self:flex-start;}
+.nav-btn.center-btn svg{width:26px;height:26px;}
+.nav-wrapper{flex:1;display:flex;align-items:center;justify-content:center;}
+
+/* MAIN */
+#main{padding-top:calc(var(--header-h) + 12px);padding-bottom:calc(var(--nav-h) + 16px);min-height:100vh;}
+.page{display:none;padding:0 12px;}
+.page.active{display:block;}
+
+/* CARDS */
+.card{background:var(--card);border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:16px;margin-bottom:12px;}
+.card-title{font-size:15px;font-weight:700;margin-bottom:8px;}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-none{background:#f3f4f6;color:var(--status-none);}
+.badge-recruit{background:#dbeafe;color:var(--status-recruit);}
+.badge-active{background:#fef3c7;color:var(--status-active);}
+.badge-done{background:#dcfce7;color:var(--status-done);}
+.badge-cat{background:var(--primary-light);color:var(--primary-dark);font-size:11px;padding:2px 8px;border-radius:20px;margin:2px;display:inline-block;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:active{background:var(--primary-dark);}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-full{width:100%;display:flex;}
+.btn-gray{background:#f1f5f9;color:var(--text-sub);}
+
+/* FORMS */
+.form-group{margin-bottom:16px;}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;}
+label .req{color:var(--danger);margin-left:3px;}
+input[type=text],input[type=tel],input[type=date],input[type=email],input[type=number],textarea,select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);appearance:none;transition:border-color .15s;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,163,74,.1);}
+textarea{resize:vertical;min-height:80px;}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:6px;}
+.cat-chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:20px;font-size:12px;cursor:pointer;border:1.5px solid var(--border);background:#fff;transition:all .15s;}
+.cat-chip.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);font-weight:600;}
+.form-hint{font-size:11px;color:var(--text-sub);margin-top:4px;}
+
+/* FILTER */
+.filter-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.filter-chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-sub);transition:all .15s;}
+.filter-chip.active{border-color:var(--primary);background:var(--primary);color:#fff;}
+
+/* CASE CARDS */
+.case-card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s;}
+.case-card:active{box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.case-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.case-no{font-size:11px;color:var(--text-sub);}
+.case-title{font-size:15px;font-weight:700;margin:4px 0;}
+.case-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--text-sub);}
+.case-meta span{display:flex;align-items:center;gap:3px;}
+.case-candidates{margin-top:8px;font-size:12px;color:var(--blue);font-weight:600;}
+.case-msg-badge{margin-top:4px;font-size:12px;color:var(--primary);font-weight:600;}
+.my-role-badge{margin-top:4px;font-size:11px;padding:2px 8px;border-radius:20px;display:inline-block;}
+.my-role-requester{background:#dbeafe;color:#1d4ed8;}
+.my-role-contractor{background:#fef3c7;color:#92400e;}
+.my-role-candidate{background:#ede9fe;color:#5b21b6;}
+
+/* MEMBER CARDS */
+.member-card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:14px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;}
+.member-avatar{width:52px;height:52px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;}
+.member-avatar img{width:100%;height:100%;object-fit:cover;}
+.member-info{flex:1;min-width:0;}
+.member-company{font-size:11px;color:var(--text-sub);}
+.member-name{font-size:15px;font-weight:700;}
+.member-cats{margin-top:5px;}
+
+/* DETAIL */
+.detail-section{margin-bottom:18px;}
+.detail-section h3{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;}
+.detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:14px;}
+.detail-label{color:var(--text-sub);flex-shrink:0;width:100px;}
+.detail-value{flex:1;font-weight:500;}
+
+/* HOME */
+.hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 100%);border-radius:14px;padding:20px 18px;margin-bottom:14px;color:#fff;}
+.hero h1{font-size:18px;font-weight:800;margin-bottom:4px;}
+.hero p{font-size:13px;opacity:.9;line-height:1.6;}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.stat-card{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.stat-num{font-size:28px;font-weight:800;color:var(--primary);}
+.stat-label{font-size:12px;color:var(--text-sub);margin-top:2px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px 16px;}
+.modal-handle{width:40px;height:4px;background:#e2e8f0;border-radius:2px;margin:0 auto 16px;}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:16px;}
+
+/* TOAST */
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:300;background:#1e293b;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;display:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+#toast.show{display:block;animation:fadeInOut 3s ease;}
+@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(-8px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}75%{opacity:1}100%{opacity:0}}
+
+/* SECTION HEADERS */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.section-title{font-size:16px;font-weight:800;}
+
+/* CANDIDATE LIST */
+.candidate-item{background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:8px;}
+.candidate-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.candidate-name{font-size:14px;font-weight:700;}
+.candidate-time{font-size:11px;color:var(--text-sub);}
+.candidate-msg{font-size:13px;color:var(--text-sub);}
+
+/* ADMIN */
+.admin-case-item{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.status-select{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fff;margin-top:8px;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 24px;color:var(--text-sub);}
+.empty-state .emoji{font-size:48px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* DIVIDER */
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+
+/* SELECTED BADGE */
+.selected-badge{background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:8px 12px;font-size:13px;color:#92400e;margin-top:8px;}
+
+/* PHOTO UPLOAD */
+.photo-upload-slot{position:relative;aspect-ratio:1/1;border:2px dashed var(--border);border-radius:12px;background:#f8fafc;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color .15s,background .15s;}
+.photo-upload-slot:hover{border-color:var(--primary);background:var(--primary-light);}
+.photo-upload-slot.has-photo{border:2px solid var(--primary);}
+.photo-placeholder{text-align:center;pointer-events:none;}
+.photo-remove-btn{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+.case-photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.case-photo-thumb{width:90px;height:90px;border-radius:10px;object-fit:cover;cursor:pointer;border:1px solid var(--border);}
+
+/* CHAT */
+.chat-container{background:#f8fafc;border-radius:12px;overflow:hidden;margin-bottom:12px;border:1px solid var(--border);}
+.chat-header{background:var(--primary-dark);color:#fff;padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.chat-messages{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:160px;max-height:340px;overflow-y:auto;}
+.chat-bubble-wrap{display:flex;flex-direction:column;max-width:80%;}
+.chat-bubble-wrap.requester{align-self:flex-end;align-items:flex-end;}
+.chat-bubble-wrap.member{align-self:flex-start;align-items:flex-start;}
+.chat-bubble-wrap.admin{align-self:center;align-items:center;max-width:90%;}
+.chat-sender{font-size:10px;color:var(--text-sub);margin-bottom:3px;}
+.chat-bubble{padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.55;word-break:break-word;white-space:pre-wrap;}
+.chat-bubble-wrap.requester .chat-bubble{background:var(--primary);color:#fff;border-radius:14px 14px 2px 14px;}
+.chat-bubble-wrap.member .chat-bubble{background:#fff;color:var(--text);border:1px solid var(--border);border-radius:14px 14px 14px 2px;}
+.chat-bubble-wrap.admin .chat-bubble{background:#e2e8f0;color:var(--text-sub);border-radius:10px;font-size:12px;}
+.chat-time{font-size:10px;color:var(--text-sub);margin-top:3px;}
+.chat-input-area{border-top:1px solid var(--border);padding:10px 12px;background:#fff;}
+.chat-input-row{display:flex;gap:6px;align-items:flex-end;}
+.chat-input-row textarea{flex:1;min-height:40px;max-height:120px;resize:none;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;}
+.chat-send-btn{background:var(--primary);color:#fff;border:none;border-radius:8px;width:44px;height:44px;cursor:pointer;font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.chat-send-btn:active{background:var(--primary-dark);}
+.chat-attach-btn{background:#f1f5f9;color:var(--text-sub);border:1.5px solid var(--border);border-radius:8px;width:44px;height:44px;cursor:pointer;font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.chat-empty{text-align:center;padding:24px;color:var(--text-sub);font-size:13px;}
+.chat-file-bubble{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;margin-top:4px;font-size:12px;}
+.chat-file-bubble a{color:inherit;text-decoration:underline;cursor:pointer;}
+.chat-file-thumb{max-width:160px;max-height:120px;border-radius:8px;margin-top:6px;display:block;}
+.chat-who-label{font-size:11px;color:var(--text-sub);margin-bottom:4px;padding:0 2px;}
+
+/* 受発注フロー */
+.flow-steps{display:flex;gap:0;margin-bottom:12px;overflow:hidden;border-radius:10px;border:1px solid var(--border);}
+.flow-step{flex:1;padding:8px 4px;text-align:center;font-size:10px;font-weight:600;color:var(--text-sub);background:#f8fafc;border-right:1px solid var(--border);position:relative;}
+.flow-step:last-child{border-right:none;}
+.flow-step.done{background:#dcfce7;color:var(--primary-dark);}
+.flow-step.active{background:var(--primary);color:#fff;}
+.flow-step .step-icon{font-size:16px;display:block;margin-bottom:2px;}
+
+.estimate-box{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:14px;margin-bottom:12px;}
+.estimate-box h4{font-size:13px;font-weight:700;color:#92400e;margin-bottom:10px;}
+.estimate-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.estimate-label{color:var(--text-sub);}
+.estimate-value{font-weight:700;}
+.completion-box{background:#f0fdf4;border:1.5px solid var(--primary);border-radius:10px;padding:14px;margin-bottom:12px;}
+.completion-box h4{font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:8px;}
+
+/* MYPAGE */
+.mypage-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.mypage-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--primary-dark);flex-shrink:0;}
+.mypage-name{font-size:18px;font-weight:800;}
+.mypage-company{font-size:13px;color:var(--text-sub);}
+.mypage-section{margin-bottom:16px;}
+.mypage-section-title{font-size:14px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.mypage-empty{font-size:13px;color:var(--text-sub);padding:12px;text-align:center;background:#f8fafc;border-radius:8px;}
+
+/* NOTIFICATIONS PANEL */
+#notif-panel{display:none;position:fixed;top:var(--header-h);right:0;z-index:150;width:min(360px,100vw);background:#fff;border-left:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0 0 0 12px;box-shadow:-4px 4px 20px rgba(0,0,0,.12);max-height:calc(100vh - var(--header-h) - var(--nav-h));overflow-y:auto;}
+#notif-panel.open{display:block;}
+.notif-panel-header{padding:14px 16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.notif-item{padding:12px 16px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .1s;}
+.notif-item:hover{background:#f8fafc;}
+.notif-item.unread{background:#f0fdf4;border-left:3px solid var(--primary);}
+.notif-item.unread:hover{background:#dcfce7;}
+.notif-case-no{font-size:11px;color:var(--text-sub);margin-bottom:2px;}
+.notif-text{font-size:13px;font-weight:600;color:var(--text);}
+.notif-time{font-size:11px;color:var(--text-sub);margin-top:2px;}
+.notif-empty{padding:32px 16px;text-align:center;color:var(--text-sub);font-size:13px;}
+#panel-backdrop{display:none;position:fixed;inset:0;z-index:140;}
+#panel-backdrop.open{display:block;}
+
+/* ADMIN HEADER BTN */
+#admin-header-btn{background:none;border:none;color:rgba(255,255,255,0.75);cursor:pointer;padding:6px;display:flex;align-items:center;font-size:18px;transition:color 0.15s;}
+#admin-header-btn:hover{color:#fff;}
+#admin-header-btn.logged-in{color:#fbbf24;}
+
+/* ADMIN LOGIN */
+.admin-login{padding:32px 0;}
+.admin-login .lock-icon{font-size:48px;text-align:center;margin-bottom:12px;}
+.admin-login h2{text-align:center;font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text-sub);}
+
+/* MODE TABS */
+.mode-tabs{display:flex;border-radius:10px;overflow:hidden;border:1.5px solid var(--primary);margin-bottom:16px;}
+.mode-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--primary);border:none;transition:all .15s;font-family:inherit;}
+.mode-tab.active{background:var(--primary);color:#fff;}
+
+/* PROFILE EDIT */
+.edit-cat-chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:20px;font-size:12px;cursor:pointer;border:1.5px solid var(--border);background:#fff;margin:3px;transition:all .15s;}
+.edit-cat-chip.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);font-weight:600;}
+
+@media(min-width:600px){
+  #main{max-width:640px;margin:0 auto;}
+  #bottom-nav{max-width:640px;left:50%;transform:translateX(-50%);}
+  #app-header{max-width:640px;left:50%;transform:translateX(-50%);right:auto;width:640px;}
+  #toast{max-width:400px;}
+  #notif-panel{right:calc(50% - 320px);}
+  #user-panel{right:calc(50% - 320px);}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="app-header">
+  <button id="header-back" onclick="goBack()">←</button>
+  <button id="admin-header-btn" onclick="showPage('admin')" title="管理者パネル">⚙️</button>
+  <div class="logo">🏘️ まち頼<span>まち頼</span></div>
+  <button class="header-icon-btn" id="todo-btn" onclick="showPage('mypage')" title="やること">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+    <span id="todo-badge"></span>
+  </button>
+  <button class="header-icon-btn" id="notif-btn" onclick="openPanel('notif')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <span id="notif-badge"></span>
+  </button>
+  <button id="user-avatar-btn" onclick="openPanel('user')">？</button>
+</header>
+
+<!-- PANEL BACKDROP -->
+<div id="panel-backdrop" onclick="closePanels()"></div>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notif-panel">
+  <div class="notif-panel-header">🔔 通知<button class="btn btn-sm btn-gray" onclick="markAllRead()">すべて既読</button></div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- USER SWITCHER PANEL -->
+<div id="user-panel">
+  <div class="user-panel-header">🔄 アカウント切り替え（テスト用）</div>
+  <div id="user-account-list"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>まち頼 案件台帳</h1>
+    <p>修理・改築・工事の相談案件を<br>公平・透明に管理します</p>
+  </div>
+  <div class="stat-grid" id="home-stats"></div>
+  <div class="section-header">
+    <div class="section-title">📋 最新案件</div>
+    <button class="btn btn-sm btn-outline" onclick="showPage('cases')">全件表示</button>
+  </div>
+  <div id="home-recent-cases"></div>
+  <div class="section-header" style="margin-top:16px;"><div class="section-title">🔀 案件の流れ</div></div>
+  <div class="card">
+    <div style="font-size:13px;color:var(--text-sub);line-height:1.8;">
+      <div>① 依頼者が<strong>案件申込フォーム</strong>を送信</div>
+      <div>② 公式LINEで<strong>全体に案件通知</strong>を送信</div>
+      <div>③ 対応可能な業者が<strong>立候補</strong>を登録</div>
+      <div>④ 依頼者が<strong>業者を決定</strong>（期限前でも可）</div>
+      <div>⑤ 業者が<strong>見積もりを提出</strong>→依頼者が承認</div>
+      <div>⑥ 業者が<strong>完了報告</strong>→依頼者が<strong>完了承認</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- CASE LIST -->
+<div class="page" id="page-cases">
+  <div id="case-area-banner" style="padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:8px;"></div>
+  <div id="case-area-wrap" style="display:none;gap:8px;margin-bottom:8px;">
+    <select id="case-pref-filter" onchange="onCasePrefChange()" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fff;">
+      <option value="">全県</option>
+      <option>長野県</option>
+    </select>
+    <select id="case-area-filter" onchange="renderCaseList()" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fff;">
+      <option value="">全エリア</option>
+    </select>
+  </div>
+  <div class="filter-bar" id="case-filter-bar">
+    <button class="filter-chip active" onclick="filterCases('all',this)">すべて</button>
+    <button class="filter-chip" onclick="filterCases('未対応',this)">🔴 未対応</button>
+    <button class="filter-chip" onclick="filterCases('立候補受付中',this)">🔵 立候補受付中</button>
+    <button class="filter-chip" onclick="filterCases('対応中',this)">🟡 対応中</button>
+    <button class="filter-chip" onclick="filterCases('対応完了',this)">✅ 対応完了</button>
+  </div>
+  <div id="case-list-container"></div>
+</div>
+
+<!-- CASE DETAIL -->
+<div class="page" id="page-case-detail">
+  <div id="case-detail-content"></div>
+</div>
+
+<!-- NEW CASE FORM -->
+<div class="page" id="page-new-case">
+  <div class="section-header"><div class="section-title">📝 案件申込フォーム</div></div>
+  <div class="card">
+    <form id="new-case-form" onsubmit="submitCase(event)">
+      <div class="form-group"><label>依頼者名 <span class="req">*</span></label><input type="text" id="nc-name" placeholder="例：山田 太郎" required></div>
+      <div class="form-group"><label>連絡先（電話番号）<span class="req">*</span></label><input type="tel" id="nc-contact" placeholder="090-0000-0000" required></div>
+      <div class="form-group">
+        <label>案件カテゴリ <span class="req">*</span></label>
+        <select id="nc-category" required>
+          <option value="">選択してください</option>
+          <option>建築・リフォーム</option><option>外構・エクステリア</option>
+          <option>屋根・外壁・塗装</option><option>電気・設備</option>
+          <option>水道・配管</option><option>内装・インテリア・床</option>
+          <option>解体・撤去</option><option>不動産・土地活用</option>
+          <option>設計・士業・申請関係</option><option>清掃・メンテナンス</option>
+          <option>建材・資材</option><option>専門工事</option><option>ドローン測量・空撮</option>
+          <option>厨房機器・キッチン用品</option><option>買取・査定</option><option>その他相談</option>
+        </select>
+      </div>
+      <div class="form-group"><label>相談内容 <span class="req">*</span></label><textarea id="nc-description" placeholder="案件の詳細を記載してください..." required rows="4"></textarea></div>
+      <div class="form-group">
+        <label>現場エリア</label>
+        <div id="nc-area-display" style="background:#f1f5f9;border-radius:8px;padding:10px 14px;font-size:14px;font-weight:600;color:var(--primary-dark);">📍 <span id="nc-area-label">—</span></div>
+        <div class="form-hint">あなたの登録エリアが自動で設定されます</div>
+      </div>
+      <div class="form-group"><label>希望納期</label><input type="date" id="nc-deadline"></div>
+      <div class="form-group">
+        <label>立候補期限 <span class="req">*</span></label>
+        <input type="date" id="nc-candidate-deadline" required>
+        <div class="form-hint">この日まで業者が立候補できます</div>
+      </div>
+      <div class="form-group"><label>備考</label><textarea id="nc-notes" placeholder="その他ご要望など..." rows="3"></textarea></div>
+      <div class="form-group">
+        <label>依頼の種別 <span class="req">*</span></label>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <label style="display:flex;align-items:flex-start;gap:10px;background:#f0fdf4;border:1.5px solid var(--primary-light);border-radius:10px;padding:12px;cursor:pointer;">
+            <input type="radio" name="nc-case-type" value="order" checked style="margin-top:2px;accent-color:var(--primary);">
+            <div><div style="font-weight:700;font-size:14px;">🔨 発注予定あり</div><div style="font-size:12px;color:var(--text-sub);margin-top:2px;">業者を選定し、確定見積もりを経て着手まで進めます</div></div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px;cursor:pointer;">
+            <input type="radio" name="nc-case-type" value="estimate" style="margin-top:2px;accent-color:var(--primary);">
+            <div><div style="font-weight:700;font-size:14px;">📋 見積もり依頼のみ</div><div style="font-size:12px;color:var(--text-sub);margin-top:2px;">参考見積もりを集めます。後から発注に切り替えることも可能です</div></div>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>現状写真（最大3枚）</label>
+        <div class="form-hint" style="margin-bottom:10px;">現場の状況が分かる写真を登録してください</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div class="photo-upload-slot" id="slot-0" onclick="document.getElementById('nc-photo-0').click()">
+            <input type="file" id="nc-photo-0" accept="image/*" style="display:none" onchange="previewPhoto(this,0)">
+            <div class="photo-placeholder" id="placeholder-0"><div style="font-size:28px;">📷</div><div style="font-size:11px;color:var(--text-sub);margin-top:4px;">写真①</div></div>
+            <img id="preview-0" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:10px;">
+            <button type="button" class="photo-remove-btn" id="remove-0" style="display:none" onclick="removePhoto(event,0)">✕</button>
+          </div>
+          <div class="photo-upload-slot" id="slot-1" onclick="document.getElementById('nc-photo-1').click()">
+            <input type="file" id="nc-photo-1" accept="image/*" style="display:none" onchange="previewPhoto(this,1)">
+            <div class="photo-placeholder" id="placeholder-1"><div style="font-size:28px;">📷</div><div style="font-size:11px;color:var(--text-sub);margin-top:4px;">写真②</div></div>
+            <img id="preview-1" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:10px;">
+            <button type="button" class="photo-remove-btn" id="remove-1" style="display:none" onclick="removePhoto(event,1)">✕</button>
+          </div>
+          <div class="photo-upload-slot" id="slot-2" onclick="document.getElementById('nc-photo-2').click()">
+            <input type="file" id="nc-photo-2" accept="image/*" style="display:none" onchange="previewPhoto(this,2)">
+            <div class="photo-placeholder" id="placeholder-2"><div style="font-size:28px;">📷</div><div style="font-size:11px;color:var(--text-sub);margin-top:4px;">写真③</div></div>
+            <img id="preview-2" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:10px;">
+            <button type="button" class="photo-remove-btn" id="remove-2" style="display:none" onclick="removePhoto(event,2)">✕</button>
+          </div>
+        </div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:var(--primary-dark);">
+        📱 送信後、まち頼メンバー全員にLINE通知が送られます
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">案件を申し込む 📤</button>
+    </form>
+  </div>
+</div>
+
+<!-- MY PAGE -->
+<div class="page" id="page-mypage">
+  <div id="mypage-content"></div>
+</div>
+
+<!-- MEMBER LIST -->
+<div class="page" id="page-members">
+  <div id="member-area-banner" style="padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:8px;"></div>
+  <div id="member-area-wrap" style="display:none;gap:8px;margin-bottom:8px;">
+    <select id="member-pref-filter" onchange="onMemberPrefChange()" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fff;">
+      <option value="">全県</option>
+      <option>長野県</option>
+    </select>
+    <select id="member-area-filter" onchange="renderMemberList()" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fff;">
+      <option value="">全エリア</option>
+    </select>
+  </div>
+  <div class="filter-bar" id="member-filter-bar">
+    <button class="filter-chip active" onclick="filterMembers('all',this)">すべて</button>
+  </div>
+  <div id="member-list-container"></div>
+</div>
+
+<!-- MEMBER DETAIL -->
+<div class="page" id="page-member-detail"><div id="member-detail-content"></div></div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div id="admin-login-section" class="admin-login">
+    <div class="lock-icon">🔐</div>
+    <h2>管理者ログイン</h2>
+    <div class="card">
+      <div class="form-group"><label>パスワード</label><input type="password" id="admin-password" placeholder="パスワードを入力"></div>
+      <button class="btn btn-primary btn-full" onclick="adminLogin()">ログイン</button>
+    </div>
+  </div>
+  <div id="admin-panel-section" style="display:none;">
+    <div class="section-header">
+      <div class="section-title">⚙️ 管理者パネル</div>
+      <button class="btn btn-sm btn-gray" onclick="adminLogout()">ログアウト</button>
+    </div>
+    <div id="admin-dashboard"></div>
+    <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">🚫 ブロックログ</div></div>
+    <div id="admin-block-log"></div>
+    <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">📲 LINE User ID管理</div></div>
+    <div id="admin-line-list"></div>
+    <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">📋 案件一覧</div></div>
+    <div id="admin-case-list"></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="showPage('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    ホーム
+  </button>
+  <button class="nav-btn" id="nav-cases" onclick="showPage('cases')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+    案件一覧
+  </button>
+  <div class="nav-wrapper">
+    <button class="nav-btn center-btn" id="nav-new-case" onclick="showPage('new-case')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+  <button class="nav-btn" id="nav-members" onclick="showPage('members')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    メンバー
+  </button>
+  <button class="nav-btn" id="nav-mypage" onclick="showPage('mypage')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    マイページ
+  </button>
+</nav>
+
+<!-- 利用規約モーダル -->
+<div class="modal-overlay" id="tos-modal">
+  <div class="modal" style="max-height:80vh;display:flex;flex-direction:column;">
+    <div class="modal-header">
+      <div class="modal-title">📋 利用規約・免責事項</div>
+    </div>
+    <div style="overflow-y:auto;flex:1;padding:0 16px 8px;">
+      <div style="font-size:13px;line-height:1.8;color:var(--text);">
+        <p style="margin-bottom:12px;">本プラットフォームをご利用いただく前に、以下をご確認ください。</p>
+        <div style="background:#fef9c3;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+          <p style="font-weight:700;margin-bottom:4px;">⚠️ 免責事項</p>
+          <p>本プラットフォームは依頼者と業者のマッチングを提供するものであり、取引の結果・品質・支払いについて一切の保証を行いません。工事内容・金額・日程・キャンセル条件については、マッチング成立後に当事者間で必ず事前に取り決めを行ってください。</p>
+        </div>
+        <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+          <p style="font-weight:700;margin-bottom:4px;">🚫 案件の譲渡禁止</p>
+          <p>選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
+        </div>
+        <div style="background:#f0fdf4;border-left:4px solid var(--primary);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+          <p style="font-weight:700;margin-bottom:4px;">📌 その他のルール</p>
+          <ul style="padding-left:16px;margin-top:4px;">
+            <li>マッチング成立後72時間以内に連絡が取れない場合、案件は自動キャンセルとなります。</li>
+            <li>材料費・外注費等については、着手前にチャット内で必ず取り決めを行ってください。</li>
+            <li>本プラットフォームはトラブルの解決を保証するものではありません。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;">
+      <button class="btn btn-gray btn-sm" style="flex:1;" onclick="closeModal('tos-modal')">キャンセル</button>
+      <button class="btn btn-primary" style="flex:2;" onclick="acceptTos()">同意して続ける</button>
+    </div>
+  </div>
+</div>
+
+<!-- 利用規約閲覧専用モーダル -->
+<div class="modal-overlay" id="tos-display-modal">
+  <div class="modal" style="max-height:80vh;display:flex;flex-direction:column;">
+    <div class="modal-header">
+      <div class="modal-title">📋 利用規約・免責事項</div>
+      <button class="modal-close" onclick="closeModal('tos-display-modal')">✕</button>
+    </div>
+    <div style="overflow-y:auto;flex:1;padding:0 16px 16px;">
+      <div style="font-size:13px;line-height:1.8;color:var(--text);">
+        <div style="background:#fef9c3;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+          <p style="font-weight:700;margin-bottom:4px;">⚠️ 免責事項</p>
+          <p>本プラットフォームは依頼者と業者のマッチングを提供するものであり、取引の結果・品質・支払いについて一切の保証を行いません。工事内容・金額・日程・キャンセル条件については、マッチング成立後に当事者間で必ず事前に取り決めを行ってください。</p>
+        </div>
+        <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+          <p style="font-weight:700;margin-bottom:4px;">🚫 案件の譲渡禁止</p>
+          <p>選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
+        </div>
+        <div style="background:#f0fdf4;border-left:4px solid var(--primary);padding:10px 12px;border-radius:0 8px 8px 0;">
+          <p style="font-weight:700;margin-bottom:4px;">📌 その他のルール</p>
+          <ul style="padding-left:16px;margin-top:4px;">
+            <li>マッチング成立後72時間以内に連絡が取れない場合、案件は自動キャンセルとなります。</li>
+            <li>材料費・外注費等については、着手前にチャット内で必ず取り決めを行ってください。</li>
+            <li>本プラットフォームはトラブルの解決を保証するものではありません。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 問い合わせモーダル -->
+<div class="modal-overlay" id="contact-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📞 お問い合わせ</div>
+      <button class="modal-close" onclick="closeModal('contact-modal')">✕</button>
+    </div>
+    <div style="padding:0 16px 16px;">
+      <div style="background:#f0fdf4;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.7;color:var(--text-sub);">
+        お問い合わせは受け付けておりますが、取引上のトラブルについてプラットフォームは解決を保証するものではありません。
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <a href="https://line.me/ti/p/~" class="btn btn-primary btn-full" style="text-decoration:none;justify-content:center;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+          LINEで問い合わせる
+        </a>
+        <a href="mailto:cheetoi1150@gmail.com" class="btn btn-outline btn-full" style="text-decoration:none;justify-content:center;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          メールで問い合わせる
+        </a>
+      </div>
+      <p style="font-size:11px;color:var(--text-sub);text-align:center;margin-top:12px;">受付時間：平日 9:00〜18:00</p>
+    </div>
+  </div>
+</div>
+
+<!-- CANDIDACY MODAL -->
+<!-- PROFILE EDIT MODAL -->
+<div class="modal-overlay" id="profile-edit-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ プロフィール編集</div>
+    <div class="form-group"><label>氏名<span class="req">*</span></label><input type="text" id="edit-name" placeholder="例：田中 誠"></div>
+    <div class="form-group"><label>会社名</label><input type="text" id="edit-company" placeholder="例：田中建設"></div>
+    <div class="form-group"><label>対応エリア</label><input type="text" id="edit-areas" placeholder="例：大阪府全域"></div>
+    <div class="form-group"><label>連絡先（電話番号）</label><input type="tel" id="edit-contact" placeholder="例：090-1111-2222"></div>
+    <div class="form-group"><label>自己紹介</label><textarea id="edit-bio" rows="3" placeholder="得意な仕事や経験など"></textarea></div>
+    <div class="form-group"><label>業種カテゴリ</label><div id="edit-cat-chips" style="margin-top:6px;"></div></div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-gray btn-full" onclick="closeModal('profile-edit-modal')">キャンセル</button>
+      <button class="btn btn-primary btn-full" onclick="saveProfileEdit()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="candidacy-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✋ 立候補する</div>
+    <form onsubmit="submitCandidacy(event)">
+      <input type="hidden" id="candidacy-case-id">
+      <div class="form-group">
+        <label>立候補者</label>
+        <div id="candidacy-current-user" style="background:#f0fdf4;border-radius:8px;padding:10px;font-size:14px;font-weight:600;color:var(--primary-dark);"></div>
+      </div>
+      <div class="form-group"><label>立候補メッセージ</label><textarea id="candidacy-message" placeholder="対応可能な理由、実績、アピールポイントなど..." rows="3"></textarea></div>
+      <div style="font-size:12px;color:var(--text-sub);margin-bottom:12px;">※ 立候補情報は依頼者・メンバー全員に公開されます</div>
+      <button type="submit" class="btn btn-primary btn-full">立候補する 🙋</button>
+      <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('candidacy-modal')">キャンセル</button>
+    </form>
+  </div>
+</div>
+
+<!-- SELECT MEMBER MODAL -->
+<div class="modal-overlay" id="select-member-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🤝 業者を決定する</div>
+    <div id="select-candidate-list"></div>
+    <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('select-member-modal')">閉じる</button>
+  </div>
+</div>
+
+<!-- 追加募集 MODAL -->
+<div class="modal-overlay" id="extra-recruit-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">➕ 追加業者を募集する</div>
+    <input type="hidden" id="extra-recruit-parent-id">
+    <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--primary-dark);margin-bottom:14px;">
+      💡 元案件の情報を引き継いで新しい案件を作成します。業者から「追加で〇〇業者が必要」と提案があった場合などにご利用ください。
+    </div>
+    <div id="extra-recruit-parent-info" style="background:#f8fafc;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text-sub);margin-bottom:14px;"></div>
+    <div class="form-group">
+      <label>追加で必要な業種カテゴリ <span class="req">*</span></label>
+      <select id="extra-recruit-category" required>
+        <option value="">選択してください</option>
+        <option>建築・リフォーム</option><option>外構・エクステリア</option>
+        <option>屋根・外壁・塗装</option><option>電気・設備</option>
+        <option>水道・配管</option><option>内装・インテリア・床</option>
+        <option>解体・撤去</option><option>不動産・土地活用</option>
+        <option>設計・士業・申請関係</option><option>清掃・メンテナンス</option>
+        <option>建材・資材</option><option>専門工事</option><option>ドローン測量・空撮</option>
+        <option>厨房機器・キッチン用品</option><option>買取・査定</option><option>その他相談</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>追加の説明・要望</label>
+      <textarea id="extra-recruit-note" rows="3" placeholder="どんな作業が必要か、業者への補足など..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>立候補期限 <span class="req">*</span></label>
+      <input type="date" id="extra-recruit-deadline" required>
+    </div>
+    <button type="button" class="btn btn-primary btn-full" onclick="submitExtraRecruit()">➕ 追加募集を作成する</button>
+    <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('extra-recruit-modal')">キャンセル</button>
+  </div>
+</div>
+
+<!-- ESTIMATE MODAL -->
+<div class="modal-overlay" id="estimate-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 見積もりを提出する</div>
+    <form onsubmit="submitEstimate(event)">
+      <input type="hidden" id="estimate-case-id">
+      <div class="form-group"><label>見積もり金額（税込）<span class="req">*</span></label><input type="number" id="est-amount" placeholder="例：250000" required min="0"></div>
+      <div class="form-group"><label>工期（目安）<span class="req">*</span></label><input type="text" id="est-period" placeholder="例：3日間、1週間" required></div>
+      <div class="form-group"><label>見積もり内容・備考</label><textarea id="est-note" placeholder="工事内容の詳細、材料費の内訳など..." rows="3"></textarea></div>
+      <div class="form-group">
+        <label>見積もり書ファイル（PDF/画像）</label>
+        <input type="file" id="est-file" accept=".pdf,image/*" style="padding:8px;">
+        <div class="form-hint">PDFまたは画像ファイルを添付できます</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">見積もりを提出する 📤</button>
+      <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('estimate-modal')">キャンセル</button>
+    </form>
+  </div>
+</div>
+
+<!-- CONFIRMED ESTIMATE MODAL -->
+<div class="modal-overlay" id="confirmed-estimate-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 確定見積もりを提出する</div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e;margin-bottom:12px;">
+      💡 依頼者が同意すると着手に進みます。仮見積もりから金額が変わる場合は理由を明記してください。
+    </div>
+    <form onsubmit="submitConfirmedEstimate(event)">
+      <input type="hidden" id="conf-est-case-id">
+      <div class="form-group"><label>確定金額（税込）<span class="req">*</span></label><input type="number" id="conf-est-amount" placeholder="例：280000" required min="0"></div>
+      <div class="form-group"><label>工期<span class="req">*</span></label><input type="text" id="conf-est-period" placeholder="例：5日間、2026年9月中旬" required></div>
+      <div class="form-group"><label>条件・変更理由・備考</label><textarea id="conf-est-conditions" placeholder="仮見積もりからの変更点や理由、条件など..." rows="3"></textarea></div>
+      <button type="submit" class="btn btn-primary btn-full">確定見積もりを提出する 📤</button>
+      <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('confirmed-estimate-modal')">キャンセル</button>
+    </form>
+  </div>
+</div>
+
+<!-- CANCEL REPOST MODAL -->
+<div class="modal-overlay" id="cancel-repost-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">❌ 確定見積もりに同意しない</div>
+    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:8px 12px;font-size:12px;color:#b91c1c;margin-bottom:12px;">
+      この案件をキャンセルし、再掲載することができます。入力した理由は補足情報として次の掲載に引き継がれます。
+    </div>
+    <input type="hidden" id="cancel-repost-case-id">
+    <div class="form-group"><label>同意しない理由・値上がりの背景（再掲載時の補足に使用）</label><textarea id="cancel-repost-reason" placeholder="例：現場調査後に追加工事が判明したため金額が上昇した" rows="3"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-gray" style="flex:1;" onclick="closeModal('cancel-repost-modal')">戻る</button>
+      <button class="btn btn-accent" style="flex:1;" onclick="doRepost()">キャンセルして再掲載</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL CASE MODAL (before confirmedEstimate) -->
+<div class="modal-overlay" id="cancel-case-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚠️ 案件をキャンセルする</div>
+    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:8px 12px;font-size:12px;color:#b91c1c;margin-bottom:12px;">
+      選定済みの業者がいます。キャンセル理由は管理者に記録されます。悪質なオフプラット逃避はアカウント停止の対象になります。
+    </div>
+    <input type="hidden" id="cancel-case-id">
+    <div class="form-group"><label>キャンセル理由 <span class="req">*</span></label><textarea id="cancel-case-reason" placeholder="例：予算の都合で工事を延期することになった" rows="3"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-gray" style="flex:1;" onclick="closeModal('cancel-case-modal')">戻る</button>
+      <button class="btn btn-danger" style="flex:1;" onclick="doCancelCase()">キャンセルを確定</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETION REPORT MODAL -->
+<div class="modal-overlay" id="completion-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏁 工事完了報告</div>
+    <form onsubmit="submitCompletion(event)">
+      <input type="hidden" id="completion-case-id">
+      <div class="form-group"><label>完了報告内容</label><textarea id="comp-note" placeholder="施工内容、完了状況などを記載してください..." rows="4"></textarea></div>
+      <div class="form-group">
+        <label>完了写真・書類（PDF/画像）</label>
+        <input type="file" id="comp-file" accept=".pdf,image/*" style="padding:8px;">
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">完了報告を提出する ✅</button>
+      <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('completion-modal')">キャンセル</button>
+    </form>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="review-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⭐ 業者を評価する</div>
+    <input type="hidden" id="review-case-id">
+    <input type="hidden" id="review-member-id">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div id="review-member-name" style="font-size:15px;font-weight:700;margin-bottom:4px;"></div>
+      <div id="review-case-no" style="font-size:12px;color:var(--text-sub);"></div>
+    </div>
+    <div class="form-group">
+      <label>評価 <span class="req">*</span></label>
+      <div style="display:flex;gap:8px;justify-content:center;margin:8px 0;" id="star-selector">
+        ${[1,2,3,4,5].map(n=>`<span class="star-btn" data-val="${n}" onclick="selectStar(${n})" style="font-size:32px;cursor:pointer;opacity:0.3;">★</span>`).join('')}
+      </div>
+      <input type="hidden" id="review-rating" value="0">
+    </div>
+    <div class="form-group">
+      <label>コメント</label>
+      <textarea id="review-comment" placeholder="仕事の丁寧さ、対応の速さなど自由にご記入ください..." rows="3"></textarea>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="submitReview()">⭐ 評価を送信する</button>
+    <button class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('review-modal')">後で評価する</button>
+  </div>
+</div>
+
+<!-- ADMIN CHAT MODAL -->
+<div class="modal-overlay" id="admin-chat-modal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="admin-chat-modal-title">💬 チャット確認</div>
+    <div id="admin-chat-modal-content"></div>
+    <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('admin-chat-modal')">閉じる</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONSTANTS
+// ============================================================
+const CATEGORIES = [
+  '建築・リフォーム','外構・エクステリア','屋根・外壁・塗装',
+  '電気・設備','水道・配管','内装・インテリア・床',
+  '解体・撤去','不動産・土地活用','設計・士業・申請関係',
+  '清掃・メンテナンス','建材・資材','専門工事','ドローン測量・空撮',
+  '厨房機器・キッチン用品','買取・査定','その他相談'
+];
+const STATUS_LIST = ['未対応','立候補受付中','対応中','対応完了'];
+
+// GAS LINE通知エンドポイント
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwhmZQHIQHoohEfH0tDXuXrx-cRX7x25vFYKqJvlJqbWxUijpmEUoMPNCBy3Stc_xoD/exec';
+
+// 会場エリア（県→エリアの階層構造。全国展開時は県を追加するだけ）
+const VENUES = {
+  '長野県': ['松本','飯田','長野','上田','佐久','諏訪湖'],
+};
+const PREFECTURES = Object.keys(VENUES);
+
+const TEST_ACCOUNTS = [
+  { id:'u1', name:'田中 誠', company:'田中建設', categories:['建築・リフォーム','内装・インテリア・床'], areas:'松本市内全域', venue:'松本', bio:'建築・リフォーム専門。創業30年。', contact:'090-1111-2222', avatar:'誠' },
+  { id:'u2', name:'山田 健一', company:'山田電気設備', categories:['電気・設備'], areas:'松本・塩尻エリア', venue:'松本', bio:'第一種電気工事士在籍。住宅・店舗対応。', contact:'090-2222-3333', avatar:'健' },
+  { id:'u3', name:'佐藤 美咲', company:'佐藤水道サービス', categories:['水道・配管'], areas:'長野市全域', venue:'長野', bio:'24時間緊急対応可能。', contact:'090-3333-4444', avatar:'咲',
+    reviews:[
+      {rating:5,comment:'当日中に対応していただき、水漏れもすぐに直りました。丁寧な説明で安心できました。',reviewerName:'山田 花子',caseNo:'KS-2026-001',category:'水道・配管',reviewedAt:'2026-05-14 17:00'},
+      {rating:4,comment:'対応が早く助かりました。また何かあればお願いしたいです。',reviewerName:'中村 健二',caseNo:'KS-2026-003',category:'水道・配管',reviewedAt:'2026-04-20 12:00'}
+    ]
+  },
+  { id:'u4', name:'鈴木 拓也', company:'鈴木工務店', categories:['外構・エクステリア','屋根・外壁・塗装'], areas:'上田・東御エリア', venue:'上田', bio:'外構・造園・塗装専門。', contact:'090-4444-5555', avatar:'拓' },
+];
+
+let currentUser = TEST_ACCOUNTS[0];
+
+function load(key,def){try{return JSON.parse(localStorage.getItem(key))||def;}catch(e){return def;}}
+function save(key,val){localStorage.setItem(key,JSON.stringify(val));}
+function nowStr(){return new Date().toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
+
+// LINE通知送信（GAS経由）
+function sendLineNotification(lineUserId, message){
+  if(!lineUserId||!message) return;
+  fetch(GAS_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({lineUserId, message})
+  }).catch(()=>{}); // サイレント失敗（通知は補助機能なのでエラーは無視）
+}
+
+// ============================================================
+//  SAMPLE DATA
+// ============================================================
+function initSampleData(){
+  if(load('members_initialized_v4',false)) return;
+  const members = TEST_ACCOUNTS.map(u=>({
+    id:u.id, company:u.company, name:u.name, categories:u.categories,
+    capabilities:'', specialties:'', areas:u.areas, contact:u.contact,
+    bio:u.bio, createdAt:'2026-01-01'
+  }));
+  const cases=[
+    {
+      id:'c1',caseNo:'KS-2026-001',requesterName:'鈴木 花子',requesterId:'guest1',contact:'090-1111-2222',
+      category:'水道・配管',description:'自宅の台所の蛇口から水漏れが発生しています。DIYで直そうとしたが改善されず、専門業者に依頼したいです。',
+      area:'長野',deadline:'2026-08-31',candidateDeadline:'2026-06-30',
+      notes:'平日午前中に対応できる業者希望',status:'対応完了',
+      candidates:[{memberId:'u3',memberName:'佐藤 美咲（佐藤水道サービス）',message:'水道工事歴15年、大阪市内はすぐ対応できます。',appliedAt:'2026-05-12 10:30'}],
+      selectedMember:'u3',
+      estimate:{amount:45000,period:'1日',note:'蛇口交換・パッキン修理一式',submittedAt:'2026-05-13 10:00',fileData:null,fileName:null},
+      estimateApproved:true,
+      completionReport:{note:'蛇口の交換完了しました。水漏れは完全に解消されています。',submittedAt:'2026-05-14 16:00',fileData:null,fileName:null},
+      completionApproved:true,
+      createdAt:'2026-05-10 09:00',
+      messages:[
+        {id:'msg1',senderRole:'member',senderName:'佐藤 美咲',text:'こちらは佐藤水道サービスです。ご依頼ありがとうございます。明日の午前中に現地確認に伺えます。',timestamp:'2026-05-13 09:15',fileData:null,fileName:null},
+        {id:'msg2',senderRole:'requester',senderName:'鈴木 花子',text:'10時以降でお願いできますか？',timestamp:'2026-05-13 10:30',fileData:null,fileName:null},
+        {id:'msg3',senderRole:'member',senderName:'佐藤 美咲',text:'承知しました。10時30分に伺います。',timestamp:'2026-05-13 11:00',fileData:null,fileName:null}
+      ]
+    },
+    {
+      id:'c2',caseNo:'KS-2026-002',requesterName:'田村 一郎',requesterId:'guest2',contact:'06-3333-4444',
+      category:'外構・エクステリア',description:'駐車場のコンクリートが割れており、カーポートの設置も検討しています。まずは現地調査をしてほしいです。',
+      area:'上田',deadline:'2026-09-30',candidateDeadline:'2026-06-15',
+      notes:'予算は50〜80万円程度',status:'対応中',
+      candidates:[{memberId:'u4',memberName:'鈴木 拓也（鈴木工務店）',message:'外構工事専門です。カーポート設置も得意分野です！',appliedAt:'2026-05-20 14:15'}],
+      selectedMember:'u4',
+      estimate:null,estimateApproved:false,completionReport:null,completionApproved:false,
+      createdAt:'2026-05-18 16:00',
+      messages:[
+        {id:'msg4',senderRole:'admin',senderName:'システム',text:'🤝 鈴木 拓也さんへの依頼が決定しました。こちらのチャットで詳細のやり取りができます。',timestamp:'2026-05-20 15:00',fileData:null,fileName:null},
+        {id:'msg5',senderRole:'member',senderName:'鈴木 拓也',text:'鈴木工務店です。今週末に現地確認に伺いたいと思います。',timestamp:'2026-05-21 10:00',fileData:null,fileName:null}
+      ]
+    },
+    {
+      id:'c3',caseNo:'KS-2026-003',requesterName:'岡田 次郎',requesterId:'guest3',contact:'090-5555-6666',
+      category:'建築・リフォーム',description:'築25年の自宅のリビング・ダイニングをフルリフォームしたいです。フローリング張替え、クロス張替え、照明交換を希望。',
+      area:'佐久',deadline:'2026-10-31',candidateDeadline:'2026-06-20',
+      notes:'',status:'未対応',candidates:[],selectedMember:null,
+      estimate:null,estimateApproved:false,completionReport:null,completionApproved:false,
+      createdAt:'2026-05-22 11:30',messages:[],publicComments:[]
+    },
+    {
+      id:'c4',caseNo:'KS-2026-004',requesterName:'田中 誠',requesterId:'u1',contact:'090-1111-2222',
+      category:'屋根・外壁・塗装',description:'自社倉庫の外壁塗装を検討しています。面積は約200㎡。現在は白い塗装ですが剥がれが目立ってきました。見積もりをお願いしたいです。',
+      area:'松本',deadline:'2026-09-30',candidateDeadline:'2026-06-25',
+      notes:'足場代込みで見積もりをお願いします',status:'立候補受付中',
+      candidates:[{memberId:'u4',memberName:'鈴木 拓也（鈴木工務店）',message:'外壁塗装は得意分野です。現地調査後に詳細見積もりを提出します。',appliedAt:'2026-05-28 13:00'}],
+      selectedMember:null,
+      estimate:null,estimateApproved:false,completionReport:null,completionApproved:false,
+      createdAt:'2026-05-25 10:00',messages:[],photos:[],publicComments:[]
+    }
+  ];
+  const notifications=[
+    {id:'n1',caseId:'c2',caseNo:'KS-2026-002',text:'鈴木 拓也 からメッセージが届きました',read:false,timestamp:'2026-05-21 10:00'},
+  ];
+  save('members',members);
+  save('cases',cases);
+  save('notifications',notifications);
+  save('members_initialized_v4',true);
+}
+
+// ============================================================
+//  USER SWITCHER
+// ============================================================
+function renderUserPanel(){
+  const list=document.getElementById('user-account-list');
+  list.innerHTML=TEST_ACCOUNTS.map(u=>`
+    <div class="user-account-item ${u.id===currentUser.id?'active':''}" onclick="switchUser('${u.id}')">
+      <div class="ua-avatar">${u.avatar}</div>
+      <div class="ua-info"><div class="ua-name">${u.name}</div><div class="ua-company">${u.company}</div></div>
+      ${u.id===currentUser.id?'<div class="ua-check">✓</div>':''}
+    </div>`).join('');
+}
+
+function switchUser(userId){
+  const base=TEST_ACCOUNTS.find(u=>u.id===userId)||TEST_ACCOUNTS[0];
+  const overrides=load(`profile_${userId}`,{});
+  currentUser={...base,...overrides};
+  document.getElementById('user-avatar-btn').textContent=currentUser.avatar;
+  closePanels();
+  showToast(`👤 ${currentUser.name}としてログイン中`);
+  renderPage(currentPage);
+}
+
+// ============================================================
+//  PANELS (notif + user switcher)
+// ============================================================
+let openPanelId=null;
+
+function openPanel(type){
+  closePanels();
+  const backdrop=document.getElementById('panel-backdrop');
+  backdrop.classList.add('open');
+  if(type==='notif'){
+    renderNotifPanel();
+    document.getElementById('notif-panel').classList.add('open');
+    openPanelId='notif';
+  } else {
+    renderUserPanel();
+    document.getElementById('user-panel').classList.add('open');
+    openPanelId='user';
+  }
+}
+
+function closePanels(){
+  document.getElementById('notif-panel').classList.remove('open');
+  document.getElementById('user-panel').classList.remove('open');
+  document.getElementById('panel-backdrop').classList.remove('open');
+  openPanelId=null;
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+let currentPage='home';
+let pageHistory=[];
+let adminLoggedIn=false;
+let currentCaseFilter='all';
+
+function showPage(page,addHistory=true){
+  if(addHistory&&currentPage!==page) pageHistory.push(currentPage);
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const nb=document.getElementById('nav-'+page);
+  if(nb) nb.classList.add('active');
+  const detailPages=['case-detail','member-detail'];
+  document.getElementById('header-back').style.display=detailPages.includes(page)?'block':'none';
+  currentPage=page;
+  renderPage(page);
+  window.scrollTo(0,0);
+  closePanels();
+}
+
+function goBack(){
+  if(pageHistory.length>0){const prev=pageHistory.pop();showPage(prev,false);}
+}
+
+function renderPage(page){
+  if(page==='home') renderHome();
+  else if(page==='cases') renderCaseList();
+  else if(page==='members') renderMemberList();
+  else if(page==='mypage') renderMyPage();
+  else if(page==='admin') renderAdmin();
+  else if(page==='new-case'){
+    // エリアラベルを自動セット
+    const lbl=document.getElementById('nc-area-label');
+    if(lbl) lbl.textContent=(currentUser&&currentUser.venue)?currentUser.venue:'未設定';
+  }
+}
+
+// ============================================================
+//  HOME
+// ============================================================
+function renderHome(){
+  const cases=load('cases',[]);
+  const members=load('members',[]);
+  const open=cases.filter(c=>c.status!=='対応完了').length;
+  const recruit=cases.filter(c=>c.status==='立候補受付中').length;
+  document.getElementById('home-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${cases.length}</div><div class="stat-label">総案件数</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${open}</div><div class="stat-label">進行中案件</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--blue)">${recruit}</div><div class="stat-label">立候補受付中</div></div>
+    <div class="stat-card"><div class="stat-num">${members.length}</div><div class="stat-label">登録メンバー</div></div>`;
+  const recent=[...cases].reverse().slice(0,3);
+  document.getElementById('home-recent-cases').innerHTML=recent.length===0
+    ?'<div class="empty-state"><div class="emoji">📋</div><p>案件はまだありません</p></div>'
+    :recent.map(c=>caseCardHTML(c)).join('');
+}
+
+// ============================================================
+//  AREA FILTER HELPERS
+// ============================================================
+function populateAreaSelect(prefSelectId, areaSelectId){
+  const pref=document.getElementById(prefSelectId).value;
+  const areaSelect=document.getElementById(areaSelectId);
+  areaSelect.innerHTML='<option value="">全エリア</option>';
+  if(pref&&VENUES[pref]){
+    VENUES[pref].forEach(a=>{
+      const opt=document.createElement('option');
+      opt.value=a; opt.textContent=a;
+      areaSelect.appendChild(opt);
+    });
+  }
+}
+function onPrefChange(){ populateAreaSelect('nc-prefecture','nc-area'); }
+function onCasePrefChange(){ populateAreaSelect('case-pref-filter','case-area-filter'); renderCaseList(); }
+function onMemberPrefChange(){ populateAreaSelect('member-pref-filter','member-area-filter'); renderMemberList(); }
+
+// ============================================================
+//  CASE LIST
+// ============================================================
+function renderCaseList(){
+  const cases=load('cases',[]);
+  let filtered=currentCaseFilter==='all'?cases:cases.filter(c=>c.status===currentCaseFilter);
+
+  const areaFilterEl=document.getElementById('case-area-filter');
+  const prefFilterEl=document.getElementById('case-pref-filter');
+  const areaWrap=document.getElementById('case-area-wrap');
+
+  if(adminLoggedIn){
+    // 管理者：手動フィルター有効・全エリア表示
+    if(areaWrap) areaWrap.style.display='flex';
+    const areaFilter=(areaFilterEl||{}).value||'';
+    const prefFilter=(prefFilterEl||{}).value||'';
+    if(areaFilter) filtered=filtered.filter(c=>c.area===areaFilter);
+    else if(prefFilter&&VENUES[prefFilter]) filtered=filtered.filter(c=>VENUES[prefFilter].includes(c.area));
+    const bannerEl=document.getElementById('case-area-banner');
+    if(bannerEl) bannerEl.innerHTML='🔓 全エリア表示中（管理者モード）';
+    if(bannerEl) bannerEl.style.background='#fef3c7';bannerEl&&(bannerEl.style.color='#92400e');
+  } else {
+    // 一般ユーザー：自分のエリアのみ自動表示
+    if(areaWrap) areaWrap.style.display='none';
+    const myVenue=currentUser.venue||'';
+    if(myVenue) filtered=filtered.filter(c=>c.area===myVenue);
+    const bannerEl=document.getElementById('case-area-banner');
+    if(bannerEl){ bannerEl.innerHTML=myVenue?`📍 ${myVenue}エリアの案件を表示中`:'📍 エリア未設定';bannerEl.style.background='#f0fdf4';bannerEl.style.color='#15803d';}
+  }
+
+  const sorted=[...filtered].reverse();
+  document.getElementById('case-list-container').innerHTML=sorted.length===0
+    ?'<div class="empty-state"><div class="emoji">📭</div><p>該当する案件がありません</p></div>'
+    :sorted.map(c=>caseCardHTML(c)).join('');
+}
+
+function filterCases(status,el){
+  document.querySelectorAll('#case-filter-bar .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentCaseFilter=status;
+  renderCaseList();
+}
+
+function remainingDaysLabel(candidateDeadline,status){
+  if(status==='対応完了'||status==='対応中') return '';
+  if(!candidateDeadline) return '';
+  const today=new Date();today.setHours(0,0,0,0);
+  const deadline=new Date(candidateDeadline);deadline.setHours(0,0,0,0);
+  const diff=Math.ceil((deadline-today)/86400000);
+  if(diff<0) return `<span style="background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">立候補期限終了</span>`;
+  if(diff===0) return `<span style="background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">⚠️ 本日期限</span>`;
+  if(diff<=3) return `<span style="background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">⏰ 残り${diff}日掲載</span>`;
+  return `<span style="background:#f0fdf4;color:#15803d;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">📅 残り${diff}日掲載</span>`;
+}
+
+function caseCardHTML(c){
+  const badge=statusBadge(c.status);
+  const remaining=remainingDaysLabel(c.candidateDeadline,c.status);
+  const msgs=(c.messages||[]).length;
+  const chatBadge=msgs>0?`<div class="case-msg-badge">💬 ${msgs}件のメッセージ</div>`:'';
+  // My role badge
+  let myRole='';
+  if(c.requesterId===currentUser.id) myRole=`<span class="my-role-badge my-role-requester">📤 依頼者</span>`;
+  else if(c.selectedMember===currentUser.id) myRole=`<span class="my-role-badge my-role-contractor">🔨 担当業者</span>`;
+  else if(c.candidates&&c.candidates.find(ca=>ca.memberId===currentUser.id)) myRole=`<span class="my-role-badge my-role-candidate">🙋 立候補中</span>`;
+  return `
+    <div class="case-card" onclick="showCaseDetail('${c.id}')">
+      <div class="case-card-header">
+        <div>
+          <div class="case-no">${c.caseNo}</div>
+          <div class="case-title">${c.description.slice(0,40)}${c.description.length>40?'…':''}</div>
+        </div>
+        ${badge}
+      </div>
+      <div style="margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;"><span class="badge-cat">${c.category}</span>${c.caseType==='estimate'?`<span style="background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">📋 見積もり依頼</span>`:`<span style="background:#f0fdf4;color:#15803d;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">🔨 発注予定</span>`}${remaining}${myRole}${c.linkedCaseId?`<span style="background:#ede9fe;color:#5b21b6;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">🔗 関連案件</span>`:''}</div>
+      <div class="case-meta"><span>👤 ${c.requesterName}</span><span>📍 ${c.area}</span></div>
+      ${c.candidates.length>0?`<div class="case-candidates">🙋 立候補者 ${c.candidates.length}名</div>`:''}
+      ${chatBadge}
+    </div>`;
+}
+
+function statusBadge(status){
+  const map={'未対応':'badge-none','立候補受付中':'badge-recruit','対応中':'badge-active','対応完了':'badge-done'};
+  return `<span class="badge ${map[status]||'badge-none'}">${status}</span>`;
+}
+
+// ============================================================
+//  CASE DETAIL
+// ============================================================
+function showCaseDetail(caseId){
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  const members=load('members',[]);
+  const selectedMember=c.selectedMember?members.find(m=>m.id===c.selectedMember):null;
+  const isRequester=(c.requesterId===currentUser.id);
+  const isContractor=(c.selectedMember===currentUser.id);
+  const isCandidate=!!(c.candidates&&c.candidates.find(ca=>ca.memberId===currentUser.id));
+
+  const myCandidate=c.candidates&&c.candidates.find(ca=>ca.memberId===currentUser.id);
+
+  // 立候補者カード＋見積もり比較（入札型）
+  let candidatesHTML;
+  if(c.candidates.length===0){
+    candidatesHTML='<p style="color:var(--text-sub);font-size:13px;">まだ立候補者がいません</p>';
+  } else if(isRequester&&!c.selectedMember){
+    // 依頼者：見積もり比較テーブル
+    const allSubmitted=c.candidates.every(ca=>ca.estimate);
+    candidatesHTML=`
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e;margin-bottom:10px;">
+        💡 見積もりが揃った業者から順に決定できます。金額は業者同士には公開されません。
+      </div>`+
+      c.candidates.map(can=>{
+        const mem=members.find(m=>m.id===can.memberId);
+        const hasEst=!!can.estimate;
+        return `<div class="candidate-item" style="margin-bottom:10px;">
+          <div class="candidate-header"><div class="candidate-name">${can.memberName}</div><div class="candidate-time">${can.appliedAt}</div></div>
+          ${can.message?`<div class="candidate-msg">${escHtml(can.message)}</div>`:''}
+          ${hasEst?`
+            <div style="background:#f0fdf4;border:1.5px solid var(--primary-light);border-radius:8px;padding:10px;margin-top:8px;">
+              <div style="font-size:15px;font-weight:800;color:var(--primary-dark);">💴 ¥${Number(can.estimate.amount).toLocaleString()}<span style="font-size:12px;font-weight:400;">（税込）</span></div>
+              <div style="font-size:12px;color:var(--text-sub);margin-top:3px;">🗓️ 工期：${can.estimate.period}</div>
+              ${can.estimate.note?`<div style="font-size:12px;color:var(--text-sub);margin-top:2px;">📝 ${escHtml(can.estimate.note)}</div>`:''}
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              ${mem?`<button class="btn btn-sm btn-outline" onclick="showMemberDetailById('${mem.id}')">プロフィール</button>`:''}
+              <button class="btn btn-sm btn-accent" onclick="selectMember('${c.id}','${can.memberId}')">✅ この業者に決定</button>
+            </div>`
+          :`<div style="background:#f8fafc;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:var(--text-sub);">⏳ 見積もり提出待ち</div>
+            ${mem?`<button class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="showMemberDetailById('${mem.id}')">プロフィール確認</button>`:''}`}
+        </div>`;
+      }).join('');
+  } else {
+    // 業者・一般：通常表示（金額は自分の分だけ表示）
+    candidatesHTML=c.candidates.map(can=>{
+      const mem=members.find(m=>m.id===can.memberId);
+      const isMe=(can.memberId===currentUser.id);
+      return `<div class="candidate-item">
+        <div class="candidate-header"><div class="candidate-name">${can.memberName}${isMe?' <span style="font-size:10px;background:#dcfce7;color:var(--primary-dark);padding:1px 6px;border-radius:10px;">あなた</span>':''}</div><div class="candidate-time">${can.appliedAt}</div></div>
+        ${can.message?`<div class="candidate-msg">${escHtml(can.message)}</div>`:''}
+        ${isMe&&can.estimate?`<div style="font-size:12px;color:var(--primary);font-weight:600;margin-top:4px;">✅ 見積もり提出済み ¥${Number(can.estimate.amount).toLocaleString()}（自分のみ確認できます）</div>`:''}
+        ${isMe&&!can.estimate&&!c.selectedMember?`<button class="btn btn-sm btn-blue" style="margin-top:8px;" onclick="openEstimateModal('${c.id}')">📋 見積もりを提出する</button>`:''}
+        ${!isMe&&mem?`<button class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="showMemberDetailById('${mem.id}')">プロフィール確認</button>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  const canApply=(c.status==='未対応'||c.status==='立候補受付中')&&!myCandidate&&!isRequester&&!c.selectedMember;
+  const hasChat=c.status==='対応中'||c.status==='対応完了';
+
+  // 受発注フロー
+  const flowHTML=hasChat?renderFlowHTML(c,isRequester,isContractor):'';
+
+  // 関連案件（この案件から追加募集された子案件一覧）
+  const linkedCases=cases.filter(x=>x.linkedCaseId===c.id);
+
+  // 元案件情報（追加募集案件の場合）
+  const parentCase=c.linkedCaseId?cases.find(x=>x.id===c.linkedCaseId):null;
+  const parentCardHTML=parentCase?`
+    <div class="card" style="border-left:4px solid var(--primary);margin-bottom:12px;background:#f0fdf4;">
+      <div style="font-size:11px;font-weight:700;color:var(--primary-dark);margin-bottom:8px;letter-spacing:0.5px;">🔗 元案件（${parentCase.caseNo}）</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span class="badge-cat">${parentCase.category}</span>
+        <span style="font-size:12px;color:var(--text-sub);">📍 ${parentCase.area}</span>
+        <span style="font-size:12px;color:var(--text-sub);">👤 ${parentCase.requesterName}</span>
+      </div>
+      <p style="font-size:13px;line-height:1.7;white-space:pre-wrap;margin:0 0 8px;">${escHtml(parentCase.description)}</p>
+      <button class="btn btn-sm btn-outline" onclick="showCaseDetail('${parentCase.id}')">元案件を見る →</button>
+    </div>`:'';
+
+  document.getElementById('case-detail-content').innerHTML=`
+    ${parentCardHTML}
+    <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+      <div class="case-no" style="font-size:13px;">${c.caseNo}</div>
+      ${statusBadge(c.status)}
+    </div>
+    <div class="card">
+      <div class="detail-section">
+        <h3>案件情報</h3>
+        <div class="detail-row"><div class="detail-label">カテゴリ</div><div class="detail-value"><span class="badge-cat">${c.category}</span></div></div>
+        <div class="detail-row"><div class="detail-label">依頼者</div><div class="detail-value">${c.requesterName}</div></div>
+        <div class="detail-row"><div class="detail-label">現場エリア</div><div class="detail-value">📍 ${c.area}</div></div>
+        <div class="detail-row"><div class="detail-label">希望納期</div><div class="detail-value">${c.deadline||'未定'}</div></div>
+        <div class="detail-row"><div class="detail-label">立候補期限</div><div class="detail-value">⏰ ${c.candidateDeadline}<span style="font-size:11px;color:var(--text-sub);margin-left:6px;">※期限前でも決定できます</span></div></div>
+        <div class="detail-row"><div class="detail-label">申込日時</div><div class="detail-value">${c.createdAt}</div></div>
+      </div>
+      <hr class="divider">
+      <div class="detail-section">
+        <h3>相談内容</h3>
+        <p style="font-size:14px;line-height:1.7;white-space:pre-wrap;">${escHtml(c.description)}</p>
+      </div>
+      ${c.notes?`<hr class="divider"><div class="detail-section"><h3>備考</h3><p style="font-size:14px;line-height:1.7;">${escHtml(c.notes)}</p></div>`:''}
+      ${(c.photos&&c.photos.length>0)?`
+      <hr class="divider">
+      <div class="detail-section">
+        <h3>現状写真 (${c.photos.length}枚)</h3>
+        <div class="case-photos">${c.photos.map((src,i)=>`<img src="${src}" class="case-photo-thumb" alt="現状写真${i+1}" onclick="openPhotoViewer('${c.id}',${i})">`).join('')}</div>
+        ${isRequester&&c.photos.length<5?`<div style="margin-top:8px;"><input type="file" id="cd-photo-${c.id}" accept="image/*" style="display:none" onchange="addCaseDetailPhoto('${c.id}',this)"><button class="btn btn-sm btn-outline" style="margin-top:4px;" onclick="document.getElementById('cd-photo-${c.id}').click()">📷 写真を追加</button></div>`:''}
+      </div>`:`${isRequester?`
+      <hr class="divider">
+      <div class="detail-section">
+        <h3>現状写真</h3>
+        <input type="file" id="cd-photo-${c.id}" accept="image/*" style="display:none" onchange="addCaseDetailPhoto('${c.id}',this)">
+        <button class="btn btn-sm btn-outline" onclick="document.getElementById('cd-photo-${c.id}').click()">📷 写真をアップロード</button>
+      </div>`:''}`}
+    </div>
+
+    ${selectedMember?`<div class="selected-badge" style="margin-bottom:12px;">🤝 対応業者決定: <strong>${selectedMember.name}（${selectedMember.company}）</strong></div>`:''}
+
+    <div class="card">
+      <div class="section-header"><div class="card-title">🙋 立候補者 (${c.candidates.length}名)</div></div>
+      ${candidatesHTML}
+    </div>
+
+    ${canApply?`<button class="btn btn-primary btn-full" style="margin-bottom:10px;" onclick="openCandidacyModal('${c.id}')">✋ この案件に立候補する</button>`:''}
+    ${myCandidate&&!myCandidate.estimate&&!c.selectedMember&&!isRequester?`<button class="btn btn-blue btn-full" style="margin-bottom:10px;" onclick="openEstimateModal('${c.id}')">📋 見積もりを提出する</button>`:''}
+    ${isRequester?`<button class="btn btn-outline btn-full" style="margin-bottom:10px;" onclick="openExtraRecruitModal('${c.id}')">➕ 追加業者を募集する</button>`:''}
+
+    ${linkedCases.length>0?`
+    <div class="card" style="margin-bottom:12px;border-left:4px solid #6366f1;">
+      <div style="font-size:12px;font-weight:700;color:#4338ca;margin-bottom:10px;">🔗 追加募集案件（${linkedCases.length}件）</div>
+      ${linkedCases.map(lc=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);" onclick="showCaseDetail('${lc.id}')" style="cursor:pointer;">
+          <div>
+            <div style="font-size:12px;color:var(--text-sub);margin-bottom:2px;">${lc.caseNo}</div>
+            <div style="font-size:13px;font-weight:600;">${lc.category}</div>
+            <div style="font-size:12px;color:var(--text-sub);margin-top:2px;">${lc.description.slice(0,40)}${lc.description.length>40?'…':''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:72px;">
+            ${statusBadge(lc.status)}
+            <div style="font-size:11px;color:#6366f1;font-weight:600;">${lc.candidates.length}名立候補</div>
+          </div>
+        </div>`).join('')}
+      ${linkedCases.length===1?`<button class="btn btn-sm btn-outline" style="margin-top:10px;width:100%;" onclick="showCaseDetail('${linkedCases[0].id}')">追加募集案件を見る →</button>`:''}
+    </div>`:''}
+
+    ${renderPublicCommentsHTML(c)}
+
+    ${flowHTML}
+    ${hasChat?renderChatHTML(c,selectedMember,isRequester,isContractor):''}
+    <div style="height:8px;"></div>
+  `;
+
+  showPage('case-detail');
+  if(hasChat){
+    const el=document.getElementById('chat-messages-'+c.id);
+    if(el) el.scrollTop=el.scrollHeight;
+  }
+}
+
+// ============================================================
+//  受発注フロー
+// ============================================================
+function renderFlowHTML(c,isRequester,isContractor){
+  const isEstimateOnly=(c.caseType==='estimate');
+  const step1done=!!c.selectedMember;
+  const step2done=isEstimateOnly?false:!!(c.confirmedEstimate&&c.confirmedEstimate.agreedAt);
+  const step3done=!!c.completionReport;
+  const step4done=!!c.completionApproved;
+
+  const cf=c.confirmedEstimate;
+  const cfSubmitted=!!(cf&&cf.submittedAt);
+  const cfAgreed=!!(cf&&cf.agreedAt);
+
+  let actionHTML='';
+
+  if(isEstimateOnly){
+    // 見積もり依頼のみ：業者選定後の確定見積もりフローなし
+    const switchBtn=isRequester?`<button class="btn btn-primary btn-full" style="margin-top:8px;" onclick="switchToOrder('${c.id}')">🔨 発注に切り替える</button>`:'';
+    if(step1done&&!step3done&&isContractor){
+      actionHTML=`<div class="completion-box"><h4>✅ 業者として選定されました（見積もり案件）</h4></div>
+        <button class="btn btn-primary btn-full" style="margin-bottom:10px;" onclick="openCompletionModal('${c.id}')">🏁 工事完了を報告する</button>`;
+    } else if(step1done&&!step3done&&isRequester){
+      actionHTML=`<div class="completion-box"><h4>✅ 業者選定済み（見積もり依頼）</h4><p style="font-size:12px;color:var(--text-sub);margin-top:4px;">発注に切り替えて進めることができます。</p></div>${switchBtn}
+        <button class="btn btn-gray btn-sm btn-full" style="margin-top:8px;" onclick="openCancelCaseModal('${c.id}')">⚠️ 案件をキャンセルする</button>`;
+    } else if(step3done&&!step4done&&isRequester){
+      const rep=c.completionReport;
+      actionHTML=`<div class="completion-box"><h4>🏁 工事完了報告が届いています</h4><p style="font-size:13px;line-height:1.6;">${escHtml(rep.note)}</p>${rep.fileName?`<div style="margin-top:8px;">${filePreviewHTML(rep.fileData,rep.fileName,'completion')}</div>`:''}<div style="font-size:11px;color:var(--text-sub);margin-top:8px;">報告日時：${rep.submittedAt}</div></div>
+        <button class="btn btn-primary btn-full" style="margin-bottom:10px;" onclick="approveCompletion('${c.id}')">✅ 完了を承認する</button>`;
+    } else if(step3done&&!step4done&&isContractor){
+      actionHTML=`<div class="completion-box"><h4>🏁 完了報告済み（依頼者の承認待ち）</h4></div>`;
+    } else if(step4done){
+      actionHTML=`<div class="completion-box" style="background:#f0fdf4;border-color:var(--primary);"><h4>🎉 案件完了！</h4></div>`;
+    }
+    const sc1=step1done?'done':'active';
+    const sc2=step3done?'done':step1done?'active':'';
+    const sc3=step4done?'done':step3done?'active':'';
+    return `<div class="card" style="margin-bottom:12px;">
+      <div class="card-title" style="margin-bottom:10px;">📊 受発注フロー</div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:6px 10px;font-size:11px;color:#1d4ed8;font-weight:600;margin-bottom:10px;">📋 見積もり依頼案件</div>
+      <div class="flow-steps">
+        <div class="flow-step ${sc1}"><span class="step-icon">🤝</span>業者決定</div>
+        <div class="flow-step ${sc2}"><span class="step-icon">🏁</span>完了報告</div>
+        <div class="flow-step ${sc3}"><span class="step-icon">🎉</span>完了承認</div>
+      </div>
+      ${actionHTML}</div>`;
+  }
+
+  // 発注予定ありフロー: 業者決定→確定見積もり→完了報告→完了承認
+  let activeStep=0;
+  if(!step1done) activeStep=1;
+  else if(!step2done) activeStep=2;
+  else if(!step3done) activeStep=3;
+  else if(!step4done) activeStep=4;
+  else activeStep=5;
+
+  const stepClass=(n)=>n<activeStep?'done':n===activeStep?'active':'';
+
+  if(step1done&&!cfSubmitted&&isContractor){
+    actionHTML=`
+      <div class="completion-box">
+        <h4>✅ 業者として選定されました</h4>
+        <p style="font-size:12px;color:var(--text-sub);margin-top:4px;">チャットで詳細を調整のうえ、確定見積もりを提出してください。</p>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-bottom:10px;" onclick="openConfirmedEstimateModal('${c.id}')">📋 確定見積もりを提出する</button>`;
+  } else if(step1done&&!cfSubmitted&&isRequester){
+    actionHTML=`<div class="completion-box"><h4>✅ 業者選定済み</h4><p style="font-size:12px;color:var(--text-sub);margin-top:4px;">業者から確定見積もりが届くまでお待ちください。</p></div>
+      <button class="btn btn-gray btn-sm btn-full" style="margin-top:8px;" onclick="openCancelCaseModal('${c.id}')">⚠️ 案件をキャンセルする</button>`;
+  } else if(cfSubmitted&&!cfAgreed&&isRequester){
+    actionHTML=`
+      <div class="completion-box" style="border-color:#f59e0b;background:#fffbeb;">
+        <h4>📋 確定見積もりが届いています</h4>
+        <div style="margin-top:10px;background:white;border-radius:8px;padding:10px;border:1px solid #fde68a;">
+          <div style="font-size:16px;font-weight:800;color:var(--primary-dark);">💴 ¥${Number(cf.amount).toLocaleString()}<span style="font-size:12px;font-weight:400;">（税込）</span></div>
+          <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">🗓️ 工期：${cf.period}</div>
+          ${cf.conditions?`<div style="font-size:12px;color:var(--text-sub);margin-top:4px;">📝 ${escHtml(cf.conditions)}</div>`:''}
+          <div style="font-size:11px;color:var(--text-sub);margin-top:4px;">提出日時：${cf.submittedAt}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="agreeConfirmedEstimate('${c.id}')">✅ 同意して着手へ</button>
+        <button class="btn btn-gray" style="flex:1;" onclick="cancelAfterConfirmedEstimate('${c.id}')">❌ 同意しない（キャンセル）</button>
+      </div>`;
+  } else if(cfSubmitted&&!cfAgreed&&isContractor){
+    actionHTML=`<div class="completion-box" style="border-color:#f59e0b;background:#fffbeb;"><h4>📋 確定見積もり提出済み（依頼者の同意待ち）</h4><div style="font-size:13px;color:var(--text-sub);margin-top:4px;">¥${Number(cf.amount).toLocaleString()} ／ 工期：${cf.period}</div></div>`;
+  } else if(cfAgreed&&!step3done&&isContractor){
+    actionHTML=`
+      <div class="completion-box" style="background:#f0fdf4;border-color:var(--primary);">
+        <h4>✅ 確定見積もりが合意されました。着手してください。</h4>
+        <div style="font-size:13px;color:var(--text-sub);margin-top:4px;">¥${Number(cf.amount).toLocaleString()}（税込）／工期：${cf.period}</div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:10px;margin-bottom:10px;" onclick="openCompletionModal('${c.id}')">🏁 工事完了を報告する</button>`;
+  } else if(cfAgreed&&!step3done&&isRequester){
+    actionHTML=`<div class="completion-box" style="background:#f0fdf4;border-color:var(--primary);"><h4>✅ 確定見積もり合意済み。完了報告をお待ちください。</h4><div style="font-size:13px;color:var(--text-sub);margin-top:4px;">¥${Number(cf.amount).toLocaleString()}（税込）／工期：${cf.period}</div></div>`;
+  } else if(step3done&&!step4done&&isRequester){
+    const rep=c.completionReport;
+    actionHTML=`
+      <div class="completion-box">
+        <h4>🏁 工事完了報告が届いています</h4>
+        <p style="font-size:13px;line-height:1.6;">${escHtml(rep.note)}</p>
+        ${rep.fileName?`<div style="margin-top:8px;">${filePreviewHTML(rep.fileData,rep.fileName,'completion')}</div>`:''}
+        <div style="font-size:11px;color:var(--text-sub);margin-top:8px;">報告日時：${rep.submittedAt}</div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-bottom:10px;" onclick="approveCompletion('${c.id}')">✅ 完了を承認する</button>`;
+  } else if(step3done&&!step4done&&isContractor){
+    actionHTML=`<div class="completion-box"><h4>🏁 完了報告済み（依頼者の承認待ち）</h4></div>`;
+  } else if(step4done){
+    actionHTML=`<div class="completion-box" style="background:#f0fdf4;border-color:var(--primary);"><h4>🎉 案件完了！すべての工程が完了しました。</h4></div>`;
+  }
+
+  return `
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title" style="margin-bottom:10px;">📊 受発注フロー</div>
+      <div class="flow-steps">
+        <div class="flow-step ${stepClass(1)}"><span class="step-icon">🤝</span>業者決定</div>
+        <div class="flow-step ${stepClass(2)}"><span class="step-icon">📋</span>確定見積</div>
+        <div class="flow-step ${stepClass(3)}"><span class="step-icon">🏁</span>完了報告</div>
+        <div class="flow-step ${stepClass(4)}"><span class="step-icon">🎉</span>完了承認</div>
+      </div>
+      ${actionHTML}
+    </div>`;
+}
+
+function filePreviewHTML(fileData,fileName,type){
+  if(!fileData||!fileName) return '';
+  if(fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i)){
+    return `<img src="${fileData}" class="chat-file-thumb" alt="${escHtml(fileName)}">`;
+  }
+  return `<div class="chat-file-bubble">📎 <a onclick="window.open('${fileData}')">${escHtml(fileName)}</a></div>`;
+}
+
+function openEstimateModal(caseId){
+  document.getElementById('estimate-case-id').value=caseId;
+  document.getElementById('est-amount').value='';
+  document.getElementById('est-period').value='';
+  document.getElementById('est-note').value='';
+  document.getElementById('est-file').value='';
+  document.getElementById('estimate-modal').classList.add('open');
+}
+
+function submitEstimate(e){
+  e.preventDefault();
+  const caseId=document.getElementById('estimate-case-id').value;
+  const amount=document.getElementById('est-amount').value;
+  const period=document.getElementById('est-period').value;
+  const note=document.getElementById('est-note').value;
+  const fileInput=document.getElementById('est-file');
+  const file=fileInput.files&&fileInput.files[0];
+
+  const doSave=(fileData,fileName)=>{
+    const cases=load('cases',[]);
+    const c=cases.find(x=>x.id===caseId);
+    if(!c) return;
+    // 入札型：候補者ごとに見積もりを保存（互いに非公開）
+    const can=c.candidates.find(ca=>ca.memberId===currentUser.id);
+    if(can){
+      can.estimate={amount:parseInt(amount),period,note,submittedAt:nowStr(),fileData:fileData||null,fileName:fileName||null};
+    }
+    save('cases',cases);
+    addNotification(caseId,c.caseNo,`${currentUser.name} から見積もりが届きました`);
+    closeModal('estimate-modal');
+    showToast('📋 見積もりを提出しました');
+    showCaseDetail(caseId);
+  };
+
+  if(file){
+    const reader=new FileReader();
+    reader.onload=ev=>doSave(ev.target.result,file.name);
+    reader.readAsDataURL(file);
+  } else {
+    doSave(null,null);
+  }
+}
+
+// ============================================================
+//  確定見積もりフロー
+// ============================================================
+function openConfirmedEstimateModal(caseId){
+  document.getElementById('conf-est-case-id').value=caseId;
+  document.getElementById('conf-est-amount').value='';
+  document.getElementById('conf-est-period').value='';
+  document.getElementById('conf-est-conditions').value='';
+  document.getElementById('confirmed-estimate-modal').classList.add('open');
+}
+
+function submitConfirmedEstimate(e){
+  e.preventDefault();
+  const caseId=document.getElementById('conf-est-case-id').value;
+  const amount=document.getElementById('conf-est-amount').value;
+  const period=document.getElementById('conf-est-period').value;
+  const conditions=document.getElementById('conf-est-conditions').value;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  c.confirmedEstimate={amount:parseInt(amount),period,conditions,submittedAt:nowStr(),agreedAt:null};
+  if(!c.messages) c.messages=[];
+  c.messages.push({id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',
+    text:`📋 確定見積もりが提出されました。金額：¥${Number(amount).toLocaleString()}（税込）／工期：${period}`,
+    timestamp:nowStr(),fileData:null,fileName:null});
+  save('cases',cases);
+  addNotification(caseId,c.caseNo,'確定見積もりが届きました。内容を確認して同意するか決めてください。');
+  closeModal('confirmed-estimate-modal');
+  showToast('📋 確定見積もりを提出しました');
+  showCaseDetail(caseId);
+}
+
+function agreeConfirmedEstimate(caseId){
+  if(!confirm('この確定見積もりに同意して着手に進みますか？')) return;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c||!c.confirmedEstimate) return;
+  c.confirmedEstimate.agreedAt=nowStr();
+  if(!c.messages) c.messages=[];
+  c.messages.push({id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',
+    text:`✅ 依頼者が確定見積もりに同意しました。着手してください。金額：¥${Number(c.confirmedEstimate.amount).toLocaleString()}（税込）`,
+    timestamp:nowStr(),fileData:null,fileName:null});
+  save('cases',cases);
+  addNotification(caseId,c.caseNo,'依頼者が確定見積もりに同意しました。着手してください。');
+  showToast('✅ 確定見積もりに同意しました。着手へ進んでください。');
+  showCaseDetail(caseId);
+}
+
+function cancelAfterConfirmedEstimate(caseId){
+  document.getElementById('cancel-repost-case-id').value=caseId;
+  document.getElementById('cancel-repost-reason').value='';
+  document.getElementById('cancel-repost-modal').classList.add('open');
+}
+
+function openCancelCaseModal(caseId){
+  document.getElementById('cancel-case-id').value=caseId;
+  document.getElementById('cancel-case-reason').value='';
+  document.getElementById('cancel-case-modal').classList.add('open');
+}
+
+function doCancelCase(){
+  const caseId=document.getElementById('cancel-case-id').value;
+  const reason=document.getElementById('cancel-case-reason').value.trim();
+  if(!reason){alert('キャンセル理由を入力してください');return;}
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  c.status='対応完了';
+  c.cancelledAfterSelection=true;
+  c.cancelReason=reason;
+  c.cancelledAt=nowStr();
+  if(!c.messages) c.messages=[];
+  c.messages.push({id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',
+    text:`⚠️ 依頼者により案件がキャンセルされました。理由：${reason}`,
+    timestamp:nowStr(),fileData:null,fileName:null});
+  save('cases',cases);
+  closeModal('cancel-case-modal');
+  showToast('案件をキャンセルしました');
+  showPage('cases');
+}
+
+function doRepost(){
+  const caseId=document.getElementById('cancel-repost-case-id').value;
+  const reason=document.getElementById('cancel-repost-reason').value;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  // 元案件をキャンセル状態に
+  c.status='対応完了';
+  c.cancelledAfterSelection=true;
+  c.confirmedEstimate={...c.confirmedEstimate,cancelledAt:nowStr(),cancelReason:reason};
+  // 新案件を作成（補足情報付き）
+  const id='c'+Date.now();
+  const no='KS-'+new Date().getFullYear()+'-'+String(cases.length+1).padStart(3,'0');
+  const repostedNote=reason?`【再掲載】前回キャンセル理由：${reason}\n\n${c.notes||''}`:c.notes||'';
+  const newCase={
+    ...c,id,caseNo:no,
+    status:'未対応',candidates:[],selectedMember:null,
+    estimate:null,estimateApproved:false,confirmedEstimate:null,
+    completionReport:null,completionApproved:false,
+    createdAt:nowStr(),messages:[],
+    notes:repostedNote,
+    linkedCaseId:caseId
+  };
+  cases.push(newCase);
+  save('cases',cases);
+  closeModal('cancel-repost-modal');
+  showToast('🔄 案件をキャンセルして再掲載しました');
+  showPage('cases');
+}
+
+function switchToOrder(caseId){
+  if(!confirm('この案件を「発注予定あり」に切り替えますか？\n切り替え後は確定見積もりフローが追加されます。')) return;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  c.caseType='order';
+  save('cases',cases);
+  showToast('🔨 発注予定ありに切り替えました');
+  showCaseDetail(caseId);
+}
+
+function approveEstimate(caseId){
+  if(!confirm('この見積もりで発注しますか？')) return;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  c.estimateApproved=true;
+  c.messages.push({id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',text:'✅ 依頼者が見積もりを承認しました。工事を進めてください。',timestamp:nowStr(),fileData:null,fileName:null});
+  save('cases',cases);
+  addNotification(caseId,c.caseNo,'見積もりが承認されました。工事を進めてください。');
+  showToast('✅ 見積もりを承認しました');
+  showCaseDetail(caseId);
+}
+
+function openCompletionModal(caseId){
+  document.getElementById('completion-case-id').value=caseId;
+  document.getElementById('comp-note').value='';
+  document.getElementById('comp-file').value='';
+  document.getElementById('completion-modal').classList.add('open');
+}
+
+function submitCompletion(e){
+  e.preventDefault();
+  const caseId=document.getElementById('completion-case-id').value;
+  const note=document.getElementById('comp-note').value;
+  const fileInput=document.getElementById('comp-file');
+  const file=fileInput.files&&fileInput.files[0];
+
+  const doSave=(fileData,fileName)=>{
+    const cases=load('cases',[]);
+    const c=cases.find(x=>x.id===caseId);
+    if(!c) return;
+    c.completionReport={note,submittedAt:nowStr(),fileData:fileData||null,fileName:fileName||null};
+    c.messages.push({id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',text:'🏁 業者から工事完了報告が届きました。内容をご確認の上、完了承認をお願いします。',timestamp:nowStr(),fileData:null,fileName:null});
+    save('cases',cases);
+    addNotification(caseId,c.caseNo,'工事完了報告が届きました。ご確認ください。');
+    closeModal('completion-modal');
+    showToast('🏁 完了報告を提出しました');
+    showCaseDetail(caseId);
+  };
+
+  if(file){
+    const reader=new FileReader();
+    reader.onload=ev=>doSave(ev.target.result,file.name);
+    reader.readAsDataURL(file);
+  } else {
+    doSave(null,null);
+  }
+}
+
+function approveCompletion(caseId){
+  if(!confirm('工事完了を承認しますか？案件が「対応完了」になります。')) return;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  c.completionApproved=nowStr();
+  c.status='対応完了';
+  c.messages.push({id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',text:'🎉 依頼者が完了を承認しました。案件が完了しました。ありがとうございました！',timestamp:nowStr(),fileData:null,fileName:null});
+  save('cases',cases);
+  // レビューモーダルを開く
+  const members=load('members',[]);
+  const mem=members.find(m=>m.id===c.selectedMember);
+  if(mem){
+    document.getElementById('review-case-id').value=caseId;
+    document.getElementById('review-member-id').value=mem.id;
+    document.getElementById('review-member-name').textContent=`${mem.name}（${mem.company}）`;
+    document.getElementById('review-case-no').textContent=c.caseNo;
+    document.getElementById('review-rating').value='0';
+    document.getElementById('review-comment').value='';
+    document.querySelectorAll('.star-btn').forEach(s=>s.style.opacity='0.3');
+    openModal('review-modal');
+  }
+  addNotification(caseId,c.caseNo,'案件が完了承認されました。お疲れ様でした！');
+  showToast('🎉 案件が完了しました！');
+  showCaseDetail(caseId);
+}
+
+// ============================================================
+//  CHAT
+// ============================================================
+function renderChatHTML(c,selectedMember,isRequester,isContractor){
+  const messages=c.messages||[];
+  const bubblesHTML=messages.length===0
+    ?'<div class="chat-empty">💬 まだメッセージがありません<br>最初のメッセージを送りましょう</div>'
+    :messages.map(m=>{
+        const roleClass=m.senderRole==='requester'?'requester':m.senderRole==='admin'?'admin':'member';
+        const fileHTML=m.fileData&&m.fileName?`<div>${filePreviewHTML(m.fileData,m.fileName,'chat')}</div>`:'';
+        return `<div class="chat-bubble-wrap ${roleClass}">
+          <div class="chat-sender">${escHtml(m.senderName)}</div>
+          <div class="chat-bubble">${m.text?escHtml(m.text):''}${fileHTML}</div>
+          <div class="chat-time">${m.timestamp}</div>
+        </div>`;
+      }).join('');
+
+  let myRoleLabel='';
+  if(isRequester) myRoleLabel=`<div class="chat-who-label">あなた（依頼者）として送信します</div>`;
+  else if(isContractor) myRoleLabel=`<div class="chat-who-label">あなた（担当業者）として送信します</div>`;
+  else myRoleLabel=`<div class="chat-who-label">閲覧のみ（この案件の当事者ではありません）</div>`;
+
+  const canChat=isRequester||isContractor;
+
+  return `
+    <div class="chat-container">
+      <div class="chat-header">💬 担当者間メッセージ（管理者も閲覧できます）</div>
+      <div style="background:#fef9c3;border-bottom:1px solid #fde047;padding:7px 12px;font-size:11px;color:#854d0e;display:flex;align-items:center;gap:5px;">
+        ⚠️ このチャットは管理者が閲覧しています。プラットフォーム外での取引・個人情報の交換は規約違反となります。
+      </div>
+      <div class="chat-messages" id="chat-messages-${c.id}">${bubblesHTML}</div>
+      ${canChat?`
+      <div class="chat-input-area">
+        ${myRoleLabel}
+        <input type="file" id="chat-file-${c.id}" accept=".pdf,image/*" style="display:none" onchange="onChatFileSelected('${c.id}')">
+        <div id="chat-file-preview-${c.id}" style="margin-bottom:6px;display:none;font-size:12px;color:var(--text-sub);"></div>
+        <div id="chat-filter-msg-${c.id}" style="display:none;font-size:11px;padding:6px 10px;border-radius:6px;border:1px solid;margin-bottom:6px;line-height:1.5;"></div>
+        <div class="chat-input-row">
+          <button class="chat-attach-btn" onclick="document.getElementById('chat-file-${c.id}').click()" title="ファイルを添付">📎</button>
+          <textarea id="chat-input-${c.id}" placeholder="メッセージを入力..." rows="2"
+            oninput="onChatInput('${c.id}')"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage('${c.id}');}"></textarea>
+          <button class="chat-send-btn" onclick="sendMessage('${c.id}')">➤</button>
+        </div>
+      </div>`:'<div style="padding:10px 12px;font-size:12px;color:var(--text-sub);text-align:center;">閲覧のみ</div>'}
+    </div>`;
+}
+
+const chatFileStore={};
+
+function onChatFileSelected(caseId){
+  const input=document.getElementById('chat-file-'+caseId);
+  const preview=document.getElementById('chat-file-preview-'+caseId);
+  const file=input.files&&input.files[0];
+  if(!file){chatFileStore[caseId]=null;preview.style.display='none';return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    chatFileStore[caseId]={data:ev.target.result,name:file.name};
+    preview.style.display='block';
+    preview.innerHTML=`<div style="display:flex;align-items:center;">📎 ${escHtml(file.name)} <button onclick="clearChatFile('${caseId}')" style="margin-left:6px;background:none;border:none;cursor:pointer;color:var(--danger);">✕</button></div><div style="font-size:11px;color:#b45309;margin-top:3px;">※ファイル内への個人情報の記載・添付は規約違反になります。</div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearChatFile(caseId){
+  chatFileStore[caseId]=null;
+  const input=document.getElementById('chat-file-'+caseId);
+  if(input) input.value='';
+  const preview=document.getElementById('chat-file-preview-'+caseId);
+  if(preview){preview.style.display='none';preview.innerHTML='';}
+}
+
+// ============================================================
+//  個人情報フィルター
+// ============================================================
+function toHalfWidth(str){
+  // 全角数字→半角
+  return str.replace(/[０-９]/g,s=>String.fromCharCode(s.charCodeAt(0)-0xFEE0))
+            .replace(/[－ー−]/g,'-').replace(/　/g,' ');
+}
+
+function detectPersonalInfo(text){
+  const t=toHalfWidth(text);
+  const hits=[];
+
+  // 電話番号: 各種フォーマット対応
+  // 03-1234-5678 / 090 1234 5678 / 0901234567 / (090)1234-5678 等
+  if(/(\(0\d{1,4}\)[\s\-.]?\d{2,4}[\s\-.]?\d{3,4}|0\d{1,4}[\s\-.]?\d{2,4}[\s\-.]?\d{3,4}|0\d{9,10})/.test(t)){
+    hits.push({type:'phone',label:'電話番号'});
+  }
+  // メールアドレス
+  if(/[a-zA-Z0-9_.+%-]{1,64}@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/.test(t)){
+    hits.push({type:'email',label:'メールアドレス'});
+  }
+  // LINE ID パターン: "LINE: xxx" / "ラインID" / "line id" / "@username"
+  if(/(line[\s:：\-　]*id[\s:：]?\s*\S+|ライン[\s　]*id[\s:：]?\s*\S+|ラインid|LINE\s*ID)/i.test(text)||
+     /(@[a-zA-Z0-9_\.]{3,30}(?:\s|$))/.test(t)){
+    hits.push({type:'line',label:'LINE ID / SNSアカウント'});
+  }
+  // SNS ハンドル / Instagram / Twitter / Facebook 誘導
+  if(/(instagram|インスタ|twitter|ツイッター|facebook|フェイスブック|tiktok|ティックトック)[\s:：\-]*[@＠]?\s*\S+/i.test(text)){
+    hits.push({type:'sns',label:'SNSアカウント'});
+  }
+
+  return hits; // 空配列 = クリーン
+}
+
+function detectOffPlatformInvitation(text){
+  // オフプラット誘導キーワード（警告のみ、ブロックしない）
+  const keywords=[
+    'ラインで','lineで','lineに','ラインに','line教','ライン教',
+    '直接連絡','直連','直接やり取り','直接取引',
+    'メールで送','メールに送','メール送ります',
+    '携帯に','スマホに','電話して','電話ください',
+    'アプリ外','プラットフォーム外','ここ以外','別の方法',
+  ];
+  const t=text.toLowerCase();
+  return keywords.some(k=>t.includes(k.toLowerCase()));
+}
+
+function logBlockedMessage(caseId,caseNo,userId,userName,text,reasons){
+  const logs=load('blocked_msgs',[]);
+  logs.push({
+    id:'bl'+Date.now(),
+    caseId,caseNo,userId,userName,
+    text,reasons:reasons.map(r=>r.label),
+    timestamp:nowStr()
+  });
+  // 最大200件保持
+  if(logs.length>200) logs.splice(0,logs.length-200);
+  save('blocked_msgs',logs);
+}
+
+function containsContactInfo(text){
+  return detectPersonalInfo(text).length>0;
+}
+function containsExternalUrl(text){
+  const t=toHalfWidth(text);
+  return /(https?:\/\/|www\.)\S+/i.test(t);
+}
+
+function showFilterBlock(caseId,msg){
+  const el=document.getElementById('chat-filter-msg-'+caseId);
+  if(!el) return;
+  el.style.display='block';
+  el.style.background='#fee2e2';
+  el.style.color='#b91c1c';
+  el.style.borderColor='#fca5a5';
+  el.innerHTML='🚫 '+msg;
+  setTimeout(()=>{if(el) el.style.display='none';},6000);
+}
+function showFilterWarn(caseId,msg){
+  const el=document.getElementById('chat-filter-msg-'+caseId);
+  if(!el) return;
+  el.style.display='block';
+  el.style.background='#fffbeb';
+  el.style.color='#92400e';
+  el.style.borderColor='#fde68a';
+  el.innerHTML='⚠️ '+msg;
+  setTimeout(()=>{if(el) el.style.display='none';},5000);
+}
+function onChatInput(caseId){
+  const inputEl=document.getElementById('chat-input-'+caseId);
+  if(!inputEl) return;
+  const text=inputEl.value;
+  const hits=detectPersonalInfo(text);
+  if(hits.length>0){
+    inputEl.style.borderColor='#ef4444';
+    inputEl.style.boxShadow='0 0 0 2px rgba(239,68,68,0.2)';
+  } else {
+    inputEl.style.borderColor='';
+    inputEl.style.boxShadow='';
+  }
+}
+
+function sendMessage(caseId){
+  const inputEl=document.getElementById('chat-input-'+caseId);
+  const text=(inputEl?inputEl.value.trim():'');
+  const cf=chatFileStore[caseId];
+  if(!text&&!cf) return;
+
+  // 個人情報フィルター
+  if(text){
+    const hits=detectPersonalInfo(text);
+    if(hits.length>0){
+      const labels=hits.map(h=>h.label).join('・');
+      showFilterBlock(caseId,`【送信ブロック】${labels}はチャットで送信できません。プラットフォーム外の連絡先共有は利用規約違反です。`);
+      const cases2=load('cases',[]);
+      const c2=cases2.find(x=>x.id===caseId);
+      logBlockedMessage(caseId,c2?c2.caseNo:'',currentUser.id,currentUser.name,text,hits);
+      return;
+    }
+    if(containsExternalUrl(text)){
+      showFilterWarn(caseId,'⚠️ 外部リンクを含みます。プラットフォーム外の取引は規約違反になる場合があります。');
+    } else if(detectOffPlatformInvitation(text)){
+      showFilterWarn(caseId,'⚠️ プラットフォーム外でのやり取りを誘導する表現が含まれています。');
+    }
+  }
+
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  if(!c.messages) c.messages=[];
+
+  const isRequester=(c.requesterId===currentUser.id);
+  const senderRole=isRequester?'requester':'member';
+
+  const msg={
+    id:'msg'+Date.now(),
+    senderRole,
+    senderId:currentUser.id,
+    senderName:currentUser.name,
+    text:text||'',
+    timestamp:nowStr(),
+    fileData:cf?cf.data:null,
+    fileName:cf?cf.name:null
+  };
+  c.messages.push(msg);
+  save('cases',cases);
+  addNotification(caseId,c.caseNo,`${currentUser.name} からメッセージが届きました`);
+
+  // LINE通知：チャット相手に送信
+  {
+    const allMembers=load('members',[]);
+    const isReqSend=(c.requesterId===currentUser.id);
+    if(isReqSend&&c.selectedMember){
+      // 依頼者が送信→選定業者に通知
+      const mem=allMembers.find(m=>m.id===c.selectedMember);
+      if(mem&&mem.lineUserId){
+        sendLineNotification(mem.lineUserId,`【まち頼】${currentUser.name}さんからメッセージが届きました。\n案件：${c.caseNo}\nアプリで確認してください。`);
+      }
+    } else if(!isReqSend){
+      // 業者が送信→依頼者に通知
+      const req=allMembers.find(m=>m.id===c.requesterId);
+      if(req&&req.lineUserId){
+        sendLineNotification(req.lineUserId,`【まち頼】${currentUser.name}さんからメッセージが届きました。\n案件：${c.caseNo}\nアプリで確認してください。`);
+      }
+    }
+  }
+
+  if(inputEl) inputEl.value='';
+  clearChatFile(caseId);
+
+  const members=load('members',[]);
+  const selectedMember=c.selectedMember?members.find(m=>m.id===c.selectedMember):null;
+  const isReq=(c.requesterId===currentUser.id);
+  const isCon=(c.selectedMember===currentUser.id);
+  const chatContainer=document.querySelector('.chat-container');
+  if(chatContainer){
+    chatContainer.outerHTML=renderChatHTML(c,selectedMember,isReq,isCon);
+    const el=document.getElementById('chat-messages-'+caseId);
+    if(el) el.scrollTop=el.scrollHeight;
+  }
+}
+
+// ============================================================
+//  PUBLIC COMMENTS
+// ============================================================
+function renderPublicCommentsHTML(c){
+  const comments=c.publicComments||[];
+  const commentsHTML=comments.length===0
+    ?'<p style="color:var(--text-sub);font-size:13px;text-align:center;padding:8px;">まだコメントがありません。最初のコメントを投稿しましょう。</p>'
+    :comments.map(cm=>`
+      <div class="candidate-item" style="margin-bottom:8px;">
+        <div class="candidate-header">
+          <div class="candidate-name" style="font-size:13px;">${escHtml(cm.authorName)}</div>
+          <div class="candidate-time">${cm.timestamp}</div>
+        </div>
+        <div class="candidate-msg" style="white-space:pre-wrap;margin-top:4px;">${escHtml(cm.text)}</div>
+      </div>`).join('');
+  return `
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title" style="margin-bottom:8px;">📢 公開コメント欄（全員閲覧可）</div>
+      <div style="background:#f0f9ff;border-radius:8px;padding:7px 12px;font-size:11px;color:#0369a1;margin-bottom:10px;">
+        このコメントはメンバー全員に公開されます。電話番号・メールアドレスは投稿できません。
+      </div>
+      ${commentsHTML}
+      <div style="margin-top:10px;">
+        <textarea id="pub-comment-${c.id}" placeholder="コメントを入力（業者への質問、現地情報の補足など）..." rows="2" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
+        <button class="btn btn-outline btn-full" style="margin-top:6px;" onclick="addPublicComment('${c.id}')">💬 投稿する</button>
+      </div>
+    </div>`;
+}
+
+function addPublicComment(caseId){
+  const inputEl=document.getElementById('pub-comment-'+caseId);
+  const text=inputEl?inputEl.value.trim():'';
+  if(!text){showToast('⚠️ コメントを入力してください');return;}
+  if(containsContactInfo(text)){showToast('⚠️ 電話番号・メールアドレスは投稿できません');return;}
+  if(containsExternalUrl(text)){showToast('⚠️ 外部リンクを含みます。プラットフォーム外取引は規約違反です');}
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  if(!c.publicComments) c.publicComments=[];
+  c.publicComments.push({
+    id:'pc'+Date.now(),
+    authorId:currentUser.id,
+    authorName:`${currentUser.name}（${currentUser.company}）`,
+    text,timestamp:nowStr()
+  });
+  save('cases',cases);
+  addNotification(caseId,c.caseNo,`${currentUser.name} が公開コメントを投稿しました`);
+  showToast('✅ コメントを投稿しました');
+  showCaseDetail(caseId);
+}
+
+function addCaseDetailPhoto(caseId,input){
+  if(!input.files||!input.files[0]) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const cases=load('cases',[]);
+    const c=cases.find(x=>x.id===caseId);
+    if(!c) return;
+    if(!c.photos) c.photos=[];
+    if(c.photos.length>=5){showToast('⚠️ 写真は最大5枚まで登録できます');return;}
+    c.photos.push(ev.target.result);
+    save('cases',cases);
+    showToast('📷 写真を追加しました');
+    showCaseDetail(caseId);
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ============================================================
+//  PHOTO VIEWER
+// ============================================================
+function openPhotoViewer(caseId,index){
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c||!c.photos) return;
+  let current=index;const total=c.photos.length;
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+  overlay.innerHTML=`
+    <button onclick="this.closest('div').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;">✕</button>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px;" id="pv-counter">${current+1} / ${total}</div>
+    <img id="pv-img" src="${c.photos[current]}" style="max-width:92vw;max-height:78vh;border-radius:10px;object-fit:contain;">
+    <div style="display:flex;gap:16px;margin-top:16px;">
+      ${total>1?`<button onclick="pvNav(-1)" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-size:16px;cursor:pointer;">◀</button>
+      <button onclick="pvNav(1)" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-size:16px;cursor:pointer;">▶</button>`:''}
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  window.pvNav=function(dir){current=(current+dir+total)%total;document.getElementById('pv-img').src=c.photos[current];document.getElementById('pv-counter').textContent=`${current+1} / ${total}`;};
+}
+
+// ============================================================
+//  NOTIFICATIONS
+// ============================================================
+function addNotification(caseId,caseNo,text){
+  if(!currentUser) return;
+  addNotificationForMember(currentUser.id,caseId,caseNo,text);
+}
+function addNotificationForMember(recipientId,caseId,caseNo,text){
+  const notifs=load('notifications',[]);
+  notifs.unshift({id:'n'+Date.now(),recipientId,caseId,caseNo,text,read:false,timestamp:nowStr()});
+  save('notifications',notifs);
+  updateNotifBadge();
+}
+
+function myNotifs(){
+  if(!currentUser) return [];
+  return load('notifications',[]).filter(n=>!n.recipientId||n.recipientId===currentUser.id);
+}
+
+function updateNotifBadge(){
+  const notifs=myNotifs();
+  const unread=notifs.filter(n=>!n.read).length;
+  const badge=document.getElementById('notif-badge');
+  if(unread>0){badge.textContent=unread>9?'9+':unread;badge.classList.add('show');}
+  else{badge.textContent='';badge.classList.remove('show');}
+  // やることバッジ
+  const cases=load('cases',[]);
+  const todos=buildTodoList(currentUser,cases);
+  const todoBadge=document.getElementById('todo-badge');
+  if(todoBadge){
+    if(todos.length>0){todoBadge.textContent=todos.length>9?'9+':todos.length;todoBadge.classList.add('show');}
+    else{todoBadge.textContent='';todoBadge.classList.remove('show');}
+  }
+}
+
+function renderNotifPanel(){
+  const notifs=myNotifs();
+  const list=document.getElementById('notif-list');
+  if(notifs.length===0){list.innerHTML='<div class="notif-empty">🔔 新しい通知はありません</div>';return;}
+  list.innerHTML=notifs.map(n=>`
+    <div class="notif-item ${n.read?'':'unread'}" onclick="openNotif('${n.id}','${n.caseId}')">
+      <div class="notif-case-no">${n.caseNo}</div>
+      <div class="notif-text">${escHtml(n.text)}</div>
+      <div class="notif-time">${n.timestamp}</div>
+    </div>`).join('');
+}
+
+function openNotif(notifId,caseId){
+  const notifs=load('notifications',[]);
+  const n=notifs.find(x=>x.id===notifId);
+  if(n) n.read=true;
+  save('notifications',notifs);
+  updateNotifBadge();
+  closePanels();
+  showCaseDetail(caseId);
+  setTimeout(()=>{const chatEl=document.querySelector('.chat-container');if(chatEl)chatEl.scrollIntoView({behavior:'smooth'});},300);
+}
+
+function markAllRead(){
+  const notifs=load('notifications',[]);
+  notifs.forEach(n=>{if(!n.recipientId||n.recipientId===currentUser.id) n.read=true;});
+  save('notifications',notifs);
+  updateNotifBadge();
+  renderNotifPanel();
+}
+
+// ============================================================
+//  MEMBER LIST
+// ============================================================
+let currentMemberFilter='all';
+
+function renderMemberList(){
+  const bar=document.getElementById('member-filter-bar');
+  bar.innerHTML=`<button class="filter-chip ${currentMemberFilter==='all'?'active':''}" onclick="filterMembers('all',this)">すべて</button>`;
+  CATEGORIES.forEach(cat=>{
+    bar.innerHTML+=`<button class="filter-chip ${currentMemberFilter===cat?'active':''}" onclick="filterMembers('${cat}',this)">${cat}</button>`;
+  });
+  const members=load('members',[]);
+  let filtered=currentMemberFilter==='all'?members:members.filter(m=>m.categories&&m.categories.includes(currentMemberFilter));
+
+  const areaWrap=document.getElementById('member-area-wrap');
+  const bannerEl=document.getElementById('member-area-banner');
+
+  if(adminLoggedIn){
+    if(areaWrap) areaWrap.style.display='flex';
+    const areaFilter=(document.getElementById('member-area-filter')||{}).value||'';
+    const prefFilter=(document.getElementById('member-pref-filter')||{}).value||'';
+    if(areaFilter) filtered=filtered.filter(m=>m.venue===areaFilter);
+    else if(prefFilter&&VENUES[prefFilter]) filtered=filtered.filter(m=>VENUES[prefFilter].includes(m.venue));
+    if(bannerEl){bannerEl.innerHTML='🔓 全エリア表示中（管理者モード）';bannerEl.style.background='#fef3c7';bannerEl.style.color='#92400e';}
+  } else {
+    if(areaWrap) areaWrap.style.display='none';
+    const myVenue=currentUser.venue||'';
+    if(myVenue) filtered=filtered.filter(m=>m.venue===myVenue);
+    if(bannerEl){bannerEl.innerHTML=myVenue?`📍 ${myVenue}エリアのメンバーを表示中`:'📍 エリア未設定';bannerEl.style.background='#f0fdf4';bannerEl.style.color='#15803d';}
+  }
+
+  if(filtered.length===0){
+    document.getElementById('member-list-container').innerHTML='<div class="empty-state"><div class="emoji">👥</div><p>該当するメンバーがいません</p></div>';
+    return;
+  }
+  document.getElementById('member-list-container').innerHTML=filtered.map(m=>memberCardHTML(m)).join('');
+}
+
+function filterMembers(cat,el){
+  document.querySelectorAll('#member-filter-bar .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentMemberFilter=cat;
+  renderMemberList();
+}
+
+function memberCardHTML(m){
+  const initials=m.name?m.name.slice(-1):'？';
+  const cats=(m.categories||[]).map(c=>`<span class="badge-cat">${c}</span>`).join('');
+  const isMe=m.id===currentUser.id;
+  return `<div class="member-card" onclick="showMemberDetailById('${m.id}')" style="${isMe?'border:1.5px solid var(--primary);':'' }">
+    <div class="member-avatar" style="background:${isMe?'var(--primary)':'var(--primary-light)'};color:${isMe?'#fff':'var(--primary-dark)'};">${initials}</div>
+    <div class="member-info">
+      <div class="member-company">${m.company}${isMe?' <span style="font-size:10px;background:#dcfce7;color:var(--primary-dark);padding:1px 6px;border-radius:10px;">あなた</span>':''}</div>
+      <div class="member-name">${m.name}</div>
+      <div class="member-cats" style="margin-top:4px;">${cats}</div>
+      <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">📍 ${m.areas||'未登録'}</div>
+      ${(()=>{
+        const reviews=m.reviews||[];
+        if(!reviews.length) return '';
+        const avg=reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
+        return `<div style="margin-top:4px;">${[1,2,3,4,5].map(i=>`<span style="color:${i<=Math.round(avg)?'#f59e0b':'#d1d5db'};font-size:12px;">★</span>`).join('')} <span style="font-size:11px;color:#92400e;font-weight:600;">${avg.toFixed(1)}</span><span style="font-size:10px;color:var(--text-sub);"> (${reviews.length}件)</span></div>`;
+      })()}
+    </div>
+  </div>`;
+}
+
+// ============================================================
+//  MY PAGE
+// ============================================================
+let mypageMode = 'contractor'; // 'requester' or 'contractor'
+
+function switchMypageMode(mode){
+  mypageMode = mode;
+  renderMyPage();
+}
+
+function buildTodoList(u, cases){
+  const todos=[];
+  const now=new Date(); now.setHours(0,0,0,0);
+
+  cases.forEach(c=>{
+    const isRequester=(c.requesterId===u.id);
+    const isContractor=(c.selectedMember===u.id);
+    const msgs=c.messages||[];
+
+    // ① キャンセル理由未入力
+    if(c.confirmedEstimate&&c.confirmedEstimate.cancelledAt&&!c.confirmedEstimate.cancelReason){
+      if(isRequester){
+        todos.push({level:'error',icon:'⚠️',text:`【${c.caseNo}】キャンセル理由を入力してください`,caseId:c.id,action:`showCaseDetail('${c.id}')`});
+      }
+    }
+
+    // ② チャット未返信（48時間以上）
+    if((isRequester||isContractor)&&msgs.length>0&&(c.status==='対応中')){
+      const lastMsg=msgs[msgs.length-1];
+      if(lastMsg&&lastMsg.senderRole!=='admin'){
+        const lastSenderId=lastMsg.senderId;
+        const myLastMsg=[...msgs].reverse().find(m=>m.senderId===u.id);
+        const otherLastMsg=[...msgs].reverse().find(m=>m.senderId!==u.id&&m.senderRole!=='admin');
+        if(otherLastMsg&&(!myLastMsg||otherLastMsg.timestamp>myLastMsg.timestamp)){
+          const lastTs=new Date(otherLastMsg.timestamp);
+          const hoursDiff=(Date.now()-lastTs.getTime())/3600000;
+          if(hoursDiff>=48){
+            todos.push({level:'warn',icon:'💬',text:`【${c.caseNo}】チャットに未返信のメッセージがあります（48時間以上経過）`,caseId:c.id,action:`showCaseDetail('${c.id}')`});
+          }
+        }
+      }
+    }
+
+    // ③ 掲載期限を過ぎても業者未選定（依頼者）
+    if(isRequester&&!c.selectedMember&&c.candidateDeadline&&c.status!=='対応完了'){
+      const deadline=new Date(c.candidateDeadline); deadline.setHours(0,0,0,0);
+      if(now>deadline&&c.candidates&&c.candidates.length>0){
+        todos.push({level:'warn',icon:'⏰',text:`【${c.caseNo}】立候補期限が過ぎています。業者を選定してください`,caseId:c.id,action:`showCaseDetail('${c.id}')`});
+      }
+    }
+
+    // ④ 完了承認未処理（依頼者）
+    if(isRequester&&c.completionReport&&!c.completionApproved){
+      todos.push({level:'warn',icon:'✅',text:`【${c.caseNo}】工事完了報告が届いています。承認してください`,caseId:c.id,action:`showCaseDetail('${c.id}')`});
+    }
+
+    // ⑤ 確定見積もりの確認待ち（依頼者）
+    if(isRequester&&c.confirmedEstimate&&c.confirmedEstimate.submittedAt&&!c.confirmedEstimate.agreedAt&&!c.confirmedEstimate.cancelledAt){
+      todos.push({level:'warn',icon:'📋',text:`【${c.caseNo}】確定見積もりが届いています。確認してください`,caseId:c.id,action:`showCaseDetail('${c.id}')`});
+    }
+
+    // ⑥ 確定見積もり未提出（業者）
+    if(isContractor&&c.caseType==='order'&&!c.confirmedEstimate&&!c.completionReport){
+      todos.push({level:'info',icon:'📝',text:`【${c.caseNo}】確定見積もりを提出してください`,caseId:c.id,action:`showCaseDetail('${c.id}')`});
+    }
+  });
+
+  return todos;
+}
+
+function todoItemHTML(t){
+  return `<div class="todo-item" onclick="${t.action}">
+    <div class="todo-circle">
+      <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+    </div>
+    <span class="todo-text">${t.text}</span>
+    <span class="todo-arrow">›</span>
+  </div>`;
+}
+
+function renderMyPage(){
+  const u = currentUser;
+  const cases = load('cases',[]);
+
+  const myRequested  = cases.filter(c=>c.requesterId===u.id);
+  const myContracted = cases.filter(c=>c.selectedMember===u.id);
+  const myCandidate  = cases.filter(c=>c.candidates&&c.candidates.find(ca=>ca.memberId===u.id)&&c.selectedMember!==u.id);
+
+  const caseListHTML=(list,emptyMsg)=>list.length===0
+    ?`<div class="mypage-empty">${emptyMsg}</div>`
+    :list.map(c=>`
+      <div class="case-card" onclick="showCaseDetail('${c.id}')">
+        <div class="case-card-header"><div><div class="case-no">${c.caseNo}</div><div class="case-title">${c.description.slice(0,36)}${c.description.length>36?'…':''}</div></div>${statusBadge(c.status)}</div>
+        <div class="case-meta" style="margin-top:6px;"><span>📍 ${c.area}</span><span>${c.category}</span></div>
+      </div>`).join('');
+
+  const contractorContent = `
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="card-title" style="margin-bottom:0;">👤 プロフィール</div>
+        <button class="btn btn-sm btn-outline" onclick="openProfileEdit()">✏️ 編集</button>
+      </div>
+      <div class="detail-row"><div class="detail-label">対応エリア</div><div class="detail-value">📍 ${u.areas||'未登録'}</div></div>
+      <div class="detail-row"><div class="detail-label">連絡先</div><div class="detail-value">📞 ${u.contact||'未登録'}</div></div>
+      <div class="detail-row"><div class="detail-label">自己紹介</div><div class="detail-value">${u.bio||'未登録'}</div></div>
+    </div>
+    <div class="mypage-section">
+      <div class="mypage-section-title">🔨 受注中・受注履歴（${myContracted.length}件）</div>
+      ${caseListHTML(myContracted,'担当している案件はありません')}
+    </div>
+    <div class="mypage-section">
+      <div class="mypage-section-title">🙋 立候補中（${myCandidate.length}件）</div>
+      ${caseListHTML(myCandidate,'立候補中の案件はありません')}
+    </div>`;
+
+  const requesterContent = `
+    <div class="mypage-section">
+      <div class="mypage-section-title">📤 依頼中・依頼履歴（${myRequested.length}件）</div>
+      ${caseListHTML(myRequested,'依頼した案件はありません')}
+    </div>`;
+
+  const todos=buildTodoList(u,cases);
+  const todoHTML=todos.length===0
+    ?`<div style="color:var(--text-sub);font-size:13px;padding:8px 0;">やることはありません ✅</div>`
+    :todos.map(t=>todoItemHTML(t)).join('');
+
+  document.getElementById('mypage-content').innerHTML=`
+    <div class="mypage-header">
+      <div class="mypage-avatar">${u.avatar}</div>
+      <div style="flex:1;">
+        <div class="mypage-company">${u.company}</div>
+        <div class="mypage-name">${u.name}</div>
+        <div style="margin-top:4px;">${(u.categories||[]).map(c=>`<span class="badge-cat">${c}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;">
+      <div style="padding:12px 16px 8px;display:flex;align-items:center;gap:6px;">
+        <span style="font-size:13px;font-weight:700;color:var(--text-primary,#111827);">やること</span>
+        ${todos.length>0?`<span style="background:#ef4444;color:white;font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;">${todos.length}</span>`:''}
+      </div>
+      ${todos.length===0?`<div style="padding:12px 16px;color:var(--text-sub,#6b7280);font-size:13px;">やることはありません ✅</div>`:todoHTML}
+    </div>
+    <div class="mode-tabs">
+      <button class="mode-tab ${mypageMode==='contractor'?'active':''}" onclick="switchMypageMode('contractor')">🔨 業者モード</button>
+      <button class="mode-tab ${mypageMode==='requester'?'active':''}" onclick="switchMypageMode('requester')">📤 依頼者モード</button>
+    </div>
+    ${mypageMode==='contractor' ? contractorContent : requesterContent}
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title" style="font-size:13px;color:var(--text-sub);margin-bottom:10px;">サポート</div>
+      <button class="btn btn-outline btn-full" style="margin-bottom:8px;" onclick="document.getElementById('tos-display-modal').classList.add('open')">
+        📋 利用規約・免責事項を確認する
+      </button>
+      <button class="btn btn-gray btn-full" onclick="openContact()">
+        📞 お問い合わせ
+      </button>
+    </div>
+  `;
+}
+
+function openProfileEdit(){
+  const u = currentUser;
+  document.getElementById('edit-name').value    = u.name    || '';
+  document.getElementById('edit-company').value = u.company || '';
+  document.getElementById('edit-areas').value   = u.areas   || '';
+  document.getElementById('edit-contact').value = u.contact || '';
+  document.getElementById('edit-bio').value     = u.bio     || '';
+  // カテゴリチップ生成
+  const container = document.getElementById('edit-cat-chips');
+  container.innerHTML = CATEGORIES.map(cat=>{
+    const sel = (u.categories||[]).includes(cat) ? 'selected' : '';
+    return `<span class="edit-cat-chip ${sel}" data-cat="${cat}" onclick="this.classList.toggle('selected')">${cat}</span>`;
+  }).join('');
+  document.getElementById('profile-edit-modal').classList.add('open');
+}
+
+function saveProfileEdit(){
+  const name    = document.getElementById('edit-name').value.trim();
+  if(!name){ showToast('⚠️ 氏名を入力してください'); return; }
+  const overrides = {
+    name,
+    company : document.getElementById('edit-company').value.trim(),
+    areas   : document.getElementById('edit-areas').value.trim(),
+    contact : document.getElementById('edit-contact').value.trim(),
+    bio     : document.getElementById('edit-bio').value.trim(),
+    categories: Array.from(document.querySelectorAll('#edit-cat-chips .edit-cat-chip.selected')).map(el=>el.dataset.cat),
+    avatar  : name.slice(-1),
+  };
+  // localStorage に保存
+  save(`profile_${currentUser.id}`, overrides);
+  // currentUser を更新
+  Object.assign(currentUser, overrides);
+  // members データも更新
+  const members = load('members',[]);
+  const idx = members.findIndex(m=>m.id===currentUser.id);
+  if(idx>=0){ members[idx]={...members[idx],...overrides}; save('members',members); }
+  // ヘッダーアバター更新
+  document.getElementById('user-avatar-btn').textContent = currentUser.avatar;
+  closeModal('profile-edit-modal');
+  renderMyPage();
+  showToast('✅ プロフィールを更新しました');
+}
+
+// ============================================================
+//  MEMBER DETAIL
+// ============================================================
+function showMemberDetailById(memberId){
+  const members=load('members',[]);
+  const m=members.find(x=>x.id===memberId);
+  if(!m) return;
+  const initials=m.name?m.name.slice(-1):'？';
+  const cats=(m.categories||[]).map(c=>`<span class="badge-cat">${c}</span>`).join('');
+  document.getElementById('member-detail-content').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px;">
+      <div class="member-avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto 10px;">${initials}</div>
+      <div style="font-size:13px;color:var(--text-sub);">${m.company}</div>
+      <div style="font-size:20px;font-weight:800;">${m.name}</div>
+      <div style="margin-top:6px;">${(()=>{
+        const reviews=m.reviews||[];
+        const avg=reviews.length?reviews.reduce((s,r)=>s+r.rating,0)/reviews.length:0;
+        return renderStars(avg,reviews.length);
+      })()}</div>
+    </div>
+    <div class="card">
+      <div class="detail-section"><h3>業種カテゴリ</h3><div>${cats}</div></div>
+      <hr class="divider">
+      <div class="detail-section"><h3>対応可能内容</h3><p style="font-size:14px;line-height:1.7;">${m.capabilities||'未登録'}</p></div>
+      ${m.specialties?`<hr class="divider"><div class="detail-section"><h3>得意分野</h3><p style="font-size:14px;">${m.specialties}</p></div>`:''}
+      <hr class="divider">
+      <div class="detail-section"><h3>対応エリア</h3><p style="font-size:14px;">📍 ${m.areas||'未登録'}</p></div>
+      ${m.bio?`<hr class="divider"><div class="detail-section"><h3>自己紹介</h3><p style="font-size:14px;line-height:1.7;">${m.bio}</p></div>`:''}
+    </div>
+    ${(()=>{
+      const cases=load('cases',[]);
+      const isMe=(m.id===currentUser.id);
+      const hasCompleted=cases.some(c=>
+        c.completionApproved===true&&(
+          (c.requesterId===currentUser.id&&c.selectedMember===m.id)||
+          (c.requesterId===m.id&&c.selectedMember===currentUser.id)
+        )
+      );
+      if(isMe||hasCompleted){
+        return `<a href="tel:${m.contact}" class="btn btn-primary btn-full">📞 ${m.contact} に電話する</a>`;
+      } else {
+        return `<div class="card" style="text-align:center;color:var(--text-sub);font-size:13px;padding:14px;">
+          🔒 連絡先は取引完了後に表示されます
+        </div>`;
+      }
+    })()}
+    ${(()=>{
+      const reviews=m.reviews||[];
+      if(reviews.length===0) return `
+        <div class="card" style="text-align:center;color:var(--text-sub);font-size:13px;padding:16px;">
+          ⭐ まだレビューがありません
+        </div>`;
+      return `
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title" style="margin-bottom:12px;">⭐ レビュー（${reviews.length}件）</div>
+          ${[...reviews].reverse().map(r=>`
+            <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <div>${[1,2,3,4,5].map(i=>`<span style="color:${i<=r.rating?'#f59e0b':'#d1d5db'};font-size:14px;">★</span>`).join('')}</div>
+                <div style="font-size:11px;color:var(--text-sub);">${r.reviewedAt.slice(0,10)}</div>
+              </div>
+              <div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">${r.reviewerName}｜${r.caseNo} ${r.category}</div>
+              ${r.comment?`<div style="font-size:13px;line-height:1.6;color:#374151;">${escHtml(r.comment)}</div>`:''}
+            </div>`).join('')}
+        </div>`;
+    })()}
+    <div style="height:8px;"></div>`;
+  showPage('member-detail');
+}
+
+// ============================================================
+//  PHOTO UPLOAD
+// ============================================================
+const photoData=[null,null,null];
+
+function previewPhoto(input,index){
+  if(!input.files||!input.files[0]) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    photoData[index]=e.target.result;
+    document.getElementById('preview-'+index).src=e.target.result;
+    document.getElementById('preview-'+index).style.display='block';
+    document.getElementById('placeholder-'+index).style.display='none';
+    document.getElementById('remove-'+index).style.display='flex';
+    document.getElementById('slot-'+index).classList.add('has-photo');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function removePhoto(event,index){
+  event.stopPropagation();
+  photoData[index]=null;
+  document.getElementById('nc-photo-'+index).value='';
+  document.getElementById('preview-'+index).src='';
+  document.getElementById('preview-'+index).style.display='none';
+  document.getElementById('placeholder-'+index).style.display='flex';
+  document.getElementById('remove-'+index).style.display='none';
+  document.getElementById('slot-'+index).classList.remove('has-photo');
+}
+
+function resetPhotos(){
+  [0,1,2].forEach(i=>{
+    photoData[i]=null;
+    const input=document.getElementById('nc-photo-'+i);if(input)input.value='';
+    const preview=document.getElementById('preview-'+i);if(preview){preview.src='';preview.style.display='none';}
+    const placeholder=document.getElementById('placeholder-'+i);if(placeholder)placeholder.style.display='flex';
+    const removeBtn=document.getElementById('remove-'+i);if(removeBtn)removeBtn.style.display='none';
+    const slot=document.getElementById('slot-'+i);if(slot)slot.classList.remove('has-photo');
+  });
+}
+
+// ============================================================
+//  NEW CASE FORM
+// ============================================================
+function submitCase(e){
+  e.preventDefault();
+  showTos(()=>doSubmitCase());
+}
+
+function doSubmitCase(){
+  const cases=load('cases',[]);
+  const id='c'+Date.now();
+  const no='KS-'+new Date().getFullYear()+'-'+String(cases.length+1).padStart(3,'0');
+  const newCase={
+    id,caseNo:no,
+    requesterName:document.getElementById('nc-name').value,
+    requesterId:currentUser.id,
+    contact:document.getElementById('nc-contact').value,
+    category:document.getElementById('nc-category').value,
+    description:document.getElementById('nc-description').value,
+    area:(currentUser&&currentUser.venue)||'',
+    prefecture:(currentUser&&currentUser.venue)?Object.keys(VENUES).find(pref=>VENUES[pref].includes(currentUser.venue))||'':'',
+    deadline:document.getElementById('nc-deadline').value,
+    candidateDeadline:document.getElementById('nc-candidate-deadline').value,
+    notes:document.getElementById('nc-notes').value,
+    caseType:(document.querySelector('input[name="nc-case-type"]:checked')||{value:'order'}).value,
+    status:'未対応',candidates:[],selectedMember:null,
+    estimate:null,estimateApproved:false,
+    confirmedEstimate:null,
+    completionReport:null,completionApproved:false,
+    createdAt:nowStr(),messages:[],
+    photos:photoData.filter(p=>p!==null)
+  };
+  cases.push(newCase);
+  save('cases',cases);
+  simulateLineNotify(newCase);
+  document.getElementById('new-case-form').reset();
+  resetPhotos();
+  showToast('✅ 案件を申し込みました！LINEに通知を送信しました。');
+  showPage('cases');
+}
+
+// ============================================================
+//  CANDIDACY
+// ============================================================
+function openCandidacyModal(caseId){
+  document.getElementById('candidacy-case-id').value=caseId;
+  document.getElementById('candidacy-current-user').textContent=`${currentUser.name}（${currentUser.company}）`;
+  document.getElementById('candidacy-message').value='';
+  document.getElementById('candidacy-modal').classList.add('open');
+}
+
+function submitCandidacy(e){
+  e.preventDefault();
+  const caseId=document.getElementById('candidacy-case-id').value;
+  const message=document.getElementById('candidacy-message').value;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  if(c.candidates.find(can=>can.memberId===currentUser.id)){alert('すでに立候補済みです');return;}
+  c.candidates.push({memberId:currentUser.id,memberName:`${currentUser.name}（${currentUser.company}）`,message,appliedAt:nowStr()});
+  if(c.status==='未対応') c.status='立候補受付中';
+  save('cases',cases);
+  closeModal('candidacy-modal');
+  showToast(`✅ ${currentUser.name}さんが立候補しました！`);
+  showCaseDetail(caseId);
+}
+
+// ============================================================
+//  SELECT MEMBER
+// ============================================================
+function openSelectModal(caseId){
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  const members=load('members',[]);
+  document.getElementById('select-candidate-list').innerHTML=c.candidates.map(can=>{
+    const mem=members.find(m=>m.id===can.memberId);
+    return `<div class="candidate-item">
+      <div class="candidate-header"><div class="candidate-name">${can.memberName}</div></div>
+      ${can.message?`<div class="candidate-msg">${can.message}</div>`:''}
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        ${mem?`<button class="btn btn-sm btn-outline" onclick="showMemberDetailById('${mem.id}')">プロフィール</button>`:''}
+        <button class="btn btn-sm btn-accent" onclick="selectMember('${caseId}','${can.memberId}')">✅ この方に決定</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('select-member-modal').classList.add('open');
+}
+
+function selectMember(caseId,memberId){
+  showTos(()=>doSelectMember(caseId,memberId));
+}
+
+function doSelectMember(caseId,memberId){
+  if(!confirm('この業者に決定しますか？')) return;
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  const members=load('members',[]);
+  const m=members.find(x=>x.id===memberId);
+  const can=c.candidates.find(ca=>ca.memberId===memberId);
+  c.selectedMember=memberId;
+  c.status='対応中';
+  // 選定した業者の見積もりをケースに反映（選定＝見積もり承認）
+  if(can&&can.estimate){
+    c.estimate=can.estimate;
+    c.estimateApproved=true;
+  }
+  if(!c.messages) c.messages=[];
+  c.messages.push({
+    id:'sys'+Date.now(),senderRole:'admin',senderName:'システム',
+    text:`🤝 ${m?m.name:'業者'}さんへの依頼が決定しました。見積もり金額：¥${can&&can.estimate?Number(can.estimate.amount).toLocaleString():'--'}。こちらのチャットで詳細のやり取りができます。`,
+    timestamp:nowStr(),fileData:null,fileName:null
+  });
+  // 落選業者へ通知
+  const selectedName=m?m.name:'選定された業者';
+  (c.candidates||[]).forEach(ca=>{
+    if(ca.memberId!==memberId){
+      addNotificationForMember(
+        ca.memberId,
+        caseId,c.caseNo,
+        `あなたの立候補した ${c.caseNo}（${c.category}）の案件は${selectedName}様に選定しました。ご応募ありがとうございました。`
+      );
+    }
+  });
+  save('cases',cases);
+  // 依頼者へ通知
+  addNotification(caseId,c.caseNo,`${selectedName}さんへの依頼が成立しました。チャットで詳細のやり取りを行ってください。`);
+
+  // LINE通知：選定された業者へ
+  if(m&&m.lineUserId){
+    sendLineNotification(m.lineUserId,`【まち頼】🎉 案件が成立しました！\n案件：${c.caseNo}（${c.category}）\n依頼者：${c.requesterName}さん\nアプリのチャットで詳細をご確認ください。`);
+  }
+  // LINE通知：落選業者へ
+  (c.candidates||[]).forEach(ca=>{
+    if(ca.memberId!==memberId){
+      const loser=members.find(lm=>lm.id===ca.memberId);
+      if(loser&&loser.lineUserId){
+        sendLineNotification(loser.lineUserId,`【まち頼】${c.caseNo}（${c.category}）の案件は別の業者に決定しました。ご応募ありがとうございました。`);
+      }
+    }
+  });
+
+  closeModal('select-member-modal');
+  // 依頼成立ポップアップ
+  showDealPopup(c.caseNo, selectedName, caseId);
+}
+
+function showDealPopup(caseNo, contractorName, caseId){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML=`
+    <div style="background:white;border-radius:16px;padding:24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+      <div style="font-size:40px;margin-bottom:12px;">🎉</div>
+      <div style="font-size:17px;font-weight:800;color:var(--primary-dark);margin-bottom:8px;">依頼が成立しました！</div>
+      <div style="font-size:13px;color:var(--text-sub);margin-bottom:4px;">${caseNo}</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:16px;">${contractorName}さんに決定</div>
+      <div style="background:#f0fdf4;border:1px solid var(--primary-light);border-radius:10px;padding:12px;font-size:13px;color:var(--primary-dark);margin-bottom:20px;line-height:1.6;">
+        💬 チャットが解放されました。<br>詳細をチャットでやり取りを行ってください。
+      </div>
+      <button style="background:var(--primary);color:white;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;width:100%;cursor:pointer;" onclick="this.closest('[style*=fixed]').remove();showCaseDetail('${caseId}');">チャットへ進む ›</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+// ============================================================
+//  追加募集
+// ============================================================
+function openExtraRecruitModal(caseId){
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  document.getElementById('extra-recruit-parent-id').value=caseId;
+  document.getElementById('extra-recruit-parent-info').innerHTML=
+    `🔗 元案件：${c.caseNo}｜${c.category}｜📍${c.area}`;
+  document.getElementById('extra-recruit-category').value='';
+  document.getElementById('extra-recruit-note').value='';
+  document.getElementById('extra-recruit-deadline').value=c.candidateDeadline||'';
+  document.getElementById('extra-recruit-modal').classList.add('open');
+}
+
+function submitExtraRecruit(){
+  const parentId=document.getElementById('extra-recruit-parent-id').value;
+  const category=document.getElementById('extra-recruit-category').value;
+  const note=document.getElementById('extra-recruit-note').value;
+  const deadline=document.getElementById('extra-recruit-deadline').value;
+  if(!category){showToast('⚠️ カテゴリを選択してください');return;}
+  if(!deadline){showToast('⚠️ 立候補期限を入力してください');return;}
+
+  const cases=load('cases',[]);
+  const parent=cases.find(x=>x.id===parentId);
+  if(!parent) return;
+
+  const id='c'+Date.now();
+  const no='KS-'+new Date().getFullYear()+'-'+String(cases.length+1).padStart(3,'0');
+  const newCase={
+    id,caseNo:no,
+    requesterName:parent.requesterName,
+    requesterId:parent.requesterId,
+    contact:parent.contact,
+    category,
+    description:`【追加募集】${parent.caseNo}の関連案件です。\n\n${note||'元案件と合わせてご確認ください。'}`,
+    area:parent.area,
+    prefecture:parent.prefecture||'',
+    deadline:parent.deadline||'',
+    candidateDeadline:deadline,
+    notes:`元案件：${parent.caseNo}（${parent.category}）`,
+    status:'未対応',candidates:[],selectedMember:null,
+    estimate:null,estimateApproved:false,completionReport:null,completionApproved:false,
+    createdAt:nowStr(),messages:[],photos:[],publicComments:[],
+    linkedCaseId:parentId  // 元案件との紐づけ
+  };
+  cases.push(newCase);
+  save('cases',cases);
+  simulateLineNotify(newCase);
+  addNotification(id,no,`追加募集案件が作成されました（元案件：${parent.caseNo}）`);
+  closeModal('extra-recruit-modal');
+  showToast(`✅ 追加募集案件 ${no} を作成しました`);
+  showCaseDetail(id);
+}
+
+// ============================================================
+//  ADMIN
+// ============================================================
+function renderAdmin(){
+  const loginSection=document.getElementById('admin-login-section');
+  const panelSection=document.getElementById('admin-panel-section');
+  if(!adminLoggedIn){loginSection.style.display='block';panelSection.style.display='none';}
+  else{loginSection.style.display='none';panelSection.style.display='block';renderAdminDashboard();renderAdminBlockLog();renderAdminLineList();renderAdminCases();}
+}
+
+function renderAdminDashboard(){
+  const cases=load('cases',[]);
+  const members=load('members',[]);
+
+  // 集計
+  const total=cases.length;
+  const completed=cases.filter(c=>c.completionApproved).length;
+  const inProgress=cases.filter(c=>c.selectedMember&&!c.completionApproved).length;
+  const recruiting=cases.filter(c=>!c.selectedMember).length;
+
+  // 成約金額合計（業者決定済み案件の見積もり合計）
+  const totalAmount=cases
+    .filter(c=>c.estimate&&c.estimate.amount)
+    .reduce((sum,c)=>sum+Number(c.estimate.amount),0);
+
+  // 完了案件の平均成約日数
+  const completedWithDates=cases.filter(c=>c.completionApproved&&c.createdAt&&c.completionApproved);
+  const avgDays=completedWithDates.length>0
+    ?Math.round(completedWithDates.reduce((sum,c)=>{
+        const start=new Date(c.createdAt);
+        const end=new Date(c.completionApproved);
+        return sum+Math.max(0,Math.round((end-start)/(1000*60*60*24)));
+      },0)/completedWithDates.length)
+    :null;
+
+  // 業者別受注件数トップ3
+  const contractorCount={};
+  cases.forEach(c=>{
+    if(c.selectedMember){
+      const mem=members.find(m=>m.id===c.selectedMember);
+      const name=mem?`${mem.name}（${mem.company}）`:c.selectedMember;
+      contractorCount[name]=(contractorCount[name]||0)+1;
+    }
+  });
+  const topContractors=Object.entries(contractorCount)
+    .sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  // 繰り返しキャンセル業者検出（選定後キャンセル2件以上）
+  const cancelCount={};
+  cases.forEach(c=>{
+    if(c.cancelledAfterSelection&&c.selectedMember){
+      const mem=members.find(m=>m.id===c.selectedMember);
+      const key=c.selectedMember;
+      if(!cancelCount[key]) cancelCount[key]={name:mem?`${mem.name}（${mem.company}）`:key,count:0,cases:[]};
+      cancelCount[key].count++;
+      cancelCount[key].cases.push(c.caseNo);
+    }
+  });
+  const flaggedContractors=Object.values(cancelCount).filter(x=>x.count>=2).sort((a,b)=>b.count-a.count);
+
+  document.getElementById('admin-dashboard').innerHTML=`
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:12px;">📊 実績ダッシュボード</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div style="background:#f0fdf4;border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:800;color:var(--primary-dark);">${total}</div>
+          <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">総案件数</div>
+        </div>
+        <div style="background:#eff6ff;border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:800;color:#1d4ed8;">${completed}</div>
+          <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">完了件数</div>
+        </div>
+        <div style="background:#fefce8;border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:800;color:#92400e;">${inProgress}</div>
+          <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">対応中</div>
+        </div>
+        <div style="background:#fdf4ff;border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:800;color:#7c3aed;">${recruiting}</div>
+          <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">立候補受付中</div>
+        </div>
+      </div>
+
+      <div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">💴 成約金額合計</div>
+        <div style="font-size:22px;font-weight:800;color:var(--primary-dark);">¥${totalAmount.toLocaleString()}<span style="font-size:12px;font-weight:400;color:var(--text-sub);margin-left:4px;">（税込）</span></div>
+      </div>
+
+      ${avgDays!==null?`
+      <div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">⏱️ 平均完了日数</div>
+        <div style="font-size:22px;font-weight:800;color:var(--primary-dark);">${avgDays}<span style="font-size:12px;font-weight:400;color:var(--text-sub);margin-left:4px;">日</span></div>
+      </div>`:''}
+
+      ${topContractors.length>0?`
+      <div style="background:#f8fafc;border-radius:10px;padding:12px;">
+        <div style="font-size:11px;color:var(--text-sub);margin-bottom:8px;">🏆 受注件数ランキング</div>
+        ${topContractors.map(([name,count],i)=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;${i<topContractors.length-1?'border-bottom:1px solid var(--border);':''}">
+            <div style="font-size:13px;">${['🥇','🥈','🥉'][i]} ${name}</div>
+            <div style="font-size:13px;font-weight:700;color:var(--primary-dark);">${count}件</div>
+          </div>`).join('')}
+      </div>`:''}
+    </div>
+
+    ${flaggedContractors.length>0?`
+    <div class="card" style="margin-bottom:12px;border:2px solid #fca5a5;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <span style="font-size:16px;">🚨</span>
+        <span style="font-size:13px;font-weight:700;color:#b91c1c;">繰り返しキャンセル業者フラグ</span>
+        <span style="background:#ef4444;color:white;font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;margin-left:auto;">${flaggedContractors.length}名</span>
+      </div>
+      <div style="font-size:11px;color:#b91c1c;margin-bottom:10px;">選定後キャンセルが2件以上の業者。オフプラット逃避の可能性を確認してください。</div>
+      ${flaggedContractors.map(f=>`
+        <div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:13px;font-weight:700;color:#7f1d1d;">${f.name}</div>
+            <div style="font-size:13px;font-weight:700;color:#ef4444;">×${f.count}件</div>
+          </div>
+          <div style="font-size:11px;color:#b91c1c;margin-top:4px;">対象案件：${f.cases.join('、')}</div>
+        </div>`).join('')}
+    </div>`:''}
+
+    `;
+}
+
+function renderAdminBlockLog(){
+  const el=document.getElementById('admin-block-log');
+  if(!el) return;
+  const logs=load('blocked_msgs',[]).slice().reverse();
+  if(logs.length===0){
+    el.innerHTML='<div class="card" style="font-size:13px;color:var(--text-sub);text-align:center;padding:16px;">ブロックされたメッセージはありません ✅</div>';
+    return;
+  }
+  el.innerHTML=`<div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:10px 14px;background:#fef2f2;border-bottom:1px solid #fca5a5;font-size:12px;color:#b91c1c;font-weight:700;">合計 ${logs.length} 件のブロック記録</div>
+    ${logs.slice(0,20).map(l=>`
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:12px;font-weight:700;color:#b91c1c;">🚫 ${l.reasons.join('・')}</span>
+          <span style="font-size:10px;color:var(--text-sub);">${l.timestamp}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-sub);">👤 ${l.userName} ／ ${l.caseNo||'不明'}</div>
+        <div style="font-size:12px;color:#374151;margin-top:4px;background:#f8fafc;padding:6px 8px;border-radius:6px;word-break:break-all;">${escHtml(l.text).substring(0,100)}${l.text.length>100?'…':''}</div>
+      </div>`).join('')}
+    ${logs.length>20?`<div style="padding:10px;font-size:11px;color:var(--text-sub);text-align:center;">最新20件を表示（計${logs.length}件）</div>`:''}
+  </div>`;
+}
+
+function adminLogin(){
+  if(document.getElementById('admin-password').value==='admin1234'){
+    adminLoggedIn=true;
+    document.getElementById('admin-password').value='';
+    document.getElementById('admin-header-btn').classList.add('logged-in');
+    renderAdmin();
+    showToast('🔓 管理者モード：全エリア表示になります');
+  } else{alert('パスワードが違います');}
+}
+function adminLogout(){
+  adminLoggedIn=false;
+  document.getElementById('admin-header-btn').classList.remove('logged-in');
+  renderAdmin();
+  showToast('🔒 管理者モード解除：エリア表示に戻ります');
+}
+
+function renderAdminLineList(){
+  const el=document.getElementById('admin-line-list');
+  if(!el) return;
+  const members=load('members',[]);
+  el.innerHTML=`
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;line-height:1.6;">
+        公式LINEを友だち追加したメンバーのLINE User IDを登録してください。<br>
+        User IDはLステップや公式LINE管理画面で確認できます。
+      </div>
+      ${members.map(m=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;">${escHtml(m.name)}</div>
+            <div style="font-size:11px;color:var(--text-sub);">${escHtml(m.company)}</div>
+            <div style="font-size:11px;color:${m.lineUserId?'var(--primary-dark)':'#9ca3af'};margin-top:2px;">
+              ${m.lineUserId?`✅ ${escHtml(m.lineUserId)}`:'未設定'}
+            </div>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="openLineIdModal('${m.id}')">編集</button>
+        </div>`).join('')}
+    </div>`;
+}
+
+function openLineIdModal(memberId){
+  const members=load('members',[]);
+  const m=members.find(x=>x.id===memberId);
+  if(!m) return;
+  const current=m.lineUserId||'';
+  const id=prompt(`${m.name}さんのLINE User IDを入力してください\n（例：U1234567890abcdef…）`,current);
+  if(id===null) return;
+  m.lineUserId=id.trim();
+  save('members',members);
+  renderAdminLineList();
+  showToast(`${m.name}のLINE IDを${m.lineUserId?'設定':'削除'}しました`);
+}
+
+function renderAdminCases(){
+  const cases=load('cases',[]);
+  if(cases.length===0){document.getElementById('admin-case-list').innerHTML='<div class="empty-state"><div class="emoji">📋</div><p>案件がありません</p></div>';return;}
+  document.getElementById('admin-case-list').innerHTML=[...cases].reverse().map(c=>{
+    const msgCount=(c.messages||[]).length;
+    const cancelFlag=c.cancelledAfterSelection?`<span style="background:#fee2e2;color:#b91c1c;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:6px;">⚠️ キャンセル済</span>`:'';
+    return `<div class="admin-case-item"${c.cancelledAfterSelection?' style="border-left:3px solid #ef4444;"':''}>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:12px;color:var(--text-sub);">${c.caseNo}${cancelFlag}</div>
+        ${statusBadge(c.status)}
+      </div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px;">${c.description.slice(0,50)}…</div>
+      <div style="font-size:12px;color:var(--text-sub);margin-bottom:6px;">
+        ${c.category} | 📍${c.area} | 👤${c.requesterName} | 🙋${c.candidates.length}名
+        ${msgCount>0?` | 💬${msgCount}件`:''}
+      </div>
+      ${msgCount>0?`<button class="btn btn-sm btn-outline" style="margin-bottom:8px;width:100%;" onclick="adminViewChat('${c.id}')">💬 チャットを確認する (${msgCount}件)</button>`:''}
+      <select class="status-select" onchange="adminUpdateStatus('${c.id}',this.value)">
+        ${STATUS_LIST.map(s=>`<option value="${s}" ${s===c.status?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <button class="btn btn-sm btn-danger" style="margin-top:8px;width:100%;" onclick="adminDeleteCase('${c.id}')">🗑️ 案件を削除</button>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+//  REVIEW
+// ============================================================
+function selectStar(val){
+  document.getElementById('review-rating').value=val;
+  document.querySelectorAll('.star-btn').forEach(s=>{
+    s.style.opacity=parseInt(s.dataset.val)<=val?'1':'0.3';
+    s.style.color=parseInt(s.dataset.val)<=val?'#f59e0b':'#a0aec0';
+  });
+}
+
+function submitReview(){
+  const rating=parseInt(document.getElementById('review-rating').value);
+  if(!rating){showToast('⭐ 評価を選んでください');return;}
+  const caseId=document.getElementById('review-case-id').value;
+  const memberId=document.getElementById('review-member-id').value;
+  const comment=document.getElementById('review-comment').value.trim();
+  const members=load('members',[]);
+  const m=members.find(x=>x.id===memberId);
+  if(!m) return;
+  if(!m.reviews) m.reviews=[];
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  m.reviews.push({
+    rating,comment,
+    reviewerName:currentUser.name,
+    caseNo:c?c.caseNo:'',
+    category:c?c.category:'',
+    reviewedAt:nowStr()
+  });
+  save('members',members);
+  closeModal('review-modal');
+  showToast('⭐ レビューを送信しました！ありがとうございます。');
+  showCaseDetail(caseId);
+}
+
+function renderStars(avg,total){
+  if(!total) return '<span style="font-size:12px;color:var(--text-sub);">まだ評価がありません</span>';
+  const full=Math.floor(avg);
+  const half=avg-full>=0.5;
+  let stars='';
+  for(let i=1;i<=5;i++){
+    if(i<=full) stars+='<span style="color:#f59e0b;">★</span>';
+    else if(i===full+1&&half) stars+='<span style="color:#f59e0b;">½</span>';
+    else stars+='<span style="color:#d1d5db;">★</span>';
+  }
+  return `<span style="font-size:14px;">${stars}</span> <span style="font-size:13px;font-weight:700;color:#92400e;">${avg.toFixed(1)}</span><span style="font-size:11px;color:var(--text-sub);margin-left:4px;">(${total}件)</span>`;
+}
+
+function adminViewChat(caseId){
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  const messages=c.messages||[];
+  document.getElementById('admin-chat-modal-title').textContent=`💬 ${c.caseNo} チャット確認`;
+  const bubblesHTML=messages.length===0
+    ?'<div class="chat-empty">メッセージはまだありません</div>'
+    :messages.map(m=>{
+        const roleClass=m.senderRole==='requester'?'requester':m.senderRole==='admin'?'admin':'member';
+        const fileHTML=m.fileData&&m.fileName?`<div>${filePreviewHTML(m.fileData,m.fileName,'admin')}</div>`:'';
+        return `<div class="chat-bubble-wrap ${roleClass}"><div class="chat-sender">${escHtml(m.senderName)}</div><div class="chat-bubble">${m.text?escHtml(m.text):''}${fileHTML}</div><div class="chat-time">${m.timestamp}</div></div>`;
+      }).join('');
+  document.getElementById('admin-chat-modal-content').innerHTML=`
+    <div style="background:#f8fafc;border-radius:10px;padding:12px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;">${bubblesHTML}</div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text-sub);text-align:center;">管理者閲覧モード（読み取り専用）</div>`;
+  document.getElementById('admin-chat-modal').classList.add('open');
+}
+
+function adminUpdateStatus(caseId,newStatus){
+  const cases=load('cases',[]);
+  const c=cases.find(x=>x.id===caseId);
+  if(!c) return;
+  c.status=newStatus;
+  save('cases',cases);
+  addNotification(caseId,c.caseNo,`ステータスが「${newStatus}」に更新されました`);
+  showToast(`📝 ${c.caseNo} のステータスを「${newStatus}」に更新しました`);
+}
+
+function adminDeleteCase(caseId){
+  if(!confirm('この案件を削除してもよろしいですか？')) return;
+  save('cases',load('cases',[]).filter(c=>c.id!==caseId));
+  renderAdminCases();
+  showToast('🗑️ 案件を削除しました');
+}
+
+// ============================================================
+//  LINE NOTIFICATION (DEMO)
+// ============================================================
+function simulateLineNotify(c){
+  const msg=`【まち頼 新案件通知】\n📋 ${c.caseNo}\n🏷️ カテゴリ: ${c.category}\n📍 エリア: ${c.area}\n⏰ 立候補期限: ${c.candidateDeadline}\n\n📝 ${c.description.slice(0,80)}...\n\n対応可能な方はシステムから立候補してください。`;
+  console.log('📱 LINE通知 送信内容:\n'+msg);
+}
+
+// ============================================================
+//  UTILITIES
+// ============================================================
+function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='show';setTimeout(()=>t.className='',3000);}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
+});
+
+// ============================================================
+//  利用規約モーダル
+// ============================================================
+let tosCallback=null;
+
+function showTos(callback){
+  tosCallback=callback;
+  document.getElementById('tos-modal').classList.add('open');
+}
+
+function acceptTos(){
+  document.getElementById('tos-modal').classList.remove('open');
+  if(tosCallback) tosCallback();
+  tosCallback=null;
+}
+
+// ============================================================
+//  問い合わせ
+// ============================================================
+function openContact(){
+  document.getElementById('contact-modal').classList.add('open');
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+initSampleData();
+document.getElementById('user-avatar-btn').textContent=currentUser.avatar;
+updateNotifBadge();
+renderHome();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg=>console.log('SW登録完了:',reg.scope))
+      .catch(err=>console.log('SW登録失敗:',err));
+  });
+}
+</script>
+</body>
+</html>
