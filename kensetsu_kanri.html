@@ -1215,13 +1215,11 @@ function showCaseDetail(caseId){
               <div style="font-size:15px;font-weight:800;color:var(--primary-dark);">💴 ¥${Number(can.estimate.amount).toLocaleString()}<span style="font-size:12px;font-weight:400;">（税込）</span></div>
               <div style="font-size:12px;color:var(--text-sub);margin-top:3px;">🗓️ 工期：${can.estimate.period}</div>
               ${can.estimate.note?`<div style="font-size:12px;color:var(--text-sub);margin-top:2px;">📝 ${escHtml(can.estimate.note)}</div>`:''}
-            </div>
-            <div style="display:flex;gap:6px;margin-top:8px;">
-              ${mem?`<button class="btn btn-sm btn-outline" onclick="showMemberDetailById('${mem.id}')">プロフィール</button>`:''}
-              <button class="btn btn-sm btn-accent" onclick="selectMember('${c.id}','${can.memberId}')">✅ この業者に決定</button>
-            </div>`
-          :`<div style="background:#f8fafc;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:var(--text-sub);">⏳ 見積もり提出待ち</div>
-            ${mem?`<button class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="showMemberDetailById('${mem.id}')">プロフィール確認</button>`:''}`}
+            </div>`:''}
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            ${mem?`<button class="btn btn-sm btn-outline" onclick="showMemberDetailById('${mem.id}')">プロフィール確認</button>`:''}
+            <button class="btn btn-sm btn-accent" onclick="selectMember('${c.id}','${can.memberId}')">✅ この業者に決定</button>
+          </div>
         </div>`;
       }).join('');
   } else {
