@@ -883,14 +883,16 @@ function nowStr(){return new Date().toLocaleString('ja-JP',{year:'numeric',month
 
 // LINE通知送信（GAS経由）
 function sendLineNotification(lineUserId, message){
-  if(!lineUserId||!message) return;
+  if(!lineUserId||!message){ try{showToast('❌ LINE ID未設定のため通知しません');}catch(e){} return; }
+  try{showToast('📤 LINE通知送信中... '+String(lineUserId).slice(0,8));}catch(e){}
   // no-corsでCORSエラーを回避（レスポンスは不要）
   fetch(GAS_URL,{
     method:'POST',
     mode:'no-cors',
     headers:{'Content-Type':'text/plain'},
     body:JSON.stringify({lineUserId, message})
-  }).catch(()=>{});
+  }).then(()=>{try{showToast('✅ GASへ送信完了');}catch(e){}})
+    .catch(err=>{try{showToast('❌ 送信失敗: '+err.message);}catch(e){}});
 }
 
 // ============================================================
