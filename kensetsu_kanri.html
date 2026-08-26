@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="まち頼">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <style>
 :root {
   --primary:#16a34a;--primary-dark:#15803d;--primary-light:#bbf7d0;
@@ -505,7 +506,7 @@ textarea{resize:vertical;min-height:80px;}
     <div id="admin-dashboard"></div>
     <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">🚫 ブロックログ</div></div>
     <div id="admin-block-log"></div>
-    <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">📲 LINE User ID管理</div></div>
+    <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">👤 会員管理・業者承認</div></div>
     <div id="admin-line-list"></div>
     <div class="section-header" style="margin-top:12px;"><div class="section-title" style="font-size:14px;">📋 案件一覧</div></div>
     <div id="admin-case-list"></div>
@@ -854,8 +855,12 @@ const CATEGORIES = [
 ];
 const STATUS_LIST = ['未対応','立候補受付中','対応中','対応完了'];
 
-// GAS LINE通知エンドポイント
+// GAS エンドポイント（会員台帳＋LINE通知）
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwhmZQHIQHoohEfH0tDXuXrx-cRX7x25vFYKqJvlJqbWxUijpmEUoMPNCBy3Stc_xoD/exec';
+// LIFF ID（LINEログイン）
+const LIFF_ID = '2011196111-mkgGx8sO';
+// 開発モード（URLに ?dev=1 を付けるとLINEログインをスキップしてテストアカウントで動作）
+const DEV_MODE = new URLSearchParams(location.search).has('dev');
 
 // 会場エリア（県→エリアの階層構造。全国展開時は県を追加するだけ）
 const VENUES = {
@@ -877,20 +882,41 @@ const TEST_ACCOUNTS = [
 
 let currentUser = TEST_ACCOUNTS[0];
 
+// 立候補できるのは承認済みの業者だけ（テストアカウントは制限なし）
+function canBid(){
+  if(!currentUser || !currentUser.role) return true;
+  return currentUser.role==='contractor' && currentUser.memberStatus==='active';
+}
+
 function load(key,def){try{return JSON.parse(localStorage.getItem(key))||def;}catch(e){return def;}}
 function save(key,val){localStorage.setItem(key,JSON.stringify(val));}
 function nowStr(){return new Date().toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
 
+// ============================================================
+//  GAS通信（JSONP：CORSを回避しつつ結果も受け取れる）
+// ============================================================
+function gasRequest(params){
+  return new Promise((resolve,reject)=>{
+    const cbName='__gascb'+Date.now()+Math.floor(Math.random()*1000);
+    const s=document.createElement('script');
+    const timer=setTimeout(()=>{cleanup();reject(new Error('タイムアウト'));},20000);
+    function cleanup(){
+      clearTimeout(timer);
+      try{delete window[cbName];}catch(e){window[cbName]=undefined;}
+      if(s.parentNode) s.parentNode.removeChild(s);
+    }
+    window[cbName]=(res)=>{cleanup();resolve(res||{});};
+    s.onerror=()=>{cleanup();reject(new Error('通信エラー'));};
+    const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k]==null?'':params[k])).join('&');
+    s.src=GAS_URL+'?callback='+cbName+'&_='+Date.now()+(qs?'&'+qs:'');
+    document.head.appendChild(s);
+  });
+}
+
 // LINE通知送信（GAS経由）
 function sendLineNotification(lineUserId, message){
   if(!lineUserId||!message) return;
-  // no-corsでCORSエラーを回避（レスポンスは不要）
-  fetch(GAS_URL,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'text/plain'},
-    body:JSON.stringify({lineUserId, message})
-  }).catch(()=>{});
+  gasRequest({action:'notify', to:lineUserId, text:message}).catch(()=>{});
 }
 
 // ============================================================
@@ -969,6 +995,28 @@ function initSampleData(){
 // ============================================================
 function renderUserPanel(){
   const list=document.getElementById('user-account-list');
+  const header=document.querySelector('.user-panel-header');
+  // 本番モード：ログイン中のアカウント情報を表示（切り替えなし）
+  if(!DEV_MODE && currentUser && currentUser.lineUserId){
+    if(header) header.textContent='👤 ログイン中のアカウント';
+    list.innerHTML=`
+      <div class="user-account-item active">
+        <div class="ua-avatar">${escHtml(currentUser.avatar||'？')}</div>
+        <div class="ua-info">
+          <div class="ua-name">${escHtml(currentUser.name)}</div>
+          <div class="ua-company">${escHtml(currentUser.company||(currentUser.role==='contractor'?'':'一般ユーザー'))}</div>
+        </div>
+        <div class="ua-check">✓</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-sub);padding:10px 4px 4px;line-height:1.7;">
+        LINEアカウントでログインしています。<br>
+        ${currentUser.role==='contractor'
+          ? (currentUser.memberStatus==='pending'?'業者登録は承認待ちです。':'業者として承認済みです。')
+          : '一般ユーザーとしてご利用中です。'}
+      </div>`;
+    return;
+  }
+  if(header) header.textContent='🔄 アカウント切り替え（テスト用）';
   list.innerHTML=TEST_ACCOUNTS.map(u=>`
     <div class="user-account-item ${u.id===currentUser.id?'active':''}" onclick="switchUser('${u.id}')">
       <div class="ua-avatar">${u.avatar}</div>
@@ -1239,7 +1287,7 @@ function showCaseDetail(caseId){
     }).join('');
   }
 
-  const canApply=(c.status==='未対応'||c.status==='立候補受付中')&&!myCandidate&&!isRequester&&!c.selectedMember;
+  const canApply=(c.status==='未対応'||c.status==='立候補受付中')&&!myCandidate&&!isRequester&&!c.selectedMember&&canBid();
   const hasChat=c.status==='対応中'||c.status==='対応完了';
 
   // 受発注フロー
@@ -2891,41 +2939,79 @@ function adminLogout(){
   showToast('🔒 管理者モード解除：エリア表示に戻ります');
 }
 
-function renderAdminLineList(){
+let adminSheetMembers=[];
+
+async function renderAdminLineList(){
   const el=document.getElementById('admin-line-list');
   if(!el) return;
-  const members=load('members',[]);
-  el.innerHTML=`
-    <div class="card" style="margin-bottom:12px;">
-      <div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;line-height:1.6;">
-        公式LINEを友だち追加したメンバーのLINE User IDを登録してください。<br>
-        User IDはLステップや公式LINE管理画面で確認できます。
+  el.innerHTML='<div class="card" style="text-align:center;font-size:13px;color:var(--text-sub);">読み込み中...</div>';
+  try{
+    const res=await gasRequest({action:'list'});
+    adminSheetMembers=res.members||[];
+  }catch(err){
+    el.innerHTML=`<div class="card" style="font-size:13px;color:var(--danger);">会員台帳を読み込めませんでした（${escHtml(err.message)}）</div>`;
+    return;
+  }
+  syncSheetMembers(adminSheetMembers);
+
+  const pending=adminSheetMembers.filter(m=>m.role==='contractor'&&m.status==='pending');
+  const active=adminSheetMembers.filter(m=>!(m.role==='contractor'&&m.status==='pending'));
+
+  const row=(m,withApprove)=>`
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;">
+          ${escHtml(m.name||'')}
+          <span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;${m.role==='contractor'?'background:#dbeafe;color:#1d4ed8;':'background:#f1f5f9;color:#475569;'}">${m.role==='contractor'?'業者':'一般'}</span>
+          ${m.status==='pending'?'<span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;background:#fef3c7;color:#92400e;">承認待ち</span>':''}
+          ${m.status==='rejected'?'<span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;background:#fee2e2;color:#b91c1c;">却下</span>':''}
+        </div>
+        ${m.company?`<div style="font-size:11px;color:var(--text-sub);">${escHtml(m.company)}</div>`:''}
+        <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">
+          📍${escHtml(m.venue||'-')}${m.categories?' ／ '+escHtml(m.categories):''}
+        </div>
+        <div style="font-size:11px;color:var(--text-sub);">📞${escHtml(m.contact||'-')}</div>
+        <div style="font-size:10px;color:${m.lineUserId?'var(--primary-dark)':'#9ca3af'};margin-top:2px;word-break:break-all;">
+          ${m.lineUserId?'✅ LINE連携済み':'未連携'}
+        </div>
       </div>
-      ${members.map(m=>`
-        <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);">
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:700;">${escHtml(m.name)}</div>
-            <div style="font-size:11px;color:var(--text-sub);">${escHtml(m.company)}</div>
-            <div style="font-size:11px;color:${m.lineUserId?'var(--primary-dark)':'#9ca3af'};margin-top:2px;">
-              ${m.lineUserId?`✅ ${escHtml(m.lineUserId)}`:'未設定'}
-            </div>
-          </div>
-          <button class="btn btn-sm btn-outline" onclick="openLineIdModal('${m.id}')">編集</button>
-        </div>`).join('')}
+      ${withApprove?`
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+          <button class="btn btn-sm btn-accent" onclick="approveMember('${m.id}','active')">承認</button>
+          <button class="btn btn-sm btn-outline" onclick="approveMember('${m.id}','rejected')">却下</button>
+        </div>`:''}
+    </div>`;
+
+  el.innerHTML=`
+    ${pending.length?`
+      <div class="card" style="margin-bottom:12px;border:1.5px solid var(--accent);">
+        <div style="font-size:13px;font-weight:800;color:var(--accent-dark);margin-bottom:6px;">⏳ 承認待ちの業者（${pending.length}件）</div>
+        ${pending.map(m=>row(m,true)).join('')}
+      </div>`:''}
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:12px;color:var(--text-sub);margin-bottom:8px;line-height:1.6;">
+        LINEログインで登録された会員の一覧です。LINE User IDは自動で紐づきます。
+      </div>
+      ${active.length?active.map(m=>row(m,false)).join('')
+        :'<div style="font-size:13px;color:var(--text-sub);text-align:center;padding:12px 0;">まだ登録がありません</div>'}
     </div>`;
 }
 
-function openLineIdModal(memberId){
-  const members=load('members',[]);
-  const m=members.find(x=>x.id===memberId);
-  if(!m) return;
-  const current=m.lineUserId||'';
-  const id=prompt(`${m.name}さんのLINE User IDを入力してください\n（例：U1234567890abcdef…）`,current);
-  if(id===null) return;
-  m.lineUserId=id.trim();
-  save('members',members);
-  renderAdminLineList();
-  showToast(`${m.name}のLINE IDを${m.lineUserId?'設定':'削除'}しました`);
+async function approveMember(id,status){
+  const m=adminSheetMembers.find(x=>x.id===id);
+  const label=status==='active'?'承認':'却下';
+  if(!confirm(`${m?m.name:''}さんを${label}しますか？`)) return;
+  try{
+    const res=await gasRequest({action:'update', id:id, memberStatus:status});
+    if(res.status!=='ok') throw new Error(res.message||'更新に失敗しました');
+    if(status==='active'&&m&&m.lineUserId){
+      sendLineNotification(m.lineUserId,'【まち頼】業者登録が承認されました。\nアプリから案件に立候補できます。');
+    }
+    showToast(`${label}しました`);
+    renderAdminLineList();
+  }catch(err){
+    showToast('失敗しました：'+err.message);
+  }
 }
 
 function renderAdminCases(){
@@ -3080,12 +3166,280 @@ function openContact(){
 }
 
 // ============================================================
+//  LINEログイン ＋ 会員登録
+// ============================================================
+let lineProfile=null;
+
+function showBootOverlay(text){
+  let el=document.getElementById('boot-overlay');
+  if(!el){
+    el=document.createElement('div');
+    el.id='boot-overlay';
+    el.style.cssText='position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`
+    <div style="font-size:34px;">🏠</div>
+    <div style="font-size:19px;font-weight:800;color:var(--primary-dark);">まち頼</div>
+    <div style="width:34px;height:34px;border:3px solid var(--primary-light);border-top-color:var(--primary);border-radius:50%;animation:mySpin .8s linear infinite;"></div>
+    <div style="font-size:13px;color:var(--text-sub);">${escHtml(text||'')}</div>
+    <style>@keyframes mySpin{to{transform:rotate(360deg)}}</style>`;
+  el.style.display='flex';
+}
+function hideBootOverlay(){
+  const el=document.getElementById('boot-overlay');
+  if(el) el.style.display='none';
+}
+function showBootError(text,retry){
+  showBootOverlay('');
+  const el=document.getElementById('boot-overlay');
+  el.innerHTML=`
+    <div style="font-size:34px;">⚠️</div>
+    <div style="font-size:15px;font-weight:700;color:var(--text);">接続できませんでした</div>
+    <div style="font-size:13px;color:var(--text-sub);text-align:center;padding:0 32px;line-height:1.7;">${escHtml(text)}</div>
+    ${retry?'<button class="btn btn-primary" style="width:200px;margin-top:8px;" onclick="location.reload()">やり直す</button>':''}`;
+}
+
+// 台帳の1行を currentUser 形式に変換
+function memberToUser(m){
+  return {
+    id:m.id,
+    name:m.name||'',
+    company:m.company||'',
+    categories:(m.categories||'').toString().split(',').map(s=>s.trim()).filter(Boolean),
+    areas:m.areas||'',
+    venue:m.venue||'',
+    bio:m.bio||'',
+    contact:m.contact||'',
+    avatar:(m.name||'？').replace(/\s/g,'').slice(-1),
+    role:m.role||'customer',
+    memberStatus:m.status||'active',
+    lineUserId:m.lineUserId||''
+  };
+}
+
+// 台帳の業者をローカルのメンバー一覧に反映（既存画面がそのまま動くように）
+function syncSheetMembers(list){
+  const local=load('members',[]);
+  (list||[]).forEach(m=>{
+    if(m.role!=='contractor'||m.status!=='active') return;
+    const rec={
+      id:m.id, company:m.company||'', name:m.name||'',
+      categories:(m.categories||'').toString().split(',').map(s=>s.trim()).filter(Boolean),
+      capabilities:'', specialties:'', areas:m.areas||'',
+      contact:m.contact||'', bio:m.bio||'', lineUserId:m.lineUserId||'',
+      createdAt:m.createdAt||''
+    };
+    const i=local.findIndex(x=>x.id===m.id);
+    if(i>=0) local[i]={...local[i],...rec}; else local.push(rec);
+  });
+  save('members',local);
+}
+
+// ===== 登録画面 =====
+let regRole='customer';
+let regCategories=[];
+
+function openRegisterScreen(profile){
+  let el=document.getElementById('register-screen');
+  if(!el){
+    el=document.createElement('div');
+    el.id='register-screen';
+    el.style.cssText='position:fixed;inset:0;z-index:9998;background:var(--bg);overflow-y:auto;padding:24px 18px 60px;';
+    document.body.appendChild(el);
+  }
+  el.style.display='block';
+  el.innerHTML=`
+    <div style="max-width:440px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div style="font-size:34px;">🏠</div>
+        <div style="font-size:20px;font-weight:800;color:var(--primary-dark);margin-top:4px;">まち頼へようこそ</div>
+        <div style="font-size:13px;color:var(--text-sub);margin-top:6px;line-height:1.7;">
+          ${escHtml(profile.displayName)}さん、はじめまして。<br>ご利用にあたって登録をお願いします。
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">ご利用の目的</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div id="reg-role-customer" onclick="setRegRole('customer')" style="cursor:pointer;border:2px solid var(--primary);background:#f0fdf4;border-radius:10px;padding:12px;">
+            <div style="font-size:14px;font-weight:700;">🙋 工事や修理を依頼したい</div>
+            <div style="font-size:12px;color:var(--text-sub);margin-top:3px;">どなたでもすぐご利用いただけます</div>
+          </div>
+          <div id="reg-role-contractor" onclick="setRegRole('contractor')" style="cursor:pointer;border:2px solid var(--border);background:#fff;border-radius:10px;padding:12px;">
+            <div style="font-size:14px;font-weight:700;">🔨 業者として登録したい</div>
+            <div style="font-size:12px;color:var(--text-sub);margin-top:3px;">守成クラブ会員の方。管理者の承認後に案件へ立候補できます</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">お名前 <span style="color:var(--danger);">*</span></label>
+          <input type="text" class="form-input" id="reg-name" value="${escHtml(profile.displayName||'')}" placeholder="山田 太郎">
+        </div>
+        <div class="form-group">
+          <label class="form-label">連絡先（電話番号） <span style="color:var(--danger);">*</span></label>
+          <input type="tel" class="form-input" id="reg-contact" placeholder="090-1234-5678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">お住まい・活動エリア <span style="color:var(--danger);">*</span></label>
+          <select class="form-input" id="reg-venue">
+            <option value="">選択してください</option>
+            ${VENUES['長野県'].map(v=>`<option value="${v}">${v}</option>`).join('')}
+          </select>
+        </div>
+
+        <div id="reg-contractor-fields" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">会社名・屋号 <span style="color:var(--danger);">*</span></label>
+            <input type="text" class="form-input" id="reg-company" placeholder="○○工務店">
+          </div>
+          <div class="form-group">
+            <label class="form-label">対応できる業種 <span style="color:var(--danger);">*</span></label>
+            <div id="reg-category-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">対応エリア（詳細）</label>
+            <input type="text" class="form-input" id="reg-areas" placeholder="松本市内全域、塩尻市">
+          </div>
+          <div class="form-group">
+            <label class="form-label">自己紹介・得意分野</label>
+            <textarea class="form-input" id="reg-bio" rows="3" placeholder="創業30年。住宅リフォーム全般に対応します。"></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:6px;" onclick="submitRegistration()">この内容で登録する</button>
+        <div style="font-size:11px;color:var(--text-sub);margin-top:10px;line-height:1.7;">
+          登録すると、案件の進捗をLINEでお知らせします。<br>
+          登録内容は後からマイページで変更できます。
+        </div>
+      </div>
+    </div>`;
+  renderRegCategories();
+  setRegRole('customer');
+}
+
+function setRegRole(role){
+  regRole=role;
+  const c=document.getElementById('reg-role-customer');
+  const k=document.getElementById('reg-role-contractor');
+  const on='2px solid var(--primary)', off='2px solid var(--border)';
+  c.style.border = role==='customer'?on:off;
+  c.style.background = role==='customer'?'#f0fdf4':'#fff';
+  k.style.border = role==='contractor'?on:off;
+  k.style.background = role==='contractor'?'#f0fdf4':'#fff';
+  document.getElementById('reg-contractor-fields').style.display = role==='contractor'?'block':'none';
+}
+
+function renderRegCategories(){
+  const el=document.getElementById('reg-category-list');
+  if(!el) return;
+  el.innerHTML=CATEGORIES.map(cat=>`
+    <span onclick="toggleRegCategory('${cat}',this)" style="cursor:pointer;font-size:12px;padding:6px 10px;border-radius:14px;border:1.5px solid var(--border);background:#fff;color:var(--text-sub);">${cat}</span>`).join('');
+}
+
+function toggleRegCategory(cat,el){
+  const i=regCategories.indexOf(cat);
+  if(i>=0){
+    regCategories.splice(i,1);
+    el.style.background='#fff'; el.style.color='var(--text-sub)'; el.style.borderColor='var(--border)';
+  }else{
+    regCategories.push(cat);
+    el.style.background='#dcfce7'; el.style.color='var(--primary-dark)'; el.style.borderColor='var(--primary)';
+  }
+}
+
+async function submitRegistration(){
+  const name=document.getElementById('reg-name').value.trim();
+  const contact=document.getElementById('reg-contact').value.trim();
+  const venue=document.getElementById('reg-venue').value;
+  if(!name){ showToast('お名前を入力してください'); return; }
+  if(!contact){ showToast('連絡先を入力してください'); return; }
+  if(!venue){ showToast('エリアを選択してください'); return; }
+
+  let company='', areas='', bio='';
+  if(regRole==='contractor'){
+    company=document.getElementById('reg-company').value.trim();
+    areas=document.getElementById('reg-areas').value.trim();
+    bio=document.getElementById('reg-bio').value.trim();
+    if(!company){ showToast('会社名を入力してください'); return; }
+    if(regCategories.length===0){ showToast('業種を1つ以上選んでください'); return; }
+  }
+
+  showBootOverlay('登録しています...');
+  try{
+    const res=await gasRequest({
+      action:'register',
+      lineUserId:lineProfile.userId,
+      name, company, role:regRole,
+      categories:regCategories.join(','),
+      venue, areas, contact, bio
+    });
+    if(res.status!=='ok') throw new Error(res.message||'登録に失敗しました');
+
+    const list=(await gasRequest({action:'list'})).members||[];
+    syncSheetMembers(list);
+    const me=list.find(m=>m.lineUserId===lineProfile.userId);
+    if(!me) throw new Error('登録内容を確認できませんでした');
+
+    currentUser=memberToUser(me);
+    document.getElementById('register-screen').style.display='none';
+    hideBootOverlay();
+    document.getElementById('user-avatar-btn').textContent=currentUser.avatar;
+    renderHome();
+    if(regRole==='contractor'){
+      showToast('登録しました。管理者の承認をお待ちください');
+    }else{
+      showToast('登録が完了しました。ようこそ！');
+    }
+  }catch(err){
+    hideBootOverlay();
+    showToast('登録に失敗しました：'+err.message);
+  }
+}
+
+// ============================================================
 //  INIT
 // ============================================================
-initSampleData();
-document.getElementById('user-avatar-btn').textContent=currentUser.avatar;
-updateNotifBadge();
-renderHome();
+async function boot(){
+  initSampleData();
+  updateNotifBadge();
+
+  if(DEV_MODE || typeof liff==='undefined'){
+    document.getElementById('user-avatar-btn').textContent=currentUser.avatar;
+    renderHome();
+    if(!DEV_MODE) showToast('LINE連携が利用できないためテストモードで表示しています');
+    return;
+  }
+
+  showBootOverlay('LINEに接続しています...');
+  try{
+    await liff.init({liffId:LIFF_ID});
+    if(!liff.isLoggedIn()){ liff.login(); return; }
+    lineProfile=await liff.getProfile();
+
+    const list=(await gasRequest({action:'list'})).members||[];
+    syncSheetMembers(list);
+    const me=list.find(m=>m.lineUserId===lineProfile.userId);
+
+    if(me){
+      currentUser=memberToUser(me);
+      hideBootOverlay();
+      document.getElementById('user-avatar-btn').textContent=currentUser.avatar;
+      renderHome();
+      if(currentUser.role==='contractor'&&currentUser.memberStatus==='pending'){
+        setTimeout(()=>showToast('業者登録は承認待ちです。承認後に案件へ立候補できます'),600);
+      }
+    }else{
+      hideBootOverlay();
+      openRegisterScreen(lineProfile);
+    }
+  }catch(err){
+    showBootError('LINEとの接続に失敗しました。通信環境をご確認のうえ、もう一度お試しください。\n('+(err.message||err)+')',true);
+  }
+}
+boot();
 </script>
 <script>
 if('serviceWorker' in navigator){

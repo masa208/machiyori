@@ -1,6 +1,5 @@
-const CACHE_NAME = 'kensetsu-v1';
+const CACHE_NAME = 'machiyori-v2';
 const ASSETS = [
-  './kensetsu_kanri.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
@@ -24,9 +23,31 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// オフライン対応：キャッシュ優先、失敗時はネットワーク
 self.addEventListener('fetch', e => {
+  const req = e.request;
+  const url = new URL(req.url);
+
+  // 自分のサイト以外（GAS・LINEなど）は素通し
+  if (url.origin !== self.location.origin) return;
+
+  const isHtml = req.mode === 'navigate' || url.pathname.endsWith('.html');
+
+  if (isHtml) {
+    // HTMLはネットワーク優先（更新を確実に反映）
+    e.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // それ以外はキャッシュ優先
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    caches.match(req).then(cached => cached || fetch(req))
   );
 });
