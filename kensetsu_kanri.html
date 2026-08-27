@@ -549,44 +549,7 @@ textarea{resize:vertical;min-height:80px;}
     <div style="overflow-y:auto;flex:1;padding:0 16px 8px;">
       <div style="font-size:13px;line-height:1.8;color:var(--text);">
         <p style="margin-bottom:12px;">本プラットフォームをご利用いただく前に、以下をご確認ください。</p>
-        <div style="background:#fef9c3;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">⚠️ 免責事項</p>
-          <p>本プラットフォームは依頼者と業者のマッチングを提供するものであり、取引の結果・品質・支払いについて一切の保証を行いません。工事内容・金額・日程・キャンセル条件については、マッチング成立後に当事者間で必ず事前に取り決めを行ってください。</p>
-        </div>
-        <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">🚫 案件の譲渡禁止</p>
-          <p>選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
-        </div>
-        <div style="background:#eff6ff;border-left:4px solid var(--blue);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">💴 成約手数料（業者の方）</p>
-          <p style="margin-bottom:6px;">立候補・見積もりの提出は無料です。成約時のみ、成約金額に応じた手数料をいただきます。</p>
-          <ul style="padding-left:16px;margin-top:4px;">
-            <li>50万円までの部分：カテゴリごとの料率（7〜15％）</li>
-            <li>50万円を超える部分：一律7％</li>
-            <li>200万円を超える部分：一律4％</li>
-            <li>表示はすべて税抜料率です。請求時に消費税10％を加算します。</li>
-            <li>カテゴリ別の料率はマイページの「手数料一覧」でご確認いただけます。</li>
-          </ul>
-          <p style="margin-top:6px;">手数料は登録いただいたクレジットカードより自動で決済します。案件に立候補するには、カードの登録が必要です。</p>
-        </div>
-        <div style="background:#eff6ff;border-left:4px solid var(--blue);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">📄 継続契約・返金について</p>
-          <ul style="padding-left:16px;margin-top:4px;">
-            <li>顧問契約など継続的な契約の場合、成約金額は初年度1年分の合計額とします。</li>
-            <li>2年目以降の継続分は手数料の対象外です。</li>
-            <li>成約後の解約・キャンセルによる手数料の返金は原則として行いません。</li>
-            <li>依頼者都合により着手前に案件が取り消された場合に限り、業者からの申請にもとづき個別に審査のうえ判断します。</li>
-            <li>クレジットカードの決済に失敗した場合、解決するまで新規案件への立候補を停止します。</li>
-          </ul>
-        </div>
-        <div style="background:#f0fdf4;border-left:4px solid var(--primary);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">📌 その他のルール</p>
-          <ul style="padding-left:16px;margin-top:4px;">
-            <li>マッチング成立後72時間以内に連絡が取れない場合、案件は自動キャンセルとなります。</li>
-            <li>材料費・外注費等については、着手前にチャット内で必ず取り決めを行ってください。</li>
-            <li>本プラットフォームはトラブルの解決を保証するものではありません。</li>
-          </ul>
-        </div>
+        <div id="tos-body-agree"></div>
       </div>
     </div>
     <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;">
@@ -605,22 +568,7 @@ textarea{resize:vertical;min-height:80px;}
     </div>
     <div style="overflow-y:auto;flex:1;padding:0 16px 16px;">
       <div style="font-size:13px;line-height:1.8;color:var(--text);">
-        <div style="background:#fef9c3;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">⚠️ 免責事項</p>
-          <p>本プラットフォームは依頼者と業者のマッチングを提供するものであり、取引の結果・品質・支払いについて一切の保証を行いません。工事内容・金額・日程・キャンセル条件については、マッチング成立後に当事者間で必ず事前に取り決めを行ってください。</p>
-        </div>
-        <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
-          <p style="font-weight:700;margin-bottom:4px;">🚫 案件の譲渡禁止</p>
-          <p>選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
-        </div>
-        <div style="background:#f0fdf4;border-left:4px solid var(--primary);padding:10px 12px;border-radius:0 8px 8px 0;">
-          <p style="font-weight:700;margin-bottom:4px;">📌 その他のルール</p>
-          <ul style="padding-left:16px;margin-top:4px;">
-            <li>マッチング成立後72時間以内に連絡が取れない場合、案件は自動キャンセルとなります。</li>
-            <li>材料費・外注費等については、着手前にチャット内で必ず取り決めを行ってください。</li>
-            <li>本プラットフォームはトラブルの解決を保証するものではありません。</li>
-          </ul>
-        </div>
+        <div id="tos-body-view"></div>
       </div>
     </div>
   </div>
@@ -3188,6 +3136,83 @@ function openContact(){
 }
 
 // ============================================================
+//  利用規約（同意モーダル・閲覧モーダルの両方で使用）
+// ============================================================
+const TOS_HTML=`
+  <div style="background:#fef9c3;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+    <p style="font-weight:700;margin-bottom:4px;">⚠️ 免責事項</p>
+    <p>本プラットフォームは依頼者と業者のマッチングを提供するものであり、取引の結果・品質・支払いについて一切の保証を行いません。工事内容・金額・日程・キャンセル条件については、マッチング成立後に当事者間で必ず事前に取り決めを行ってください。</p>
+  </div>
+  <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+    <p style="font-weight:700;margin-bottom:4px;">🚫 案件の譲渡禁止</p>
+    <p>選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
+  </div>
+  <div style="background:#eff6ff;border-left:4px solid var(--blue);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+    <p style="font-weight:700;margin-bottom:4px;">💴 成約手数料（業者の方）</p>
+    <p style="margin-bottom:6px;">立候補・見積もりの提出は無料です。依頼者が確定見積もりを承認した時点で、成約金額に応じた手数料が発生します。</p>
+    <ul style="padding-left:16px;margin-top:4px;">
+      <li>50万円までの部分：カテゴリごとの料率（7〜15％）</li>
+      <li>50万円を超える部分：一律7％</li>
+      <li>200万円を超える部分：一律4％</li>
+      <li>最低手数料は1,650円（税込）です。</li>
+      <li>成約金額は消費税を除いた工事代金本体の金額とします。</li>
+      <li>表示はすべて税抜料率です。請求時に消費税10％を加算します。</li>
+      <li>カテゴリ別の料率はマイページの「手数料一覧」でご確認いただけます。</li>
+    </ul>
+    <p style="margin-top:6px;">手数料は登録いただいたクレジットカードより自動で決済します。案件に立候補するには、カードの登録が必要です。</p>
+  </div>
+  <div style="background:#eff6ff;border-left:4px solid var(--blue);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+    <p style="font-weight:700;margin-bottom:4px;">📄 継続契約について</p>
+    <ul style="padding-left:16px;margin-top:4px;">
+      <li>顧問契約など継続的な契約の場合、成約金額は初年度1年分の合計額とします。</li>
+      <li>2年目以降の継続分は手数料の対象外です。</li>
+      <li>クレジットカードの決済に失敗した場合、解決するまで新規案件への立候補を停止します。</li>
+    </ul>
+  </div>
+  <div style="background:#fef9c3;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+    <p style="font-weight:700;margin-bottom:4px;">🔁 キャンセル申請（業者の方）</p>
+    <p style="margin-bottom:6px;">成約手数料は原則として返金しません。ただし依頼者都合による中止の場合に限り、申請にもとづき審査のうえ免除・返金します。</p>
+    <p style="font-weight:700;margin:8px 0 2px;">申請できるケース</p>
+    <ul style="padding-left:16px;margin-top:2px;">
+      <li>依頼者の都合で中止になった</li>
+      <li>依頼者と連絡が取れなくなった</li>
+    </ul>
+    <p style="font-weight:700;margin:8px 0 2px;">申請できないケース（手数料は請求されます）</p>
+    <ul style="padding-left:16px;margin-top:2px;">
+      <li>業者都合によるキャンセル</li>
+      <li>遅刻・無断キャンセル</li>
+      <li>業者都合の日程変更を依頼者が断った結果のキャンセル</li>
+    </ul>
+    <p style="font-weight:700;margin:8px 0 2px;">審査の条件</p>
+    <ul style="padding-left:16px;margin-top:2px;">
+      <li>審査の対象は本アプリ内のチャット履歴のみです。外部のメッセージ・メール・通話記録は対象外です。</li>
+      <li>依頼者からキャンセルの申し出があった場合、その意思がチャットに残っている必要があります。電話や対面で伝えられた場合は、理由を含めてチャットに書き残してから申請してください。</li>
+      <li>連絡が取れない場合は、チャットに「◯月◯日◯時までに返信がない場合はキャンセルとします」と明記し、その期限を過ぎている必要があります。期限は12時間以上先に設定してください。</li>
+    </ul>
+    <p style="font-weight:700;margin:8px 0 2px;">申請期限</p>
+    <ul style="padding-left:16px;margin-top:2px;">
+      <li>着手予定日の当日まで。ただし手数料の決済日から90日を超えた場合は、理由を問わず申請できません。</li>
+      <li>日程が変わった場合は、キャンセル申請ではなくチャット画面から着手予定日を変更してください。</li>
+    </ul>
+    <p style="margin-top:6px;">申請はチャット画面から行えます。結果は5営業日以内にアプリとLINEでお知らせします。審査結果に対する再審査は受け付けておりません。</p>
+  </div>
+  <div style="background:#f0fdf4;border-left:4px solid var(--primary);padding:10px 12px;border-radius:0 8px 8px 0;">
+    <p style="font-weight:700;margin-bottom:4px;">📌 その他のルール</p>
+    <ul style="padding-left:16px;margin-top:4px;">
+      <li>マッチング成立後72時間以内に連絡が取れない場合、案件は自動キャンセルとなります。</li>
+      <li>材料費・外注費等については、着手前にチャット内で必ず取り決めを行ってください。</li>
+      <li>本プラットフォームはトラブルの解決を保証するものではありません。</li>
+    </ul>
+  </div>`;
+
+function renderTos(){
+  const a=document.getElementById('tos-body-agree');
+  const v=document.getElementById('tos-body-view');
+  if(a) a.innerHTML=TOS_HTML;
+  if(v) v.innerHTML=TOS_HTML;
+}
+
+// ============================================================
 //  LINEログイン ＋ 会員登録
 // ============================================================
 let lineProfile=null;
@@ -3426,6 +3451,7 @@ async function submitRegistration(){
 // ============================================================
 async function boot(){
   initSampleData();
+  renderTos();
   updateNotifBadge();
 
   if(DEV_MODE || typeof liff==='undefined'){
