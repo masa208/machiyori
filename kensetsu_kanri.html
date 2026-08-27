@@ -630,6 +630,10 @@ textarea{resize:vertical;min-height:80px;}
         <div id="candidacy-current-user" style="background:#f0fdf4;border-radius:8px;padding:10px;font-size:14px;font-weight:600;color:var(--primary-dark);"></div>
       </div>
       <div class="form-group"><label>立候補メッセージ</label><textarea id="candidacy-message" placeholder="対応可能な理由、実績、アピールポイントなど..." rows="3"></textarea></div>
+      <label for="candidacy-qualified" style="display:flex;align-items:flex-start;gap:8px;background:#fef9c3;border:1.5px solid var(--accent);border-radius:8px;padding:10px 12px;margin-bottom:12px;cursor:pointer;">
+        <input type="checkbox" id="candidacy-qualified" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;">
+        <span style="font-size:12px;line-height:1.6;color:#92400e;">この工事に必要な建設業許可・資格・登録を保有していることを確認しました</span>
+      </label>
       <div style="font-size:12px;color:var(--text-sub);margin-bottom:12px;">※ 立候補情報は依頼者・メンバー全員に公開されます</div>
       <button type="submit" class="btn btn-primary btn-full">立候補する 🙋</button>
       <button type="button" class="btn btn-gray btn-full" style="margin-top:8px;" onclick="closeModal('candidacy-modal')">キャンセル</button>
@@ -2571,6 +2575,8 @@ function openCandidacyModal(caseId){
   document.getElementById('candidacy-case-id').value=caseId;
   document.getElementById('candidacy-current-user').textContent=`${currentUser.name}（${currentUser.company}）`;
   document.getElementById('candidacy-message').value='';
+  const q=document.getElementById('candidacy-qualified');
+  if(q) q.checked=false;
   document.getElementById('candidacy-modal').classList.add('open');
 }
 
@@ -2578,11 +2584,16 @@ function submitCandidacy(e){
   e.preventDefault();
   const caseId=document.getElementById('candidacy-case-id').value;
   const message=document.getElementById('candidacy-message').value;
+  const qualified=document.getElementById('candidacy-qualified');
+  if(qualified&&!qualified.checked){
+    showToast('必要な許可・資格の確認にチェックを入れてください');
+    return;
+  }
   const cases=load('cases',[]);
   const c=cases.find(x=>x.id===caseId);
   if(!c) return;
   if(c.candidates.find(can=>can.memberId===currentUser.id)){alert('すでに立候補済みです');return;}
-  c.candidates.push({memberId:currentUser.id,memberName:`${currentUser.name}（${currentUser.company}）`,message,appliedAt:nowStr()});
+  c.candidates.push({memberId:currentUser.id,memberName:`${currentUser.name}（${currentUser.company}）`,message,appliedAt:nowStr(),qualifiedConfirmedAt:nowStr()});
   if(c.status==='未対応') c.status='立候補受付中';
   save('cases',cases);
   closeModal('candidacy-modal');
@@ -3145,7 +3156,17 @@ const TOS_HTML=`
   </div>
   <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
     <p style="font-weight:700;margin-bottom:4px;">🚫 案件の譲渡禁止</p>
-    <p>選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
+    <p style="margin-bottom:6px;">選定された業者は、受注した案件を第三者または他社へ譲渡することを禁止します。違反が確認された場合、アカウントを停止します。</p>
+    <p>ただし、工事の一部を協力業者へ発注することは妨げません。この場合も、受注業者が契約・顧客対応・施工管理について最終責任を負うものとします。</p>
+  </div>
+  <div style="background:#fee2e2;border-left:4px solid var(--danger);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
+    <p style="font-weight:700;margin-bottom:4px;">🪪 資格・許可・保険について（業者の方）</p>
+    <ul style="padding-left:16px;margin-top:4px;">
+      <li>業者は、受注する工事に必要な建設業許可、各種資格、登録を保有していることを表明し、保証するものとします。法令上必要な許可・資格を有しない工事を受注することはできません。</li>
+      <li>業者は、工事に起因する事故・損害に備え、損害賠償責任保険への加入を推奨します。</li>
+      <li>工事の内容、施工品質、事故、法令違反にかかる一切の責任は受注業者が負うものとし、本プラットフォームは責任を負いません。</li>
+      <li>運営は必要に応じて、許可証・資格証・保険証券の提示を求めることがあります。提示がない場合、または虚偽の申告が確認された場合は、アカウントを停止することがあります。</li>
+    </ul>
   </div>
   <div style="background:#eff6ff;border-left:4px solid var(--blue);padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:12px;">
     <p style="font-weight:700;margin-bottom:4px;">💴 成約手数料（業者の方）</p>
