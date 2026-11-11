@@ -235,6 +235,8 @@ h2{font-size:17px;margin:0 0 10px}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
+html,:root,.phone{color-scheme:light!important}
+.uh-t{color:#23302A;font-family:inherit;cursor:pointer}
 body{background:#F3F4F1;margin:0}
 .phone{max-width:480px;height:100vh;height:100dvh;margin:0 auto;border-radius:0;box-shadow:none;overflow:clip}
 .sheet{visibility:hidden}.open .sheet{visibility:visible}
@@ -444,7 +446,7 @@ function wxIcon(c){if(c==null)return '';if(c<=1)return '<svg width="24" height="
 function wxHTML(){var d=new Date(),W='日月火水木金土';var ok=WX&&WX.temperature_2m_max;
   return '<div class="uh-wx" id="uhWx" aria-label="今日の天気"><div class="uh-wd"><span>'+(d.getMonth()+1)+'/'+d.getDate()+'（'+W[d.getDay()]+'）</span><span>松本</span></div><div class="uh-wm">'+(ok?wxIcon(WX.weather_code[0]):'')+'<span class="uh-wt">'+(ok?Math.round(WX.temperature_2m_max[0])+'°<small> / '+Math.round(WX.temperature_2m_min[0])+'°</small>':'…')+'</span></div><div class="uh-wr"><span>降水 今日</span><b>'+(ok?WX.precipitation_probability_max[0]+'%':'-')+'</b><span>降水 明日</span><b>'+(ok?WX.precipitation_probability_max[1]+'%':'-')+'</b></div></div>';}
 function renderHome(){
-  var ac=activeCases(),op=opening();
+  var ac=activeCases(),op=opening(),keep=scr.querySelector('.uh')?scr.scrollTop:0;
   scr.innerHTML='<div class="uh">'+
     '<div class="uh-news"><span class="uh-nl">お知らせ</span><div class="uh-nv"><span>まち頼のテスト版です ／ 気になることは何でも気軽に相談してください ／ 地元の専門家につながります</span></div></div>'+
     '<div class="uh-hero"><img class="uh-bg" src="top.jpg" alt="松本城と北アルプスの風景"><div class="uh-clouds" aria-hidden="true"><div class="uh-cl c1"></div><div class="uh-cl c2"></div><div class="uh-cl c3"></div><div class="uh-cl c4"></div></div><div class="uh-shade"></div>'+wxHTML()+
@@ -454,7 +456,7 @@ function renderHome(){
     '<div class="uh-chips">'+['床がきしむ','窓からすきま風','お風呂のカビ','庭が荒れてきた'].map(function(t){return '<button type="button" class="uh-chip">'+t+'</button>';}).join('')+'</div></div>'+
     '<div class="uh-body">'+(ac.length?'<div class="uh-sec">進行中の依頼</div><div class="list">'+ac.map(caseLine).join('')+'</div>':'')+
     '<div class="uh-sec">やりたいことが決まっている方は</div><div class="uh-grid">'+CATS.map(function(x){return '<button type="button" class="uh-t" data-k="'+x[1].replace(/<br>/g,'')+'"><b>'+x[0]+'</b>'+x[1]+'</button>';}).join('')+'</div></div></div>';
-  loadWx();
+  scr.scrollTop=keep;loadWx();
   var b=$('uhBub');b.onclick=function(){conc(op.replace(/\|/g,''));};b.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();b.onclick();}};
   $('uhForm').onsubmit=function(e){e.preventDefault();var v=$('uhIn').value.trim();if(v)conc('どうされましたか？',v);};
   each('.uh-chip',scr,function(x){x.onclick=function(){conc('どうされましたか？',x.textContent);};});
