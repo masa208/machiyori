@@ -237,6 +237,9 @@ h2{font-size:17px;margin:0 0 10px}
 html,body{height:100%}
 html,:root,.phone{color-scheme:light!important}
 .uh-t{color:#23302A;font-family:inherit;cursor:pointer}
+.uh-box{background:#fff;border-radius:18px;padding:2px 12px 14px;margin-top:14px;box-shadow:0 5px 18px rgba(0,0,0,.06)}
+.uh-box .uh-sec{margin-top:14px}.uh-box .uh-sec small{font-weight:400;font-size:11px;color:#6E7D75}.uh-box .list{padding:0}.uh-box .uh-t{background:#FAFAF8}
+.uh-emp{font-size:12.5px;color:#6E7D75;margin:0 2px}
 body{background:#F3F4F1;margin:0}
 .phone{max-width:480px;height:100vh;height:100dvh;margin:0 auto;border-radius:0;box-shadow:none;overflow:clip}
 .sheet{visibility:hidden}.open .sheet{visibility:visible}
@@ -454,8 +457,8 @@ function renderHome(){
     '<div class="uh-bub" id="uhBub" role="button" tabindex="0">'+op.split('|').map(esc).join('<br>')+'<span class="uh-tap">タップして話す ›</span></div></div>'+
     '<div class="uh-ask"><div class="uh-at">ほかに気になっていることがある</div><form class="uh-in" id="uhForm"><input id="uhIn" placeholder="例：窓からすきま風が入る" aria-label="気になっていること"><button class="uh-send" type="submit">相談する</button></form>'+
     '<div class="uh-chips">'+['床がきしむ','窓からすきま風','お風呂のカビ','庭が荒れてきた'].map(function(t){return '<button type="button" class="uh-chip">'+t+'</button>';}).join('')+'</div></div>'+
-    '<div class="uh-body">'+(ac.length?'<div class="uh-sec">進行中の依頼</div><div class="list">'+ac.map(caseLine).join('')+'</div>':'')+
-    '<div class="uh-sec">やりたいことが決まっている方は</div><div class="uh-grid">'+CATS.map(function(x){return '<button type="button" class="uh-t" data-k="'+x[1].replace(/<br>/g,'')+'"><b>'+x[0]+'</b>'+x[1]+'</button>';}).join('')+'</div></div></div>';
+    '<div class="uh-body"><div class="uh-box"><div class="uh-sec">あなたの依頼 <small>新着順</small></div>'+(ac.length?'<div class="list">'+ac.map(caseLine).join('')+'</div>':'<p class="uh-emp">まだ依頼はありません。気になることを上から相談してみてください。</p>')+'</div>'+
+    '<div class="uh-box"><div class="uh-sec">やりたいことが決まっている方は</div><div class="uh-grid">'+CATS.map(function(x){return '<button type="button" class="uh-t" data-k="'+x[1].replace(/<br>/g,'')+'"><b>'+x[0]+'</b>'+x[1]+'</button>';}).join('')+'</div></div></div></div>';
   scr.scrollTop=keep;loadWx();
   var b=$('uhBub');b.onclick=function(){conc(op.replace(/\|/g,''));};b.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();b.onclick();}};
   $('uhForm').onsubmit=function(e){e.preventDefault();var v=$('uhIn').value.trim();if(v)conc('どうされましたか？',v);};
