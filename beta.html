@@ -284,7 +284,7 @@ body{background:#F3F4F1;margin:0}
 <body>
 <div class="phone" id="ph" data-mode="user">
   <div class="hd">
-    <span class="logo">まち頼</span><span class="beta">テスト版</span>
+    <span class="logo">まち頼</span><button class="chip" id="chip" aria-haspopup="dialog" aria-label="モードを切り替える"><span>依頼者モード</span> ▾</button><span class="beta">テスト版</span>
     <span class="sp"></span>
     <button class="bell" id="qaBtn" aria-label="運営への問い合わせ"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.2a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.4M12 14.2v.1"/></svg></button>
     <button class="bell" id="bell" aria-label="お知らせ"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><b id="bellN"></b></button>
@@ -664,6 +664,9 @@ function inquiry(){
     api('inquiry',{type:r.value,body:b}).then(function(){toast('送信しました');inquiry();}).catch(fail);};
 }
 $('qaBtn').onclick=inquiry;
+var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','一般の依頼に立候補して仕事を受ける（見本）','#2F6B45'],['member','会員ページ','会員どうしで仕事を頼む・受ける（見本）','#2B4C7E']];
+$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.map(function(x){return '<button type="button" class="opt'+(x[0]==='user'?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]==='user'?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">Proモードと会員ページは、いまは見本の画面です（準備中）。</p>');
+  each('.opt',sheet,function(b){b.onclick=function(){if(b.dataset.k==='user'){closeSheet();return;}try{localStorage.setItem('machiyori_mode',b.dataset.k);}catch(e){}location.href='mode.html';};});};
 
 boot();
 })();

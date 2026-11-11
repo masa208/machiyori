@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>まち頼（テスト版）</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* レイアウト：左に試作のスマホ、右にルール。モードは工務店の現場で使う「木札」に見立て、ここだけを印象的にする。ほかは線で区切る静かなリスト */
+:root{--bg:#F4F3EF;--card:#fff;--ink:#28332D;--sub:#6A776F;--line:#E2E6E3;--acc:#C94A28}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1f1d;--card:#252a27;--ink:#e6ebe8;--sub:#a3aea8;--line:#39403c;--acc:#f08a68;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1f1d;--card:#252a27;--ink:#e6ebe8;--sub:#a3aea8;--line:#39403c;--acc:#f08a68;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","Noto Sans JP","Noto Sans CJK JP",sans-serif;line-height:1.75}
+main{max-width:1040px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px))}
+h1{font-size:24px;margin:0 0 2px;text-wrap:balance}.lead{color:var(--sub);font-size:14px;margin:0 0 24px}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:32px;align-items:start}.grid>*{min-width:0}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+h2{font-size:17px;margin:0 0 10px}
+.pane{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;font-size:14px}
+.pane ul{margin:4px 0;padding-left:1.2em}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.who button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:5px 12px;cursor:pointer}
+.who button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc);font-weight:700}
+.who button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.wrap{display:flex;justify-content:center}
+
+/* ===== スマホ（常に明るい表示） ===== */
+.phone{--m:#E8613C;--ml:#FDECE6;--tx:#23302A;--sb:#6E7D75;--bd:#E3E6E2;--wood:#D8BC8C;--wood2:#C4A270;--paper:#F3F4F1;
+ position:relative;width:100%;max-width:375px;height:740px;background:var(--paper);color:var(--tx);border-radius:28px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);line-height:1.6}
+.phone *{box-sizing:border-box}
+.phone[data-mode="pro"]{--m:#2F6B45;--ml:#E6F1EA}
+.phone[data-mode="member"]{--m:#2B4C7E;--ml:#E6ECF5}
+.hd{display:flex;align-items:center;gap:10px;padding:10px 14px 12px;background:#fff;box-shadow:inset 0 -4px 0 var(--m)}
+.logo{font-weight:900;font-size:17px;color:var(--m)}
+.chip{position:relative;display:flex;align-items:center;gap:5px;font:inherit;font-size:12.5px;font-weight:700;color:#3A2A14;background:linear-gradient(180deg,var(--wood),var(--wood2));border:0;border-left:5px solid var(--m);border-radius:3px 6px 6px 3px;padding:5px 10px 5px 16px;cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.chip::before{content:"";position:absolute;left:5px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#7a5a2e;box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
+.chip:focus-visible,.bell:focus-visible,.nav button:focus-visible,.opt:focus-visible{outline:2px solid var(--m);outline-offset:2px}
+.ex{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#D93A2B;color:#fff;font-size:11px;font-weight:900;line-height:1}
+.sp{flex:1}
+.bell{position:relative;border:0;background:none;cursor:pointer;padding:4px}
+.bell svg{width:22px;height:22px;fill:none;stroke:var(--m);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.bell b{position:absolute;top:0;right:-2px;min-width:16px;height:16px;border-radius:8px;background:#D93A2B;color:#fff;font-size:10px;line-height:16px;text-align:center;padding:0 4px}
+.scr{position:absolute;top:58px;left:0;right:0;bottom:62px;overflow-y:auto;padding:14px}
+.nav{position:absolute;left:0;right:0;bottom:0;height:62px;display:flex;background:#fff;border-top:1px solid var(--bd)}
+.nav button{flex:1;border:0;background:none;font:inherit;font-size:10px;color:var(--sb);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.nav button.on{color:var(--m);font-weight:700}
+.nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sec{font-size:13px;font-weight:700;margin:16px 2px 8px;display:flex;justify-content:space-between}
+.sec small{font-weight:400;color:var(--sb)}
+.card{background:#fff;border-bottom:1px solid var(--bd);padding:11px 4px;font-size:13px}
+.card:first-of-type{border-top:1px solid var(--bd)}
+.list{background:#fff;border-radius:10px;padding:0 10px;margin-bottom:6px}
+.card b{display:block;font-size:14px}
+.meta{color:var(--sb);font-size:11.5px;display:flex;flex-wrap:wrap;gap:0 10px}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--m);background:var(--ml);border-radius:6px;padding:1px 6px;margin-right:4px}
+.stats{display:flex;background:#fff;border-radius:10px;overflow:hidden}
+.stat{flex:1;padding:9px 6px;text-align:center;font-size:11px;color:var(--sb)}
+.stat+.stat{border-left:1px solid var(--bd)}
+.stat b{font-size:16px;color:var(--tx);font-variant-numeric:tabular-nums;margin-right:3px}
+.hello{display:flex;gap:10px;align-items:flex-end;background:linear-gradient(180deg,#cfe3f3,#f4efe4);border-radius:14px;padding:12px 12px 0;overflow:hidden}
+.hello img{height:110px}
+.hello p{margin:0 0 14px;background:rgba(255,255,255,.85);border:2px solid #222;border-radius:50%/48%;padding:12px 14px;font-weight:700;font-size:13px;text-align:center}
+.ask{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:10px}
+.ask .in{display:flex;border:2px solid var(--m);border-radius:22px;padding:4px 4px 4px 12px;font-size:13px;color:#9aa49e;align-items:center}
+.ask .in span{flex:1}.ask .in i{font-style:normal;background:var(--m);color:#fff;border-radius:18px;padding:6px 12px;font-weight:700}
+.note{font-size:11.5px;color:var(--sb);text-align:center;margin-top:10px}
+
+/* 切り替えの一覧（下から出る） */
+.shade{position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;padding:10px 14px 18px;transform:translateY(100%);transition:transform .32s cubic-bezier(.2,1.3,.4,1);z-index:10}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.open .shade{opacity:1;pointer-events:auto}.open .sheet{transform:none}
+.grab{width:40px;height:4px;border-radius:2px;background:#d5dbd7;margin:0 auto 10px}
+.sheet h3{font-size:14px;margin:0 0 8px}
+.rail{position:relative;padding-top:6px}
+.rail::before{content:"";position:absolute;left:4px;right:4px;top:0;height:6px;border-radius:3px;background:linear-gradient(180deg,#9b7a48,#7a5a2e)}
+.opt{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:linear-gradient(180deg,#F1E4CB,#E6D2AC);border:0;border-left:8px solid var(--m);border-radius:3px 8px 8px 3px;padding:12px 12px 12px 14px;margin-top:14px;cursor:pointer;color:#2E2414;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.opt::before{content:"";position:absolute;left:28px;top:-14px;width:2px;height:14px;background:#7a5a2e}
+.opt .sw{display:none}
+.opt .t{flex:1;font-size:12px;color:#6b5a3e}.opt .t b{display:block;font-size:15px;color:#2E2414;letter-spacing:.04em}
+.opt .n{min-width:20px;height:20px;border-radius:10px;background:#D93A2B;color:#fff;font-size:11px;text-align:center;line-height:20px;padding:0 6px}
+.opt.cur{transform:translateX(6px);box-shadow:0 2px 0 rgba(0,0,0,.12),0 0 0 2px var(--m)}
+.dl{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;font-weight:700;color:#B4321F}
+.opt .ck{font-size:11.5px;font-weight:700;color:#fff;background:var(--m);border-radius:10px;padding:2px 8px}
+.bdg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;color:#2B4C7E;background:#E6ECF5}.bdg.soon{color:#fff;background:#E39B1B}.bdg.today{color:#fff;background:#D93A2B}.bdg.none{color:var(--sb);background:#e6eae8}.bdg.past{color:#2F6B45;background:#E6F1EA}.bdg.end{color:#fff;background:#8a948f}
+.bl1{display:flex;align-items:center;gap:6px;margin-bottom:2px}.dlx{font-size:11px;color:var(--sb)}
+.kw0{margin:0}.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sb);margin:6px 4px 0}.chk input{margin:0;accent-color:var(--m)}
+.ctl{display:flex;align-items:center;gap:8px;margin:10px 0 8px}.seg{display:flex;flex:1;background:#fff;border:1px solid var(--bd);border-radius:9px;padding:2px}.seg button{flex:1;font:inherit;font-size:12px;border:0;background:none;color:var(--sb);border-radius:7px;padding:5px 0;cursor:pointer}.seg button[aria-pressed="true"]{background:var(--m);color:#fff;font-weight:700}
+.ctl select{font:inherit;font-size:12px;color:var(--tx);border:1px solid var(--bd);border-radius:9px;background:#fff;padding:6px 4px}
+.pbox{width:100%;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:13.5px;color:var(--tx);background:#fff;border:1px solid var(--bd);border-radius:10px;padding:11px 12px;margin-top:10px;cursor:pointer}.pbox span{flex:1}.pbox small{display:block;font-size:11px;color:var(--sb);margin-top:1px}.pbox i{font-style:normal;font-size:20px;color:var(--sb)}
+.none0{text-align:center;padding:6px 0 4px}.clr{font:inherit;font-size:12.5px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:16px;padding:6px 14px;cursor:pointer}
+.lock{padding:10px;background:#f1f2f0;border-top:1px solid var(--bd);font-size:12.5px;color:var(--sb);text-align:center}
+.arw{flex:1;overflow-y:auto;padding:10px 12px}.adesc{font-size:11.5px;color:var(--sb);margin:0 0 8px;line-height:1.6}
+.dlf{background:#fff;border:1px solid #cdd4d0;border-radius:8px;padding:8px 10px;margin-top:3px}.dlf .rd{display:inline-flex!important;align-items:center;gap:4px;margin:0 14px 0 0!important;font-size:13.5px!important;font-weight:400!important;color:var(--tx)!important}.dlf .rd input{width:auto!important;margin:0!important;accent-color:var(--m)}.dlf .dld{display:block;width:100%;margin-top:6px;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:8px;padding:6px}.dlf .dld[hidden]{display:none}.dlf .hint{font-size:11px;color:var(--sb);margin:6px 0 0;line-height:1.55}
+.lab{font-size:12px;font-weight:700;color:var(--sb);margin-top:8px}
+.dlbox{width:100%}.dlbox .mph{display:block;margin-bottom:4px}.qk0{display:flex;gap:6px;margin-top:8px}.qk0 button{flex:1;font:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--m);border:0;border-radius:8px;padding:8px;cursor:pointer}.qk0 button.g{background:#e6eae8;color:var(--sb)}
+.cvt{display:flex;align-items:center;gap:8px;margin-bottom:8px}.seg2{display:flex;background:#fff;border:1px solid var(--bd);border-radius:9px;padding:2px}.seg2 button{font:inherit;font-size:12px;border:0;background:none;color:var(--sb);border-radius:7px;padding:5px 10px;cursor:pointer}.seg2 button[aria-pressed="true"]{background:var(--m);color:#fff;font-weight:700}
+.gsync{margin-left:auto;font:inherit;font-size:11px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:14px;padding:6px 9px;cursor:pointer}
+.cwk{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 6px}.cwk b{font-size:15px}.ca{border:0;background:none;font-size:24px;color:var(--m);cursor:pointer;line-height:1;padding:0 8px}
+.lgd{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:var(--sb);margin:0 0 6px}.lgd span{display:inline-flex;align-items:center;gap:3px}.lgd i{width:12px;height:10px;border-radius:3px;display:inline-block;padding:0}
+.ev{font:inherit;border:0;cursor:pointer;color:#fff}.ev.fix{background:#2F6B45}.ev.prop{background:rgba(47,107,69,.12);color:#2F6B45;border:1.5px dashed #2F6B45}.ev.work{background:#C4772B}.ev.money{background:#2B4C7E}.ev.resume{background:#fff;color:#8A5A9E;border:1.5px solid #8A5A9E}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;border-radius:6px;padding:1px 7px}
+.cg{background:#fff;border-radius:10px;border:1px solid var(--bd);overflow:hidden}.cr{display:grid;grid-template-columns:34px repeat(7,1fr)}.ch span{text-align:center;font-size:10px;color:var(--sb);padding:4px 0;border-bottom:1px solid var(--bd)}.ch b{display:block;font-size:14px;color:var(--tx)}.ch .su b{color:#C0392B}.ch .sa b{color:#2B6CB0}.ch .td{background:var(--ml)}.ch .td b{color:var(--m)}
+.cad>span{border-bottom:1px solid var(--bd);border-left:1px solid #eef0ee;padding:2px 1px;min-height:22px;display:flex;flex-direction:column;gap:2px}.cad .tl{font-size:9.5px;color:var(--sb);display:flex;align-items:center;justify-content:center;border-left:0}.ad{font-size:9.5px;font-weight:700;border-radius:4px;padding:1px 0;width:100%}
+.cb{position:relative;display:grid;grid-template-columns:34px repeat(7,1fr);background:repeating-linear-gradient(#fff 0 29px,#eef0ee 29px 30px)}.tcol{position:relative}.tcol span{position:absolute;right:3px;font-size:9px;color:var(--sb);transform:translateY(-1px)}.dcol{position:relative;border-left:1px solid #eef0ee}
+.tm{position:absolute;left:1px;right:1px;font-size:9.5px;font-weight:700;border-radius:4px;padding:2px 1px;line-height:1.2;text-align:center;overflow:hidden}.tm small{display:block;font-size:8.5px;font-weight:400}.tm.prop{z-index:1}.tm.wn2{left:50%;box-shadow:0 0 0 1.5px #D93A2B}
+.sp{font-size:13px;line-height:1.7;margin:8px 0}.sp.s2{font-size:12px;color:var(--sb)}
+.ppd{background:#fff;border-radius:12px;padding:12px;margin-bottom:6px}.pdt{font-size:12px;color:var(--sb);margin:8px 0 0}.pdt b{display:block;font-size:19px;color:var(--tx);margin-top:2px}
+.pch{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.pch button{font:inherit;font-size:13px;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:18px;padding:7px 12px;cursor:pointer}.pch button[aria-pressed="true"]{border-color:var(--m);background:var(--ml);color:var(--m);font-weight:700}
+.pdtf{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-top:10px}.pdtf[hidden]{display:none}.pdtf label{font-size:12px;font-weight:700;color:var(--sb)}.pdtf input{display:block;width:100%;margin-top:3px;font:inherit;font-size:15px;border:1px solid #cdd4d0;border-radius:8px;padding:7px;background:#fff}
+.pdsum{font-size:13px;background:#fff;border-radius:10px;padding:10px;margin:10px 0 0;line-height:1.6}.pdsum:empty{display:none}.pdsum small{color:var(--sb)}
+.big:disabled{opacity:.4;cursor:default}
+.scr.flush{padding:0}
+.uh-news{display:flex;align-items:center;gap:8px;margin:8px 12px;padding:6px;background:#FDECE6;border-radius:10px;overflow:hidden}.uh-nl{flex-shrink:0;font-size:10.5px;font-weight:700;color:#fff;background:#C94A28;border-radius:6px;padding:2px 7px}.uh-nv{flex:1;min-width:0;overflow:hidden;white-space:nowrap;font-size:12px;color:#C94A28}.uh-nv span{display:inline-block;padding-left:100%;animation:uhtick 22s linear infinite}@keyframes uhtick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.uh-hero{position:relative;height:330px;overflow:hidden;background:#7fb6e6}.uh-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0%}
+.uh-clouds{position:absolute;left:0;right:0;top:0;height:42%;pointer-events:none;overflow:hidden}.uh-cl{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,.55) 55%,rgba(255,255,255,0));filter:blur(2px);animation:uhdrift linear infinite}.uh-cl::before,.uh-cl::after{content:"";position:absolute;border-radius:50%;background:inherit}.uh-cl::before{width:60%;height:90%;left:-30%;top:20%}.uh-cl::after{width:70%;height:100%;right:-35%;top:10%}
+.uh-cl.c1{width:120px;height:44px;top:2px;animation-duration:48s;animation-delay:-6s;opacity:.85}.uh-cl.c2{width:90px;height:32px;top:28px;animation-duration:62s;animation-delay:-30s;opacity:.7}.uh-cl.c3{width:150px;height:50px;top:10px;animation-duration:75s;animation-delay:-52s;opacity:.6}.uh-cl.c4{width:70px;height:26px;top:46px;animation-duration:55s;animation-delay:-18s;opacity:.6}
+@keyframes uhdrift{from{transform:translateX(-200px)}to{transform:translateX(560px)}}
+@media (prefers-reduced-motion:reduce){.uh-cl{animation:none;transform:translateX(120px)}.uh-nv span{animation:none;padding-left:0}}
+.uh-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,45,.45) 0%,rgba(10,30,45,0) 32%,rgba(10,30,45,0) 50%,rgba(10,30,45,.6) 100%)}
+.uh-chara{position:absolute;left:32px;bottom:16px;height:146px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.3))}
+.uh-bub{position:absolute;left:144px;right:18px;bottom:76px;z-index:4;padding:18px 16px;text-align:center;background:rgba(255,255,255,.81);border:2px solid #222;border-radius:50% 50% 48% 52% / 52% 48% 52% 48%;font-weight:700;font-size:13px;line-height:1.65;white-space:nowrap;letter-spacing:.02em;color:#222;cursor:pointer}.uh-bub:focus-visible{outline:3px solid #E8613C;outline-offset:3px}
+.uh-bub::after{content:"";position:absolute;left:-28px;top:50%;margin-top:-6px;width:30px;height:26px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='26' viewBox='0 0 30 26'%3E%3Cpath d='M30 3 L1 22 L30 15' fill='rgba(255,255,255,0.81)' stroke='%23222' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat}
+.uh-tap{display:block;margin-top:4px;font-size:10.5px;font-weight:700;color:#C94A28;letter-spacing:.04em}
+.uh-copy{position:absolute;left:16px;right:124px;top:14px;color:#fff;font-size:18px;white-space:nowrap;font-weight:700;line-height:1.5;text-shadow:0 2px 8px rgba(0,0,0,.55)}
+.uh-wx{position:absolute;right:14px;top:10px;z-index:3;width:108px;padding:7px 9px 8px;border-radius:12px;background:rgba(15,35,50,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font-size:10.5px;line-height:1.35;text-shadow:0 1px 3px rgba(0,0,0,.4)}.uh-wd{font-weight:700;font-size:11px;display:flex;justify-content:space-between}.uh-wm{display:flex;align-items:center;gap:6px;margin:3px 0 4px}.uh-wt{font-size:15px;font-weight:700}.uh-wt small{font-size:11px;font-weight:400;opacity:.85}.uh-wr{display:grid;grid-template-columns:auto 1fr;column-gap:6px;border-top:1px solid rgba(255,255,255,.35);padding-top:4px}.uh-wr b{text-align:right}
+.uh-ask{background:#fff;margin:-8px 12px 0;position:relative;border-radius:18px;padding:14px;box-shadow:0 5px 18px rgba(0,0,0,.12)}.uh-at{font-size:15px;font-weight:700;margin-bottom:8px}
+.uh-in{display:flex;gap:6px;align-items:center;border:2px solid #E8613C;border-radius:24px;padding:4px 4px 4px 12px;background:#fff}.uh-in input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:14px;color:var(--tx);background:transparent}.uh-send{border:0;background:#E8613C;color:#fff;font:inherit;font-size:13px;font-weight:700;padding:8px 14px;border-radius:19px;cursor:pointer;white-space:nowrap}
+.uh-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.uh-chip{font:inherit;font-size:11.5px;color:#2F6B45;background:#E8F2EA;border:1px solid #D7E6DB;border-radius:12px;padding:4px 10px;cursor:pointer}
+.uh-body{padding:0 14px 18px}.uh-sec{display:flex;align-items:center;gap:7px;margin:20px 2px 10px;font-size:14px;font-weight:700}.uh-sec:before{content:"";width:3px;height:14px;background:#E8613C;border-radius:2px}
+.uh-search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--bd);border-radius:22px;padding:9px 14px;font-size:13px;color:#A3ADA7}
+.uh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.uh-t{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:9px 3px;text-align:center;font-size:10px;line-height:1.3;min-height:60px}.uh-t b{display:block;font-size:21px;margin-bottom:3px;font-weight:400}
+.cbt{padding-left:36px;background:none!important;border:0!important}.cbt button.pri{background:var(--m);color:#fff;border-color:var(--m)}
+.mg.wide{max-width:94%}.sht{background:#fff;border:1.5px solid var(--m);border-radius:12px;padding:8px 10px;font-size:12.5px;flex:1}.sht-h{font-weight:700;color:var(--m);font-size:12px;margin-bottom:4px}.sht-r{display:grid;grid-template-columns:7.5em 1fr;gap:6px;padding:4px 0;border-top:1px solid var(--bd)}.sht-r span{color:var(--sb);font-size:11.5px}.sht-r b{font-weight:500}.sht-p{display:flex;gap:4px;margin-top:6px}.sht-p img{width:56px;height:56px;object-fit:cover;border-radius:6px}
+.phb{font-size:12.5px;color:#fff;background:var(--m);border:1.5px solid var(--m);border-radius:16px;padding:5px 11px;cursor:pointer;font-weight:700}
+.kebab{margin-left:auto;border:0;background:none;color:#fff;font-size:22px;line-height:1;width:34px;height:30px;cursor:pointer;letter-spacing:-1px}
+.stp{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 6px 8px;margin-bottom:8px}.stp span{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:#9aa5a0;position:relative;text-align:center;line-height:1.2}.stp i{width:12px;height:12px;border-radius:50%;background:#dfe4e1;position:relative;z-index:1}.stp span+span::before{content:"";position:absolute;top:5px;right:50%;width:100%;height:2px;background:#dfe4e1}.stp .dn i,.stp .dn::before,.stp .cur::before{background:var(--m)}.stp .cur i{background:#fff;box-shadow:0 0 0 3px var(--m)}.stp .cur{color:var(--m);font-weight:700}.stp .dn{color:var(--tx)}
+.todo1{display:block;width:100%;text-align:left;font:inherit;font-size:13px;color:var(--tx);background:#FFF4EC;border:1.5px solid var(--m);border-radius:12px;padding:10px 12px;margin-bottom:4px;cursor:pointer;line-height:1.55}.todo1 b{display:block;font-size:11px;color:var(--m)}.todo1.pp{cursor:default;border-color:#8A5A9E;background:#F5EEF8}.todo1.pp b{color:#8A5A9E}.t1b{display:flex;gap:6px;margin-top:6px}.t1b button{font:inherit;font-size:12px;font-weight:700;border:1px solid #8A5A9E;background:#fff;color:#8A5A9E;border-radius:14px;padding:4px 10px;cursor:pointer}
+.vc .vhd{display:flex;align-items:center;gap:6px}.vc .vhd b{font-size:14px}.vst{font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;background:#e6eae8;color:var(--sb)}.vst.hot{background:var(--m);color:#fff}.vst.ok{background:#2F6B45;color:#fff}.unr{margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#D93A2B;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}.lm{display:block;font-size:12px;color:var(--sb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.vc.off{opacity:.55}
+.sdet{margin-top:12px}.sdet summary{font-size:13px;font-weight:700;color:var(--m);cursor:pointer;padding:6px 2px}.sdet .sht{border-color:var(--bd)}
+.kbm{list-style:none;margin:0;padding:0}.kbm button{width:100%;text-align:left;font:inherit;font-size:14.5px;font-weight:700;color:var(--tx);background:none;border:0;border-bottom:1px solid var(--bd);padding:12px 2px;cursor:pointer}.kbm small{display:block;font-size:11.5px;font-weight:400;color:var(--sb)}.kbm .dng{color:#C0392B}
+.pc{align-self:stretch;background:#fff;border:1.5px solid var(--m);border-radius:12px;padding:10px 12px;font-size:12.5px}.pc-h{font-weight:700;color:var(--m);margin-bottom:4px}.pc dl{display:grid;grid-template-columns:6.5em 1fr;gap:3px 8px;margin:0 0 6px}.pc dt{color:var(--sb)}.pc dd{margin:0}.pc-s{font-size:12px;font-weight:700;margin:6px 0 2px}.pc-d{font-size:12px;color:var(--sb);margin-top:6px}.pc-t{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}.pc-t button{font:inherit;font-size:12.5px;font-weight:700;border:1.5px solid var(--m);color:var(--m);background:#fff;border-radius:8px;padding:4px 8px;cursor:pointer}.pc-no{margin-top:10px;width:100%;font:inherit;font-size:12.5px;color:var(--sb);background:#f3f5f4;border:0;border-radius:8px;padding:7px;cursor:pointer}.pc-ok{margin:6px 0 0;font-weight:700;color:#2F6B45}
+.pc.est .amt{font-size:24px;font-weight:700;margin:0 0 6px}.pc.est .amt small{font-size:12px;font-weight:400}.pc-b{display:flex;gap:6px}.pc-b button{flex:1;font:inherit;font-size:13px;font-weight:700;border:0;border-radius:8px;padding:9px;background:var(--m);color:#fff;cursor:pointer}.pc-b button.g{background:#e6eae8;color:var(--sb)}
+.ctr{background:#fff;border-top:1px solid var(--bd);padding:8px 10px}.tr{display:flex;align-items:center;gap:3px}.tr input{min-width:0}
+.todo1.inf{background:#fff;border-color:var(--bd)}.todo1.inf b{color:var(--sb)}.todo1.okk{cursor:default;border-color:#2F6B45;background:#EEF6F0}.todo1.okk b{color:#2F6B45}.todo1.okk .t1b button{border-color:#2F6B45;color:#2F6B45}.t1n{display:block;font-size:11px;color:var(--sb);margin-top:2px}
+.simb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1.5px dashed #b9c2bd;border-radius:10px;padding:8px;margin:6px 0}.simb span{width:100%;font-size:10.5px;color:var(--sb)}.simb button{font:inherit;font-size:11.5px;border:1px solid #b9c2bd;background:#fff;color:var(--tx);border-radius:12px;padding:4px 9px;cursor:pointer}
+.amt2{margin:2px 0 6px;font-size:14px}.amt2 s{color:var(--sb)}.amt2 b{font-size:18px}.pc-n{font-size:11.5px;color:var(--sb);margin:4px 0 6px}.ph0{display:inline-flex;width:56px;height:42px;margin-right:4px;border-radius:6px;background:#e6eae8;color:var(--sb);font-size:10px;align-items:center;justify-content:center}
+.rvw textarea{display:block;width:100%;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:8px;padding:8px;margin-top:4px}.stars{display:flex;gap:6px;margin:4px 0 12px}.stars button{font-size:34px;line-height:1;border:0;background:none;color:#d5dad7;cursor:pointer;padding:0}.stars button.on{color:#F2A900}
+.gbox{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px;margin:10px 0}.gbox b{font-size:14px}
+.mp{padding:0}.mpp{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:12px}.mpp b{font-size:16px;display:block}.mpp small{font-size:11.5px;color:var(--sb)}
+.ond{background:#fff;border-radius:12px;padding:12px;margin-top:8px}.ond-h{display:flex;gap:10px;align-items:center}.ond-h img{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--ml)}.ond-h small{display:block;font-size:11px;color:var(--sb)}.ond-h b{font-size:16px;color:var(--m)}
+.ond-bar{height:8px;border-radius:4px;background:#eceeed;margin:10px 0 4px;overflow:hidden}.ond-bar i{display:block;height:100%;background:var(--m);border-radius:4px}.ond-s{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sb)}.ond-s .on{color:var(--m);font-weight:700}.ond-n{font-size:11px;color:var(--sb);margin:6px 0 0}
+.pv{padding:11px 4px}.pv b{font-size:14px}.pvs{display:inline-block;font-size:10.5px;font-weight:700;color:#2F6B45;background:#E8F2EA;border-radius:6px;padding:0 6px;margin-top:4px}.pvs.ro{color:var(--sb);background:#e6eae8}.pvb{display:flex;gap:6px;margin-top:8px}.pvb button{flex:1;font:inherit;font-size:12.5px;font-weight:700;border:1.5px solid var(--m);color:var(--m);background:#fff;border-radius:8px;padding:6px;cursor:pointer}.pvb button.pri{background:var(--m);color:#fff}
+.mset{padding:0 12px}.mrow{display:flex;align-items:center;gap:8px;width:100%;font:inherit;font-size:13.5px;color:var(--tx);background:none;border:0;border-bottom:1px solid var(--bd);padding:12px 0;text-align:left;cursor:pointer}.mrow:last-child{border-bottom:0}.mrow small{margin-left:auto;font-size:11.5px;color:var(--sb)}.mrow i{font-style:normal;color:var(--sb)}
+.chsel{display:flex;gap:8px}.chsel button{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;background:#fff;border:2px solid var(--bd);border-radius:12px;padding:12px 6px;cursor:pointer}.chsel button.on{border-color:var(--m);color:var(--m)}.chsel img,.chsel .cf{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--ml)}.chsel .cf{display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--m)}
+.nmi{display:block;width:100%;font:inherit;font-size:15px;border:1px solid #cdd4d0;border-radius:8px;padding:8px;margin:6px 0}
+.pnote{font-size:11.5px;color:var(--sb);text-align:center;background:#fff;border-top:1px solid var(--bd);padding:6px}.pnote button{font:inherit;font-size:11.5px;font-weight:700;color:var(--m);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}.t1b.cen{justify-content:center}.lock .t1b button{border-color:var(--m);color:var(--m)}
+.crow{display:flex!important;align-items:center;gap:10px}.av.sm{width:34px;height:34px;font-size:14px;flex-shrink:0}
+.nxt{font-size:12.5px;background:#fff;border:1.5px solid var(--m);border-radius:10px;padding:7px 10px;margin:0 0 4px;line-height:1.5}.nxt b{display:block;font-size:10.5px;color:var(--m)}
+.pstp{padding:8px 10px 0;background:var(--bg,#f3f5f4)}.pstp .stp{margin-bottom:6px}
+.flw{margin:4px 0 6px;padding-left:18px;font-size:12.5px}.flw li{margin:3px 0;color:var(--sb)}.flw li.on{color:var(--tx);font-weight:700}.flw small{display:block;font-weight:400;font-size:11px;color:var(--sb)}
+.pc.tsk{border-color:#D93A2B}.pc.tsk .pc-h{color:#D93A2B}
+.adinfo{font-size:12.5px;background:#fff;border-bottom:1px solid var(--bd);padding:8px 12px}.adinfo small{display:block;font-size:11px;color:var(--sb);margin-top:3px}
+.inv{display:block;margin-top:4px;font:inherit;font-size:11.5px;font-weight:700;color:var(--m);background:#fff;border:1.5px solid var(--m);border-radius:12px;padding:3px 10px;cursor:pointer}
+.pf2 select{display:block;width:100%;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:8px;padding:7px;margin-top:3px;background:#fff}
+.pc.add2{border-color:#2B6CB0}.pc.add2 .pc-h{color:#2B6CB0}.adn{margin:4px 0 8px;padding-left:16px;font-size:11.5px;color:var(--sb)}.adn li{margin:2px 0}
+.hch{display:flex;flex-direction:column;gap:8px}.hch button{text-align:left;font:inherit;background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:12px;cursor:pointer}.hch b{display:block;font-size:14.5px;color:var(--m)}.hch small{font-size:12px;color:var(--sb)}
+.pc.hlp{border-color:#2B6CB0}.pc.hlp .pc-h{color:#2B6CB0}.lnk{font-size:12px;background:#f1f4f8;border-radius:6px;padding:5px 8px;margin:0 0 6px;word-break:break-all}
+.ck{display:flex!important;align-items:flex-start;gap:6px;font-weight:700}.ck input{width:auto!important;margin:3px 0 0!important}
+.hcb{display:block;width:100%;text-align:left;font:inherit;font-size:12.5px;font-weight:700;color:#2B6CB0;background:#fff;border:1.5px solid #2B6CB0;border-radius:10px;padding:7px 10px;margin:0 0 4px;cursor:pointer}
+.hlpv{display:block;font-size:11.5px;color:#2B6CB0;font-weight:700;margin-top:3px}
+.qty{display:flex;flex-direction:column;gap:6px;margin:4px 0 10px}.rd2{display:flex!important;align-items:center;gap:8px;background:#fff;border:1px solid #cdd4d0;border-radius:8px;padding:9px 10px;font-size:14px!important;font-weight:400!important;color:var(--tx)!important;margin:0!important;cursor:pointer}.rd2 input{width:auto!important;margin:0!important;accent-color:var(--m)}.rd2:has(input:checked){border-color:var(--m);background:#FFF4EC}
+.qd{display:grid;grid-template-columns:3em 1fr;gap:4px 8px;font-size:13px;margin:6px 0 0}.qd dt{color:var(--sb)}.qd dd{margin:0;white-space:pre-wrap}
+.qrep{margin-top:6px;background:#F4F6F5;border-radius:8px;padding:7px 9px;font-size:12.5px;line-height:1.6}.qrep b{display:block;font-size:11px;color:var(--m)}
+.fab{position:absolute;right:16px;bottom:76px;width:58px;height:58px;border-radius:50%;border:0;background:var(--m);color:#fff;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;box-shadow:0 4px 12px rgba(0,0,0,.22);cursor:pointer;z-index:5}.fab span{font-size:24px;font-weight:700}.fab small{font-size:10px;font-weight:700;margin-top:2px}.fab:focus-visible{outline:2px solid var(--m);outline-offset:3px}
+.flow{color:var(--m);font-weight:700}
+.nmem{display:flex;gap:8px}.nm{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:0;border-radius:10px;padding:12px 6px;font:inherit;cursor:pointer}.nm b{font-size:12.5px}.nm small{font-size:11px;color:var(--sb)}.av{width:38px;height:38px;border-radius:50%;background:var(--ml);color:var(--m);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px}
+.post{width:100%;font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--m);border:0;border-radius:10px;padding:11px;cursor:pointer}
+.tabs{display:flex;gap:6px;margin:12px 0 8px}.tabs button{flex:1;font:inherit;font-size:13px;border:1px solid var(--bd);background:#fff;color:var(--sb);border-radius:8px;padding:7px;cursor:pointer}.tabs button[aria-selected="true"]{color:var(--m);border-color:var(--m);font-weight:700}
+.bp{display:block;width:100%;text-align:left;font:inherit;color:var(--tx);border:0;border-bottom:1px solid var(--bd);background:#fff;cursor:pointer}
+.ty{display:inline-block;font-size:10.5px;font-weight:700;border:1px solid;border-radius:6px;padding:0 6px;margin-right:4px}
+.ug{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:#D93A2B;border-radius:6px;padding:0 6px;margin-right:4px}
+.stb{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;border-radius:6px;padding:0 6px}
+.by{display:block;font-size:11px;color:var(--sb)}
+.empty{font-size:12.5px;color:var(--sb);text-align:center;padding:14px 0}
+.dh{display:flex;gap:4px}.dl2{display:grid;grid-template-columns:4.5em 1fr;gap:4px 8px;font-size:13px;margin:0 0 10px}.dl2 dt{color:var(--sb)}.dl2 dd{margin:0}
+.big{width:100%;font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--m);border:0;border-radius:10px;padding:11px;margin-top:8px;cursor:pointer}.big:disabled{background:#9AA49E;font-size:12.5px}
+.ghost{width:100%;font:inherit;font-size:13px;color:var(--sb);background:none;border:1px solid var(--bd);border-radius:10px;padding:9px;margin-top:8px;cursor:pointer}
+.sub{font-size:12px;font-weight:700;color:var(--sb);margin:8px 0 4px}
+.hr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px}.pick{font:inherit;font-size:12px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:8px;padding:5px 10px;cursor:pointer}
+.pf label{display:block;font-size:12px;font-weight:700;color:var(--sb);margin-top:8px}.pf input,.pf select,.pf textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:14px;color:var(--tx);border:1px solid #cdd4d0;border-radius:8px;padding:8px;background:#fff}
+.pf .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pf .ck2{display:flex;align-items:center;gap:6px;color:var(--tx);font-weight:400;font-size:13px}.pf .ck2 input{width:auto;margin:0}
+.tys{display:flex;flex-wrap:wrap;gap:6px}.tys button{font:inherit;font-size:12.5px;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:16px;padding:5px 10px;cursor:pointer}.tys button[aria-pressed="true"]{border-color:var(--m);color:var(--m);font-weight:700;background:var(--ml)}
+.sheet{max-height:86%;overflow-y:auto}
+.pane2{position:absolute;inset:0;background:#F3F5F4;z-index:8;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}.pane2.on{transform:none}
+.ph2{display:flex;align-items:center;gap:8px;background:var(--m);color:#fff;padding:10px 10px}.bk{border:0;background:none;color:#fff;font-size:24px;line-height:1;width:30px;cursor:pointer}
+.pt{display:flex;flex-direction:column;min-width:0}.pt b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pt span{font-size:10.5px;opacity:.85}
+.inf{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;background:#fff;border-bottom:1px solid var(--bd)}.lf{font-size:10.5px;color:var(--sb);border:1px solid var(--bd);border-radius:6px;padding:0 6px}
+.msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.mg{max-width:82%;align-self:flex-start}.mg.me{align-self:flex-end}.wn{font-size:10.5px;color:var(--sb);display:block;margin:0 0 2px 4px}
+.bb{background:#fff;border:1px solid var(--bd);border-radius:4px 12px 12px 12px;padding:7px 10px;font-size:13px;white-space:pre-wrap}.me .bb{background:var(--ml);border-color:transparent;border-radius:12px 4px 12px 12px}
+.bb img{display:block;max-width:180px;border-radius:8px;margin-bottom:4px}.mn{color:var(--m);font-weight:700}
+.sys{align-self:center;font-size:11px;color:var(--sb);background:#e6eae8;border-radius:10px;padding:2px 10px}
+.qk{display:flex;gap:6px;padding:6px 10px;background:#fff;border-top:1px solid var(--bd)}.qk button{flex:1;font:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--m);border:0;border-radius:8px;padding:8px;cursor:pointer}.qk button.g{background:#fff;color:var(--sb);border:1px solid var(--bd);font-weight:400}.qk button:disabled{background:#9AA49E}
+.cmp{display:flex;gap:6px;align-items:center;padding:8px 10px;background:#fff;border-top:1px solid var(--bd)}.cmp input#tx,.cmp input#atx{flex:1;min-width:0;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:18px;padding:7px 12px}
+.ic{font:inherit;font-size:12px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:14px;padding:6px 9px;cursor:pointer}.sd{font:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--m);border:0;border-radius:16px;padding:7px 12px;cursor:pointer}
+.mpick{position:absolute;left:10px;right:10px;bottom:58px;background:#fff;border:1px solid var(--bd);border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.15);padding:8px;display:flex;flex-wrap:wrap;gap:6px}.mpick[hidden]{display:none}.mpick button{font:inherit;font-size:12.5px;border:1px solid var(--bd);background:#fff;border-radius:14px;padding:4px 10px;cursor:pointer}.mph{width:100%;font-size:11.5px;font-weight:700;color:var(--sb)}
+.sbar{width:100%;display:flex;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--sb);background:#fff;border:1px solid #cdd4d0;border-radius:22px;padding:8px 14px;margin:0 0 10px;cursor:pointer;text-align:left}.sbar svg,.kw svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;flex:none}.sbar small{margin-left:auto;font-size:11px;color:#8a948f}
+.kw{display:flex;align-items:center;gap:8px;margin:10px 10px 0;background:#fff;border:1px solid #cdd4d0;border-radius:22px;padding:7px 12px;color:var(--sb)}.kw input{flex:1;border:0;outline:0;font:inherit;font-size:15px;background:none;min-width:0}
+.arch{width:100%;font:inherit;font-size:13px;color:var(--m);background:none;border:1px dashed var(--m);border-radius:10px;padding:9px;margin-top:10px;cursor:pointer}
+.srch{display:flex;align-items:flex-end;gap:6px;padding:10px;background:#fff;border-bottom:1px solid var(--bd);font-size:12px;color:var(--sb)}.srch label{display:flex;flex-direction:column;flex:1;font-weight:700}.srch input{font:inherit;font-size:13px;border:1px solid #cdd4d0;border-radius:8px;padding:6px;margin-top:2px}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.chs{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 8px}.chs button{font:inherit;font-size:12.5px;color:var(--m);background:#fff;border:1.5px solid var(--m);border-radius:16px;padding:5px 11px;cursor:pointer}
+.skip{font:inherit;font-size:12px;color:var(--sb);background:#fff;border:0;border-top:1px solid var(--bd);padding:8px;cursor:pointer;text-decoration:underline}
+.pf2{flex:1;overflow-y:auto;padding:4px 12px 12px}
+.choose{padding:16px 12px;display:flex;flex-direction:column;gap:12px}
+.cho{display:flex;gap:12px;align-items:center;text-align:left;font:inherit;background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:12px;cursor:pointer;color:var(--tx)}
+.cho:hover,.cho:focus-visible{border-color:var(--m)}.cho img{width:64px;height:64px;object-fit:cover;object-position:50% 8%;border-radius:50%;background:var(--ml);flex-shrink:0}
+.cho span{font-size:12px;color:var(--sb)}.cho b{display:block;font-size:15px;color:var(--tx);margin-bottom:2px}
+.fi{width:64px;height:64px;border-radius:50%;background:var(--ml);color:var(--m)!important;font-size:28px!important;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hav{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:#fff}
+.ai2{display:flex;gap:6px;align-items:flex-start}.av2{width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:#fff;border:1px solid var(--bd);flex-shrink:0}
+.rq,.op{font-style:normal;font-size:10px;font-weight:700;border-radius:5px;padding:0 5px;margin-left:4px}.rq{color:#fff;background:#D93A2B}.op{color:var(--sb);background:#e6eae8}
+.thumbs{display:flex;gap:6px;margin-top:6px}.tb{position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;background:#ddd}.tb img,.tb video{width:100%;height:100%;object-fit:cover}.tb button{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;line-height:20px;padding:0;cursor:pointer}
+.warn{font-size:11.5px;color:#B4321F;margin:4px 0 0}
+.cnt{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:6px;border-radius:11px;background:#e6eae8;color:var(--sb);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;padding:0 6px}
+.tabs button[aria-selected="true"] .cnt{background:var(--m);color:#fff}
+.nw{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.06em;color:#fff;background:#E39B1B;border-radius:6px;padding:0 6px;margin-right:4px}
+.bl{list-style:none;margin:0;padding:0}
+.tt{flex:1;display:flex;flex-direction:column}
+.dd{font-size:11.5px;color:var(--sb);display:flex;align-items:center;gap:4px;margin-top:2px}.dd.u{color:#B4321F;font-weight:700}.dd .ex{width:15px;height:15px;font-size:10px}
+.bell b.urg{background:#D93A2B}
+#todo b{background:#6E7D75}#todo b.urg{background:#D93A2B}.bl li{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.bl .mt{flex-shrink:0;font-size:10px;font-weight:700;color:#fff;border-radius:6px;padding:1px 6px;height:18px;margin-top:2px}
+/* テスト版：画面いっぱいに表示 */
+html,:root{color-scheme:light!important}body{background:#F3F4F1}
+main{max-width:none;padding:0}main>h1,main>.lead,.grid>div:last-child{display:none}
+.grid{display:block}.wrap{display:block}
+.phone{max-width:480px;height:100vh;height:100dvh;margin:0 auto;border-radius:0;box-shadow:none}
+.mkb{position:absolute;left:50%;transform:translateX(-50%);bottom:68px;z-index:7;font-size:10.5px;color:#fff;background:rgba(35,48,42,.8);border-radius:10px;padding:2px 9px;pointer-events:none}
+</style>
+</head>
+<body>
+<main>
+<h1>まち頼 モード切り替え（試作）</h1>
+<p class="lead">業者が「Proモード／会員ページ／依頼者モード」を1つのアプリで切り替える形の試作です。案件などはすべて例です。</p>
+<div class="grid">
+<div class="wrap">
+<div class="phone" id="ph" data-mode="pro">
+  <div class="hd">
+    <span class="logo">まち頼</span>
+    <button class="chip" id="chip" aria-haspopup="dialog" aria-label="モードを切り替える"><span id="chipT">Proモード</span><span class="ex" id="chipDot" hidden aria-label="ほかのモードに期限付きのタスクあり">！</span> ▾</button>
+    <span class="sp"></span>
+    <button class="bell" id="qaBtn" aria-label="運営への問い合わせ"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.2a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.4M12 14.2v.1"/></svg></button>
+    <button class="bell" id="bell" aria-label="お知らせ"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><b>4</b></button>
+    <button class="bell" id="todo" aria-label="やること"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><b id="todoN">3</b></button>
+  </div>
+  <div class="scr" id="scr"></div><div class="mkb">見本の画面です（データは例）</div>
+  <nav class="nav" id="nav"></nav>
+  <div class="shade" id="shade"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-label="モードの切り替え"></div>
+</div>
+</div>
+<div>
+<h2>試す人を選ぶ</h2>
+<div class="pane">表示されるモードは、その人の登録内容で変わります。
+<div class="who" role="group" aria-label="試す人">
+<button type="button" data-who="member" aria-pressed="true">会員の業者</button>
+<button type="button" data-who="pro" aria-pressed="false">一般の業者</button>
+<button type="button" data-who="user" aria-pressed="false">依頼者だけの人</button>
+</div></div>
+<h2>切り替えのルール</h2>
+<div class="pane"><ul>
+<li>画面の上の「◯◯モード ▾」を押すと、下から一覧が出て切り替えられる</li>
+<li>期限付きのタスクがあるモードには、一覧に「！」と残り時間を表示する。ほかのモードに期限付きのタスクがあると、上のラベルにも「！」が付く</li>
+<li>モードごとに色と下のメニューが丸ごと変わる（依頼者＝つつじ色、Pro＝緑、会員ページ＝紺）</li>
+<li>次に開いたときは、最後に使ったモードで始まる</li>
+<li>右上のベルは「お知らせ」（運営からのお知らせと、見積もりが届いたなどの出来事）</li>
+<li>右上のチェックマークは「やること」（返信、見積もりへの返事、完了確認など）。どのモードの分もまとめ、モードの印を付ける</li>
+<li>「！」は期限が迫っているもの。やることの項目と、モードの木札の両方に付く</li>
+</ul></div>
+<h2>表示の条件</h2>
+<div class="pane"><ul>
+<li>会員の業者：Proモード／会員ページ／依頼者モード。一般の業者：Proモード／依頼者モード</li>
+<li>会員ページは、運営が会員の印を付けた人にだけ表示する</li>
+<li>依頼者だけの人には、モードのラベル自体を出さない（マイページに「業者として登録する」）</li>
+<li>会員ページは「相談の掲示板」。種類のタグは付けず、投稿は会員全員に通知。必須はタイトルと内容だけ</li>
+<li>一覧はタブで分けず1つ。上から検索 → 絞り込み（すべて／期限あり／期限なし）と並び替え（新着順／締切が近い順）→ 案件 → 過去の案件。「過去の案件も含める」で検索範囲を広げられる</li><li>期限なしの投稿は1か月で「過去の案件」へ移る（募集は続く）。期限ありは最長3か月で、期限まで一覧に出る。期限が来たら募集終了。試作の「いま」は11/7 15:00</li>
+<li>投稿は、最初に「チャットで相談しながら作る」か「フォームに直接書く」かを選ぶ。チャットでは建築士のお姉さんが「どんなことで相談しますか？」と聞き、要件を整理してフォーム（相談タイトルと相談内容・背景は必須。どうしてほしいか／希望時期（日時）／場所（自由入力）／予算の希望／写真・動画3つまでは任意）にまとめる。試作の返事は固定の流れ</li>
+<li>案件を開くと、会員なら誰でもコメント・メンション（@）・画像の投稿ができるスレッドになり、過去のやり取りをさかのぼれる</li>
+<li>下のメニューの「会員」から一覧を開き、特定の会員と1対1でチャットできる</li>
+<li>自分の投稿（ミニユンボ）で「期限を変更」「募集を終了する」を試せます。募集終了の案件には、やり取りしていない会員は新しく問い合わせできません</li>
+</ul></div>
+</div>
+</div>
+</main>
+<script>
+(function(){
+  var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),sheet=document.getElementById('sheet');
+  var who='member',mode='pro';
+  try{var s=localStorage.getItem('machiyori_mode');if(s)mode=s;}catch(e){}
+  var I={cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><rect x="13" y="13" width="4" height="4" rx=".5"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',list:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',me:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',job:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',run:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',ppl:'<circle cx="9" cy="9" r="3.2"/><circle cx="17" cy="10" r="2.6"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M14 19a4 4 0 0 1 7 0"/>'};
+  var M={
+    user:{name:'依頼者モード',desc:'自分の家の困りごとを相談・依頼する',color:'#E8613C',due:'見積もりの返事 あと1日',
+      nav:[['home','ホーム'],['list','依頼'],['chat','チャット'],['me','マイページ']],
+      html:'<div class="hello"><img src="chara.png" alt="建築士のお姉さん"><p>朝晩、冷え込むように<br>なりましたね。<br>冬じたく、始めてます？</p></div><div class="ask"><div style="font-weight:700;font-size:13px;margin-bottom:6px">ほかに気になっていることがある</div><div class="in"><span>例：窓からすきま風が入る</span><i>相談する</i></div></div><div class="sec">進行中の依頼 <small>1件</small></div><div class="list"><button type="button" class="card bp" id="caseB"><span class="tag">見積もり到着</span><b>キッチンの水栓の交換</b><span class="meta">業者2社と交渉中</span></button></div>'},
+    pro:{name:'Proモード',desc:'一般の依頼に立候補して仕事を受ける',color:'#2F6B45',due:'返信期限 あと5時間',
+      nav:[['job','案件'],['run','進行中'],['cal','カレンダー'],['chat','チャット'],['me','マイページ']],
+      html:'<div class="stats"><div class="stat"><b>3</b>新着</div><div class="stat"><b>2</b>交渉中</div><div class="stat"><b>1</b>調査中</div></div><div class="sec">新着の案件 <small>大分類とエリアが一致</small></div><div class="list"><div class="card"><span class="tag">新着</span><b>雨どいの修理（例）</b><span class="meta"><span>松本市</span><span>一戸建て</span><span>2時間前</span><span>交渉中 1社</span></span></div><div class="card"><span class="tag">新着</span><b>給湯器の交換（例）</b><span class="meta"><span>塩尻市</span><span>一戸建て</span><span>5時間前</span><span>交渉中 0社</span></span></div><div class="card"><b>庭木の剪定（例）</b><span class="meta"><span>安曇野市</span><span>一戸建て</span><span>昨日</span><span>交渉中 3社</span></span></div></div><div class="sec">今月のお支払い（見込み）</div><div class="list"><div class="card"><b style="font-variant-numeric:tabular-nums">4,800円</b><span class="meta"><span>立候補料 3件</span><span>紹介手数料 1件</span><span>11月10日ごろ決済</span></span></div></div>'},
+    member:{name:'会員ページ',desc:'会員どうしで仕事を頼む・受ける',color:'#2B4C7E',due:'',
+      nav:[['job','案件'],['ppl','会員'],['chat','チャット'],['me','マイページ']],
+      html:'<div class="sec">会員からの依頼 <small>仮の内容</small></div><div class="list"><div class="card"><span class="tag">協力依頼</span><b>外壁塗装の足場（例）</b><span class="meta"><span>元請けの会員から</span><span>松本市</span><span>来週</span></span></div><div class="card"><b>電気工事の手伝い（例）</b><span class="meta"><span>安曇野市</span><span>今月中</span></span></div></div><div class="note">会員ページの中身は相談中のため、試作では仮の表示です</div>'}
+  };
+  function avail(){return who==='member'?['user','pro','member']:who==='pro'?['user','pro']:['user'];}
+  function render(){
+    var of=document.getElementById('fab');if(of)of.remove();
+    var a=avail();if(a.indexOf(mode)<0)mode=a.indexOf('pro')>=0?'pro':'user';
+    var m=M[mode];ph.dataset.mode=mode;
+    document.getElementById('chipT').textContent=m.name;
+    document.getElementById('chip').hidden=a.length<2;
+    var other=a.some(function(k){return k!==mode&&M[k].due;});document.getElementById('chipDot').hidden=!other;
+    scr.classList.toggle('flush',mode==='user');
+    if(mode==='member'){scr.innerHTML='';}else if(mode==='user'){scr.innerHTML=userHomeHTML();}else{scr.innerHTML=m.html;}
+    nav.innerHTML=m.nav.map(function(n,i){return '<button type="button" class="'+(i===0?'on':'')+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
+    if(mode==='member')renderMember();
+    if(mode==='user'){bindUserHome();Array.prototype.forEach.call(nav.querySelectorAll('button'),function(b,i){b.onclick=function(){Array.prototype.forEach.call(nav.querySelectorAll('button'),function(x,j){x.classList.toggle('on',j===i);});scr.scrollTop=0;scr.classList.toggle('flush',i===0);if(i===0){scr.innerHTML=userHomeHTML();bindUserHome();}else if(i===1)renderUserCases();else if(i===2)renderUserChats();else renderUserMy();};});}
+    if(mode==='pro')Array.prototype.forEach.call(nav.querySelectorAll('button'),function(b,i){b.onclick=function(){Array.prototype.forEach.call(nav.querySelectorAll('button'),function(x,j){x.classList.toggle('on',j===i);});if(i===2)renderProCal();else if(i===1)renderProRun();else if(i===0)scr.innerHTML=M.pro.html;};});
+    sheet.innerHTML='<div class="grab"></div><h3>モードを切り替える</h3><div class="rail">'+a.map(function(k){var x=M[k];return '<button type="button" class="opt'+(k===mode?' cur':'')+'" data-k="'+k+'" style="--m:'+x.color+'"><span class="sw" style="background:'+x.color+'"></span><span class="t"><b>'+x.name+'</b>'+x.desc+(x.due?'<span class="dl"><span class="ex">！</span>'+x.due+'</span>':'')+'</span>'+(k===mode?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div>';
+    MSH=sheet.innerHTML;bindModeOpts();
+    if(typeof counts==='function')counts();
+  }
+  function open(){ph.classList.add('open');setTimeout(function(){var f=sheet.querySelector('.opt.cur')||sheet.querySelector('.opt');if(f){try{f.focus({preventScroll:true});}catch(e){}}},300);}
+  function close(){ph.classList.remove('open');}
+  var MSH='';function bindModeOpts(){Array.prototype.forEach.call(sheet.querySelectorAll('.opt'),function(b){b.onclick=function(){if(b.dataset.k==='user'){try{localStorage.setItem('machiyori_mode','user');}catch(e){}location.href='beta.html';return;}mode=b.dataset.k;try{localStorage.setItem('machiyori_mode',mode);}catch(e){}close();if(typeof pane!=='undefined'&&pane)pane.classList.remove('on');render();};});}
+  document.getElementById('qaBtn').onclick=function(){inquiry();};
+  document.getElementById('chip').onclick=function(){if(MSH){sheet.innerHTML=MSH;bindModeOpts();}open();};
+  document.getElementById('shade').onclick=close;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  var NEWS=[['ops','年末年始の対応について'],['user','見積もりが届きました（浴室の換気扇）'],['pro','新しい案件：雨どいの修理'],['member','会員から協力依頼が届きました']];
+  var TODO=[['pro','依頼者に返信する（雨どいの修理）','あと5時間',1],['user','見積もりに返事をする（浴室の換気扇）','あと1日',1],['pro','確定見積もりを出す（庭木の剪定）','あと4日',0],['member','協力依頼に返事をする（外壁塗装の足場）','',0]];
+  function tag(k){return k==='ops'?'<span class="mt" style="background:#7A6A52">運営</span>':'<span class="mt" style="background:'+M[k].color+'">'+M[k].name.replace('モード','').replace('ページ','')+'</span>';}
+  function counts(){var a=avail();document.getElementById('bell').querySelector('b').textContent=NEWS.filter(function(x){return x[0]==='ops'||a.indexOf(x[0])>=0;}).length;var t=TODO.filter(function(x){return a.indexOf(x[0])>=0;});var tn=document.getElementById('todoN');tn.textContent=t.length;tn.className=t.some(function(x){return x[3];})?'urg':'';}
+  document.getElementById('bell').onclick=function(){
+    var a=avail(),items=NEWS.filter(function(x){return x[0]==='ops'||a.indexOf(x[0])>=0;});
+    sheet.innerHTML='<div class="grab"></div><h3>お知らせ</h3><ul class="bl">'+items.map(function(x){return '<li>'+tag(x[0])+x[1]+'</li>';}).join('')+'</ul>';
+    open();
+  };
+  document.getElementById('todo').onclick=function(){
+    var a=avail(),items=TODO.filter(function(x){return a.indexOf(x[0])>=0;});
+    sheet.innerHTML='<div class="grab"></div><h3>やること</h3><ul class="bl">'+items.map(function(x){return '<li>'+tag(x[0])+'<span class="tt">'+x[1]+(x[2]?'<span class="dd'+(x[3]?' u':'')+'">'+(x[3]?'<span class="ex">！</span>':'')+x[2]+'</span>':'')+'</span></li>';}).join('')+'</ul>';
+    open();
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.who button'),function(b){b.onclick=function(){who=b.dataset.who;Array.prototype.forEach.call(document.querySelectorAll('.who button'),function(x){x.setAttribute('aria-pressed',x===b);});close();render();};});
+
+
+  /* ===== 会員ページ（掲示板：設計指示書 11/7 準拠） ===== */
+  var ME='松本リフォーム';
+  var MEMBERS=[['山田工務店','工務店・リフォーム','松本市'],['中信足場','足場・とび','松本市'],['北アルプス重機','重機・解体','安曇野市'],['塩尻建設','土木・外構','塩尻市'],['あずさ解体','解体・産廃','塩尻市'],['松本電設','電気工事','松本市'],['信州水道設備','水道・設備','松本市']];
+  var NEWM=[['安曇野塗装','塗装・防水'],['松本サッシ','サッシ・ガラス']];MEMBERS.push(['安曇野塗装','塗装・防水','安曇野市'],['松本サッシ','サッシ・ガラス','松本市']);
+  var NOW=new Date('2026-11-07T15:00');/* 試作の現在日時（本番は日本時間で判定） */
+  var seq=20;
+  /* at=初回投稿日時（編集しても変えない） dl=募集期限（日付・その日の23:59:59まで） closed=投稿者が手動で終了 gone=投稿者が退会 */
+  var POSTS=[
+    {id:1,at:'2026-11-06T09:10',dl:'2026-11-08',title:'明日の足場の作業員 2名',where:'松本市',by:'山田工務店',
+     th:[['山田工務店','外壁塗装の現場です。朝8時から夕方まで、2名お願いしたいです。'],['中信足場','1名なら出せます。もう1名あたってみます。'],['@','中信足場さんが「対応できます」と問い合わせました']]},
+    {id:2,at:'2026-11-04T18:30',dl:'',title:'ミニユンボを買い取ってほしい',where:'安曇野市',by:ME,
+     th:[[ME,'0.1クラス、稼働時間少なめです。写真を載せます。'],['北アルプス重機','現物を見たいです。来週どこかで伺えますか？'],['塩尻建設','うちも興味あります。']]},
+    {id:3,at:'2026-11-03T12:00',dl:'2026-11-30',title:'解体で出た石膏ボードの引き取り',where:'塩尻市',by:'あずさ解体',th:[['あずさ解体','軽トラ2台分ほど。マニフェスト対応できる方を探しています。']]},
+    {id:4,at:'2026-11-02T08:00',dl:'2026-11-07',title:'分電盤交換の協力',where:'松本市',by:'山田工務店',th:[['山田工務店','分電盤の交換、どなたか協力お願いできますか。'],['松本電設','明後日の午後なら伺えます。']]},
+    {id:5,at:'2026-09-20T10:00',dl:'2026-12-15',title:'型枠大工の応援（12月中旬まで）',where:'松本市',by:'塩尻建設',th:[['塩尻建設','基礎工事の型枠、週2〜3日の応援を探しています。期間は12月中旬まで。']]},
+    {id:6,at:'2026-10-15T07:30',dl:'2026-10-21',title:'雨どい交換の応援 1名',where:'松本市',by:'塩尻建設',th:[['塩尻建設','雨どい交換の応援を1名お願いします。'],['中信足場','行けます。']]},
+    {id:7,at:'2026-09-25T16:00',dl:'',title:'使わなくなった高圧洗浄機',where:'安曇野市',by:'北アルプス重機',th:[['北アルプス重機','業務用の高圧洗浄機、譲ります。']]},
+    {id:8,at:'2026-09-30T11:00',dl:'',closed:true,title:'古いエアコン3台の引き取り',where:'松本市',by:'松本電設',th:[['松本電設','古いエアコン3台、引き取れる方いますか。'],['@','投稿者が募集を終了しました']]},
+    {id:9,at:'2026-11-05T09:00',dl:'',gone:true,title:'（退会した会員の投稿）',where:'松本市',by:'旧会員',th:[]}
+  ];
+  var DMS={'山田工務店':[['山田工務店','先日はありがとうございました。']]};
+  function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+  function pad(n){return (n<10?'0':'')+n;}
+  function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function md(s){return (+s.slice(5,7))+'/'+(+s.slice(8,10));}
+  function addM(d,n){var y=d.getFullYear(),m=d.getMonth()+n,last=new Date(y,m+1,0).getDate();return new Date(y,m,Math.min(d.getDate(),last),d.getHours(),d.getMinutes());}/* 暦月。ない日は月末に合わせる */
+  function endOf(dl){return new Date(dl+'T23:59:59');}
+  function maxDl(p){return ymd(addM(new Date(p.at),3));}
+  /* 募集状態と掲載場所を別々に判定（表示のたびに判定するので、定期処理が遅れても期限切れは受け付けない） */
+  function st(p){
+    if(p.gone)return {s:'stop',place:'none'};
+    if(p.closed||(p.dl&&NOW>endOf(p.dl)))return {s:'end',place:'past'};
+    if(!p.dl&&NOW>=addM(new Date(p.at),1))return {s:'open',place:'past'};
+    return {s:'open',place:'top'};
+  }
+  function days(dl){return Math.round((new Date(dl+'T00:00')-new Date(ymd(NOW)+'T00:00'))/864e5);}
+  function dueBadge(p){var x=st(p);
+    if(x.s==='end')return '<span class="bdg end">募集終了</span>';
+    if(!p.dl)return x.place==='past'?'<span class="bdg past">募集中・期限なし</span>':'<span class="bdg none">期限なし</span>';
+    var n=days(p.dl);return n===0?'<span class="bdg today">本日締切</span>':'<span class="bdg'+(n<=3?' soon':'')+'">残り'+n+'日</span>';}
+  function cmt(p){return p.th.filter(function(m){return m[0]!=='@';}).length;}
+  function card(p){return '<button type="button" class="card bp" data-id="'+p.id+'"><span class="bl1">'+dueBadge(p)+(p.dl&&st(p).s!=='end'?'<small class="dlx">締切 '+md(p.dl)+'</small>':'')+'</span><b>'+esc(p.title)+'</b><span class="meta"><span>'+esc(p.by)+'</span>'+(p.where?'<span>'+esc(p.where)+'</span>':'')+'<span>投稿 '+md(p.at)+'</span><span>コメント '+cmt(p)+'</span></span></button>';}
+  function hit(p,q){if(!q.length)return true;var h=(p.title+' '+p.where+' '+p.by+' '+p.th.map(function(m){return m[1];}).join(' ')).toLowerCase();return q.every(function(w){return h.indexOf(w)>=0;});}
+  function words(v){return v.trim().toLowerCase().split(/[\s　]+/).filter(Boolean);}
+  function sortL(a,srt){
+    var byNew=function(x,y){return x.at<y.at?1:-1;};
+    if(srt==='new')return a.slice().sort(byNew);
+    var g=[[],[],[],[]];/* 期限あり募集中 → 期限なし募集中 → 期限切れ・終了（期限あり） → 終了（期限なし） */
+    a.forEach(function(p){var e=st(p).s==='end';g[(e?2:0)+(p.dl?0:1)].push(p);});
+    var byDl=function(x,y){return x.dl<y.dl?-1:x.dl>y.dl?1:byNew(x,y);};
+    return g[0].sort(byDl).concat(g[1].sort(byNew),g[2].sort(byDl),g[3].sort(byNew));
+  }
+  function fltOk(p,f){return f==='all'||(f==='with'?!!p.dl:!p.dl);}
+  function ctlHTML(id,f,srt){return '<div class="ctl"><div class="seg" role="group" aria-label="期限で絞り込む">'+[['all','すべて'],['with','期限あり'],['none','期限なし']].map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(f===x[0])+'">'+x[1]+'</button>';}).join('')+'</div><select id="'+id+'" aria-label="並び替え"><option value="new"'+(srt==='new'?' selected':'')+'>新着順</option><option value="due"'+(srt==='due'?' selected':'')+'>締切が近い順</option></select></div>';}
+  var B={q:'',inc:false,f:'all',srt:'new'};
+  function renderBoard(){
+    var pastN=POSTS.filter(function(p){return st(p).place==='past';}).length;
+    scr.innerHTML='<div class="kw kw0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="bq" placeholder="案件を探す（例：足場、ユンボ）" aria-label="キーワード" value="'+esc(B.q)+'"></div>'+
+      '<label class="chk"><input type="checkbox" id="binc"'+(B.inc?' checked':'')+'>過去の案件も含める</label>'+
+      ctlHTML('bsrt',B.f,B.srt)+'<div id="bl"></div>'+
+      '<button type="button" class="pbox" id="pboxB"><span><b>過去の案件</b>（'+pastN+'件）<small>1か月たった期限なしの募集や、終わった募集</small></span><i aria-hidden="true">›</i></button>'+
+      '<div class="sec">新しく入った会員</div><div class="nmem">'+NEWM.map(function(m){return '<button type="button" class="nm" data-n="'+esc(m[0])+'"><span class="av">'+esc(m[0].slice(0,1))+'</span><b>'+esc(m[0])+'</b><small>'+esc(m[1])+'</small></button>';}).join('')+'</div>'+
+      '<div style="height:70px"></div>';
+    function draw(){
+      var q=words(B.q);
+      var l=POSTS.filter(function(p){var x=st(p);return (x.place==='top'||(B.inc&&x.place==='past'))&&fltOk(p,B.f)&&hit(p,q);});
+      l=sortL(l,B.srt);
+      var cond=q.length||B.f!=='all'||B.inc;
+      document.getElementById('bl').innerHTML=l.length?'<div class="list">'+l.map(card).join('')+'</div>':(cond?'<div class="none0"><p class="empty">条件に合う案件はありません</p><button type="button" class="clr" id="clrB">条件を解除する</button></div>':'<p class="empty">いま募集中の案件はありません。右下の「投稿」から相談できます。</p>');
+      Array.prototype.forEach.call(document.querySelectorAll('#bl .bp'),function(b){b.onclick=function(){openThread(+b.dataset.id);};});
+      var c=document.getElementById('clrB');if(c)c.onclick=function(){B.q='';B.inc=false;B.f='all';renderBoard();};
+    }
+    draw();
+    document.getElementById('bq').oninput=function(e){B.q=e.target.value;draw();};
+    document.getElementById('binc').onchange=function(e){B.inc=e.target.checked;draw();};
+    document.getElementById('bsrt').onchange=function(e){B.srt=e.target.value;draw();};
+    Array.prototype.forEach.call(scr.querySelectorAll('.seg button'),function(b){b.onclick=function(){B.f=b.dataset.f;Array.prototype.forEach.call(scr.querySelectorAll('.seg button'),function(x){x.setAttribute('aria-pressed',x===b);});draw();};});
+    document.getElementById('pboxB').onclick=archive;
+    Array.prototype.forEach.call(scr.querySelectorAll('.nm'),function(b){b.onclick=function(){openDM(b.dataset.n);};});
+    var of=document.getElementById('fab');if(of)of.remove();
+    var fb=document.createElement('button');fb.type='button';fb.id='fab';fb.className='fab';fb.setAttribute('aria-label','相談を投稿する');fb.innerHTML='<span aria-hidden="true">＋</span><small>投稿</small>';ph.appendChild(fb);
+    fb.onclick=postForm;
+  }
+  function renderMembers(){
+    scr.innerHTML='<div class="sec">会員 <small>'+MEMBERS.length+'社（例）</small></div><div class="list">'+MEMBERS.map(function(m){return '<button type="button" class="card bp mm" data-n="'+m[0]+'"><b>'+m[0]+'</b><span class="meta"><span>'+m[1]+'</span><span>'+m[2]+'</span></span></button>';}).join('')+'</div><p class="note">会員を選ぶと、1対1のチャットが開きます</p>';
+    Array.prototype.forEach.call(scr.querySelectorAll('.mm'),function(b){b.onclick=function(){openDM(b.dataset.n);};});
+  }
+  function renderDMs(){
+    var ks=Object.keys(DMS);
+    scr.innerHTML='<div class="sec">チャット</div>'+(ks.length?'<div class="list">'+ks.map(function(k){var l=DMS[k][DMS[k].length-1];return '<button type="button" class="card bp dm" data-n="'+k+'"><b>'+k+'</b><span class="meta"><span>'+esc(l[1]).slice(0,24)+'</span></span></button>';}).join('')+'</div>':'<p class="empty">まだやり取りはありません。会員の一覧から話しかけられます。</p>');
+    Array.prototype.forEach.call(scr.querySelectorAll('.dm'),function(b){b.onclick=function(){openDM(b.dataset.n);};});
+  }
+  var pane=null,back=null;
+  function ensurePane(){if(!pane){pane=document.createElement('div');pane.className='pane2';ph.appendChild(pane);}}
+  function closePane(){if(back){var f=back;back=null;f();}else{pane.classList.remove('on');render();}}
+  function panel(head,msgs,opts){
+    ensurePane();
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt">'+head+'</div></div>'+(opts.info||'')+'<div class="msgs" id="msgs"></div>'+
+      (opts.quick||'')+(opts.lock?'<div class="lock">'+opts.lock+'</div>':'<form class="cmp" id="cmp"><button type="button" class="ic" id="at" aria-label="メンション">@</button><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="img" hidden></label><input id="tx" placeholder="'+(opts.ph||'コメントを書く')+'" aria-label="メッセージ"><button class="sd">送信</button></form>')+'<div class="mpick" id="mpick" hidden></div>';
+    pane.classList.add('on');
+    function draw(){var box=document.getElementById('msgs');box.innerHTML=msgs.map(function(m){if(m[0]==='@')return '<div class="sys">'+esc(m[1])+'</div>';var mine=m[0]===ME;return '<div class="mg'+(mine?' me':'')+'">'+(mine?'':'<span class="wn">'+esc(m[0])+'</span>')+'<div class="bb">'+(m[2]?'<img src="'+m[2]+'" alt="添付画像">':'')+esc(m[1]).replace(/@(\S+)/g,'<span class="mn">@$1</span>')+'</div></div>';}).join('');box.scrollTop=box.scrollHeight;}
+    draw();
+    pane.querySelector('.bk').onclick=closePane;
+    var mp=document.getElementById('mpick');
+    if(!opts.lock){
+      document.getElementById('cmp').onsubmit=function(e){e.preventDefault();var v=document.getElementById('tx').value.trim();if(!v)return;msgs.push([ME,v]);document.getElementById('tx').value='';draw();if(opts.after)opts.after();};
+      document.getElementById('img').onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;msgs.push([ME,'',URL.createObjectURL(f)]);draw();};
+      document.getElementById('at').onclick=function(){mp.hidden=!mp.hidden;mp.innerHTML=MEMBERS.map(function(m){return '<button type="button">'+m[0]+'</button>';}).join('');Array.prototype.forEach.call(mp.querySelectorAll('button'),function(b){b.onclick=function(){var t=document.getElementById('tx');t.value+=(t.value?' ':'')+'@'+b.textContent+' ';mp.hidden=true;t.focus();};});};
+    }
+    if(opts.bind)opts.bind(draw);
+  }
+  function openThread(id){
+    var p=POSTS.filter(function(x){return x.id===id;})[0];if(!p||p.gone)return;
+    var x=st(p),mine=p.by===ME,talked=p.th.some(function(m){return m[0]===ME;});
+    var info='<div class="inf">'+dueBadge(p)+(p.dl?'<span class="lf">締切 '+md(p.dl)+'</span>':'')+(p.where?'<span class="lf">'+esc(p.where)+'</span>':'')+'<span class="lf">投稿 '+esc(p.by)+'・'+md(p.at)+'</span>'+(x.place==='past'?'<span class="lf">過去の案件に掲載中</span>':'')+'</div>';
+    var quick='',lock='';
+    if(x.s==='open'&&!mine)quick='<div class="qk"><button type="button" id="hand">対応できます</button></div>';
+    if(x.s==='open'&&mine)quick='<div class="qk"><button type="button" id="dlB" class="g">期限を変更</button><button type="button" id="endB">募集を終了する</button></div>';
+    if(x.s==='end'&&!mine&&!talked)lock='募集は終了しました。新しい問い合わせはできません。';
+    var sub=x.s==='end'?(mine||talked?'募集終了・これまでのやり取りは続けられます':'募集終了'):'募集中・会員なら誰でもコメントできます';
+    panel('<b>'+esc(p.title)+'</b><span>'+sub+'</span>',p.th,{info:info,quick:quick,lock:lock,bind:function(draw){
+      var e=document.getElementById('hand');if(e)e.onclick=function(){if(st(p).s!=='open')return;p.th.push(['@',ME+'さんが「対応できます」と問い合わせました']);e.disabled=true;e.textContent='問い合わせました';draw();};
+      e=document.getElementById('endB');if(e)e.onclick=function(){p.closed=true;p.th.push(['@','投稿者が募集を終了しました']);openThread(id);};
+      e=document.getElementById('dlB');if(e)e.onclick=function(){var mp=document.getElementById('mpick');mp.hidden=false;
+        mp.innerHTML='<div class="dlbox"><span class="mph">募集期限を変更</span>'+dlField(p.dl,ymd(NOW),maxDl(p))+'<p class="warn" id="dw2" hidden></p><div class="qk0"><button type="button" class="g" id="dlC">やめる</button><button type="button" id="dlS">保存する</button></div></div>';
+        bindDl(mp);
+        document.getElementById('dlC').onclick=function(){mp.hidden=true;};
+        document.getElementById('dlS').onclick=function(){var v=readDl(mp,maxDl(p),document.getElementById('dw2'));if(v===null)return;p.dl=v;p.th.push(['@',v?'募集期限を'+md(v)+'に変更しました':'募集期限を「期限なし」に変更しました']);openThread(id);};};
+    }});
+  }
+  /* 募集期限の入力（投稿フォームと期限変更で共通） */
+  function dlField(cur,min,max){return '<div class="dlf"><label class="rd"><input type="radio" name="dlm" value="none"'+(cur?'':' checked')+'>期限なし</label><label class="rd"><input type="radio" name="dlm" value="set"'+(cur?' checked':'')+'>期限を設定する</label><input type="date" class="dld" min="'+min+'" max="'+max+'" value="'+(cur||'')+'"'+(cur?'':' hidden')+' aria-label="募集期限の日付"><p class="hint">期限なしの投稿は、1か月後に「過去の案件」へ移動します。移動後も募集は続きます。期限ありの投稿は、期限まで通常一覧に掲載します（最長3か月）。</p></div>';}
+  function bindDl(root){var d=root.querySelector('.dld');Array.prototype.forEach.call(root.querySelectorAll('input[name=dlm]'),function(r){r.onchange=function(){d.hidden=r.value!=='set'||!r.checked;if(r.value==='set'&&r.checked&&!d.value)d.focus();};});}
+  function readDl(root,max,warn){var set=root.querySelector('input[name=dlm][value=set]').checked;if(!set)return '';var v=root.querySelector('.dld').value;var msg='';
+    if(!v)msg='期限の日付を選んでください。';else if(v<ymd(NOW))msg='過去の日付は選べません。';else if(v>max)msg='期限は最初の投稿から3か月（'+md(max)+'）までです。';
+    if(msg){warn.textContent=msg;warn.hidden=false;return null;}warn.hidden=true;return v;}/* 本番はサーバー側でも同じ検証をする */
+  function openDM(n){if(!DMS[n])DMS[n]=[];var m=MEMBERS.filter(function(x){return x[0]===n;})[0]||[n,'',''];panel('<b>'+esc(n)+'</b><span>'+esc(m[1])+'　'+esc(m[2])+'</span>',DMS[n],{ph:'メッセージを書く'});}
+  var A={q:'',f:'all',srt:'new'};
+  function archive(){
+    ensurePane();back=null;
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>過去の案件</b><span>募集中のものは、今も問い合わせできます</span></div></div>'+
+      '<div class="arw"><p class="adesc">投稿から1か月以上経過した期限なしの募集や、募集が終了した案件を掲載しています。</p><div class="kw kw0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="aq" placeholder="過去の案件を探す" aria-label="キーワード" value="'+esc(A.q)+'"></div>'+ctlHTML('asrt',A.f,A.srt)+'<div id="al"></div></div>';
+    pane.classList.add('on');
+    function draw(){var q=words(A.q);var l=sortL(POSTS.filter(function(p){return st(p).place==='past'&&fltOk(p,A.f)&&hit(p,q);}),A.srt);
+      document.getElementById('al').innerHTML=l.length?'<div class="list">'+l.map(card).join('')+'</div>':'<div class="none0"><p class="empty">条件に合う案件はありません</p><button type="button" class="clr" id="aclr">条件を解除する</button></div>';
+      Array.prototype.forEach.call(pane.querySelectorAll('#al .bp'),function(b){b.onclick=function(){back=archive;openThread(+b.dataset.id);};});
+      var c=document.getElementById('aclr');if(c)c.onclick=function(){A.q='';A.f='all';archive();};}
+    draw();
+    document.getElementById('aq').oninput=function(e){A.q=e.target.value;draw();};
+    document.getElementById('asrt').onchange=function(e){A.srt=e.target.value;draw();};
+    Array.prototype.forEach.call(pane.querySelectorAll('.seg button'),function(b){b.onclick=function(){A.f=b.dataset.f;Array.prototype.forEach.call(pane.querySelectorAll('.seg button'),function(x){x.setAttribute('aria-pressed',x===b);});draw();};});
+    pane.querySelector('.bk').onclick=function(){back=null;pane.classList.remove('on');render();};
+  }
+  function postForm(){
+    ensurePane();back=null;
+    var D={title:'',bg:'',want:'',dl:'',where:''},step=0;
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>相談を投稿する</b><span>書き方を選んでください</span></div></div>'+
+      '<div class="choose"><button type="button" class="cho" id="useChat"><img src="chara.png" alt=""><span><b>チャットで相談しながら作る</b>話した内容から、相談の文章を自動でまとめます。何を書けばいいか迷うときに</span></button>'+
+      '<button type="button" class="cho" id="useForm"><span class="fi" aria-hidden="true">✎</span><span><b>フォームに直接書く</b>書くことが決まっているときに</span></button></div>';
+    pane.classList.add('on');
+    pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');render();};
+    document.getElementById('useForm').onclick=function(){form();};
+    document.getElementById('useChat').onclick=chat;
+    function chat(){
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><img class="hav" src="chara.png" alt=""><div class="pt"><b>建築士のお姉さん</b><span>相談の内容を一緒にまとめます</span></div></div><div class="msgs" id="am"></div><div class="chs" id="chs"></div><form class="cmp" id="ac"><input id="atx" placeholder="まとまっていなくて大丈夫です" aria-label="相談の内容"><button class="sd">送信</button></form><button type="button" class="skip" id="skip">フォームに直接書く</button>';
+    var box=document.getElementById('am'),chs=document.getElementById('chs');
+    function say(t,who){var d=document.createElement('div');d.className='mg'+(who?' me':' ai2');d.innerHTML=(who?'':'<img class="av2" src="chara.png" alt="">')+'<div class="bb">'+esc(t)+'</div>';box.appendChild(d);box.scrollTop=box.scrollHeight;}
+    function choices(list,fn){chs.innerHTML=list.map(function(c){return '<button type="button">'+c+'</button>';}).join('');Array.prototype.forEach.call(chs.querySelectorAll('button'),function(b){b.onclick=function(){chs.innerHTML='';say(b.textContent,1);fn(b.textContent);};});}
+    say('どんなことで相談しますか？');
+    function next(v){
+      if(step===0){D.bg=v;D.title=v.split(/[。\n]/)[0].slice(0,22);step=1;setTimeout(function(){say('なるほど、そういうことなんですね。どうしてほしいですか？近いものを選ぶか、書いてください。');choices(['人を出してほしい','買い取ってほしい','引き取ってほしい','相談して決めたい'],next);},400);}
+      else if(step===1){D.want=v;step=2;setTimeout(function(){say('募集はいつまでにしますか？');choices(['今日中','明日まで','1週間以内','今月中','期限なし'],next);},400);}
+      else if(step===2){var t=new Date(NOW),k={'今日中':0,'明日まで':1,'1週間以内':7};if(v in k){t.setDate(t.getDate()+k[v]);D.dl=ymd(t);}else if(v==='今月中'){D.dl=ymd(new Date(NOW.getFullYear(),NOW.getMonth()+1,0));}else D.dl='';step=3;setTimeout(function(){say('現場や受け渡しの場所はありますか？必要なければ「なし」で大丈夫です。');choices(['松本市','安曇野市','塩尻市','なし'],next);},400);}
+      else if(step===3){D.where=v==='なし'?'':v;step=4;setTimeout(function(){say('まとめました。直したいところがあれば、このあと直せます。');setTimeout(form,900);},400);}
+    }
+    document.getElementById('ac').onsubmit=function(e){e.preventDefault();var v=document.getElementById('atx').value.trim();if(!v)return;document.getElementById('atx').value='';chs.innerHTML='';say(v,1);next(v);};
+    document.getElementById('skip').onclick=form;
+    pane.querySelector('.bk').onclick=function(){postForm();};
+    }
+    function form(){
+      var mx=ymd(addM(NOW,3));
+      pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+(D.bg?'内容の確認':'相談を書く')+'</b><span>'+(D.bg?'直したいところを直して投稿してください':'必須は上の2つだけです')+'</span></div></div><form class="pf pf2" id="pf" novalidate>'+
+        '<label>相談タイトル <em class="rq">必須</em><input id="g1" required value="'+esc(D.title)+'" placeholder="例：明日の足場の作業員 2名"></label>'+
+        '<label>相談内容・背景 <em class="rq">必須</em><textarea id="g2" rows="3" required placeholder="何が起きていて、なぜ困っているか">'+esc(D.bg)+'</textarea></label>'+
+        '<label>どうしてほしいか <em class="op">任意</em><input id="g3" value="'+esc(D.want)+'" placeholder="「相談して決めたい」でも大丈夫です"></label>'+
+        '<div class="lab">募集期限</div>'+dlField(D.dl,ymd(NOW),mx)+'<p class="warn" id="dw" hidden></p>'+
+        '<label>場所 <em class="op">必要な場合のみ</em><input id="g5" value="'+esc(D.where)+'" placeholder="例：松本市○○町の現場、事務所渡し など"></label>'+
+        '<label>予算の希望 <em class="op">任意</em><input id="g7" placeholder="例：3万円くらい、相談したい"></label>'+
+        '<label>写真・動画 <em class="op">任意・3つまで</em><input type="file" id="g6" accept="image/*,video/*" multiple></label><div class="thumbs" id="th"></div><p class="warn" id="wn" hidden>写真・動画は3つまでです。最初の3つを使います。</p>'+
+        '<p class="warn" id="rw" hidden>タイトルと内容を入れてください。</p><button class="big" type="submit">この内容で投稿する</button></form>';
+      pane.querySelector('.bk').onclick=function(){postForm();};
+      var fm=document.getElementById('pf');bindDl(fm);
+      var files=[];
+      document.getElementById('g6').onchange=function(e){var fs=Array.prototype.slice.call(e.target.files||[]);files=files.concat(fs);document.getElementById('wn').hidden=files.length<=3;files=files.slice(0,3);
+        document.getElementById('th').innerHTML=files.map(function(f,i){var u=URL.createObjectURL(f);return '<div class="tb">'+(/^video/.test(f.type)?'<video src="'+u+'" muted></video>':'<img src="'+u+'" alt="">')+'<button type="button" data-i="'+i+'" aria-label="外す">×</button></div>';}).join('');
+        Array.prototype.forEach.call(document.querySelectorAll('.tb button'),function(b){b.onclick=function(){files.splice(+b.dataset.i,1);document.getElementById('g6').value='';document.getElementById('g6').onchange({target:{files:[]}});};});};
+      fm.onsubmit=function(ev){ev.preventDefault();
+        var t=document.getElementById('g1').value.trim(),b=document.getElementById('g2').value.trim();document.getElementById('rw').hidden=!!(t&&b);if(!t||!b)return;
+        var dl=readDl(fm,mx,document.getElementById('dw'));if(dl===null)return;
+        var w=document.getElementById('g3').value;var bd=b+(w?'\n\nどうしてほしいか：'+w:'')+(document.getElementById('g7').value?'\n予算の希望：'+document.getElementById('g7').value:'');
+        POSTS.push({id:++seq,at:ymd(NOW)+'T'+pad(NOW.getHours())+':'+pad(NOW.getMinutes()),dl:dl,title:t,where:document.getElementById('g5').value,by:ME,th:[[ME,bd]]});
+        B.q='';B.inc=false;B.f='all';B.srt='new';pane.classList.remove('on');render();};
+    }
+  }
+  /* ===== Proモード：カレンダー（11/7 試作） ===== */
+  var CAL0=new Date('2026-11-07T00:00');var calOff=0,calView='week';
+  /* k: fix=確定した現地調査 / prop=提案中の枠 / work=工事日 / money=お金の日 / resume=先送りの再開予定 */
+  var EV=[
+    {k:'fix',d:'2026-11-09',s:'13:00',e:'14:00',t:'現地調査',case:'浴室の換気扇の交換',who:'松本市・田中様'},
+    {k:'prop',d:'2026-11-10',s:'10:00',e:'12:00',t:'提案中',case:'給湯器の交換',who:'塩尻市・佐藤様'},
+    {k:'prop',d:'2026-11-11',s:'14:00',e:'17:00',t:'提案中',case:'給湯器の交換',who:'塩尻市・佐藤様'},
+    {k:'prop',d:'2026-11-09',s:'13:00',e:'15:00',t:'提案中',case:'外壁のひび割れ',who:'安曇野市・小林様',warn:1},
+    {k:'fix',d:'2026-11-12',s:'9:30',e:'10:30',t:'現地調査',case:'和室のふすま張り替え',who:'松本市・中村様'},
+    {k:'work',d:'2026-11-13',d2:'2026-11-14',t:'工事',case:'雨どいの修理',who:'松本市・伊藤様'},
+    {k:'money',d:'2026-11-10',t:'決済',case:'10月分のカード決済 4,800円',who:'立候補料3件＋紹介手数料1件'},
+    {k:'resume',d:'2026-11-12',s:'10:00',e:'11:00',t:'再開',case:'庭木の剪定（先送り中）',who:'安曇野市・山本様'},
+    {k:'fix',d:'2026-11-17',s:'10:00',e:'11:00',t:'現地調査',case:'玄関ドアの交換',who:'松本市・渡辺様'},
+    {k:'money',d:'2026-11-05',t:'明細',case:'10月分の明細確定',who:'4,800円'}
+  ];
+  var KN={fix:'現地調査（確定）',prop:'現地調査の提案中の枠',work:'工事日',money:'お金の日',resume:'先送りの再開予定'};
+  var WD='日月火水木金土';
+  function dd(d){var x=new Date(CAL0);x.setDate(x.getDate()+d);return x;}
+  function hm(s){var a=s.split(':');return +a[0]+(+a[1])/60;}
+  function inDay(ev,ds){return ev.d2?(ds>=ev.d&&ds<=ev.d2):ev.d===ds;}
+  function renderProCal(){
+    var days=[];for(var i=0;i<7;i++)days.push(dd(calOff*7+i));
+    var ds=days.map(ymd),H0=8,H1=19,RH=30;
+    var head='<div class="cvt"><div class="seg2"><button type="button" data-v="week" aria-pressed="'+(calView==='week')+'">カレンダー</button><button type="button" data-v="list" aria-pressed="'+(calView==='list')+'">予定一覧</button></div><button type="button" class="gsync" id="gsB">Googleカレンダーに表示</button></div>';
+    var leg='<div class="lgd">'+['fix','prop','work','money','resume'].map(function(k){return '<span><i class="ev '+k+'"></i>'+KN[k].replace('現地調査の','').replace('（確定）','')+'</span>';}).join('')+'</div>';
+    if(calView==='list'){
+      var L=EV.filter(function(e){return e.d>=ymd(CAL0)||(e.d2&&e.d2>=ymd(CAL0));}).sort(function(a,b){return (a.d+(a.s?pad(hm(a.s)*10|0):'00'))<(b.d+(b.s?pad(hm(b.s)*10|0):'00'))?-1:1;});
+      scr.innerHTML=head+leg+'<div class="list">'+L.map(function(e,i){var x=new Date(e.d+'T00:00');return '<button type="button" class="card bp cl" data-i="'+EV.indexOf(e)+'"><span class="bl1"><span class="ev '+e.k+' pill">'+KN[e.k]+'</span>'+(e.warn?'<span class="bdg today">時間が重なっています</span>':'')+'</span><b>'+esc(e.case)+'</b><span class="meta"><span>'+(x.getMonth()+1)+'/'+x.getDate()+'（'+WD[x.getDay()]+'）'+(e.d2?'〜'+md(e.d2):'')+(e.s?' '+e.s+'〜'+e.e:'')+'</span><span>'+esc(e.who)+'</span></span></button>';}).join('')+'</div>';
+    }else{
+      var top='<div class="cwk"><button type="button" class="ca" id="cP" aria-label="前の週">‹</button><b>'+(days[0].getMonth()+1)+'/'+days[0].getDate()+' 〜 '+(days[6].getMonth()+1)+'/'+days[6].getDate()+'</b><button type="button" class="ca" id="cN" aria-label="次の週">›</button></div>';
+      var g='<div class="cg"><div class="cr ch"><span></span>'+days.map(function(d){var t=ymd(d)===ymd(CAL0);return '<span class="'+(t?'td':'')+(d.getDay()===0?' su':d.getDay()===6?' sa':'')+'">'+WD[d.getDay()]+'<b>'+d.getDate()+'</b></span>';}).join('')+'</div>';
+      g+='<div class="cr cad"><span class="tl">終日</span>'+ds.map(function(s){return '<span>'+EV.filter(function(e){return !e.s&&inDay(e,s);}).map(function(e){return '<button type="button" class="ev '+e.k+' ad" data-i="'+EV.indexOf(e)+'">'+e.t+'</button>';}).join('')+'</span>';}).join('')+'</div>';
+      g+='<div class="cb" style="height:'+((H1-H0)*RH)+'px"><div class="tcol">'+Array.apply(null,{length:H1-H0}).map(function(_,i){return '<span style="top:'+(i*RH)+'px">'+(H0+i)+':00</span>';}).join('')+'</div>'+
+        ds.map(function(s,ci){return '<div class="dcol">'+EV.filter(function(e){return e.s&&e.d===s;}).map(function(e){var y=(hm(e.s)-H0)*RH,h=(hm(e.e)-hm(e.s))*RH;return '<button type="button" class="ev '+e.k+' tm'+(e.warn?' wn2':'')+'" data-i="'+EV.indexOf(e)+'" style="top:'+y+'px;height:'+(h-2)+'px'+(EV.some(function(o){return o.warn&&o.d===e.d&&o!==e;})?';right:50%':'')+'">'+(e.k==='fix'?'調査':e.t)+'<small>'+e.s+'</small></button>';}).join('')+'</div>';}).join('')+'</div></div>';
+      scr.innerHTML=head+top+leg+g+'<p class="note">予定をタップすると詳しく見られます</p>';
+      document.getElementById('cP').onclick=function(){calOff--;renderProCal();};document.getElementById('cN').onclick=function(){calOff++;renderProCal();};
+    }
+    Array.prototype.forEach.call(scr.querySelectorAll('.seg2 button'),function(b){b.onclick=function(){calView=b.dataset.v;renderProCal();};});
+    Array.prototype.forEach.call(scr.querySelectorAll('[data-i]'),function(b){b.onclick=function(){evSheet(EV[+b.dataset.i]);};});
+    document.getElementById('gsB').onclick=function(){sheet.innerHTML='<div class="grab"></div><h3>Googleカレンダーに表示する</h3><p class="sp">まち頼で確定した予定（現地調査・工事日・お金の日）を、お使いのGoogleカレンダーに表示します。表示だけで、Google側で変更してもまち頼には戻りません。反映まで時間がかかることがあります。</p><button type="button" class="big" id="gsC">表示用のURLをコピー</button><p class="sp s2">コピーしたURLを、Googleカレンダーの「他のカレンダー ＞ URLで追加」に貼り付けてください。</p>';open();document.getElementById('gsC').onclick=function(){this.textContent='コピーしました（試作）';};};
+  }
+  function evSheet(e){var x=new Date(e.d+'T00:00');
+    var msg={fix:'依頼者が承認した日時です。前日にLINEでお知らせします。',prop:'依頼者にまだ選ばれていない候補の枠です。選ばれると「現地調査（確定）」に変わり、選ばれなかった枠は消えます。',work:'成約のときに入れた工事の日程です。',money:'毎月の請求の日です。',resume:'依頼者と決めた再開の目安です。近づいたら依頼者に連絡しましょう。'}[e.k];
+    sheet.innerHTML='<div class="grab"></div><span class="ev '+e.k+' pill">'+KN[e.k]+'</span><h3 style="margin-top:6px">'+esc(e.case)+'</h3><p class="sp"><b>'+(x.getMonth()+1)+'月'+x.getDate()+'日（'+WD[x.getDay()]+'）'+(e.d2?'〜'+md(e.d2):'')+(e.s?'　'+e.s+'〜'+e.e:'')+'</b><br>'+esc(e.who)+'</p>'+(e.warn?'<p class="warn">11/9 13:00〜14:00 の確定した現地調査と時間が重なっています。</p>':'')+'<p class="sp s2">'+msg+'</p>'+(e.k!=='money'?'<button type="button" class="big" id="evC">この案件のチャットを開く</button>':'<button type="button" class="big" id="evC">明細を見る</button>');
+    open();document.getElementById('evC').onclick=function(){this.textContent='（試作ではここまで）';};}
+  /* ===== 依頼者モード：先送り（11/7 試作） ===== */
+  function wdTxt(d){return (d.getMonth()+1)+'月'+d.getDate()+'日（'+WD[d.getDay()]+'）';}
+  function postpone(){
+    var p=UC.post,min=ymd(dd(1)),dv=p?p.d:'',tv=p?p.t:'10:00';
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>相談を先に延ばす</b><span>'+UC.title+'</span></div></div><div class="arw">'+
+      '<p class="sp">再開する日時を選んでください。それまで業者さんは連絡を控えます。業者さんは「待つ」か「辞退する」を選びます。</p>'+
+      '<div class="lab">いつ再開しますか？</div><div class="pch" id="pch">'+[['1w','1週間後'],['1m','1か月後'],['3m','3か月後'],['6m','半年後'],['x','日時を指定する']].map(function(x){return '<button type="button" data-k="'+x[0]+'" aria-pressed="false">'+x[1]+'</button>';}).join('')+'</div>'+
+      '<div class="pdtf" id="pdtf"'+(p?'':' hidden')+'><label>日付<input type="date" id="pdD" min="'+min+'" value="'+dv+'"></label><label>時刻<input type="time" id="pdT" step="1800" value="'+tv+'"></label></div>'+
+      '<p class="pdsum" id="pdS"></p><p class="warn" id="pdW" hidden></p>'+
+      '<button type="button" class="big" id="pdOK" disabled>この日時で先送りする</button></div>';
+    pane.querySelector('.bk').onclick=openCase;
+    var D=document.getElementById('pdD'),T=document.getElementById('pdT'),f=document.getElementById('pdtf'),ok=document.getElementById('pdOK');
+    function sum(){var w=document.getElementById('pdW');if(!D.value||!T.value){ok.disabled=true;document.getElementById('pdS').textContent='';return;}
+      if(D.value<min){w.textContent='明日以降の日付を選んでください。';w.hidden=false;ok.disabled=true;return;}w.hidden=true;
+      var d=new Date(D.value+'T'+T.value);document.getElementById('pdS').innerHTML='再開予定：<b>'+d.getFullYear()+'年'+wdTxt(d)+' '+T.value+'</b><br><small>1週間前と当日にLINEでお知らせします</small>';ok.disabled=false;}
+    Array.prototype.forEach.call(document.querySelectorAll('#pch button'),function(b){b.onclick=function(){Array.prototype.forEach.call(document.querySelectorAll('#pch button'),function(x){x.setAttribute('aria-pressed',x===b);});f.hidden=false;
+      var k=b.dataset.k;if(k!=='x'){var x=new Date(CAL0);if(k==='1w')x.setDate(x.getDate()+7);else x=addM(x,{'1m':1,'3m':3,'6m':6}[k]);D.value=ymd(x);}else{D.focus();}sum();};});
+    D.oninput=sum;T.oninput=sum;sum();
+    ok.onclick=function(){removeResume();UC.post={d:D.value,t:T.value};var h=+T.value.slice(0,2),m=T.value.slice(3);
+      EV.push({k:'resume',d:D.value,s:T.value,e:(h+1)+':'+m,t:'再開',case:UC.title+'（先送り中）',who:'依頼者が指定した再開の日時',uc:1});openCase();};
+  }
+  function removeResume(){for(var i=EV.length-1;i>=0;i--)if(EV[i].uc)EV.splice(i,1);}
+  /* ===== 依頼者ホーム（依頼者ホームのデザインを移植・11/7） ===== */
+  function userHomeHTML(){
+    var cats=[['🚰','水のトラブル'],['🏠','外装工事'],['🛠️','リフォーム'],['❄️','機器設置・修理'],['🧱','解体工事'],['🚗','外構工事'],['🌳','庭の手入れ'],['🧽','ハウス<br>クリーニング'],['🐝','害虫・害獣<br>駆除'],['📦','便利屋・<br>片付け'],['🔑','鍵・防犯'],['📐','図面・役所<br>の手続き'],['🏚️','耐震診断・<br>住宅診断'],['⚖️','税務・法務<br>・労務'],['🚁','ドローン・<br>測量'],['💬','その他・<br>まず相談']];
+    var c=UC.post?'<span class="tag">先送り中</span><b>'+UC.title+'</b><span class="meta">再開予定 '+md(UC.post.d)+' '+UC.post.t+'</span>':(UC.af&&UC.af.rv?'<span class="tag">完了</span><b>'+UC.title+'</b><span class="meta">'+wonV().n+'・口コミ投稿済み</span>':wonV()?'<span class="tag">'+(UC.af&&UC.af.done?'口コミを書く':UC.af&&(UC.af.rep||UC.af.chg)?'やることがあります':'工事予定')+'</span><b>'+UC.title+'</b><span class="meta">'+wonV().n+'・着手予定 11/20</span>':'<span class="tag">やることがあります</span><b>'+UC.title+'</b><span class="meta">業者'+UC.vs.length+'社とやり取り中・確定見積もり到着</span>');
+    return '<div class="uh">'+
+      '<div class="uh-news"><span class="uh-nl">お知らせ</span><div class="uh-nv"><span>11月は冬じたくの相談が増えています ／ 年末年始の対応について ／ 新しい専門家が加わりました</span></div></div>'+
+      '<div class="uh-hero"><img class="uh-bg" src="top.jpg" alt="松本城と北アルプスの風景">'+
+        '<div class="uh-clouds" aria-hidden="true"><div class="uh-cl c1"></div><div class="uh-cl c2"></div><div class="uh-cl c3"></div><div class="uh-cl c4"></div></div><div class="uh-shade"></div>'+
+        '<div class="uh-wx" aria-label="今日の天気（試作の仮の値）"><div class="uh-wd"><span>11/7（土）</span><span>松本</span></div><div class="uh-wm"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="#FFD25A"/><g stroke="#FFD25A" stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg><span class="uh-wt">14°<small> / 4°</small></span></div><div class="uh-wr"><span>降水 今日</span><b>10%</b><span>降水 明日</span><b>30%</b></div></div>'+
+        '<div class="uh-copy">暮らしのそばに、<br>頼れる地元のプロがいる</div>'+
+        '<img class="uh-chara" src="chara.png" alt="建築士のお姉さん">'+
+        '<div class="uh-bub" id="uhBub" role="button" tabindex="0">'+bubHTML(UL[uli].t)+'<span class="uh-tap">タップして話す ›</span></div></div>'+
+      '<div class="uh-ask"><div class="uh-at">ほかに気になっていることがある</div><form class="uh-in" id="uhForm"><input id="uhIn" placeholder="例：窓からすきま風が入る" aria-label="気になっていること"><button class="uh-send" type="submit">相談する</button></form>'+
+        '<div class="uh-chips">'+['床がきしむ','窓からすきま風','お風呂のカビ','庭が荒れてきた'].map(function(t){return '<button type="button" class="uh-chip">'+t+'</button>';}).join('')+'</div></div>'+
+      '<div class="uh-body"><div class="uh-sec">進行中の依頼</div><div class="list"><button type="button" class="card bp" id="caseB">'+c+'</button><button type="button" class="card bp" id="caseB2"><span class="tag">'+'調査済み'+'</span><b>外壁の張り替え</b><span class="meta">松本リフォームとやり取り中・調査済み</span></button></div>'+
+        '<div class="uh-sec">やりたいことが決まっている方は</div><div class="uh-search">🔍 サービスを検索（例：給湯器の交換）</div>'+
+        '<div class="uh-grid">'+cats.map(function(x){return '<div class="uh-t"><b>'+x[0]+'</b>'+x[1]+'</div>';}).join('')+'</div></div></div>';
+  }
+  var UL=[
+    {t:'朝晩、急に冷え込む|ようになりましたね。|おうちでは、もう|暖房使い始めてます？',r:[['もう使ってます','暖房があると、朝起きるのがだいぶ楽になりますね。お部屋は十分暖まってます？'],['まだ我慢してます','日中はまだ暖かい日もありますもんね。夜はどうしてます？']]},
+    {t:'そろそろ冬じたくを|考える時期になりましたね。|もう何か始めてます？',r:[['少しずつ始めてる','いいですね。どんなことから始めました？'],['まだ何も','まだ日中は暖かい日もありますもんね。今年の冬、何か気になってることはあります？']]}
+  ];
+  var uli=0;
+  var UFIRST={'床がきしむ':'床のきしみって、家の古さや季節で出てくることがあるんですよね。最近、気になるようになったんですか？','窓からすきま風':'窓のすきま風って、建て付けや季節で急に気になりだすことがあるんですよね。どの部屋の窓ですか？','お風呂のカビ':'お風呂のカビって、湿気の多い時期は特に出やすいんですよね。どのあたりに出てます？','庭が荒れてきた':'お庭って、少し手が回らないだけで一気に伸びてきますよね。ご自宅のお庭ですか？'};
+  function bubHTML(t){return t.split('|').map(function(x){return esc(x);}).join('<br>');}
+  function bindUserHome(){
+    var b=document.getElementById('uhBub');
+    function ob(){var L=UL[uli];conc(L.t.replace(/\|/g,''));cMode='chat';}
+    b.onclick=ob;b.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ob();}};
+    document.getElementById('uhForm').onsubmit=function(e){e.preventDefault();var v=document.getElementById('uhIn').value.trim();if(!v)return;startTopic(v);};
+    Array.prototype.forEach.call(scr.querySelectorAll('.uh-chip'),function(x){x.onclick=function(){startTopic(x.textContent);};});
+    var cb=document.getElementById('caseB');if(cb)cb.onclick=function(){UC=UC1;openCase();};
+    cb=document.getElementById('caseB2');if(cb)cb.onclick=function(){UC=UC2;openCase();};
+  }
+  /* コンシェルジュのチャット */
+  var cStep=0;
+  function conc(first){
+    ensurePane();back=null;
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><img class="hav" src="chara.png" alt=""><div class="pt"><b>建築士のお姉さん</b><span>まち頼 コンシェルジュ</span></div></div><div class="msgs" id="cl"></div><form class="cmp" id="cf"><input id="atx" placeholder="メッセージを入力" aria-label="メッセージ"><button class="sd">送信</button></form>';
+    pane.classList.add('on');cStep=1;cWaitFn=null;
+    pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');render();};
+    document.getElementById('cf').onsubmit=function(e){e.preventDefault();var i=document.getElementById('atx'),v=i.value.trim();if(!v)return;i.value='';var cb=document.querySelector('#cl .cbt');if(cb)cb.remove();cMe(v);if(cWaitFn){var f=cWaitFn;cWaitFn=null;f(v);}else cReply(v);};
+    cSay(first,0);
+  }
+  function cSay(t,me){var box=document.getElementById('cl');var d=document.createElement('div');d.className='mg'+(me?' me':' ai2');d.innerHTML=(me?'':'<img class="av2" src="chara.png" alt="">')+'<div class="bb">'+esc(t)+'</div>';box.appendChild(d);box.scrollTop=box.scrollHeight;}
+  function cMe(t){cSay(t,1);}
+  function cAi(t,then){var box=document.getElementById('cl');var w=document.createElement('div');w.className='sys';w.textContent='入力中…';box.appendChild(w);box.scrollTop=box.scrollHeight;setTimeout(function(){w.remove();cSay(t,0);if(then)then();},800);}
+  function cBtns(list){var box=document.getElementById('cl');var b=document.createElement('div');b.className='chs cbt';list.forEach(function(it){var x=document.createElement('button');x.type='button';x.textContent=it[0];if(it[2])x.className='pri';x.onclick=function(){b.remove();cMe(it[0]);it[1]();};b.appendChild(x);});box.appendChild(b);box.scrollTop=box.scrollHeight;}
+  function startTopic(t){setTopic(t);conc('何でも気軽に相談してください');cMe(t);cMode='topic';cAi(UFIRST[t]||'それって、最近気になるようになったんですか？');}
+  var cMode='topic',CHIT=['そうなんですね。最近は、どんなふうに過ごしてます？','いいですね。ほかにも、最近気になっていることはあります？','うんうん。暮らしの中で、ちょっと困っていることとかもあれば聞かせてくださいね。'],chitI=0;
+  var TROUBLE=/寒|冷え|すきま|壊|割れ|漏|水|カビ|きしむ|修理|交換|故障|詰ま|雨|虫|庭|草|片付|汚れ|古く|ガタ|音がする|動かない|効かない/;
+  function cReply(v){
+    if(cMode==='chat'){if(v&&TROUBLE.test(v)){setTopic(v);cMode='topic';}else{cAi(CHIT[chitI++%CHIT.length]);return;}}
+    if(cStep===1){cStep=2;cAi('そうだったんですね。教えてくださってありがとうございます。\nそれなら、見積もりだけでも取ってみますか？',function(){cBtns([['はい',cYes,true],['もう少し話したい',function(){cStep=1;cAi('もちろんです。気になっていること、もう少し聞かせてください。');}]]);});}
+    else cAi('うんうん。ほかにも気になっていることがあれば、何でも話してくださいね。');
+  }
+  /* ===== 依頼を作る（コンシェルジュ → 案件シート → 投稿）11/7 ===== */
+  var CT={topic:'',bunya:'',what:'',where:'',bld:'',when:'',detail:'',photos:[],ask:''};
+  var TOPIC={'床がきしむ':['リフォーム','床のきしみの点検・補修','歩くと床がきしむ。'],'窓からすきま風':['リフォーム','窓のすきま風の対策（修理か交換か相談したい）','窓からすきま風が入り、寒さが気になる。'],'お風呂のカビ':['ハウスクリーニング','浴室のカビ取り・クリーニング','お風呂にカビが出ている。'],'庭が荒れてきた':['庭の手入れ','庭木の剪定・草刈り','庭が荒れてきて手が回らない。']};
+  function setTopic(t){var x=TOPIC[t]||['その他・まず相談','現地を見て相談したい',t+'。'];CT={topic:t,bunya:x[0],what:x[1],where:'',bld:'',when:'',detail:x[2],photos:[],ask:'見積もり自体に料金がかかるか'};}
+  function sheetHTML(){
+    var rows=[['分野',CT.bunya],['依頼したいこと',CT.what],['場所',CT.where],['建物の種類',CT.bld],['希望時期',CT.when],['詳しい内容',CT.detail],['写真',CT.photos.length?CT.photos.length+'枚':'なし'],['専門家に確認したいこと',CT.ask]];
+    return '<div class="sht"><div class="sht-h">案件シート</div>'+rows.map(function(r){return '<div class="sht-r"><span>'+r[0]+'</span><b>'+esc(r[1]||'—')+'</b></div>';}).join('')+(CT.photos.length?'<div class="sht-p">'+CT.photos.map(function(u){return '<img src="'+u+'" alt="">';}).join('')+'</div>':'')+'</div>';
+  }
+  function cHTML(html){var box=document.getElementById('cl');var d=document.createElement('div');d.className='mg ai2 wide';d.innerHTML='<img class="av2" src="chara.png" alt="">'+html;box.appendChild(d);box.scrollTop=box.scrollHeight;}
+  function cYes(){
+    cStep=3;
+    cAi('了解です。あと4つ教えてください。\n（1/4）お住まいは、何市・何町・何村ですか？番地は不要です。',function(){
+      cWait(function(v){CT.where=v;q2();});cBtns([['松本市',function(){CT.where='松本市';q2();}],['安曇野市',function(){CT.where='安曇野市';q2();}],['塩尻市',function(){CT.where='塩尻市';q2();}]]);});
+    function q2(){cWait(null);cAi('（2/4）建物の種類を教えてください。',function(){cBtns([['一戸建て',function(){CT.bld='一戸建て';q3();}],['マンション・アパート',function(){CT.bld='マンション・アパート';q3();}],['店舗・事務所',function(){CT.bld='店舗・事務所';q3();}],['その他',function(){CT.bld='その他';q3();}]]);});}
+    function q3(){cAi('（3/4）いつ頃までにお願いしたいですか？「年末までに」「来月中」など、ざっくりで大丈夫です。\n時期がまだ決まっていなければ、下のボタンを押してください。',function(){
+      cWait(function(v){CT.when=v;q4();});cBtns([['まずは見積もりだけ欲しい',function(){CT.when='見積もりのみ希望';q4();}]]);});}
+    function q4(){cWait(null);cAi('（4/4）様子がわかる写真があれば、専門家も見当をつけやすいです。3枚まで送れます。',function(){photoAsk();});}
+  }
+  function photoAsk(){var box=document.getElementById('cl');var b=document.createElement('div');b.className='chs cbt';
+    b.innerHTML='<label class="phb">写真を選ぶ<input type="file" accept="image/*" multiple hidden></label><button type="button">写真なしで進む</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
+    b.querySelector('input').onchange=function(e){var fs=Array.prototype.slice.call(e.target.files||[]).slice(0,3);if(!fs.length)return;CT.photos=fs.map(function(f){return URL.createObjectURL(f);});b.remove();cMe('写真を'+fs.length+'枚送りました');showSheet();};
+    b.querySelector('button').onclick=function(){b.remove();cMe('写真なしで進みます');showSheet();};}
+  function showSheet(){cAi('ありがとうございます。まとめました。間違っているところはありませんか？',function(){cHTML(sheetHTML());cBtns([['訂正する',fix],['この内容で投稿する',post,true]]);});}
+  function fix(){cAi('どこをどう直しますか？「場所は塩尻市」のように教えてください。',function(){cWait(function(v){CT.detail+='（訂正：'+v+'）';cWait(null);cAi('直しました。もう一度確認してください。',function(){cHTML(sheetHTML());cBtns([['訂正する',fix],['この内容で投稿する',post,true]]);});});});}
+  function post(){cAi('投稿しました。対応できる専門家から返事が届いたら、LINEでお知らせしますね。',function(){var box=document.getElementById('cl');var n=document.createElement('div');n.className='sys';n.textContent='（試作）ここで依頼が投稿されます';box.appendChild(n);box.scrollTop=box.scrollHeight;});}
+  var cWaitFn=null;function cWait(fn){cWaitFn=fn;}
+  /* ===== 依頼者：進行中の案件（11/7 作り直し） ===== */
+  var UC={title:'キッチンの水栓の交換',post:null,closed:false,stop:false,
+    sheet:[['分野','水のトラブル'],['依頼したいこと','キッチンの水栓の交換'],['場所','松本市'],['建物の種類','一戸建て'],['希望時期','年内に'],['詳しい内容','蛇口の根元から水がにじむ。15年くらい使っている。'],['専門家に確認したいこと','見積もり自体に料金がかかるか']],
+    vs:[
+      {n:'山田工務店',star:4.8,rv:23,st:'est',un:1,
+       msgs:[['v','はじめまして、山田工務店です。水栓の型番がわかる写真はありますか？'],['me','これです。'],['v','ありがとうございます。一度見せていただければ正確な金額を出せます。'],['sys','11/5 10:00 に現地調査をしました'],['est',{amt:38500,start:'11/20',pay:'工事完了後に振込',memo:'水栓本体（混合水栓）と取り付け工事一式。古い水栓の処分を含みます。',due:'11/10'}]]},
+      {n:'松本水道設備',star:4.6,rv:11,st:'prop',un:1,
+       msgs:[['v','松本水道設備です。水がにじむのは根元のパッキンの劣化か、本体の寿命のことが多いです。'],['me','15年くらい使っています。'],['prop',{kari:'25,000〜45,000円',todo:'水栓の状態と配管の確認（30分ほど）',slots:[['11/10（火）','10:00','12:00'],['11/12（木）','13:00','15:00']],estDue:'調査から3日以内'}]]},
+      {n:'中信設備',star:4.2,rv:5,st:'chat',un:0,
+       msgs:[['v','中信設備です。台所の下の収納に、止水栓はありますか？'],['me','あると思います。']]}
+    ]};
+  var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],fixd:['調査日が決定',''],est:['確定見積もり到着','hot'],won:['依頼しました','ok'],lost:['見送り','off']};
+  function stage(){if(UC.af&&UC.af.done)return 7;if(UC.vs.some(function(v){return v.st==='won';}))return 5;if(UC.vs.some(function(v){return v.st==='est';}))return 4;if(UC.vs.some(function(v){return v.st==='fixd'||v.st==='prop';}))return 3;return 2;}
+  function openCase(){
+    ensurePane();back=null;
+    var p=UC.post,st=stage(),steps=['投稿','立候補','やり取り','現地調査','見積もり','依頼','完了'];
+    var stepH='<div class="stp">'+steps.map(function(t,i){return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div>';
+    var todo='';
+    var e1=UC.vs.filter(function(v){return v.st==='est';})[0],p1=UC.vs.filter(function(v){return v.st==='prop';})[0];
+    if(p){var d=new Date(p.d+'T'+p.t);todo='<div class="todo1 pp"><b>先送り中</b>再開予定 '+d.getFullYear()+'年'+wdTxt(d)+' '+p.t+'<div class="t1b"><button type="button" id="chgB">日時を変更</button><button type="button" id="nowB">今すぐ再開</button></div></div>';}
+    else if(UC.vs.some(function(v){return v.msgs.some(function(m){return m[0]==='addreq'&&!m[1].done;});})){var av=UC.vs.filter(function(v){return v.msgs.some(function(m){return m[0]==='addreq'&&!m[1].done;});})[0];todo='<button type="button" class="todo1" data-v="'+UC.vs.indexOf(av)+'"><b>やること</b>'+av.n+'から「別の専門家を追加したい」というお願いが届いています ›</button>';}
+    else if(wonV())todo=afterTodo();
+    else if(e1)todo='<button type="button" class="todo1" data-v="'+UC.vs.indexOf(e1)+'"><b>やること</b>'+e1.n+'から確定見積もりが届いています。依頼するか決めてください ›</button>';
+    else if(p1)todo='<button type="button" class="todo1" data-v="'+UC.vs.indexOf(p1)+'"><b>やること</b>'+p1.n+'から現地調査の提案が届いています。日時を選んでください ›</button>';
+    var vsH='<div class="list">'+UC.vs.map(function(v,i){var last=v.msgs[v.msgs.length-1],lt=typeof last[1]==='string'?last[1]:last[0]==='prop'?'現地調査の提案が届きました':last[0]==='est'?'確定見積もりが届きました':last[0]==='chg'?'金額変更の申請が届きました':last[0]==='rep'?'完了報告が届きました':last[0]==='addreq'?'別の専門家を追加したいというお願いが届きました':'';
+      return '<button type="button" class="card bp vc'+(v.st==='lost'?' off':'')+'" data-v="'+i+'"><span class="vhd"><b>'+v.n+'</b><span class="vst '+VST[v.st][1]+'">'+VST[v.st][0]+'</span>'+(v.un?'<span class="unr">'+v.un+'</span>':'')+'</span><span class="meta"><span>★'+v.star+'（'+v.rv+'件）</span></span>'+(v.helpers?'<span class="hlpv">協力業者（元請けの手配）：'+v.helpers.join('、')+'</span>':'')+'<span class="lm">'+esc(lt)+'</span></button>';}).join('')+'</div>';
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+UC.title+'</b><span>'+(p?'先送り中':UC.closed?'取り下げました':st>=7?'完了':steps[st])+'</span></div><button type="button" class="kebab" id="kbB" aria-label="その他の操作">…</button></div>'+
+      '<div class="arw">'+stepH+todo+simBox()+'<div class="sec">立候補した業者 <small>'+UC.vs.length+'社 ／ 最大5社'+(UC.stop?'・締め切り済み':'')+'</small></div>'+vsH+
+      '<details class="sdet"><summary>依頼の内容を見る</summary><div class="sht">'+UC.sheet.map(function(r){return '<div class="sht-r"><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>';}).join('')+'</div></details></div>';
+    pane.classList.add('on');
+    pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');UC=UC1;render();};
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-v]'),function(b){b.onclick=function(){openVendor(+b.dataset.v);};});
+    bindAfter();
+    var e=document.getElementById('chgB');if(e)e.onclick=postpone;
+    e=document.getElementById('nowB');if(e)e.onclick=function(){removeResume();UC.post=null;openCase();};
+    document.getElementById('kbB').onclick=function(){
+      if(stage()>=5){sheet.innerHTML='<div class="grab"></div><h3>この依頼について</h3><ul class="kbm"><li><button type="button" id="k9">キャンセルを業者さんに相談する<small>成約後のキャンセルは、業者さんからの申請で行います</small></button></li><li><button type="button" id="k8">運営に問い合わせる</button></li></ul>';open();document.getElementById('k9').onclick=close;document.getElementById('k8').onclick=close;return;}
+      sheet.innerHTML='<div class="grab"></div><h3>この依頼について</h3><ul class="kbm"><li><button type="button" id="k1">新しい立候補を締め切る<small>立候補済みの業者さんには影響しません</small></button></li><li><button type="button" id="k2">先送りする<small>再開する日時を決めて、いったん止めます</small></button></li><li><button type="button" id="k3" class="dng">依頼を取り下げる<small>立候補した業者さん全員に通知されます</small></button></li></ul>';
+      open();
+      document.getElementById('k1').onclick=function(){UC.stop=true;close();openCase();};
+      document.getElementById('k2').onclick=function(){close();postpone();};
+      document.getElementById('k3').onclick=function(){UC.closed=true;close();openCase();};};
+  }
+  function openVendor(i){
+    var v=UC.vs[i];v.un=0;ensurePane();
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+v.n+'</b><span>★'+v.star+'（口コミ'+v.rv+'件）・'+VST[v.st][0]+'</span></div></div><div class="msgs" id="vm"></div><form class="cmp" id="vf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="vimg" hidden></label><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ"><button class="sd">送信</button></form>';
+    pane.classList.add('on');
+    function draw(){var box=document.getElementById('vm');box.innerHTML=v.msgs.map(function(m,k){
+      if(m[0]==='sys')return '<div class="sys">'+esc(m[1])+'</div>';
+      if(m[0]==='me')return '<div class="mg me"><div class="bb">'+(m[2]?'<img src="'+m[2]+'" alt="">':'')+esc(m[1])+'</div></div>';
+      if(m[0]==='v')return '<div class="mg"><span class="wn">'+v.n+'</span><div class="bb">'+esc(m[1])+'</div></div>';
+      var ca=cardAfter(m,k);if(ca!==null)return ca;ca=cardAdd(m,k);if(ca!==null)return ca;
+      if(m[0]==='prop'){var x=m[1];return '<div class="pc"><div class="pc-h">現地調査の提案</div><dl><dt>仮の見積もり</dt><dd>'+x.kari+'</dd><dt>当日やること</dt><dd>'+x.todo+'</dd><dt>調査の費用</dt><dd>無料</dd><dt>確定見積もり</dt><dd>'+x.estDue+'に届きます</dd></dl>'+
+        (x.done?'<p class="pc-ok">'+x.done+'</p>':'<div class="pc-s">ご都合のよい開始時刻を選んでください</div>'+x.slots.map(function(s,si){var h0=+s[1].slice(0,2),h1=+s[2].slice(0,2),bt=[];for(var h=h0;h<h1;h+=.5)bt.push(pad(Math.floor(h))+':'+(h%1?'30':'00'));return '<div class="pc-d">'+s[0]+' '+s[1]+'〜'+s[2]+'</div><div class="pc-t">'+bt.map(function(t){return '<button type="button" data-k="'+k+'" data-d="'+s[0]+'" data-t="'+t+'">'+t+'</button>';}).join('')+'</div>';}).join('')+'<button type="button" class="pc-no" data-k="'+k+'">合う日時がない（候補を送る）</button>')+'</div>';}
+      if(m[0]==='est'){var y=m[1];return '<div class="pc est"><div class="pc-h">確定見積もり</div><p class="amt">'+y.amt.toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+y.memo+'</dd><dt>着手予定日</dt><dd>'+y.start+'</dd><dt>支払い</dt><dd>'+y.pay+'</dd><dt>返事の期限</dt><dd>'+y.due+'</dd></dl>'+(y.done?'<p class="pc-ok">'+y.done+'</p>':'<div class="pc-b"><button type="button" class="g" data-x="no" data-k="'+k+'">見送る</button><button type="button" data-x="yes" data-k="'+k+'">この内容で依頼する</button></div>')+'</div>';}
+      return '';}).join('');box.scrollTop=box.scrollHeight;
+      bindCardAfter(v,box,draw);
+      Array.prototype.forEach.call(box.querySelectorAll('.pc-t button'),function(b){b.onclick=function(){var x=v.msgs[+b.dataset.k][1];x.done=b.dataset.d+' '+b.dataset.t+' に決まりました。住所が業者さんに伝わります。';v.st='fixd';v.msgs.push(['sys','現地調査の日時が決まりました：'+b.dataset.d+' '+b.dataset.t]);draw();};});
+      Array.prototype.forEach.call(box.querySelectorAll('.pc-no'),function(b){b.onclick=function(){counter(+b.dataset.k);};});
+      Array.prototype.forEach.call(box.querySelectorAll('.pc-b button[data-x]'),function(b){b.onclick=function(){var y=v.msgs[+b.dataset.k][1];if(b.dataset.x==='yes'){y.done='依頼しました。着手予定日は '+y.start+' です。';v.st='won';UC.vs.forEach(function(o){if(o!==v){o.st='lost';o.un=0;}});v.msgs.push(['sys','依頼が決まりました（成約）。ほかの業者さんには見送りが通知されます']);}else{y.done='見送りました。';v.st='lost';}draw();};});
+    }
+    function counter(k){var mp=document.createElement('div');mp.className='ctr';mp.innerHTML='<div class="mph">ご都合のよい枠を送る（3つまで）</div><div class="pdtf"><label>日付<input type="date" id="cd" min="'+ymd(dd(1))+'"></label><label>時間<span class="tr"><input type="time" id="c1" step="1800" value="10:00">〜<input type="time" id="c2" step="1800" value="12:00"></span></label></div><div class="qk0"><button type="button" class="g" id="cc">やめる</button><button type="button" id="cs">この枠を送る</button></div>';
+      pane.insertBefore(mp,document.getElementById('vf'));document.getElementById('cc').onclick=function(){mp.remove();};
+      document.getElementById('cs').onclick=function(){var d=document.getElementById('cd').value;if(!d)return;var x=new Date(d+'T00:00');v.msgs[k][1].done='候補を送りました。業者さんが24時間以内に時刻を決めます。';v.msgs.push(['me','この日はどうでしょうか：'+(x.getMonth()+1)+'/'+x.getDate()+' '+document.getElementById('c1').value+'〜'+document.getElementById('c2').value]);mp.remove();draw();};}
+    draw();
+    pane.querySelector('.bk').onclick=openCase;
+    document.getElementById('vf').onsubmit=function(e){e.preventDefault();var t=document.getElementById('tx'),s=t.value.trim();if(!s)return;v.msgs.push(['me',s]);t.value='';draw();};
+    document.getElementById('vimg').onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;v.msgs.push(['me','',URL.createObjectURL(f)]);draw();};
+  }
+  /* ===== 依頼者：成約後〜完了・口コミ（11/7） ===== */
+  function wonV(){return UC.vs.filter(function(v){return v.st==='won';})[0];}
+  function afterTodo(){var v=wonV();if(!v)return '';var i=UC.vs.indexOf(v),A=UC.af||(UC.af={});
+    if(A.rv)return '<div class="todo1 okk"><b>完了しました</b>口コミありがとうございました。<div class="t1b"><button type="button" id="againB">また'+v.n+'に頼む</button></div><small class="t1n">'+v.n+'とのチャットは、完了から30日間使えます</small></div>';
+    if(A.done)return '<button type="button" class="todo1" id="rvB"><b>やること</b>工事が完了しました。'+v.n+'の口コミを書いてください ›</button>';
+    if(A.rep)return '<button type="button" class="todo1" data-v="'+i+'"><b>やること</b>'+v.n+'から完了報告が届いています。確認してください ›<small class="t1n">7日たつと自動で完了になります</small></button>';
+    if(A.chg)return '<button type="button" class="todo1" data-v="'+i+'"><b>やること</b>'+v.n+'から金額変更の申請が届いています ›</button>';
+    return '<button type="button" class="todo1 inf" data-v="'+i+'"><b>工事の予定</b>着手予定日 11/20（金）　'+v.n+'<small class="t1n">工事が終わったら、業者さんから完了報告が届きます</small></button>';}
+  function simBox(){var v=wonV(),A=UC.af||{};if(!v||A.done)return '';
+    return '<div class="simb"><span>試作の操作（業者さん側の動き）</span>'+(A.chg||A.rep?'':'<button type="button" id="simC">金額変更の申請を届ける</button>')+(A.rep?'':'<button type="button" id="simR">完了報告を届ける</button>')+'</div>';}
+  function bindAfter(){
+    var v=wonV();if(!v)return;var A=UC.af||(UC.af={});
+    var e=document.getElementById('simC');if(e)e.onclick=function(){A.chg=1;v.msgs.push(['chg',{from:38500,to:42900,why:'壁の中の止水栓が劣化していたため、交換を追加しました（現場でご了承済み）'}]);openCase();};
+    e=document.getElementById('simR');if(e)e.onclick=function(){A.rep=1;v.msgs.push(['rep',{amt:A.amt||38500,what:'混合水栓の交換、古い水栓の処分'+(A.amt?'、止水栓の交換':''),day:'11/20（金）'}]);openCase();};
+    e=document.getElementById('rvB');if(e)e.onclick=function(){openReview(v);};
+    e=document.getElementById('againB');if(e)e.onclick=function(){this.textContent='（試作）'+v.n+'に新しく相談する画面が開きます';};
+  }
+  function cardAfter(m,k){
+    if(m[0]==='chg'){var x=m[1];return '<div class="pc"><div class="pc-h">金額変更の申請</div><p class="amt2"><s>'+x.from.toLocaleString()+'円</s> → <b>'+x.to.toLocaleString()+'円</b>（税込）</p><dl><dt>理由</dt><dd>'+x.why+'</dd></dl>'+(x.done?'<p class="pc-ok">'+x.done+'</p>':'<div class="pc-b"><button type="button" class="g" data-a="talk" data-k="'+k+'">チャットで相談する</button><button type="button" data-a="ok" data-k="'+k+'">承諾する</button></div>')+'</div>';}
+    if(m[0]==='rep'){var y=m[1];return '<div class="pc"><div class="pc-h">完了報告</div><dl><dt>作業日</dt><dd>'+y.day+'</dd><dt>作業内容</dt><dd>'+y.what+'</dd><dt>最終金額</dt><dd><b>'+y.amt.toLocaleString()+'円</b>（税込）</dd><dt>写真</dt><dd><span class="ph0">施工前</span><span class="ph0">施工後</span></dd></dl>'+(y.done?'<p class="pc-ok">'+y.done+'</p>':'<p class="pc-n">内容を確認して、問題なければ「完了を確認する」を押してください。7日たつと自動で完了になります。</p><div class="pc-b"><button type="button" class="g" data-a="notyet" data-k="'+k+'">まだ終わっていない</button><button type="button" data-a="fin" data-k="'+k+'">完了を確認する</button></div>')+'</div>';}
+    return null;}
+  function bindCardAfter(v,box,draw){Array.prototype.forEach.call(box.querySelectorAll('[data-a]'),function(b){b.onclick=function(){var m=v.msgs[+b.dataset.k],A=UC.af||(UC.af={}),a=b.dataset.a;
+    if(a==='agree'){m[1].done='同意しました。'+m[1].cat+'の業者さんを募集しています。';m[1].ok=1;v.msgs.push(['sys','追加募集が始まりました（'+m[1].cat+'）']);}
+    if(a==='deny'){m[1].done='今回は追加しないと伝えました。';}
+    if(a==='askq'){document.getElementById('tx').focus();return;}
+    if(a==='fix'){m[1].fixed=1;v.msgs.push(['sys','松本電設が協力業者として加わりました。工事の責任は'+v.n+'が持ちます']);}
+    if(a==='ok'){m[1].done='承諾しました。金額は '+m[1].to.toLocaleString()+'円 になります。';A.chg=0;A.amt=m[1].to;v.msgs.push(['sys','金額が変更されました：'+m[1].to.toLocaleString()+'円']);}
+    if(a==='talk'){document.getElementById('tx').focus();return;}
+    if(a==='fin'){m[1].done='完了を確認しました。ありがとうございました。';A.done=1;A.rep=0;v.msgs.push(['sys','工事が完了しました']);}
+    if(a==='notyet'){m[1].done='「まだ終わっていない」と伝えました。チャットで状況を伝えてください。';A.rep=0;}
+    draw();};});}
+  function openReview(v){
+    ensurePane();var star=0;
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>口コミを書く</b><span>'+v.n+'</span></div></div><div class="arw rvw">'+
+      '<p class="sp">'+UC.title+'はいかがでしたか？</p><div class="stars" id="st" role="radiogroup" aria-label="評価">'+[1,2,3,4,5].map(function(n){return '<button type="button" role="radio" aria-checked="false" data-n="'+n+'" aria-label="'+n+'">★</button>';}).join('')+'</div>'+
+      '<label class="lab" for="rvT">感想</label><textarea id="rvT" rows="4" placeholder="例：説明がわかりやすく、作業もていねいでした"></textarea>'+
+      '<p class="warn" id="rvW" hidden>星を選んでください</p><button type="button" class="big" id="rvS">口コミを投稿する</button></div>';
+    pane.classList.add('on');pane.querySelector('.bk').onclick=openCase;
+    var bs=pane.querySelectorAll('#st button');Array.prototype.forEach.call(bs,function(b){b.onclick=function(){star=+b.dataset.n;Array.prototype.forEach.call(bs,function(x){x.classList.toggle('on',+x.dataset.n<=star);x.setAttribute('aria-checked',x===b);});};});
+    document.getElementById('rvS').onclick=function(){if(!star){document.getElementById('rvW').hidden=false;return;}var t=document.getElementById('rvT').value.trim();UC.af.rv=1;
+      pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>ありがとうございました</b><span>'+v.n+'</span></div></div><div class="arw rvw"><p class="sp">口コミを投稿しました。'+v.n+'の励みになります。</p>'+
+        '<div class="gbox"><b>Googleにも同じ口コミを書きませんか？</b><p class="sp s2">書いた文章をコピーして、'+v.n+'のGoogleの口コミページを開きます。貼り付けて投稿するだけです。</p><button type="button" class="big" id="gB">文章をコピーしてGoogleを開く</button></div><button type="button" class="ghost" id="skB">今回はしない</button></div>';
+      pane.querySelector('.bk').onclick=openCase;document.getElementById('skB').onclick=openCase;
+      document.getElementById('gB').onclick=function(){try{navigator.clipboard&&navigator.clipboard.writeText(t);}catch(x){}this.textContent='コピーしました（試作：本番はここでGoogleが開きます）';this.disabled=true;};};
+  }
+  /* ===== 依頼者：マイページ・依頼・チャット（11/7） ===== */
+  var PAST=[
+    {n:'信州水道設備',job:'浴室の換気扇の交換',done:'2026-10-25',msgs:[['v','先日はありがとうございました。換気扇の音はいかがですか？'],['me','静かになりました。ありがとうございます。']]},
+    {n:'安曇野塗装',job:'外壁の部分塗装',done:'2026-06-14',msgs:[['v','工事完了のご確認ありがとうございました。'],['me','きれいになりました。']]}
+  ];
+  var MY={name:'まさ',chara:'sis'};
+  function pastList(){var l=PAST.slice();var v=wonV();if(v&&UC.af&&UC.af.done)l.unshift({n:v.n,job:UC.title,done:'2026-11-20',msgs:v.msgs,cur:1});return l;}
+  function daysLeft(d){return 30-Math.round((new Date(ymd(CAL0)+'T00:00')-new Date(d+'T00:00'))/864e5);}
+  function renderUserMy(){
+    var pts=62;
+    scr.innerHTML='<div class="mp">'+
+      '<div class="mpp"><span class="av">ま</span><div><b>'+esc(MY.name)+'さん</b><small>LINEでログイン中・松本市</small></div></div>'+
+      '<div class="ond"><div class="ond-h"><img src="chara.png" alt=""><div><small>建築士のお姉さんとの おなじみ度</small><b>話し相手</b></div></div><div class="ond-bar"><i style="width:'+pts+'%"></i></div><div class="ond-s"><span>顔見知り</span><span class="on">話し相手</span><span>頼れる存在</span></div><p class="ond-n">ログインや完了確認でおなじみ度が上がります</p></div>'+
+      '<div class="sec">これまで頼んだ業者 <small>'+pastList().length+'社</small></div><div class="list">'+pastList().map(function(p,i){var dl=daysLeft(p.done);return '<div class="card pv"><b>'+p.n+'</b><span class="meta"><span>'+esc(p.job)+'</span><span>完了 '+md(p.done)+'</span></span><span class="pvs '+(p.cur||dl>0?'':'ro')+'">'+(p.cur?'チャットは30日間使えます':dl>0?'チャットはあと'+dl+'日使えます':'チャットは読むだけ')+'</span><div class="pvb"><button type="button" data-p="'+i+'" data-a="chat">チャット</button><button type="button" data-p="'+i+'" data-a="again" class="pri">また頼む</button></div></div>';}).join('')+'</div>'+
+      '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(MY.name)],['ch','話し相手のキャラクター',MY.chara==='sis'?'建築士のお姉さん':'大工のお兄さん'],['ad','住所','松本市○○町（登録済み）'],['nt','通知','LINEで受け取る'],['hs','会話の履歴','見る・消す']].map(function(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}).join('')+'</div>'+
+      '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['hp','ヘルプ・最大10万円保証について',''],['tos','利用規約・プライバシーポリシー',''],['biz','業者として登録する','仕事を受けたい方'],['out','退会する','']].map(function(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}).join('')+'</div><div style="height:16px"></div></div>';
+    Array.prototype.forEach.call(scr.querySelectorAll('.pvb button'),function(b){b.onclick=function(){var p=pastList()[+b.dataset.p];if(b.dataset.a==='chat')pastChat(p);else againSheet(p);};});
+    Array.prototype.forEach.call(scr.querySelectorAll('.mrow'),function(b){b.onclick=function(){var k=b.dataset.m;
+      if(k==='ch'){sheet.innerHTML='<div class="grab"></div><h3>話し相手のキャラクター</h3><div class="chsel"><button type="button" data-c="bro"'+(MY.chara==='bro'?' class="on"':'')+'><span class="cf">大</span>大工のお兄さん</button><button type="button" data-c="sis"'+(MY.chara==='sis'?' class="on"':'')+'><img src="chara.png" alt="">建築士のお姉さん</button></div><p class="sp s2">おなじみ度は、キャラクターごとに育ちます。</p>';open();Array.prototype.forEach.call(sheet.querySelectorAll('.chsel button'),function(x){x.onclick=function(){MY.chara=x.dataset.c;close();renderUserMy();};});return;}
+      if(k==='nm'){sheet.innerHTML='<div class="grab"></div><h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(MY.name)+'" aria-label="呼ばれたい名前"><p class="sp s2">キャラクターが、必要なときにこの名前で呼びます。</p><button type="button" class="big" id="nmS">保存する</button>';open();document.getElementById('nmS').onclick=function(){var v=document.getElementById('nmI').value.trim();if(v)MY.name=v;close();renderUserMy();};return;}
+      if(k==='qa'){inquiry();return;}
+      sheet.innerHTML='<div class="grab"></div><h3>'+b.querySelector('span').textContent+'</h3><p class="sp s2">（試作）この画面は後で作ります。</p>';open();};});
+  }
+  function pastChat(p){
+    ensurePane();var dl=daysLeft(p.done),ro=!p.cur&&dl<=0;
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+p.n+'</b><span>'+esc(p.job)+'・完了 '+md(p.done)+'</span></div></div><div class="msgs" id="pm"></div>'+
+      (ro?'<div class="lock">完了から30日が過ぎたため、読むだけになっています。<div class="t1b cen"><button type="button" id="pAg">また頼む</button><button type="button" id="pNw">新しく相談する</button></div></div>'
+         :'<div class="pnote">別のご相談は［<button type="button" id="pNw">新しく相談する</button>］から</div><form class="cmp" id="pf"><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ"><button class="sd">送信</button></form>');
+    pane.classList.add('on');pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');renderUserMy();};
+    function draw(){var box=document.getElementById('pm');box.innerHTML=p.msgs.filter(function(m){return m[0]==='v'||m[0]==='me'||m[0]==='sys';}).map(function(m){return m[0]==='sys'?'<div class="sys">'+esc(m[1])+'</div>':m[0]==='me'?'<div class="mg me"><div class="bb">'+esc(m[1])+'</div></div>':'<div class="mg"><span class="wn">'+p.n+'</span><div class="bb">'+esc(m[1])+'</div></div>';}).join('');box.scrollTop=box.scrollHeight;}
+    draw();
+    var f=document.getElementById('pf');if(f)f.onsubmit=function(e){e.preventDefault();var t=document.getElementById('tx'),s=t.value.trim();if(!s)return;p.msgs.push(['me',s]);t.value='';draw();};
+    var a=document.getElementById('pAg');if(a)a.onclick=function(){againSheet(p);};
+    document.getElementById('pNw').onclick=function(){pane.classList.remove('on');memberTabU=0;render();setTimeout(function(){startTopic('新しく相談したいことがあります');},50);};
+  }
+  function againSheet(p){
+    sheet.innerHTML='<div class="grab"></div><h3>'+p.n+'に また頼む</h3><p class="sp s2">前回：'+esc(p.job)+'（'+md(p.done)+' 完了）。この業者さんにだけ届く依頼になります。</p><textarea class="nmi" id="agT" rows="3" placeholder="例：今度は台所の換気扇も見てほしいです"></textarea><button type="button" class="big" id="agS">この業者さんに依頼を送る</button>';
+    open();document.getElementById('agS').onclick=function(){if(!document.getElementById('agT').value.trim())return;sheet.innerHTML='<div class="grab"></div><h3>送りました</h3><p class="sp">'+p.n+'から返事が届いたら、LINEでお知らせします。</p><button type="button" class="big" id="agC">閉じる</button>';document.getElementById('agC').onclick=close;};
+  }
+  function renderUserCases(){
+    var c=document.createElement('div');c.innerHTML=userHomeHTML();var card=c.querySelector('#caseB').outerHTML;
+    scr.innerHTML='<div class="mp"><div class="sec">進行中の依頼 <small>1件</small></div><div class="list">'+card+'</div><div class="sec">終わった依頼 <small>'+PAST.length+'件</small></div><div class="list">'+PAST.map(function(p,i){return '<button type="button" class="card bp pc2" data-p="'+i+'"><span class="tag" style="background:#e6eae8;color:var(--sb)">完了</span><b>'+esc(p.job)+'</b><span class="meta"><span>'+p.n+'</span><span>完了 '+md(p.done)+'</span></span></button>';}).join('')+'</div></div>';
+    document.getElementById('caseB').onclick=openCase;
+    Array.prototype.forEach.call(scr.querySelectorAll('.pc2'),function(b){b.onclick=function(){pastChat(PAST[+b.dataset.p]);};});
+  }
+  function renderUserChats(){
+    var rows=[['c','建築士のお姉さん','まち頼 コンシェルジュ','chara']].concat(UC.vs.filter(function(v){return v.st!=='lost';}).map(function(v){return ['v'+UC.vs.indexOf(v),v.n,UC.title,'']; })).concat(PAST.map(function(p,i){return ['p'+i,p.n,p.job+'（完了）',''];}));
+    scr.innerHTML='<div class="mp"><div class="sec">チャット</div><div class="list">'+rows.map(function(r){return '<button type="button" class="card bp crow" data-r="'+r[0]+'">'+(r[3]?'<img class="av2" src="chara.png" alt="">':'<span class="av sm">'+r[1].slice(0,1)+'</span>')+'<span><b>'+r[1]+'</b><span class="meta"><span>'+esc(r[2])+'</span></span></span></button>';}).join('')+'</div></div>';
+    Array.prototype.forEach.call(scr.querySelectorAll('.crow'),function(b){b.onclick=function(){var r=b.dataset.r;if(r==='c')conc('何でも気軽に相談してください');else if(r[0]==='v'){openVendor(+r.slice(1));pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');renderUserChats();};}else pastChat(PAST[+r.slice(1)]);};});
+  }
+  var QH=[['お金・キャンセルについて','キャンセルした場合、見積もりの費用はかかりますか？','見積もりや現地調査に費用はかかりません。キャンセルの際も、依頼者さまに手数料はかかりませんのでご安心ください。']];
+  function inquiry(){
+    ensurePane();
+    var T=['業者とのトラブル','業者から返事がない・対応してくれない','お金・キャンセルについて','アプリの使い方','機能改善の要望','登録・退会について','その他'];
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>運営への問い合わせ</b><span>まち頼 運営事務局</span></div></div><div class="arw"><form class="pf pf2" id="qf" novalidate>'+
+      '<div class="lab">お問い合わせの種類 <em class="rq">必須</em></div><div class="qty">'+T.map(function(t,i){return '<label class="rd2"><input type="radio" name="qt" value="'+i+'">'+t+'</label>';}).join('')+'</div>'+
+      '<label>内容 <em class="rq">必須</em><textarea id="qb" rows="6" placeholder="どの依頼のことか、何があったかを書いてください"></textarea></label>'+
+      '<p class="warn" id="qw" hidden>種類を選び、内容を書いてください</p><button class="big" type="submit">送信する</button><p class="pc-n">1営業日以内に、アプリ内（この画面の「これまでの問い合わせ」）でご返信します。</p></form>'+(QH.length?'<div class="sec">これまでの問い合わせ</div><div class="list">'+QH.map(function(q){return '<div class="card"><span class="tag" style="'+(q[2]?'':'background:#e6eae8;color:var(--sb)')+'">'+(q[2]?'返信あり':'確認中')+'</span><b>'+q[0]+'</b><span class="meta"><span>'+esc(q[1])+'</span></span>'+(q[2]?'<div class="qrep"><b>運営より</b>'+esc(q[2])+'</div>':'')+'</div>';}).join('')+'</div>':'')+'</div>';
+    pane.classList.add('on');pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');};
+    document.getElementById('qf').onsubmit=function(e){e.preventDefault();var r=document.querySelector('input[name=qt]:checked'),b=document.getElementById('qb').value.trim();if(!r||!b){document.getElementById('qw').hidden=false;return;}
+      pane.querySelector('.arw').innerHTML='<div class="ppd"><b style="font-size:16px">送信しました</b><p class="sp">お問い合わせを受け付けました。内容を確認して、1営業日以内にアプリ内でご返信します。返信が届くと、お知らせ（ベル）に表示されます。</p><dl class="qd"><dt>種類</dt><dd>'+T[+r.value]+'</dd><dt>内容</dt><dd>'+esc(b)+'</dd></dl></div><button type="button" class="big" id="qok">マイページに戻る</button>';
+      QH.unshift([T[+r.value],b,'']);document.getElementById('qok').onclick=function(){pane.classList.remove('on');};};
+  }
+  var memberTabU=0;
+  /* ===== Proモード：進行中の案件（完了報告・追加募集）11/8 ===== */
+  var PSTEPS=['立候補','やり取り','現地調査','見積もり','成約','工事','完了'];
+  var PC=[
+    {id:'b',title:'浴室の換気扇の交換',who:'松本市・田中様',cat:'機器設置・修理',days:28,st:5,work:'2026-11-06',amt:33000,
+     msgs:[['c','換気扇から異音がします。見ていただけますか？'],['me','伺って確認します。'],['sys','11/2 10:00 に現地調査をしました'],['sys','確定見積もり 33,000円 で依頼されました（成約）'],['task','report']]},
+    {id:'g',title:'外壁の張り替え',who:'安曇野市・小林様',cat:'外装工事',days:28,st:3,
+     msgs:[['c','外壁が傷んできたので張り替えたいです。'],['me','11/5 に現地を見せていただきました。'],['sys','11/5 13:00 に現地調査をしました'],['me','外壁の照明とコンセントを一度外す必要があり、電気工事の資格者が要ります。'],['c','そうなんですね。お任せします。']]}
+  ];
+  function nextNeed(c){
+    if(c.st===5&&!c.rep)return '工事が終わったら「完了報告」を送ってください';
+    if(c.st===5&&c.rep)return '依頼者の確認を待っています（7日で自動的に完了）';
+    if(c.st===3)return '確定見積もりを送ってください（協力業者の分も含めた全体の金額・期限 11/12）';
+    if(c.st>=6)return '完了しました';return '';}
+  function proStep(c){return '<div class="stp">'+PSTEPS.map(function(t,i){return '<span class="'+(i<c.st?'dn':i===c.st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>次に進むには</b>'+nextNeed(c)+'</div>';}
+  function renderProRun(){
+    scr.innerHTML='<div class="sec">進行中の案件 <small>'+PC.length+'件</small></div><div class="list">'+PC.map(function(c,i){return '<button type="button" class="card bp pcr" data-i="'+i+'"><span class="tag">'+PSTEPS[Math.min(c.st,6)]+'</span><b>'+c.title+'</b><span class="meta"><span>'+c.who+'</span></span><span class="lm">次：'+nextNeed(c)+'</span></button>';}).join('')+'</div>';
+    Array.prototype.forEach.call(scr.querySelectorAll('.pcr'),function(b){b.onclick=function(){openProCase(+b.dataset.i);};});
+  }
+  function autoDay(c){var d=new Date(c.work+'T00:00');d.setDate(d.getDate()+c.days);return (d.getMonth()+1)+'/'+d.getDate();}
+  function openProCase(i){
+    var c=PC[i];ensurePane();
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+c.title+'</b><span>'+c.who+'</span></div><button type="button" class="kebab" id="pkB" aria-label="その他の操作">…</button></div><div class="pstp">'+proStep(c)+((c.helpers||[]).length?'<button type="button" class="hcb" id="hcB">協力業者とのチャット（'+c.helpers.join('、')+'）›</button>':'')+'</div><div class="msgs" id="pcm"></div><form class="cmp" id="pcf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" hidden></label><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ"><button class="sd">送信</button></form>';
+    pane.classList.add('on');
+    pane.querySelector('.bk').onclick=function(){pane.classList.remove('on');renderProRun();};
+    function draw(){var box=document.getElementById('pcm');box.innerHTML=c.msgs.map(function(m,k){
+      if(m[0]==='sys')return '<div class="sys">'+esc(m[1])+'</div>';
+      if(m[0]==='me')return '<div class="mg me"><div class="bb">'+esc(m[1])+'</div></div>';
+      if(m[0]==='c')return '<div class="mg"><span class="wn">依頼者</span><div class="bb">'+esc(m[1])+'</div></div>';
+      if(m[0]==='task')return c.rep?'':'<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 6px">着手予定日（'+md(c.work)+'）を過ぎました。工事が終わったら報告してください。</p><ol class="flw"><li class="on">完了報告を送る<small>金額が変わった場合は、ここで最終金額を直せます</small></li><li>依頼者が確認する<small>確認がなくても7日で自動的に完了</small></li><li>完了<small>紹介手数料が確定し、翌月の請求に入ります</small></li></ol><p class="pc-n">報告がない場合も、仕事日から'+c.days+'日（'+autoDay(c)+'）で自動的に完了になります。</p><div class="pc-b"><button type="button" id="repB">完了報告をする</button></div></div>';
+      if(m[0]==='rep'){var r=m[1];return '<div class="pc"><div class="pc-h">完了報告（送信済み）</div><dl><dt>作業日</dt><dd>'+md(r.day)+'</dd><dt>作業内容</dt><dd>'+esc(r.what)+'</dd><dt>最終金額</dt><dd><b>'+r.amt.toLocaleString()+'円</b>'+(r.amt!==c.amt?'（変更あり：'+c.amt.toLocaleString()+'円 → 依頼者の承諾待ち）':'')+'</dd>'+(r.why?'<dt>変更の理由</dt><dd>'+esc(r.why)+'</dd>':'')+'</dl><p class="pc-ok">依頼者の確認を待っています。7日たつと自動的に完了します。</p></div>';}
+      var hh=cardHelper(m,k,c);if(hh!==null)return hh;
+      if(m[0]==='add'){var a=m[1];return '<div class="pc add"><div class="pc-h">追加募集（'+esc(a.cat)+'）</div><dl><dt>必要な理由</dt><dd>'+esc(a.why)+'</dd><dt>作業内容</dt><dd>'+esc(a.what)+'</dd><dt>募集の期限</dt><dd>'+a.due+'</dd></dl>'+(a.ok?'<p class="pc-ok">依頼者が同意しました。追加募集の枠が開いています。</p><div class="pc-b"><button type="button" id="addOpen">追加募集の枠を見る</button></div>':'<p class="pc-n">依頼者の同意を待っています。</p><div class="simb"><span>試作の操作</span><button type="button" id="simAg">依頼者が同意する</button></div>')+'</div>';}
+      return '';}).join('');box.scrollTop=box.scrollHeight;
+      bindHelper(c,box,function(){openProCase(i);});
+      var e=document.getElementById('repB');if(e)e.onclick=function(){reportForm(c,function(){openProCase(i);});};
+      e=document.getElementById('simAg');if(e)e.onclick=function(){c.add.ok=1;c.msgs.push(['sys','依頼者が追加募集に同意しました。'+c.add.cat+'の業者に通知しました']);openProCase(i);};
+      e=document.getElementById('addOpen');if(e)e.onclick=function(){addBoard(c,function(){openProCase(i);});};
+    }
+    draw();
+    document.getElementById('pcf').onsubmit=function(e){e.preventDefault();var t=document.getElementById('tx'),s=t.value.trim();if(!s)return;c.msgs.push(['me',s]);t.value='';draw();};
+    var hb=document.getElementById('hcB');if(hb)hb.onclick=function(){helperChat(c,function(){openProCase(i);});};
+    document.getElementById('pkB').onclick=function(){
+      sheet.innerHTML='<div class="grab"></div><h3>この案件について</h3><ul class="kbm">'+(c.st>=5?'<li><button type="button" id="pk1">金額を変更する<small>依頼者の承諾が必要です</small></button></li><li><button type="button" id="pk2">着手予定日を変更する</button></li><li><button type="button" id="pk3">キャンセルを申請する<small>理由を3つから選びます</small></button></li>':'<li><button type="button" id="pk4">協力業者を追加する<small>別の業種が必要なとき。下請けとして入ってもらいます</small></button></li><li><button type="button" id="pk5">辞退する<small>理由の入力が必要です</small></button></li>')+'<li><button type="button" id="pk6">運営に相談する</button></li></ul>';
+      open();
+      Array.prototype.forEach.call(sheet.querySelectorAll('.kbm button'),function(b){b.onclick=function(){if(b.id==='pk4'){close();helperChoose(c,function(){openProCase(i);});}else{b.querySelector('small')?b.querySelector('small').textContent='（試作）この画面は後で作ります':b.insertAdjacentHTML('beforeend','<small>（試作）この画面は後で作ります</small>');}};});};
+  }
+  function reportForm(c,done){
+    ensurePane();
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>完了報告</b><span>'+c.title+'</span></div></div><div class="arw"><form class="pf pf2" id="rf" novalidate>'+
+      '<label>作業日 <em class="rq">必須</em><input type="date" id="r1" value="'+c.work+'"></label>'+
+      '<label>作業内容 <em class="rq">必須</em><textarea id="r2" rows="2">換気扇本体の交換、ダクトの清掃</textarea></label>'+
+      '<label>最終金額（税込） <em class="rq">必須</em><input type="number" id="r3" value="'+c.amt+'" inputmode="numeric"></label>'+
+      '<p class="pc-n">確定見積もりは '+c.amt.toLocaleString()+'円 です。変わった場合だけ直してください。</p>'+
+      '<label id="r4w" hidden>金額が変わった理由 <em class="rq">必須</em><textarea id="r4" rows="2" placeholder="例：ダクトの劣化があり、交換を追加しました"></textarea></label>'+
+      '<p class="warn" id="r4n" hidden>金額を変更すると、依頼者の承諾が必要です。承諾されると、紹介手数料も変更後の金額で計算します。</p>'+
+      '<label>施工後の写真 <em class="op">任意・3つまで</em><input type="file" accept="image/*" multiple></label>'+
+      '<p class="warn" id="rw2" hidden>未入力の項目があります</p><button class="big" type="submit">この内容で完了報告を送る</button></form></div>';
+    pane.querySelector('.bk').onclick=done;
+    var a=document.getElementById('r3');a.oninput=function(){var ch=+a.value!==c.amt;document.getElementById('r4w').hidden=!ch;document.getElementById('r4n').hidden=!ch;};
+    document.getElementById('rf').onsubmit=function(e){e.preventDefault();var amt=+a.value,why=document.getElementById('r4').value.trim(),w=document.getElementById('r2').value.trim();
+      if(!w||!amt||(amt!==c.amt&&!why)){document.getElementById('rw2').hidden=false;return;}
+      c.rep=1;c.msgs.push(['rep',{day:document.getElementById('r1').value,what:w,amt:amt,why:amt!==c.amt?why:''}]);done();};
+  }
+  function addForm(c,done){
+    ensurePane();
+    var cats=['電気工事（機器設置・修理）','水のトラブル','解体工事','外構工事','リフォーム','その他'];
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>別の業者を追加で募集する</b><span>'+c.title+'</span></div></div><div class="arw">'+
+      '<p class="sp s2">依頼者には、必要な理由と作業内容をそのまま見せて、同意をもらいます。専門用語はなるべく使わずに書いてください。</p><form class="pf pf2" id="af" novalidate>'+
+      '<label>必要な業種 <em class="rq">必須</em><select id="a1">'+cats.map(function(x){return '<option>'+x+'</option>';}).join('')+'</select></label>'+
+      '<label>必要な理由 <em class="rq">必須</em><textarea id="a2" rows="2">外壁に付いている照明とコンセントを一度外して付け直すため。電気工事士の資格が必要です。</textarea></label>'+
+      '<label>作業内容 <em class="rq">必須</em><textarea id="a3" rows="2">外壁照明1か所・屋外コンセント1か所の取り外しと再取り付け</textarea></label>'+
+      '<label>募集の期限 <em class="op">任意</em><select id="a4"><option>3日間</option><option>1週間</option><option>期限なし</option></select></label>'+
+      '<label>写真 <em class="op">任意</em><input type="file" accept="image/*" multiple></label>'+
+      '<p class="pc-n">追加募集の枠では、住所は出しません（写真・症状・作業内容・地区名まで）。協力が決まった業者だけを、個別のチャットに招待します。</p>'+
+      '<button class="big" type="submit">依頼者に同意をお願いする</button></form></div>';
+    pane.querySelector('.bk').onclick=done;
+    document.getElementById('af').onsubmit=function(e){e.preventDefault();c.add={cat:document.getElementById('a1').value,why:document.getElementById('a2').value,what:document.getElementById('a3').value,due:document.getElementById('a4').value};c.msgs.push(['add',c.add]);done();};
+  }
+  function addBoard(c,done){
+    ensurePane();var a=c.add;
+    var gm=[['松本電設','対応できます。照明の型番がわかれば教えてください。'],['安曇野電工','来週なら伺えます。']];
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>追加募集：'+esc(a.cat)+'</b><span>'+c.title+'・'+c.who.split('・')[0]+'・期限 '+a.due+'</span></div></div>'+
+      '<div class="adinfo">'+esc(a.what)+'<small>住所は出していません。協力をお願いする業者を「招待」すると、個別のチャットで住所を伝えられます。</small></div><div class="msgs" id="gm"></div><form class="cmp" id="gf"><input id="tx" placeholder="グループに書く" aria-label="メッセージ"><button class="sd">送信</button></form>';
+    pane.classList.add('on');pane.querySelector('.bk').onclick=done;
+    function draw(){var box=document.getElementById('gm');box.innerHTML=gm.map(function(m){if(m[0]==='sys')return '<div class="sys">'+esc(m[1])+'</div>';if(m[0]===ME)return '<div class="mg me"><div class="bb">'+esc(m[1])+'</div></div>';return '<div class="mg"><span class="wn">'+m[0]+'</span><div class="bb">'+esc(m[1])+'</div>'+(m[2]?'':'<button type="button" class="inv" data-n="'+m[0]+'">この業者を招待する</button>')+'</div>';}).join('');box.scrollTop=box.scrollHeight;
+      Array.prototype.forEach.call(box.querySelectorAll('.inv'),function(b){b.onclick=function(){gm.forEach(function(m){if(m[0]===b.dataset.n)m[2]=1;});gm.push(['sys',b.dataset.n+'を個別チャットに招待しました（招待前の履歴は見えません）']);c.msgs.push(['sys',b.dataset.n+'を協力業者として招待しました']);draw();};});}
+    draw();
+    document.getElementById('gf').onsubmit=function(e){e.preventDefault();var t=document.getElementById('tx'),s=t.value.trim();if(!s)return;gm.push([ME,s]);t.value='';draw();};
+  }
+  /* ===== 依頼者：追加募集の同意（外壁の張り替え）11/8 ===== */
+  var UC1=UC;
+  var UC2={title:'外壁の張り替え',post:null,closed:false,stop:true,
+    sheet:[['分野','外装工事'],['依頼したいこと','外壁の張り替え'],['場所','安曇野市'],['建物の種類','一戸建て'],['希望時期','来年の春までに'],['詳しい内容','外壁が傷んできた。築25年。']],
+    vs:[{n:'松本リフォーム',star:4.7,rv:18,st:'fixd',un:1,
+      msgs:[['me','外壁が傷んできたので張り替えたいです。'],['v','11/5 に現地を見せていただきました。ありがとうございました。'],['sys','11/5 13:00 に現地調査をしました'],['v','外壁の照明とコンセントを一度外す必要があり、電気工事の資格者が要ります。'],['me','そうなんですね。お任せします。'],
+        ['v','照明とコンセントの付け外しは、協力業者の松本電設さんにお願いします。費用は私の見積もりに含めてお出しします。'],['sys','協力業者（元請けの手配）：松本電設 が加わりました']],helpers:['松本電設']}]};
+  function cardAdd(m,k){
+    if(m[0]!=='addreq')return null;var a=m[1];
+    return '<div class="pc add2"><div class="pc-h">業者さんからのお願い：別の専門家を追加したい</div>'+
+      '<p class="sp" style="margin:0 0 6px">この工事には、<b>'+esc(a.cat)+'</b>の専門家の手伝いが必要です。まち頼で募集してもよいですか？</p>'+
+      '<dl><dt>必要な理由</dt><dd>'+esc(a.why)+'</dd><dt>やること</dt><dd>'+esc(a.what)+'</dd><dt>募集の期間</dt><dd>'+a.due+'</dd></dl>'+
+      '<ul class="adn"><li>住所は出さずに募集します。決まった業者さんにだけ伝わります</li><li>追加の費用は、決まった業者さんから見積もりが届きます</li><li>同意しなくても、今の業者さんとの話は続けられます</li></ul>'+
+      (a.done?'<p class="pc-ok">'+a.done+'</p>'+(a.ok&&!a.fixed?'<div class="simb"><span>試作の操作</span><button type="button" data-a="fix" data-k="'+k+'">協力業者が決まる</button></div>':''):'<div class="pc-b"><button type="button" class="g" data-a="askq" data-k="'+k+'">質問する</button><button type="button" data-a="agree" data-k="'+k+'">同意する</button></div><button type="button" class="pc-no" data-a="deny" data-k="'+k+'">今回は追加しない</button>')+'</div>';}
+  /* ===== Proモード：協力業者を追加する（11/8 決定版） ===== */
+  function helperChoose(c,done){
+    ensurePane();
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>協力業者を追加する</b><span>'+c.title+'</span></div></div><div class="arw">'+
+      '<p class="sp s2">協力業者は、あなた（元請け）の下請けとして入ります。見積もり・支払い・責任はあなたが持ちます。協力業者に業者登録は要りません。</p>'+
+      '<div class="hch"><button type="button" data-h="own"><b>知り合いの業者に頼む</b><small>普段付き合いのある業者に、参加リンクを送ります</small></button>'+
+      '<button type="button" data-h="mem"><b>会員に呼びかける</b><small>会員ページの掲示板に、住所なしで投稿します</small></button>'+
+      '<button type="button" data-h="ops"><b>運営に相談する</b><small>幹事チームが探して、個別にご連絡します</small></button></div></div>';
+    pane.classList.add('on');pane.querySelector('.bk').onclick=done;
+    Array.prototype.forEach.call(pane.querySelectorAll('.hch button'),function(b){b.onclick=function(){var h=b.dataset.h;if(h==='own')linkIssue(c,'',done);else helperAsk(c,h,done);};});
+  }
+  function helperAsk(c,h,done){
+    ensurePane();var mem=h==='mem';
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+(mem?'会員に呼びかける':'運営に相談する')+'</b><span>'+c.title+'</span></div></div><div class="arw"><form class="pf pf2" id="hf" novalidate>'+
+      '<label>必要な業種 <em class="rq">必須</em><select id="h1"><option>電気工事</option><option>水道・設備</option><option>足場・とび</option><option>解体・産廃</option><option>その他</option></select></label>'+
+      '<label>やってほしい作業 <em class="rq">必須</em><textarea id="h2" rows="2">外壁照明1か所・屋外コンセント1か所の取り外しと再取り付け</textarea></label>'+
+      '<label>時期 <em class="op">任意</em><input id="h3" value="11月下旬の2日間"></label>'+
+      '<label>写真 <em class="op">任意</em><input type="file" accept="image/*" multiple></label>'+
+      '<p class="pc-n">'+(mem?'会員ページの掲示板に「'+c.who.split('・')[0]+'」まで載せます。住所と依頼者の名前は出しません。':'幹事チームに送ります。担当の業者が決まったら、チャットでお知らせします。')+'</p>'+
+      '<button class="big" type="submit">'+(mem?'掲示板に投稿する':'運営に送る')+'</button></form></div>';
+    pane.querySelector('.bk').onclick=function(){helperChoose(c,done);};
+    document.getElementById('hf').onsubmit=function(e){e.preventDefault();var cat=document.getElementById('h1').value;
+      c.msgs.push(['hreq',{via:h,cat:cat,what:document.getElementById('h2').value}]);done();};
+  }
+  function linkIssue(c,name,done){
+    ensurePane();
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>参加リンクを発行する</b><span>'+c.title+'</span></div></div><div class="arw"><form class="pf pf2" id="lf" novalidate>'+
+      '<label>協力業者の名前 <em class="rq">必須</em><input id="l1" value="'+esc(name||'')+'" placeholder="例：松本電設"></label>'+
+      '<label>お願いする作業 <em class="rq">必須</em><input id="l2" value="外壁照明・屋外コンセントの付け外し"></label>'+
+      '<label class="ck"><input type="checkbox" id="l3"> この作業に必要な資格を、私（元請け）が確認しました</label>'+
+      '<p class="pc-n">資格が要らない作業の場合も、チェックしてください。まち頼は協力業者の審査をしません。</p>'+
+      '<p class="warn" id="lw" hidden>名前・作業の入力と、資格の確認のチェックが必要です</p><button class="big" type="submit">リンクを発行する</button></form></div>';
+    pane.querySelector('.bk').onclick=function(){helperChoose(c,done);};
+    document.getElementById('lf').onsubmit=function(e){e.preventDefault();var n=document.getElementById('l1').value.trim(),w=document.getElementById('l2').value.trim();
+      if(!n||!w||!document.getElementById('l3').checked){document.getElementById('lw').hidden=false;return;}
+      c.msgs.push(['hlink',{n:n,w:w,url:'https://machiyori.app/j/'+Math.random().toString(36).slice(2,8)}]);done();};
+  }
+  function cardHelper(m,k,c){
+    if(m[0]==='hreq'){var a=m[1];return '<div class="pc hlp"><div class="pc-h">'+(a.via==='mem'?'会員への呼びかけ（掲示板に投稿済み）':'運営への相談（送信済み）')+'</div><dl><dt>業種</dt><dd>'+esc(a.cat)+'</dd><dt>作業</dt><dd>'+esc(a.what)+'</dd></dl>'+(a.found?'<p class="pc-ok">'+a.found+'に決まりました。参加リンクを送ってください。</p>':'<div class="simb"><span>試作の操作</span><button type="button" data-hk="'+k+'">'+(a.via==='mem'?'会員から「対応できます」':'運営が業者を紹介')+'</button></div>')+'</div>';}
+    if(m[0]==='hlink'){var l=m[1];return '<div class="pc hlp"><div class="pc-h">参加リンク：'+esc(l.n)+'</div><p class="lnk">'+l.url+'</p><dl><dt>お願いする作業</dt><dd>'+esc(l.w)+'</dd><dt>資格の確認</dt><dd>元請けが確認済み</dd></dl><p class="pc-n">このリンクからLINEでログインすると、業者登録なしで、この案件の「協力業者とのチャット」に入れます。</p>'+(l.joined?'<p class="pc-ok">'+esc(l.n)+'が参加しました</p>':'<div class="pc-b"><button type="button" class="g" data-cp="'+k+'">コピー</button><button type="button" data-cp="'+k+'">LINEで送る</button></div><div class="simb"><span>試作の操作</span><button type="button" data-jn="'+k+'">'+esc(l.n)+'がリンクから参加する</button></div>')+'</div>';}
+    return null;}
+  function bindHelper(c,box,redraw){
+    Array.prototype.forEach.call(box.querySelectorAll('[data-hk]'),function(b){b.onclick=function(){var a=c.msgs[+b.dataset.hk][1];a.found=a.via==='mem'?'松本電設':'安曇野電工';linkIssue(c,a.found,redraw);};});
+    Array.prototype.forEach.call(box.querySelectorAll('[data-cp]'),function(b){b.onclick=function(){b.textContent=b.textContent==='コピー'?'コピーしました':'（試作）LINEが開きます';};});
+    Array.prototype.forEach.call(box.querySelectorAll('[data-jn]'),function(b){b.onclick=function(){var l=c.msgs[+b.dataset.jn][1];l.joined=1;(c.helpers=c.helpers||[]).push(l.n);c.hc=(c.hc||[]).concat([['sys',l.n+'が参加しました（協力業者・元請けの手配）'],[l.n,'よろしくお願いします。現場の写真を見せてもらえますか？']]);c.msgs.push(['sys',l.n+'が協力業者として参加しました。依頼者には「協力業者（元請けの手配）」と表示されます']);redraw();};});
+  }
+  function helperChat(c,done){
+    ensurePane();var hc=c.hc||(c.hc=[]);
+    pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>協力業者とのチャット</b><span>'+c.title+'・'+(c.helpers||[]).join('、')+'</span></div></div><div class="adinfo">依頼者はこのチャットに入りません。住所や日程は、元請けから伝えてください。</div><div class="msgs" id="hcm"></div><form class="cmp" id="hcf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" hidden></label><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ"><button class="sd">送信</button></form>';
+    pane.classList.add('on');pane.querySelector('.bk').onclick=done;
+    function draw(){var box=document.getElementById('hcm');box.innerHTML=hc.map(function(m){return m[0]==='sys'?'<div class="sys">'+esc(m[1])+'</div>':m[0]===ME?'<div class="mg me"><div class="bb">'+esc(m[1])+'</div></div>':'<div class="mg"><span class="wn">'+esc(m[0])+'</span><div class="bb">'+esc(m[1])+'</div></div>';}).join('');box.scrollTop=box.scrollHeight;}
+    draw();document.getElementById('hcf').onsubmit=function(e){e.preventDefault();var t=document.getElementById('tx'),s=t.value.trim();if(!s)return;hc.push([ME,s]);t.value='';draw();};
+  }
+  var memberTab=0;
+  function renderMember(){var of=document.getElementById('fab');if(of)of.remove();if(memberTab===1)renderMembers();else if(memberTab===2)renderDMs();else renderBoard();
+    Array.prototype.forEach.call(nav.querySelectorAll('button'),function(b,i){b.classList.toggle('on',i===memberTab);b.onclick=function(){if(i<3){memberTab=i;renderMember();}};});}
+  render();counts();
+})();
+</script>
+</body>
+</html>
