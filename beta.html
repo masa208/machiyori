@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>まち頼（テスト版）</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* レイアウト：左に試作のスマホ、右にルール。モードは工務店の現場で使う「木札」に見立て、ここだけを印象的にする。ほかは線で区切る静かなリスト */
+:root{--bg:#F4F3EF;--card:#fff;--ink:#28332D;--sub:#6A776F;--line:#E2E6E3;--acc:#C94A28}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1f1d;--card:#252a27;--ink:#e6ebe8;--sub:#a3aea8;--line:#39403c;--acc:#f08a68;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1f1d;--card:#252a27;--ink:#e6ebe8;--sub:#a3aea8;--line:#39403c;--acc:#f08a68;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","Noto Sans JP","Noto Sans CJK JP",sans-serif;line-height:1.75}
+main{max-width:1040px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 56px max(16px,env(safe-area-inset-left,0px))}
+h1{font-size:24px;margin:0 0 2px;text-wrap:balance}.lead{color:var(--sub);font-size:14px;margin:0 0 24px}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:32px;align-items:start}.grid>*{min-width:0}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+h2{font-size:17px;margin:0 0 10px}
+.pane{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;font-size:14px}
+.pane ul{margin:4px 0;padding-left:1.2em}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.who button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:5px 12px;cursor:pointer}
+.who button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc);font-weight:700}
+.who button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.wrap{display:flex;justify-content:center}
+
+/* ===== スマホ（常に明るい表示） ===== */
+.phone{--m:#E8613C;--ml:#FDECE6;--tx:#23302A;--sb:#6E7D75;--bd:#E3E6E2;--wood:#D8BC8C;--wood2:#C4A270;--paper:#F3F4F1;
+ position:relative;width:100%;max-width:375px;height:740px;background:var(--paper);color:var(--tx);border-radius:28px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.18);line-height:1.6}
+.phone *{box-sizing:border-box}
+.phone[data-mode="pro"]{--m:#2F6B45;--ml:#E6F1EA}
+.phone[data-mode="member"]{--m:#2B4C7E;--ml:#E6ECF5}
+.hd{display:flex;align-items:center;gap:10px;padding:10px 14px 12px;background:#fff;box-shadow:inset 0 -4px 0 var(--m)}
+.logo{font-weight:900;font-size:17px;color:var(--m)}
+.chip{position:relative;display:flex;align-items:center;gap:5px;font:inherit;font-size:12.5px;font-weight:700;color:#3A2A14;background:linear-gradient(180deg,var(--wood),var(--wood2));border:0;border-left:5px solid var(--m);border-radius:3px 6px 6px 3px;padding:5px 10px 5px 16px;cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.chip::before{content:"";position:absolute;left:5px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#7a5a2e;box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
+.chip:focus-visible,.bell:focus-visible,.nav button:focus-visible,.opt:focus-visible{outline:2px solid var(--m);outline-offset:2px}
+.ex{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#D93A2B;color:#fff;font-size:11px;font-weight:900;line-height:1}
+.sp{flex:1}
+.bell{position:relative;border:0;background:none;cursor:pointer;padding:4px}
+.bell svg{width:22px;height:22px;fill:none;stroke:var(--m);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.bell b{position:absolute;top:0;right:-2px;min-width:16px;height:16px;border-radius:8px;background:#D93A2B;color:#fff;font-size:10px;line-height:16px;text-align:center;padding:0 4px}
+.scr{position:absolute;top:58px;left:0;right:0;bottom:62px;overflow-y:auto;padding:14px}
+.nav{position:absolute;left:0;right:0;bottom:0;height:62px;display:flex;background:#fff;border-top:1px solid var(--bd)}
+.nav button{flex:1;border:0;background:none;font:inherit;font-size:10px;color:var(--sb);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.nav button.on{color:var(--m);font-weight:700}
+.nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sec{font-size:13px;font-weight:700;margin:16px 2px 8px;display:flex;justify-content:space-between}
+.sec small{font-weight:400;color:var(--sb)}
+.card{background:#fff;border-bottom:1px solid var(--bd);padding:11px 4px;font-size:13px}
+.card:first-of-type{border-top:1px solid var(--bd)}
+.list{background:#fff;border-radius:10px;padding:0 10px;margin-bottom:6px}
+.card b{display:block;font-size:14px}
+.meta{color:var(--sb);font-size:11.5px;display:flex;flex-wrap:wrap;gap:0 10px}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--m);background:var(--ml);border-radius:6px;padding:1px 6px;margin-right:4px}
+.stats{display:flex;background:#fff;border-radius:10px;overflow:hidden}
+.stat{flex:1;padding:9px 6px;text-align:center;font-size:11px;color:var(--sb)}
+.stat+.stat{border-left:1px solid var(--bd)}
+.stat b{font-size:16px;color:var(--tx);font-variant-numeric:tabular-nums;margin-right:3px}
+.hello{display:flex;gap:10px;align-items:flex-end;background:linear-gradient(180deg,#cfe3f3,#f4efe4);border-radius:14px;padding:12px 12px 0;overflow:hidden}
+.hello img{height:110px}
+.hello p{margin:0 0 14px;background:rgba(255,255,255,.85);border:2px solid #222;border-radius:50%/48%;padding:12px 14px;font-weight:700;font-size:13px;text-align:center}
+.ask{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:10px}
+.ask .in{display:flex;border:2px solid var(--m);border-radius:22px;padding:4px 4px 4px 12px;font-size:13px;color:#9aa49e;align-items:center}
+.ask .in span{flex:1}.ask .in i{font-style:normal;background:var(--m);color:#fff;border-radius:18px;padding:6px 12px;font-weight:700}
+.note{font-size:11.5px;color:var(--sb);text-align:center;margin-top:10px}
+
+/* 切り替えの一覧（下から出る） */
+.shade{position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;padding:10px 14px 18px;transform:translateY(100%);transition:transform .32s cubic-bezier(.2,1.3,.4,1);z-index:10}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.open .shade{opacity:1;pointer-events:auto}.open .sheet{transform:none}
+.grab{width:40px;height:4px;border-radius:2px;background:#d5dbd7;margin:0 auto 10px}
+.sheet h3{font-size:14px;margin:0 0 8px}
+.rail{position:relative;padding-top:6px}
+.rail::before{content:"";position:absolute;left:4px;right:4px;top:0;height:6px;border-radius:3px;background:linear-gradient(180deg,#9b7a48,#7a5a2e)}
+.opt{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:linear-gradient(180deg,#F1E4CB,#E6D2AC);border:0;border-left:8px solid var(--m);border-radius:3px 8px 8px 3px;padding:12px 12px 12px 14px;margin-top:14px;cursor:pointer;color:#2E2414;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.opt::before{content:"";position:absolute;left:28px;top:-14px;width:2px;height:14px;background:#7a5a2e}
+.opt .sw{display:none}
+.opt .t{flex:1;font-size:12px;color:#6b5a3e}.opt .t b{display:block;font-size:15px;color:#2E2414;letter-spacing:.04em}
+.opt .n{min-width:20px;height:20px;border-radius:10px;background:#D93A2B;color:#fff;font-size:11px;text-align:center;line-height:20px;padding:0 6px}
+.opt.cur{transform:translateX(6px);box-shadow:0 2px 0 rgba(0,0,0,.12),0 0 0 2px var(--m)}
+.dl{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;font-weight:700;color:#B4321F}
+.opt .ck{font-size:11.5px;font-weight:700;color:#fff;background:var(--m);border-radius:10px;padding:2px 8px}
+.bdg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;color:#2B4C7E;background:#E6ECF5}.bdg.soon{color:#fff;background:#E39B1B}.bdg.today{color:#fff;background:#D93A2B}.bdg.none{color:var(--sb);background:#e6eae8}.bdg.past{color:#2F6B45;background:#E6F1EA}.bdg.end{color:#fff;background:#8a948f}
+.bl1{display:flex;align-items:center;gap:6px;margin-bottom:2px}.dlx{font-size:11px;color:var(--sb)}
+.kw0{margin:0}.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sb);margin:6px 4px 0}.chk input{margin:0;accent-color:var(--m)}
+.ctl{display:flex;align-items:center;gap:8px;margin:10px 0 8px}.seg{display:flex;flex:1;background:#fff;border:1px solid var(--bd);border-radius:9px;padding:2px}.seg button{flex:1;font:inherit;font-size:12px;border:0;background:none;color:var(--sb);border-radius:7px;padding:5px 0;cursor:pointer}.seg button[aria-pressed="true"]{background:var(--m);color:#fff;font-weight:700}
+.ctl select{font:inherit;font-size:12px;color:var(--tx);border:1px solid var(--bd);border-radius:9px;background:#fff;padding:6px 4px}
+.pbox{width:100%;display:flex;align-items:center;gap:8px;text-align:left;font:inherit;font-size:13.5px;color:var(--tx);background:#fff;border:1px solid var(--bd);border-radius:10px;padding:11px 12px;margin-top:10px;cursor:pointer}.pbox span{flex:1}.pbox small{display:block;font-size:11px;color:var(--sb);margin-top:1px}.pbox i{font-style:normal;font-size:20px;color:var(--sb)}
+.none0{text-align:center;padding:6px 0 4px}.clr{font:inherit;font-size:12.5px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:16px;padding:6px 14px;cursor:pointer}
+.lock{padding:10px;background:#f1f2f0;border-top:1px solid var(--bd);font-size:12.5px;color:var(--sb);text-align:center}
+.arw{flex:1;overflow-y:auto;padding:10px 12px}.adesc{font-size:11.5px;color:var(--sb);margin:0 0 8px;line-height:1.6}
+.dlf{background:#fff;border:1px solid #cdd4d0;border-radius:8px;padding:8px 10px;margin-top:3px}.dlf .rd{display:inline-flex!important;align-items:center;gap:4px;margin:0 14px 0 0!important;font-size:13.5px!important;font-weight:400!important;color:var(--tx)!important}.dlf .rd input{width:auto!important;margin:0!important;accent-color:var(--m)}.dlf .dld{display:block;width:100%;margin-top:6px;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:8px;padding:6px}.dlf .dld[hidden]{display:none}.dlf .hint{font-size:11px;color:var(--sb);margin:6px 0 0;line-height:1.55}
+.lab{font-size:12px;font-weight:700;color:var(--sb);margin-top:8px}
+.dlbox{width:100%}.dlbox .mph{display:block;margin-bottom:4px}.qk0{display:flex;gap:6px;margin-top:8px}.qk0 button{flex:1;font:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--m);border:0;border-radius:8px;padding:8px;cursor:pointer}.qk0 button.g{background:#e6eae8;color:var(--sb)}
+.cvt{display:flex;align-items:center;gap:8px;margin-bottom:8px}.seg2{display:flex;background:#fff;border:1px solid var(--bd);border-radius:9px;padding:2px}.seg2 button{font:inherit;font-size:12px;border:0;background:none;color:var(--sb);border-radius:7px;padding:5px 10px;cursor:pointer}.seg2 button[aria-pressed="true"]{background:var(--m);color:#fff;font-weight:700}
+.gsync{margin-left:auto;font:inherit;font-size:11px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:14px;padding:6px 9px;cursor:pointer}
+.cwk{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 6px}.cwk b{font-size:15px}.ca{border:0;background:none;font-size:24px;color:var(--m);cursor:pointer;line-height:1;padding:0 8px}
+.lgd{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:var(--sb);margin:0 0 6px}.lgd span{display:inline-flex;align-items:center;gap:3px}.lgd i{width:12px;height:10px;border-radius:3px;display:inline-block;padding:0}
+.ev{font:inherit;border:0;cursor:pointer;color:#fff}.ev.fix{background:#2F6B45}.ev.prop{background:rgba(47,107,69,.12);color:#2F6B45;border:1.5px dashed #2F6B45}.ev.work{background:#C4772B}.ev.money{background:#2B4C7E}.ev.resume{background:#fff;color:#8A5A9E;border:1.5px solid #8A5A9E}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;border-radius:6px;padding:1px 7px}
+.cg{background:#fff;border-radius:10px;border:1px solid var(--bd);overflow:hidden}.cr{display:grid;grid-template-columns:34px repeat(7,1fr)}.ch span{text-align:center;font-size:10px;color:var(--sb);padding:4px 0;border-bottom:1px solid var(--bd)}.ch b{display:block;font-size:14px;color:var(--tx)}.ch .su b{color:#C0392B}.ch .sa b{color:#2B6CB0}.ch .td{background:var(--ml)}.ch .td b{color:var(--m)}
+.cad>span{border-bottom:1px solid var(--bd);border-left:1px solid #eef0ee;padding:2px 1px;min-height:22px;display:flex;flex-direction:column;gap:2px}.cad .tl{font-size:9.5px;color:var(--sb);display:flex;align-items:center;justify-content:center;border-left:0}.ad{font-size:9.5px;font-weight:700;border-radius:4px;padding:1px 0;width:100%}
+.cb{position:relative;display:grid;grid-template-columns:34px repeat(7,1fr);background:repeating-linear-gradient(#fff 0 29px,#eef0ee 29px 30px)}.tcol{position:relative}.tcol span{position:absolute;right:3px;font-size:9px;color:var(--sb);transform:translateY(-1px)}.dcol{position:relative;border-left:1px solid #eef0ee}
+.tm{position:absolute;left:1px;right:1px;font-size:9.5px;font-weight:700;border-radius:4px;padding:2px 1px;line-height:1.2;text-align:center;overflow:hidden}.tm small{display:block;font-size:8.5px;font-weight:400}.tm.prop{z-index:1}.tm.wn2{left:50%;box-shadow:0 0 0 1.5px #D93A2B}
+.sp{font-size:13px;line-height:1.7;margin:8px 0}.sp.s2{font-size:12px;color:var(--sb)}
+.ppd{background:#fff;border-radius:12px;padding:12px;margin-bottom:6px}.pdt{font-size:12px;color:var(--sb);margin:8px 0 0}.pdt b{display:block;font-size:19px;color:var(--tx);margin-top:2px}
+.pch{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.pch button{font:inherit;font-size:13px;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:18px;padding:7px 12px;cursor:pointer}.pch button[aria-pressed="true"]{border-color:var(--m);background:var(--ml);color:var(--m);font-weight:700}
+.pdtf{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-top:10px}.pdtf[hidden]{display:none}.pdtf label{font-size:12px;font-weight:700;color:var(--sb)}.pdtf input{display:block;width:100%;margin-top:3px;font:inherit;font-size:15px;border:1px solid #cdd4d0;border-radius:8px;padding:7px;background:#fff}
+.pdsum{font-size:13px;background:#fff;border-radius:10px;padding:10px;margin:10px 0 0;line-height:1.6}.pdsum:empty{display:none}.pdsum small{color:var(--sb)}
+.big:disabled{opacity:.4;cursor:default}
+.scr.flush{padding:0}
+.uh-news{display:flex;align-items:center;gap:8px;margin:8px 12px;padding:6px;background:#FDECE6;border-radius:10px;overflow:hidden}.uh-nl{flex-shrink:0;font-size:10.5px;font-weight:700;color:#fff;background:#C94A28;border-radius:6px;padding:2px 7px}.uh-nv{flex:1;min-width:0;overflow:hidden;white-space:nowrap;font-size:12px;color:#C94A28}.uh-nv span{display:inline-block;padding-left:100%;animation:uhtick 22s linear infinite}@keyframes uhtick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.uh-hero{position:relative;height:330px;overflow:hidden;background:#7fb6e6}.uh-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0%}
+.uh-clouds{position:absolute;left:0;right:0;top:0;height:42%;pointer-events:none;overflow:hidden}.uh-cl{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,.55) 55%,rgba(255,255,255,0));filter:blur(2px);animation:uhdrift linear infinite}.uh-cl::before,.uh-cl::after{content:"";position:absolute;border-radius:50%;background:inherit}.uh-cl::before{width:60%;height:90%;left:-30%;top:20%}.uh-cl::after{width:70%;height:100%;right:-35%;top:10%}
+.uh-cl.c1{width:120px;height:44px;top:2px;animation-duration:48s;animation-delay:-6s;opacity:.85}.uh-cl.c2{width:90px;height:32px;top:28px;animation-duration:62s;animation-delay:-30s;opacity:.7}.uh-cl.c3{width:150px;height:50px;top:10px;animation-duration:75s;animation-delay:-52s;opacity:.6}.uh-cl.c4{width:70px;height:26px;top:46px;animation-duration:55s;animation-delay:-18s;opacity:.6}
+@keyframes uhdrift{from{transform:translateX(-200px)}to{transform:translateX(560px)}}
+@media (prefers-reduced-motion:reduce){.uh-cl{animation:none;transform:translateX(120px)}.uh-nv span{animation:none;padding-left:0}}
+.uh-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,45,.45) 0%,rgba(10,30,45,0) 32%,rgba(10,30,45,0) 50%,rgba(10,30,45,.6) 100%)}
+.uh-chara{position:absolute;left:32px;bottom:16px;height:146px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.3))}
+.uh-bub{position:absolute;left:144px;right:18px;bottom:76px;z-index:4;padding:18px 16px;text-align:center;background:rgba(255,255,255,.81);border:2px solid #222;border-radius:50% 50% 48% 52% / 52% 48% 52% 48%;font-weight:700;font-size:13px;line-height:1.65;white-space:nowrap;letter-spacing:.02em;color:#222;cursor:pointer}.uh-bub:focus-visible{outline:3px solid #E8613C;outline-offset:3px}
+.uh-bub::after{content:"";position:absolute;left:-28px;top:50%;margin-top:-6px;width:30px;height:26px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='26' viewBox='0 0 30 26'%3E%3Cpath d='M30 3 L1 22 L30 15' fill='rgba(255,255,255,0.81)' stroke='%23222' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat}
+.uh-tap{display:block;margin-top:4px;font-size:10.5px;font-weight:700;color:#C94A28;letter-spacing:.04em}
+.uh-copy{position:absolute;left:16px;right:124px;top:14px;color:#fff;font-size:18px;white-space:nowrap;font-weight:700;line-height:1.5;text-shadow:0 2px 8px rgba(0,0,0,.55)}
+.uh-wx{position:absolute;right:14px;top:10px;z-index:3;width:108px;padding:7px 9px 8px;border-radius:12px;background:rgba(15,35,50,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font-size:10.5px;line-height:1.35;text-shadow:0 1px 3px rgba(0,0,0,.4)}.uh-wd{font-weight:700;font-size:11px;display:flex;justify-content:space-between}.uh-wm{display:flex;align-items:center;gap:6px;margin:3px 0 4px}.uh-wt{font-size:15px;font-weight:700}.uh-wt small{font-size:11px;font-weight:400;opacity:.85}.uh-wr{display:grid;grid-template-columns:auto 1fr;column-gap:6px;border-top:1px solid rgba(255,255,255,.35);padding-top:4px}.uh-wr b{text-align:right}
+.uh-ask{background:#fff;margin:-8px 12px 0;position:relative;border-radius:18px;padding:14px;box-shadow:0 5px 18px rgba(0,0,0,.12)}.uh-at{font-size:15px;font-weight:700;margin-bottom:8px}
+.uh-in{display:flex;gap:6px;align-items:center;border:2px solid #E8613C;border-radius:24px;padding:4px 4px 4px 12px;background:#fff}.uh-in input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:14px;color:var(--tx);background:transparent}.uh-send{border:0;background:#E8613C;color:#fff;font:inherit;font-size:13px;font-weight:700;padding:8px 14px;border-radius:19px;cursor:pointer;white-space:nowrap}
+.uh-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.uh-chip{font:inherit;font-size:11.5px;color:#2F6B45;background:#E8F2EA;border:1px solid #D7E6DB;border-radius:12px;padding:4px 10px;cursor:pointer}
+.uh-body{padding:0 14px 18px}.uh-sec{display:flex;align-items:center;gap:7px;margin:20px 2px 10px;font-size:14px;font-weight:700}.uh-sec:before{content:"";width:3px;height:14px;background:#E8613C;border-radius:2px}
+.uh-search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--bd);border-radius:22px;padding:9px 14px;font-size:13px;color:#A3ADA7}
+.uh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.uh-t{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:9px 3px;text-align:center;font-size:10px;line-height:1.3;min-height:60px}.uh-t b{display:block;font-size:21px;margin-bottom:3px;font-weight:400}
+.cbt{padding-left:36px;background:none!important;border:0!important}.cbt button.pri{background:var(--m);color:#fff;border-color:var(--m)}
+.mg.wide{max-width:94%}.sht{background:#fff;border:1.5px solid var(--m);border-radius:12px;padding:8px 10px;font-size:12.5px;flex:1}.sht-h{font-weight:700;color:var(--m);font-size:12px;margin-bottom:4px}.sht-r{display:grid;grid-template-columns:7.5em 1fr;gap:6px;padding:4px 0;border-top:1px solid var(--bd)}.sht-r span{color:var(--sb);font-size:11.5px}.sht-r b{font-weight:500}.sht-p{display:flex;gap:4px;margin-top:6px}.sht-p img{width:56px;height:56px;object-fit:cover;border-radius:6px}
+.phb{font-size:12.5px;color:#fff;background:var(--m);border:1.5px solid var(--m);border-radius:16px;padding:5px 11px;cursor:pointer;font-weight:700}
+.kebab{margin-left:auto;border:0;background:none;color:#fff;font-size:22px;line-height:1;width:34px;height:30px;cursor:pointer;letter-spacing:-1px}
+.stp{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 6px 8px;margin-bottom:8px}.stp span{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:#9aa5a0;position:relative;text-align:center;line-height:1.2}.stp i{width:12px;height:12px;border-radius:50%;background:#dfe4e1;position:relative;z-index:1}.stp span+span::before{content:"";position:absolute;top:5px;right:50%;width:100%;height:2px;background:#dfe4e1}.stp .dn i,.stp .dn::before,.stp .cur::before{background:var(--m)}.stp .cur i{background:#fff;box-shadow:0 0 0 3px var(--m)}.stp .cur{color:var(--m);font-weight:700}.stp .dn{color:var(--tx)}
+.todo1{display:block;width:100%;text-align:left;font:inherit;font-size:13px;color:var(--tx);background:#FFF4EC;border:1.5px solid var(--m);border-radius:12px;padding:10px 12px;margin-bottom:4px;cursor:pointer;line-height:1.55}.todo1 b{display:block;font-size:11px;color:var(--m)}.todo1.pp{cursor:default;border-color:#8A5A9E;background:#F5EEF8}.todo1.pp b{color:#8A5A9E}.t1b{display:flex;gap:6px;margin-top:6px}.t1b button{font:inherit;font-size:12px;font-weight:700;border:1px solid #8A5A9E;background:#fff;color:#8A5A9E;border-radius:14px;padding:4px 10px;cursor:pointer}
+.vc .vhd{display:flex;align-items:center;gap:6px}.vc .vhd b{font-size:14px}.vst{font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;background:#e6eae8;color:var(--sb)}.vst.hot{background:var(--m);color:#fff}.vst.ok{background:#2F6B45;color:#fff}.unr{margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#D93A2B;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}.lm{display:block;font-size:12px;color:var(--sb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.vc.off{opacity:.55}
+.sdet{margin-top:12px}.sdet summary{font-size:13px;font-weight:700;color:var(--m);cursor:pointer;padding:6px 2px}.sdet .sht{border-color:var(--bd)}
+.kbm{list-style:none;margin:0;padding:0}.kbm button{width:100%;text-align:left;font:inherit;font-size:14.5px;font-weight:700;color:var(--tx);background:none;border:0;border-bottom:1px solid var(--bd);padding:12px 2px;cursor:pointer}.kbm small{display:block;font-size:11.5px;font-weight:400;color:var(--sb)}.kbm .dng{color:#C0392B}
+.pc{align-self:stretch;background:#fff;border:1.5px solid var(--m);border-radius:12px;padding:10px 12px;font-size:12.5px}.pc-h{font-weight:700;color:var(--m);margin-bottom:4px}.pc dl{display:grid;grid-template-columns:6.5em 1fr;gap:3px 8px;margin:0 0 6px}.pc dt{color:var(--sb)}.pc dd{margin:0}.pc-s{font-size:12px;font-weight:700;margin:6px 0 2px}.pc-d{font-size:12px;color:var(--sb);margin-top:6px}.pc-t{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}.pc-t button{font:inherit;font-size:12.5px;font-weight:700;border:1.5px solid var(--m);color:var(--m);background:#fff;border-radius:8px;padding:4px 8px;cursor:pointer}.pc-no{margin-top:10px;width:100%;font:inherit;font-size:12.5px;color:var(--sb);background:#f3f5f4;border:0;border-radius:8px;padding:7px;cursor:pointer}.pc-ok{margin:6px 0 0;font-weight:700;color:#2F6B45}
+.pc.est .amt{font-size:24px;font-weight:700;margin:0 0 6px}.pc.est .amt small{font-size:12px;font-weight:400}.pc-b{display:flex;gap:6px}.pc-b button{flex:1;font:inherit;font-size:13px;font-weight:700;border:0;border-radius:8px;padding:9px;background:var(--m);color:#fff;cursor:pointer}.pc-b button.g{background:#e6eae8;color:var(--sb)}
+.ctr{background:#fff;border-top:1px solid var(--bd);padding:8px 10px}.tr{display:flex;align-items:center;gap:3px}.tr input{min-width:0}
+.todo1.inf{background:#fff;border-color:var(--bd)}.todo1.inf b{color:var(--sb)}.todo1.okk{cursor:default;border-color:#2F6B45;background:#EEF6F0}.todo1.okk b{color:#2F6B45}.todo1.okk .t1b button{border-color:#2F6B45;color:#2F6B45}.t1n{display:block;font-size:11px;color:var(--sb);margin-top:2px}
+.simb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1.5px dashed #b9c2bd;border-radius:10px;padding:8px;margin:6px 0}.simb span{width:100%;font-size:10.5px;color:var(--sb)}.simb button{font:inherit;font-size:11.5px;border:1px solid #b9c2bd;background:#fff;color:var(--tx);border-radius:12px;padding:4px 9px;cursor:pointer}
+.amt2{margin:2px 0 6px;font-size:14px}.amt2 s{color:var(--sb)}.amt2 b{font-size:18px}.pc-n{font-size:11.5px;color:var(--sb);margin:4px 0 6px}.ph0{display:inline-flex;width:56px;height:42px;margin-right:4px;border-radius:6px;background:#e6eae8;color:var(--sb);font-size:10px;align-items:center;justify-content:center}
+.rvw textarea{display:block;width:100%;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:8px;padding:8px;margin-top:4px}.stars{display:flex;gap:6px;margin:4px 0 12px}.stars button{font-size:34px;line-height:1;border:0;background:none;color:#d5dad7;cursor:pointer;padding:0}.stars button.on{color:#F2A900}
+.gbox{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px;margin:10px 0}.gbox b{font-size:14px}
+.mp{padding:0}.mpp{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:12px}.mpp b{font-size:16px;display:block}.mpp small{font-size:11.5px;color:var(--sb)}
+.ond{background:#fff;border-radius:12px;padding:12px;margin-top:8px}.ond-h{display:flex;gap:10px;align-items:center}.ond-h img{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--ml)}.ond-h small{display:block;font-size:11px;color:var(--sb)}.ond-h b{font-size:16px;color:var(--m)}
+.ond-bar{height:8px;border-radius:4px;background:#eceeed;margin:10px 0 4px;overflow:hidden}.ond-bar i{display:block;height:100%;background:var(--m);border-radius:4px}.ond-s{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sb)}.ond-s .on{color:var(--m);font-weight:700}.ond-n{font-size:11px;color:var(--sb);margin:6px 0 0}
+.pv{padding:11px 4px}.pv b{font-size:14px}.pvs{display:inline-block;font-size:10.5px;font-weight:700;color:#2F6B45;background:#E8F2EA;border-radius:6px;padding:0 6px;margin-top:4px}.pvs.ro{color:var(--sb);background:#e6eae8}.pvb{display:flex;gap:6px;margin-top:8px}.pvb button{flex:1;font:inherit;font-size:12.5px;font-weight:700;border:1.5px solid var(--m);color:var(--m);background:#fff;border-radius:8px;padding:6px;cursor:pointer}.pvb button.pri{background:var(--m);color:#fff}
+.mset{padding:0 12px}.mrow{display:flex;align-items:center;gap:8px;width:100%;font:inherit;font-size:13.5px;color:var(--tx);background:none;border:0;border-bottom:1px solid var(--bd);padding:12px 0;text-align:left;cursor:pointer}.mrow:last-child{border-bottom:0}.mrow small{margin-left:auto;font-size:11.5px;color:var(--sb)}.mrow i{font-style:normal;color:var(--sb)}
+.chsel{display:flex;gap:8px}.chsel button{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;background:#fff;border:2px solid var(--bd);border-radius:12px;padding:12px 6px;cursor:pointer}.chsel button.on{border-color:var(--m);color:var(--m)}.chsel img,.chsel .cf{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:var(--ml)}.chsel .cf{display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--m)}
+.nmi{display:block;width:100%;font:inherit;font-size:15px;border:1px solid #cdd4d0;border-radius:8px;padding:8px;margin:6px 0}
+.pnote{font-size:11.5px;color:var(--sb);text-align:center;background:#fff;border-top:1px solid var(--bd);padding:6px}.pnote button{font:inherit;font-size:11.5px;font-weight:700;color:var(--m);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}.t1b.cen{justify-content:center}.lock .t1b button{border-color:var(--m);color:var(--m)}
+.crow{display:flex!important;align-items:center;gap:10px}.av.sm{width:34px;height:34px;font-size:14px;flex-shrink:0}
+.nxt{font-size:12.5px;background:#fff;border:1.5px solid var(--m);border-radius:10px;padding:7px 10px;margin:0 0 4px;line-height:1.5}.nxt b{display:block;font-size:10.5px;color:var(--m)}
+.pstp{padding:8px 10px 0;background:var(--bg,#f3f5f4)}.pstp .stp{margin-bottom:6px}
+.flw{margin:4px 0 6px;padding-left:18px;font-size:12.5px}.flw li{margin:3px 0;color:var(--sb)}.flw li.on{color:var(--tx);font-weight:700}.flw small{display:block;font-weight:400;font-size:11px;color:var(--sb)}
+.pc.tsk{border-color:#D93A2B}.pc.tsk .pc-h{color:#D93A2B}
+.adinfo{font-size:12.5px;background:#fff;border-bottom:1px solid var(--bd);padding:8px 12px}.adinfo small{display:block;font-size:11px;color:var(--sb);margin-top:3px}
+.inv{display:block;margin-top:4px;font:inherit;font-size:11.5px;font-weight:700;color:var(--m);background:#fff;border:1.5px solid var(--m);border-radius:12px;padding:3px 10px;cursor:pointer}
+.pf2 select{display:block;width:100%;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:8px;padding:7px;margin-top:3px;background:#fff}
+.pc.add2{border-color:#2B6CB0}.pc.add2 .pc-h{color:#2B6CB0}.adn{margin:4px 0 8px;padding-left:16px;font-size:11.5px;color:var(--sb)}.adn li{margin:2px 0}
+.hch{display:flex;flex-direction:column;gap:8px}.hch button{text-align:left;font:inherit;background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:12px;cursor:pointer}.hch b{display:block;font-size:14.5px;color:var(--m)}.hch small{font-size:12px;color:var(--sb)}
+.pc.hlp{border-color:#2B6CB0}.pc.hlp .pc-h{color:#2B6CB0}.lnk{font-size:12px;background:#f1f4f8;border-radius:6px;padding:5px 8px;margin:0 0 6px;word-break:break-all}
+.ck{display:flex!important;align-items:flex-start;gap:6px;font-weight:700}.ck input{width:auto!important;margin:3px 0 0!important}
+.hcb{display:block;width:100%;text-align:left;font:inherit;font-size:12.5px;font-weight:700;color:#2B6CB0;background:#fff;border:1.5px solid #2B6CB0;border-radius:10px;padding:7px 10px;margin:0 0 4px;cursor:pointer}
+.hlpv{display:block;font-size:11.5px;color:#2B6CB0;font-weight:700;margin-top:3px}
+.qty{display:flex;flex-direction:column;gap:6px;margin:4px 0 10px}.rd2{display:flex!important;align-items:center;gap:8px;background:#fff;border:1px solid #cdd4d0;border-radius:8px;padding:9px 10px;font-size:14px!important;font-weight:400!important;color:var(--tx)!important;margin:0!important;cursor:pointer}.rd2 input{width:auto!important;margin:0!important;accent-color:var(--m)}.rd2:has(input:checked){border-color:var(--m);background:#FFF4EC}
+.qd{display:grid;grid-template-columns:3em 1fr;gap:4px 8px;font-size:13px;margin:6px 0 0}.qd dt{color:var(--sb)}.qd dd{margin:0;white-space:pre-wrap}
+.qrep{margin-top:6px;background:#F4F6F5;border-radius:8px;padding:7px 9px;font-size:12.5px;line-height:1.6}.qrep b{display:block;font-size:11px;color:var(--m)}
+.fab{position:absolute;right:16px;bottom:76px;width:58px;height:58px;border-radius:50%;border:0;background:var(--m);color:#fff;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;box-shadow:0 4px 12px rgba(0,0,0,.22);cursor:pointer;z-index:5}.fab span{font-size:24px;font-weight:700}.fab small{font-size:10px;font-weight:700;margin-top:2px}.fab:focus-visible{outline:2px solid var(--m);outline-offset:3px}
+.flow{color:var(--m);font-weight:700}
+.nmem{display:flex;gap:8px}.nm{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:0;border-radius:10px;padding:12px 6px;font:inherit;cursor:pointer}.nm b{font-size:12.5px}.nm small{font-size:11px;color:var(--sb)}.av{width:38px;height:38px;border-radius:50%;background:var(--ml);color:var(--m);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px}
+.post{width:100%;font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--m);border:0;border-radius:10px;padding:11px;cursor:pointer}
+.tabs{display:flex;gap:6px;margin:12px 0 8px}.tabs button{flex:1;font:inherit;font-size:13px;border:1px solid var(--bd);background:#fff;color:var(--sb);border-radius:8px;padding:7px;cursor:pointer}.tabs button[aria-selected="true"]{color:var(--m);border-color:var(--m);font-weight:700}
+.bp{display:block;width:100%;text-align:left;font:inherit;color:var(--tx);border:0;border-bottom:1px solid var(--bd);background:#fff;cursor:pointer}
+.ty{display:inline-block;font-size:10.5px;font-weight:700;border:1px solid;border-radius:6px;padding:0 6px;margin-right:4px}
+.ug{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:#D93A2B;border-radius:6px;padding:0 6px;margin-right:4px}
+.stb{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;border-radius:6px;padding:0 6px}
+.by{display:block;font-size:11px;color:var(--sb)}
+.empty{font-size:12.5px;color:var(--sb);text-align:center;padding:14px 0}
+.dh{display:flex;gap:4px}.dl2{display:grid;grid-template-columns:4.5em 1fr;gap:4px 8px;font-size:13px;margin:0 0 10px}.dl2 dt{color:var(--sb)}.dl2 dd{margin:0}
+.big{width:100%;font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--m);border:0;border-radius:10px;padding:11px;margin-top:8px;cursor:pointer}.big:disabled{background:#9AA49E;font-size:12.5px}
+.ghost{width:100%;font:inherit;font-size:13px;color:var(--sb);background:none;border:1px solid var(--bd);border-radius:10px;padding:9px;margin-top:8px;cursor:pointer}
+.sub{font-size:12px;font-weight:700;color:var(--sb);margin:8px 0 4px}
+.hr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px}.pick{font:inherit;font-size:12px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:8px;padding:5px 10px;cursor:pointer}
+.pf label{display:block;font-size:12px;font-weight:700;color:var(--sb);margin-top:8px}.pf input,.pf select,.pf textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:14px;color:var(--tx);border:1px solid #cdd4d0;border-radius:8px;padding:8px;background:#fff}
+.pf .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pf .ck2{display:flex;align-items:center;gap:6px;color:var(--tx);font-weight:400;font-size:13px}.pf .ck2 input{width:auto;margin:0}
+.tys{display:flex;flex-wrap:wrap;gap:6px}.tys button{font:inherit;font-size:12.5px;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:16px;padding:5px 10px;cursor:pointer}.tys button[aria-pressed="true"]{border-color:var(--m);color:var(--m);font-weight:700;background:var(--ml)}
+.sheet{max-height:86%;overflow-y:auto}
+.pane2{position:absolute;inset:0;background:#F3F5F4;z-index:8;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease}.pane2.on{transform:none}
+.ph2{display:flex;align-items:center;gap:8px;background:var(--m);color:#fff;padding:10px 10px}.bk{border:0;background:none;color:#fff;font-size:24px;line-height:1;width:30px;cursor:pointer}
+.pt{display:flex;flex-direction:column;min-width:0}.pt b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pt span{font-size:10.5px;opacity:.85}
+.inf{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;background:#fff;border-bottom:1px solid var(--bd)}.lf{font-size:10.5px;color:var(--sb);border:1px solid var(--bd);border-radius:6px;padding:0 6px}
+.msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.mg{max-width:82%;align-self:flex-start}.mg.me{align-self:flex-end}.wn{font-size:10.5px;color:var(--sb);display:block;margin:0 0 2px 4px}
+.bb{background:#fff;border:1px solid var(--bd);border-radius:4px 12px 12px 12px;padding:7px 10px;font-size:13px;white-space:pre-wrap}.me .bb{background:var(--ml);border-color:transparent;border-radius:12px 4px 12px 12px}
+.bb img{display:block;max-width:180px;border-radius:8px;margin-bottom:4px}.mn{color:var(--m);font-weight:700}
+.sys{align-self:center;font-size:11px;color:var(--sb);background:#e6eae8;border-radius:10px;padding:2px 10px}
+.qk{display:flex;gap:6px;padding:6px 10px;background:#fff;border-top:1px solid var(--bd)}.qk button{flex:1;font:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--m);border:0;border-radius:8px;padding:8px;cursor:pointer}.qk button.g{background:#fff;color:var(--sb);border:1px solid var(--bd);font-weight:400}.qk button:disabled{background:#9AA49E}
+.cmp{display:flex;gap:6px;align-items:center;padding:8px 10px;background:#fff;border-top:1px solid var(--bd)}.cmp input#tx,.cmp input#atx{flex:1;min-width:0;font:inherit;font-size:14px;border:1px solid #cdd4d0;border-radius:18px;padding:7px 12px}
+.ic{font:inherit;font-size:12px;font-weight:700;color:var(--m);background:var(--ml);border:0;border-radius:14px;padding:6px 9px;cursor:pointer}.sd{font:inherit;font-size:13px;font-weight:700;color:#fff;background:var(--m);border:0;border-radius:16px;padding:7px 12px;cursor:pointer}
+.mpick{position:absolute;left:10px;right:10px;bottom:58px;background:#fff;border:1px solid var(--bd);border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.15);padding:8px;display:flex;flex-wrap:wrap;gap:6px}.mpick[hidden]{display:none}.mpick button{font:inherit;font-size:12.5px;border:1px solid var(--bd);background:#fff;border-radius:14px;padding:4px 10px;cursor:pointer}.mph{width:100%;font-size:11.5px;font-weight:700;color:var(--sb)}
+.sbar{width:100%;display:flex;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--sb);background:#fff;border:1px solid #cdd4d0;border-radius:22px;padding:8px 14px;margin:0 0 10px;cursor:pointer;text-align:left}.sbar svg,.kw svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;flex:none}.sbar small{margin-left:auto;font-size:11px;color:#8a948f}
+.kw{display:flex;align-items:center;gap:8px;margin:10px 10px 0;background:#fff;border:1px solid #cdd4d0;border-radius:22px;padding:7px 12px;color:var(--sb)}.kw input{flex:1;border:0;outline:0;font:inherit;font-size:15px;background:none;min-width:0}
+.arch{width:100%;font:inherit;font-size:13px;color:var(--m);background:none;border:1px dashed var(--m);border-radius:10px;padding:9px;margin-top:10px;cursor:pointer}
+.srch{display:flex;align-items:flex-end;gap:6px;padding:10px;background:#fff;border-bottom:1px solid var(--bd);font-size:12px;color:var(--sb)}.srch label{display:flex;flex-direction:column;flex:1;font-weight:700}.srch input{font:inherit;font-size:13px;border:1px solid #cdd4d0;border-radius:8px;padding:6px;margin-top:2px}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.chs{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 8px}.chs button{font:inherit;font-size:12.5px;color:var(--m);background:#fff;border:1.5px solid var(--m);border-radius:16px;padding:5px 11px;cursor:pointer}
+.skip{font:inherit;font-size:12px;color:var(--sb);background:#fff;border:0;border-top:1px solid var(--bd);padding:8px;cursor:pointer;text-decoration:underline}
+.pf2{flex:1;overflow-y:auto;padding:4px 12px 12px}
+.choose{padding:16px 12px;display:flex;flex-direction:column;gap:12px}
+.cho{display:flex;gap:12px;align-items:center;text-align:left;font:inherit;background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:12px;cursor:pointer;color:var(--tx)}
+.cho:hover,.cho:focus-visible{border-color:var(--m)}.cho img{width:64px;height:64px;object-fit:cover;object-position:50% 8%;border-radius:50%;background:var(--ml);flex-shrink:0}
+.cho span{font-size:12px;color:var(--sb)}.cho b{display:block;font-size:15px;color:var(--tx);margin-bottom:2px}
+.fi{width:64px;height:64px;border-radius:50%;background:var(--ml);color:var(--m)!important;font-size:28px!important;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hav{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:#fff}
+.ai2{display:flex;gap:6px;align-items:flex-start}.av2{width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 8%;background:#fff;border:1px solid var(--bd);flex-shrink:0}
+.rq,.op{font-style:normal;font-size:10px;font-weight:700;border-radius:5px;padding:0 5px;margin-left:4px}.rq{color:#fff;background:#D93A2B}.op{color:var(--sb);background:#e6eae8}
+.thumbs{display:flex;gap:6px;margin-top:6px}.tb{position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;background:#ddd}.tb img,.tb video{width:100%;height:100%;object-fit:cover}.tb button{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;line-height:20px;padding:0;cursor:pointer}
+.warn{font-size:11.5px;color:#B4321F;margin:4px 0 0}
+.cnt{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:6px;border-radius:11px;background:#e6eae8;color:var(--sb);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;padding:0 6px}
+.tabs button[aria-selected="true"] .cnt{background:var(--m);color:#fff}
+.nw{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.06em;color:#fff;background:#E39B1B;border-radius:6px;padding:0 6px;margin-right:4px}
+.bl{list-style:none;margin:0;padding:0}
+.tt{flex:1;display:flex;flex-direction:column}
+.dd{font-size:11.5px;color:var(--sb);display:flex;align-items:center;gap:4px;margin-top:2px}.dd.u{color:#B4321F;font-weight:700}.dd .ex{width:15px;height:15px;font-size:10px}
+.bell b.urg{background:#D93A2B}
+#todo b{background:#6E7D75}#todo b.urg{background:#D93A2B}.bl li{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.bl .mt{flex-shrink:0;font-size:10px;font-weight:700;color:#fff;border-radius:6px;padding:1px 6px;height:18px;margin-top:2px}
+
+/* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
+html,body{height:100%}
+body{background:#F3F4F1;margin:0}
+.phone{max-width:480px;height:100vh;height:100dvh;margin:0 auto;border-radius:0;box-shadow:none;overflow:clip}
+.sheet{visibility:hidden}.open .sheet{visibility:visible}
+.hd{padding-top:max(10px,env(safe-area-inset-top))}
+.nav{padding-bottom:env(safe-area-inset-bottom);height:calc(62px + env(safe-area-inset-bottom))}
+.scr{bottom:calc(62px + env(safe-area-inset-bottom))}
+.beta{font-size:10px;font-weight:700;color:#fff;background:#6E7D75;border-radius:4px;padding:1px 5px}
+.bell b:empty{display:none}
+/* ログイン */
+.lg{position:absolute;inset:0;overflow-y:auto;background:#F3F4F1;z-index:20;padding:28px 20px 40px}
+.lg h1{font-size:26px;font-weight:900;color:#E8613C;margin:0;text-align:center}
+.lg .lgs{text-align:center;font-size:13px;color:#6E7D75;margin:2px 0 14px}
+.lg .lgc{display:block;height:130px;margin:0 auto 8px}
+.lgbox{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.btn-line{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-size:15px;font-weight:700;color:#fff;background:#06C755;border:0;border-radius:12px;padding:13px;cursor:pointer}
+.btn-line small{font-size:11px;font-weight:700;background:#fff;color:#06A046;border-radius:10px;padding:1px 7px}
+.or{display:flex;align-items:center;gap:8px;color:#6E7D75;font-size:12px;margin:16px 0 12px}.or::before,.or::after{content:"";flex:1;height:1px;background:#E3E6E2}
+.fm label{display:block;font-size:12.5px;font-weight:700;margin:10px 0 4px}
+.fm input,.fm select,.fm textarea{width:100%;font:inherit;font-size:16px;border:1px solid #D5DAD6;border-radius:10px;padding:10px;background:#fff;color:#23302A}
+.fm textarea{font-size:15px}
+.big{display:block;width:100%;font:inherit;font-size:15px;font-weight:700;color:#fff;background:var(--m,#E8613C);border:0;border-radius:12px;padding:12px;margin-top:14px;cursor:pointer}
+.big[disabled]{opacity:.5;cursor:default}
+.lnk2{display:block;margin:12px auto 0;font:inherit;font-size:12.5px;color:#2B6CB0;background:none;border:0;text-decoration:underline;cursor:pointer}
+.tabs2{display:flex;background:#EEF0EE;border-radius:10px;padding:3px;margin-bottom:6px}.tabs2 button{flex:1;font:inherit;font-size:13px;border:0;background:none;border-radius:8px;padding:7px;cursor:pointer;color:#6E7D75}.tabs2 button[aria-pressed=true]{background:#fff;color:#23302A;font-weight:700}
+.err{color:#C8321F;font-size:12.5px;margin:8px 0 0}
+.note2{font-size:11.5px;color:#6E7D75;margin:12px 2px 0;line-height:1.6}
+/* 共通 */
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#23302A;color:#fff;font-size:13px;border-radius:20px;padding:8px 16px;z-index:50;max-width:90%;opacity:0;transition:opacity .2s;pointer-events:none}.toast.on{opacity:.95}
+.load{display:flex;align-items:center;justify-content:center;height:100%;color:#6E7D75;font-size:13px}
+.empty{background:#fff;border-radius:10px;padding:16px;font-size:13px;color:#6E7D75;text-align:center}
+.tbx{margin:10px 0;padding:10px;border:1.5px dashed #9AA59F;border-radius:12px;background:#FBFBF8;font-size:12px}
+.tbx b{display:block;margin-bottom:6px;color:#6E7D75}
+.tbx select{font:inherit;font-size:13px;width:100%;margin-bottom:6px;padding:6px;border-radius:8px;border:1px solid #D5DAD6}
+.tbx button{font:inherit;font-size:12px;margin:0 6px 6px 0;padding:6px 10px;border-radius:16px;border:1px solid #9AA59F;background:#fff;cursor:pointer}
+.nf{display:block;width:100%;text-align:left;font:inherit;font-size:13px;color:#23302A;background:#fff;border:0;border-bottom:1px solid #E3E6E2;padding:11px 12px;cursor:pointer}
+.nf.un{background:#FFF7F2}.nf small{display:block;color:#6E7D75;font-size:11px}
+.typing{font-size:12px;color:#6E7D75;padding:4px 10px}
+.phs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.phs img{width:72px;height:72px;object-fit:cover;border-radius:8px}
+.phadd{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border:1.5px dashed #9AA59F;border-radius:8px;font-size:12px;color:#6E7D75;cursor:pointer}
+.bb img{max-width:200px;border-radius:8px;display:block;margin-bottom:4px}
+.dtl{display:block;width:100%;font:inherit;font-size:16px;border:1px solid #D5DAD6;border-radius:10px;padding:10px;margin:8px 0}
+.cf-av{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#2F6B45;color:#fff;font-weight:700;flex:none}
+</style>
+</head>
+<body>
+<div class="phone" id="ph" data-mode="user">
+  <div class="hd">
+    <span class="logo">まち頼</span><span class="beta">テスト版</span>
+    <span class="sp"></span>
+    <button class="bell" id="qaBtn" aria-label="運営への問い合わせ"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.2a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.4M12 14.2v.1"/></svg></button>
+    <button class="bell" id="bell" aria-label="お知らせ"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><b id="bellN"></b></button>
+  </div>
+  <div class="scr" id="scr"><div class="load">読み込み中…</div></div>
+  <nav class="nav" id="nav"></nav>
+  <div class="pane2" id="pane"></div>
+  <div class="shade" id="shade"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+  <div class="lg" id="lg" hidden></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+(function(){
+'use strict';
+/* ===== 設定（キーやトークンはここに書かない） ===== */
+var GAS_URL='https://script.google.com/macros/s/AKfycbwhmZQHIQHoohEfH0tDXuXrx-cRX7x25vFYKqJvlJqbWxUijpmEUoMPNCBy3Stc_xoD/exec';
+var LIFF_ID='2011196111-mkgGx8sO';
+var TK='machiyori_token';
+
+var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
+var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
+try{TOKEN=localStorage.getItem(TK)||'';}catch(e){}
+
+/* ===== 共通 ===== */
+function esc(t){var d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML;}
+function $(id){return document.getElementById(id);}
+function each(sel,root,fn){Array.prototype.forEach.call((root||document).querySelectorAll(sel),fn);}
+function toast(t){var x=$('toast');x.textContent=t;x.classList.add('on');clearTimeout(x._t);x._t=setTimeout(function(){x.classList.remove('on');},2600);}
+function md(iso){var d=new Date(iso);return isNaN(d)?'':(d.getMonth()+1)+'/'+d.getDate();}
+function mdhm(iso){var d=new Date(iso);if(isNaN(d))return '';return (d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2);}
+function yen(n){return Number(n||0).toLocaleString()+'円';}
+function api(a,data){
+  var b=data||{};b.a=a;b.token=TOKEN;
+  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){
+    if(!j.ok&&j.error==='auth'){logoutLocal();throw new Error('ログインし直してください');}
+    if(!j.ok)throw new Error(j.error||'うまくいきませんでした');
+    return j;
+  });
+}
+function fail(e){toast((e&&e.message)||'通信に失敗しました。電波のよいところでもう一度お試しください');}
+function openSheet(html){sheet.innerHTML='<div class="grab"></div>'+html;ph.classList.add('open');}
+function closeSheet(){ph.classList.remove('open');ph.scrollTop=0;}
+$('shade').onclick=closeSheet;
+function setPane(html,onBack){stopChat();pane.innerHTML=html;pane.classList.add('on');var b=pane.querySelector('.bk');if(b)b.onclick=onBack||closePane;}
+function closePane(){stopChat();pane.classList.remove('on');refresh();}
+/* 写真を小さくしてから送る（長い辺1200px） */
+function shrink(file){return new Promise(function(ok,ng){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82));};im.onerror=ng;im.src=r.result;};r.onerror=ng;r.readAsDataURL(file);});}
+function charaName(){return ME&&ME.chara==='bro'?'大工のお兄さん':'建築士のお姉さん';}
+function charaImg(cls){return ME&&ME.chara==='bro'?'<span class="cf-av '+(cls||'')+'">大</span>':'<img class="'+(cls||'av2')+'" src="chara.png" alt="">';}
+
+/* ===== ログイン ===== */
+function logoutLocal(){TOKEN='';ME=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
+function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);}catch(e){}lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
+function showLogin(mode){
+  lg.hidden=false;mode=mode||'login';
+  lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
+    '<div class="lgbox"><button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
+    '<div class="or">または メールアドレスで</div>'+
+    '<div class="tabs2"><button type="button" data-m="login" aria-pressed="'+(mode==='login')+'">ログイン</button><button type="button" data-m="new" aria-pressed="'+(mode==='new')+'">はじめての方</button></div>'+
+    '<form class="fm" id="lgF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email">'+
+    '<label for="lgP">パスワード'+(mode==='new'?'（8文字以上）':'')+'</label><input id="lgP" type="password" autocomplete="'+(mode==='new'?'new-password':'current-password')+'">'+
+    '<p class="err" id="lgErr" hidden></p><button class="big" type="submit">'+(mode==='new'?'登録して始める':'ログイン')+'</button></form>'+
+    (mode==='login'?'<button type="button" class="lnk2" id="lgFg">パスワードを忘れた方</button>':'')+'</div>'+
+    '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
+  $('lgLine').onclick=lineLogin;
+  each('.tabs2 button',lg,function(b){b.onclick=function(){showLogin(b.dataset.m);};});
+  $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
+    api(mode==='new'?'registerEmail':'loginEmail',{email:$('lgE').value,password:$('lgP').value}).then(saveLogin).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};
+  var fg=$('lgFg');if(fg)fg.onclick=forgot;
+}
+function forgot(){
+  lg.innerHTML='<h1>まち頼</h1><p class="lgs">パスワードの再設定</p><div class="lgbox"><form class="fm" id="fgF" novalidate><label for="fgE">登録したメールアドレス</label><input id="fgE" type="email" autocomplete="email"><button class="big" type="submit">再設定のメールを送る</button></form><button type="button" class="lnk2" id="fgB">ログイン画面にもどる</button></div>';
+  $('fgB').onclick=function(){showLogin();};
+  $('fgF').onsubmit=function(e){e.preventDefault();api('resetRequest',{email:$('fgE').value}).then(function(){lg.querySelector('.lgbox').innerHTML='<p style="font-size:14px">登録があれば、再設定のメールを送りました。メールのリンクを1時間以内に開いてください。<br><small style="color:#6E7D75">届かないときは、迷惑メールのフォルダも見てください。</small></p><button type="button" class="lnk2" id="fgB2">ログイン画面にもどる</button>';$('fgB2').onclick=function(){showLogin();};}).catch(fail);};
+}
+function resetForm(rt){
+  lg.hidden=false;
+  lg.innerHTML='<h1>まち頼</h1><p class="lgs">新しいパスワードを決める</p><div class="lgbox"><form class="fm" id="rsF" novalidate><label for="rsP">新しいパスワード（8文字以上）</label><input id="rsP" type="password" autocomplete="new-password"><p class="err" id="rsE" hidden></p><button class="big" type="submit">保存してログイン</button></form></div>';
+  $('rsF').onsubmit=function(e){e.preventDefault();api('resetDo',{resetToken:rt,password:$('rsP').value}).then(saveLogin).catch(function(x){$('rsE').textContent=x.message;$('rsE').hidden=false;});};
+}
+function liffReady(){if(!window.liff)return Promise.reject(new Error('LINEの読み込みに失敗しました'));return liff.init({liffId:LIFF_ID});}
+function lineLogin(){
+  liffReady().then(function(){
+    if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname});return;}
+    finishLine();
+  }).catch(function(e){toast('LINEログインを開始できませんでした（'+(e&&e.message||'')+'）');});
+}
+function finishLine(){
+  var idt=null;try{idt=liff.getIDToken();}catch(e){}
+  return api('loginLine',idt?{idToken:idt}:{accessToken:liff.getAccessToken()}).then(saveLogin).catch(function(e){fail(e);showLogin();});
+}
+
+/* ===== 起動 ===== */
+function boot(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('reset')){resetForm(q.get('reset'));return;}
+  if(q.get('liffClientId')||q.get('code')||q.get('liff.state')){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
+  if(!TOKEN){showLogin();return;}
+  api('me').then(function(j){ME=j.user;afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
+}
+function afterLogin(){
+  lg.hidden=true;
+  if(!ME.callName||!ME.area){welcome();}
+  renderNav();refresh();startPoll();
+}
+function welcome(){
+  openSheet('<h3>はじめまして</h3><p class="sp s2">最初に3つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
+    '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc(ME.callName||ME.name||'')+'" maxlength="20" placeholder="例：まさ">'+
+    '<label for="wcA">お住まいの市町村</label>'+areaSel('wcA',ME.area)+
+    '<label>話し相手のキャラクター</label><div class="chsel"><button type="button" data-c="sis" class="on"><img src="chara.png" alt="">建築士のお姉さん</button><button type="button" data-c="bro"><span class="cf">大</span>大工のお兄さん</button></div>'+
+    '<button class="big" type="submit">始める</button></form>');
+  var ch='sis';each('.chsel button',sheet,function(b){b.onclick=function(){ch=b.dataset.c;each('.chsel button',sheet,function(x){x.classList.toggle('on',x===b);});};});
+  $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim();if(!n){$('wcN').focus();return;}
+    api('saveProfile',{callName:n,area:$('wcA').value,chara:ch}).then(function(j){ME=j.user;closeSheet();refresh();}).catch(fail);};
+}
+var AREAS=['松本市','塩尻市','安曇野市','大町市','東筑摩郡山形村','東筑摩郡朝日村','東筑摩郡筑北村','東筑摩郡麻績村','東筑摩郡生坂村','北安曇郡池田町','北安曇郡松川村','北安曇郡白馬村','木曽郡','そのほか'];
+function areaSel(id,cur){return '<select id="'+id+'">'+AREAS.map(function(a){return '<option'+(a===cur?' selected':'')+'>'+a+'</option>';}).join('')+'</select>';}
+
+/* ===== 下のメニュー ===== */
+var I={home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',list:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',me:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>'};
+var NAV=[['home','ホーム'],['list','依頼'],['chat','チャット'],['me','マイページ']];
+function renderNav(){nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
+  each('button',nav,function(b){b.onclick=function(){tab=b.dataset.t;pane.classList.remove('on');stopChat();renderNav();refresh();};});}
+function refresh(){if(!ME)return;return api('home').then(function(j){HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';draw();}).catch(fail);}
+function draw(){if(!HOME)return;if(tab==='home')renderHome();else if(tab==='list')renderCases();else if(tab==='chat')renderChats();else renderMy();}
+function startPoll(){stopPoll();pollT=setInterval(function(){if(document.visibilityState==='visible'&&!pane.classList.contains('on'))refresh();},60000);}
+function stopPoll(){clearInterval(pollT);}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&ME&&!pane.classList.contains('on'))refresh();});
+
+/* ===== 案件の状態 ===== */
+var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],fixd:['調査日が決定',''],est:['確定見積もり到着','hot'],won:['依頼しました','ok'],done:['完了','ok'],lost:['見送り','off'],other:['見送り','off'],declined:['辞退','off']};
+function caseStage(c,bids){if(c.status==='done')return 6;if(bids.some(function(v){return v.state==='won';}))return 5;if(bids.some(function(v){return v.state==='est';}))return 4;if(bids.some(function(v){return v.state==='fixd'||v.state==='prop';}))return 3;if(bids.length)return 2;return 1;}
+function caseLine(x){var c=x.c,b=x.bids,t,m;
+  if(c.status==='withdrawn'){t='取り下げ';m='';}
+  else if(c.status==='postponed'){t='先送り中';m='再開予定 '+mdhm(c.postponeAt);}
+  else if(c.status==='done'){t='完了';m=(b.filter(function(v){return v.state==='done';})[0]||{vendor:{}}).vendor.name||'';}
+  else if(!b.length){t='返事を待っています';m='投稿 '+md(c.createdAt);}
+  else{var w=b.filter(function(v){return v.state==='won';})[0];
+    if(w){t='工事予定';m=(w.vendor||{}).name||'';}
+    else{var hot=b.some(function(v){return v.state==='est'||v.state==='prop';});t=hot?'やることがあります':'やり取り中';m='業者'+b.filter(function(v){return VST[v.state]&&VST[v.state][1]!=='off';}).length+'社とやり取り中';}}
+  return '<button type="button" class="card bp" data-c="'+c.id+'"><span class="tag"'+(c.status==='done'||c.status==='withdrawn'?' style="background:#e6eae8;color:var(--sb)"':'')+'>'+t+'</span><b>'+esc(c.title)+'</b><span class="meta"><span>'+esc(m)+'</span></span></button>';}
+function bindCases(root){each('[data-c]',root,function(b){b.onclick=function(){openCase(b.dataset.c);};});}
+function activeCases(){return HOME.cases.filter(function(x){return ['open','postponed','contracted'].indexOf(x.c.status)>=0;});}
+
+/* ===== ホーム ===== */
+var OPEN=[
+  [11,'朝晩、急に冷え込む|ようになりましたね。|おうちでは、もう|暖房使い始めてます？'],
+  [11,'そろそろ冬じたくを|考える時期になりましたね。|もう何か始めてます？'],
+  [12,'今年もあと少しですね。|年末の大掃除、|もう考えてます？'],[1,'寒い日が続きますね。|水道の凍結、|気をつけてくださいね。'],[2,'まだまだ寒いですね。|結露で困ったりは|していませんか？'],[3,'少しずつ暖かく|なってきましたね。|春に向けて、何か|考えてます？'],[4,'新しい季節ですね。|お庭やおうちの|気になるところは|ありますか？'],[5,'過ごしやすい季節ですね。|外まわりの手入れに|いい時期ですよ。'],[6,'梅雨が近いですね。|雨漏りやカビ、|気になってませんか？'],[7,'暑くなってきましたね。|エアコンの調子は|どうですか？'],[8,'暑い日が続きますね。|おうちの中は|快適ですか？'],[9,'台風の時期ですね。|屋根や雨どいは|大丈夫そうですか？'],[10,'秋らしくなりましたね。|冬の前に、気になる|ところはありますか？']];
+function opening(){var m=new Date().getMonth()+1,l=OPEN.filter(function(o){return o[0]===m;});var o=l[new Date().getDate()%l.length]||OPEN[0];return o[1];}
+var CATS=[['🚰','水のトラブル'],['🏠','外装工事'],['🛠️','リフォーム'],['❄️','機器設置・修理'],['🧱','解体工事'],['🚗','外構工事'],['🌳','庭の手入れ'],['🧽','ハウス<br>クリーニング'],['🐝','害虫・害獣<br>駆除'],['📦','便利屋・<br>片付け'],['🔑','鍵・防犯'],['📐','図面・役所<br>の手続き'],['🏚️','耐震診断・<br>住宅診断'],['⚖️','税務・法務<br>・労務'],['🚁','ドローン・<br>測量'],['💬','その他・<br>まず相談']];
+var WX=null;
+function loadWx(){if(WX)return;WX={};fetch('https://api.open-meteo.com/v1/forecast?latitude=36.238&longitude=137.972&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=2').then(function(r){return r.json();}).then(function(j){WX=j.daily;var w=$('uhWx');if(w)w.outerHTML=wxHTML();}).catch(function(){});}
+function wxIcon(c){if(c==null)return '';if(c<=1)return '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="#FFD25A"/><g stroke="#FFD25A" stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>';
+  if(c>=51)return '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15a4 4 0 1 1 1-7.9A5 5 0 0 1 18 9a3 3 0 0 1 0 6z" fill="#E8EEF3"/><path d="M9 18l-1 2M13 18l-1 2M17 18l-1 2" stroke="#7FB6E6" stroke-width="2" stroke-linecap="round"/></svg>';
+  return '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 1 1 1-7.9A5 5 0 0 1 18 12a3 3 0 0 1 0 6z" fill="#E8EEF3"/></svg>';}
+function wxHTML(){var d=new Date(),W='日月火水木金土';var ok=WX&&WX.temperature_2m_max;
+  return '<div class="uh-wx" id="uhWx" aria-label="今日の天気"><div class="uh-wd"><span>'+(d.getMonth()+1)+'/'+d.getDate()+'（'+W[d.getDay()]+'）</span><span>松本</span></div><div class="uh-wm">'+(ok?wxIcon(WX.weather_code[0]):'')+'<span class="uh-wt">'+(ok?Math.round(WX.temperature_2m_max[0])+'°<small> / '+Math.round(WX.temperature_2m_min[0])+'°</small>':'…')+'</span></div><div class="uh-wr"><span>降水 今日</span><b>'+(ok?WX.precipitation_probability_max[0]+'%':'-')+'</b><span>降水 明日</span><b>'+(ok?WX.precipitation_probability_max[1]+'%':'-')+'</b></div></div>';}
+function renderHome(){
+  var ac=activeCases(),op=opening();
+  scr.innerHTML='<div class="uh">'+
+    '<div class="uh-news"><span class="uh-nl">お知らせ</span><div class="uh-nv"><span>まち頼のテスト版です ／ 気になることは何でも気軽に相談してください ／ 地元の専門家につながります</span></div></div>'+
+    '<div class="uh-hero"><img class="uh-bg" src="top.jpg" alt="松本城と北アルプスの風景"><div class="uh-clouds" aria-hidden="true"><div class="uh-cl c1"></div><div class="uh-cl c2"></div><div class="uh-cl c3"></div><div class="uh-cl c4"></div></div><div class="uh-shade"></div>'+wxHTML()+
+    '<div class="uh-copy">暮らしのそばに、<br>頼れる地元のプロがいる</div>'+(ME.chara==='bro'?'':'<img class="uh-chara" src="chara.png" alt="'+charaName()+'">')+
+    '<div class="uh-bub" id="uhBub" role="button" tabindex="0">'+op.split('|').map(esc).join('<br>')+'<span class="uh-tap">タップして話す ›</span></div></div>'+
+    '<div class="uh-ask"><div class="uh-at">ほかに気になっていることがある</div><form class="uh-in" id="uhForm"><input id="uhIn" placeholder="例：窓からすきま風が入る" aria-label="気になっていること"><button class="uh-send" type="submit">相談する</button></form>'+
+    '<div class="uh-chips">'+['床がきしむ','窓からすきま風','お風呂のカビ','庭が荒れてきた'].map(function(t){return '<button type="button" class="uh-chip">'+t+'</button>';}).join('')+'</div></div>'+
+    '<div class="uh-body">'+(ac.length?'<div class="uh-sec">進行中の依頼</div><div class="list">'+ac.map(caseLine).join('')+'</div>':'')+
+    '<div class="uh-sec">やりたいことが決まっている方は</div><div class="uh-grid">'+CATS.map(function(x){return '<button type="button" class="uh-t" data-k="'+x[1].replace(/<br>/g,'')+'"><b>'+x[0]+'</b>'+x[1]+'</button>';}).join('')+'</div></div></div>';
+  loadWx();
+  var b=$('uhBub');b.onclick=function(){conc(op.replace(/\|/g,''));};b.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();b.onclick();}};
+  $('uhForm').onsubmit=function(e){e.preventDefault();var v=$('uhIn').value.trim();if(v)conc('どうされましたか？',v);};
+  each('.uh-chip',scr,function(x){x.onclick=function(){conc('どうされましたか？',x.textContent);};});
+  each('.uh-t',scr,function(x){x.onclick=function(){conc('どんなことでお困りですか？',x.dataset.k+'について相談したいです');};});
+  bindCases(scr);
+}
+
+/* ===== AIコンシェルジュ ===== */
+var C={first:true,opening:'',busy:false};
+function conc(op,firstText){
+  C={first:true,opening:op,busy:false};
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button>'+charaImg('hav')+'<div class="pt"><b>'+charaName()+'</b><span>まち頼 コンシェルジュ</span></div></div><div class="msgs" id="cl"></div><form class="cmp" id="cf"><input id="atx" placeholder="メッセージを入力" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>');
+  cSay(op,0);
+  $('cf').onsubmit=function(e){e.preventDefault();var i=$('atx'),v=i.value.trim();if(!v||C.busy)return;i.value='';cSend(v);};
+  if(firstText)cSend(firstText);
+}
+function cSay(t,me){var box=$('cl');if(!box)return;var d=document.createElement('div');d.className='mg'+(me?' me':' ai2');d.innerHTML=(me?'':charaImg())+'<div class="bb">'+esc(t).replace(/\n/g,'<br>')+'</div>';box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function cSend(v){
+  cSay(v,1);C.busy=true;var box=$('cl'),w=document.createElement('div');w.className='typing';w.textContent=charaName()+'が入力中…';box.appendChild(w);box.scrollTop=box.scrollHeight;
+  var data={text:v};if(C.first){data.reset=true;data.opening=C.opening;C.first=false;}
+  api('concierge',data).then(function(j){w.remove();cSay(j.reply,0);if(j.sheet)sheetCard(j.sheet);}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
+}
+var SK=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','専門家に確認したいこと']];
+function sheetCard(s){var box=$('cl'),d=document.createElement('div');d.className='mg ai2 wide';
+  d.innerHTML=charaImg()+'<div class="sht">'+SK.map(function(k){return s[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(s[k[0]])+'</b></div>':'';}).join('')+(s.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div>';
+  box.appendChild(d);var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button" id="cfix">訂正する</button><button type="button" class="pri" id="cpost">この内容で投稿する</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
+  $('cfix').onclick=function(){b.remove();$('atx').placeholder='例：場所は塩尻市です';$('atx').focus();};
+  $('cpost').onclick=function(){postConfirm(s);};
+}
+function postConfirm(s){
+  var photos=[];
+  openSheet('<h3>投稿する内容の確認</h3><p class="sp s2">この内容が、対応できる地元の専門家に届きます。お名前と詳しい住所は、現地調査が決まるまで伝わりません。</p><form class="fm" id="pcF">'+
+    SK.map(function(k){return '<label for="pc_'+k[0]+'">'+k[1]+'</label>'+(k[0]==='detail'?'<textarea id="pc_'+k[0]+'" rows="3">'+esc(s[k[0]]||'')+'</textarea>':'<input id="pc_'+k[0]+'" value="'+esc(s[k[0]]||'')+'">');}).join('')+
+    '<label><input type="checkbox" id="pc_est"'+(s.estOnly?' checked':'')+' style="width:auto;margin-right:6px">見積もりだけ欲しい（まだ依頼するか決めていない）</label>'+
+    '<label>写真（3枚まで・なくても大丈夫）</label><div class="phs" id="pcPh"><label class="phadd">＋ 追加<input type="file" accept="image/*" id="pcIn" hidden></label></div>'+
+    '<p class="err" id="pcE" hidden></p><button class="big" type="submit" id="pcB">この内容で投稿する</button></form>');
+  $('pcIn').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f||photos.length>=3)return;shrink(f).then(function(u){photos.push(u);var im=document.createElement('img');im.src=u;im.alt='添付する写真';$('pcPh').insertBefore(im,$('pcPh').lastChild);if(photos.length>=3)$('pcPh').lastChild.hidden=true;});};
+  $('pcF').onsubmit=function(e){e.preventDefault();var b=$('pcB');b.disabled=true;b.textContent='送っています…';
+    var data={};SK.forEach(function(k){data[k[0]]=$('pc_'+k[0]).value.trim();});data.estOnly=$('pc_est').checked;
+    var urls=[];photos.reduce(function(p,u){return p.then(function(){return api('uploadPhoto',{dataUrl:u}).then(function(j){urls.push(j.url);});});},Promise.resolve())
+      .then(function(){return api('postCase',{sheet:data,photos:urls});})
+      .then(function(j){closeSheet();cSay('投稿しました。専門家から返事が届いたら、ベルのお知らせでお伝えしますね。',0);toast('投稿しました');setTimeout(function(){openCase(j.caseId);},900);})
+      .catch(function(x){$('pcE').textContent=x.message;$('pcE').hidden=false;b.disabled=false;b.textContent='この内容で投稿する';});};
+}
+
+/* ===== 案件の画面 ===== */
+var CUR=null;
+function openCase(id){
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="arw"></div>');
+  api('getCase',{caseId:id}).then(function(j){CUR=j;drawCase();}).catch(function(e){fail(e);closePane();});
+}
+function drawCase(){
+  var c=CUR.c,bs=CUR.bids,st=caseStage(c,bs),steps=['投稿','立候補','やり取り','現地調査','見積もり','依頼','完了'];
+  var todo='',live=bs.filter(function(v){return VST[v.state]&&VST[v.state][1]!=='off';});
+  var w=bs.filter(function(v){return v.state==='won';})[0],dn=bs.filter(function(v){return v.state==='done';})[0];
+  if(c.status==='withdrawn')todo='<div class="todo1 inf"><b>取り下げました</b>この依頼は終了しています。</div>';
+  else if(c.status==='postponed')todo='<div class="todo1 pp"><b>先送り中</b>再開予定 '+mdhm(c.postponeAt)+'<div class="t1b"><button type="button" id="chgB">日時を変更</button><button type="button" id="nowB">今すぐ再開</button></div></div>';
+  else if(dn&&!dn.reviewed)todo='<button type="button" class="todo1" data-rv="'+dn.id+'"><b>やること</b>工事が完了しました。'+esc(dn.vendor.name)+'の口コミを書いてください ›</button>';
+  else if(dn)todo='<div class="todo1 okk"><b>完了しました</b>口コミありがとうございました。<small class="t1n">'+esc(dn.vendor.name)+'とのチャットは、完了から30日間使えます</small></div>';
+  else if(w){var lt=w.last&&w.last.type,und=w.last&&!(w.last.body||{}).done;
+    todo=lt==='rep'&&und?'<button type="button" class="todo1" data-v="'+w.id+'"><b>やること</b>'+esc(w.vendor.name)+'から完了報告が届いています。確認してください ›<small class="t1n">7日たつと自動で完了になります</small></button>':
+      lt==='chg'&&und?'<button type="button" class="todo1" data-v="'+w.id+'"><b>やること</b>'+esc(w.vendor.name)+'から金額変更の申請が届いています ›</button>':
+      '<button type="button" class="todo1 inf" data-v="'+w.id+'"><b>工事の予定</b>'+esc(w.vendor.name)+'<small class="t1n">工事が終わったら、業者さんから完了報告が届きます</small></button>';}
+  else{var e1=bs.filter(function(v){return v.state==='est';})[0],p1=bs.filter(function(v){return v.state==='prop';})[0];
+    if(e1)todo='<button type="button" class="todo1" data-v="'+e1.id+'"><b>やること</b>'+esc(e1.vendor.name)+'から確定見積もりが届いています。依頼するか決めてください ›</button>';
+    else if(p1)todo='<button type="button" class="todo1" data-v="'+p1.id+'"><b>やること</b>'+esc(p1.vendor.name)+'から現地調査の提案が届いています。日時を選んでください ›</button>';
+    else if(!bs.length)todo='<div class="todo1 inf"><b>専門家の返事を待っています</b>立候補があると、ベルのお知らせでお伝えします。</div>';}
+  var lastTxt=function(v){var l=v.last;if(!l)return '';var t=l.type;return t==='text'?(l.body.text||''):t==='img'?'写真':t==='sys'?l.body.text:t==='prop'?'現地調査の提案が届きました':t==='est'?'確定見積もりが届きました':t==='chg'?'金額変更の申請が届きました':t==='rep'?'完了報告が届きました':t==='visit'?'現地調査はいかがでしたか？':'';};
+  var vsH=bs.length?'<div class="list">'+bs.map(function(v){var s=VST[v.state]||['',''],vn=v.vendor||{name:'業者'};
+    return '<button type="button" class="card bp vc'+(s[1]==='off'?' off':'')+'" data-v="'+v.id+'"><span class="vhd"><b>'+esc(vn.name)+'</b><span class="vst '+s[1]+'">'+s[0]+'</span>'+(v.unread?'<span class="unr">'+v.unread+'</span>':'')+'</span><span class="meta"><span>★'+(vn.star||'-')+'（'+(vn.reviews||0)+'件）</span></span><span class="lm">'+esc(lastTxt(v))+'</span></button>';}).join('')+'</div>':'<div class="empty">まだ立候補はありません</div>';
+  var rows=SK.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'');
+  var pics=(c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':'';
+  var stt=c.status==='postponed'?'先送り中':c.status==='withdrawn'?'取り下げ':st>=6?'完了':steps[st];
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+stt+'</span></div>'+(c.status==='withdrawn'||c.status==='done'?'':'<button type="button" class="kebab" id="kbB" aria-label="その他の操作">…</button>')+'</div>'+
+    '<div class="arw"><div class="stp">'+steps.map(function(t,i){return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div>'+todo+testBox()+
+    '<div class="sec">立候補した業者 <small>'+bs.length+'社 ／ 最大5社'+(c.stopBids?'・締め切り済み':'')+'</small></div>'+vsH+
+    '<details class="sdet"><summary>依頼の内容を見る</summary><div class="sht">'+rows+'</div>'+pics+'</details></div>');
+  each('[data-v]',pane,function(b){b.onclick=function(){openChat(b.dataset.v);};});
+  each('[data-rv]',pane,function(b){b.onclick=function(){openReview(bs.filter(function(v){return v.id===b.dataset.rv;})[0]);};});
+  var e=$('chgB');if(e)e.onclick=postpone;
+  e=$('nowB');if(e)e.onclick=function(){caseOp('resume');};
+  e=$('kbB');if(e)e.onclick=kebab;
+  bindTest();
+}
+function caseOp(op,extra){var d=extra||{};d.caseId=CUR.c.id;d.op=op;return api('caseAction',d).then(function(j){CUR=j;closeSheet();drawCase();}).catch(fail);}
+function kebab(){
+  if(CUR.bids.some(function(v){return v.state==='won';})){openSheet('<h3>この依頼について</h3><ul class="kbm"><li><button type="button" id="k9">キャンセルを業者さんに相談する<small>成約後のキャンセルは、業者さんとのチャットで相談してください。キャンセルの申請は業者さんから行います</small></button></li><li><button type="button" id="k8">運営に問い合わせる</button></li></ul>');$('k9').onclick=closeSheet;$('k8').onclick=function(){closeSheet();inquiry();};return;}
+  openSheet('<h3>この依頼について</h3><ul class="kbm">'+(CUR.c.stopBids?'':'<li><button type="button" id="k1">新しい立候補を締め切る<small>立候補済みの業者さんには影響しません</small></button></li>')+(CUR.c.status==='postponed'?'':'<li><button type="button" id="k2">先送りする<small>再開する日時を決めて、いったん止めます</small></button></li>')+'<li><button type="button" id="k3" class="dng">依頼を取り下げる<small>立候補した業者さん全員に通知されます</small></button></li></ul>');
+  var e=$('k1');if(e)e.onclick=function(){caseOp('stopBids');};
+  e=$('k2');if(e)e.onclick=postpone;
+  $('k3').onclick=function(){openSheet('<h3>依頼を取り下げますか？</h3><p class="sp s2">取り下げると、もとに戻せません。立候補した業者さん全員に通知されます。</p><form class="fm" id="wdF"><label for="wdR">理由（任意）</label><select id="wdR"><option value="">選ばない</option><option>自分で直した・必要なくなった</option><option>ほかで頼んだ</option><option>予算が合わなかった</option><option>そのほか</option></select><button class="big" type="submit" style="background:#C8321F">取り下げる</button></form>');$('wdF').onsubmit=function(ev){ev.preventDefault();caseOp('withdraw',{reason:$('wdR').value});};};
+}
+function postpone(){
+  var t=new Date(Date.now()+7*864e5);t.setHours(10,0,0,0);var v=new Date(t-t.getTimezoneOffset()*6e4).toISOString().slice(0,16);
+  openSheet('<h3>いつ再開しますか？</h3><p class="sp s2">再開の1週間前と当日に、お知らせでお伝えします。立候補した業者さんにも、再開予定が伝わります。</p><input type="datetime-local" class="dtl" id="ppD" value="'+v+'" min="'+new Date(Date.now()+36e5-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16)+'" aria-label="再開する日時"><button type="button" class="big" id="ppS">この日時で先送りする</button>');
+  $('ppS').onclick=function(){var x=$('ppD').value;if(!x)return;caseOp('postpone',{at:new Date(x).toISOString()});};
+}
+
+/* ===== 業者とのチャット ===== */
+var CH=null;
+function stopChat(){clearInterval(chatT);chatT=null;}
+function openChat(bidId,back){
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
+  api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
+}
+function pollChat(){if(!CH||document.visibilityState!=='visible')return;var l=CH.msgs[CH.msgs.length-1];api('getChat',{bidId:CH.bid.id,since:l?l.createdAt:''}).then(function(j){if(j.msgs.length){CH.msgs=CH.msgs.concat(j.msgs);CH.bid=j.bid;drawMsgs();}}).catch(function(){});}
+function drawChat(){
+  var v=CH.vendor||{name:'業者'},s=VST[CH.bid.state]||['',''],closed=s[1]==='off';
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(v.name)+'</b><span>★'+(v.star||'-')+'（口コミ'+(v.reviews||0)+'件）・'+s[0]+'</span></div></div><div class="msgs" id="vm"></div>'+
+    (closed?'<div class="lock">このやり取りは終了しています。</div>':'<form class="cmp" id="vf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="vimg" hidden></label><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
+    CH.back||function(){openCase(CH.c.id);});
+  chatT=setInterval(pollChat,8000);
+  drawMsgs();
+  var f=$('vf');if(!f)return;
+  f.onsubmit=function(e){e.preventDefault();var t=$('tx'),x=t.value.trim();if(!x)return;t.value='';send({text:x});};
+  $('vimg').onchange=function(e){var fl=e.target.files[0];e.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
+}
+function send(d){var l=CH.msgs[CH.msgs.length-1];d.bidId=CH.bid.id;d.since=l?l.createdAt:'';api('sendMsg',d).then(function(j){CH.msgs=CH.msgs.concat(j.msgs);CH.bid=j.bid;drawMsgs();}).catch(fail);}
+function drawMsgs(){
+  var box=$('vm');if(!box)return;var vn=(CH.vendor||{}).name||'業者';
+  box.innerHTML=CH.msgs.map(function(m){var b=m.body||{};
+    if(m.type==='sys')return '<div class="sys">'+esc(b.text)+'</div>';
+    if(m.from===ME.id)return '<div class="mg me"><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="送った写真">':'')+esc(b.text||'')+'</div></div>';
+    if(m.type==='text'||m.type==='img')return '<div class="mg"><span class="wn">'+esc(vn)+'</span><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="">':'')+esc(b.text||'')+'</div></div>';
+    return cardHTML(m);}).join('');
+  box.scrollTop=box.scrollHeight;
+  each('[data-op]',box,function(x){x.onclick=function(){cardDo(x.dataset.id,x.dataset.op,x.dataset.slot);};});
+  each('.pc-no',box,function(x){x.onclick=function(){counter(x.dataset.id);};});
+  each('[data-talk]',box,function(x){x.onclick=function(){var t=$('tx');if(t)t.focus();};});
+}
+function done(b){return b.done?'<p class="pc-ok">'+esc(b.done)+'</p>':'';}
+function cardHTML(m){var x=m.body||{},id=m.id;
+  if(m.type==='prop')return '<div class="pc"><div class="pc-h">現地調査の提案</div><dl><dt>仮の見積もり</dt><dd>'+esc(x.kari)+'</dd><dt>当日やること</dt><dd>'+esc(x.todo)+'</dd><dt>調査の費用</dt><dd>無料</dd><dt>確定見積もり</dt><dd>'+esc(x.estDue)+'に届きます</dd></dl>'+
+    (x.done?done(x):'<div class="pc-s">ご都合のよい開始時刻を選んでください</div>'+(x.slots||[]).map(function(s){var h0=+s[1].slice(0,2),h1=+s[2].slice(0,2),bt=[];for(var h=h0;h<h1;h+=.5)bt.push(('0'+Math.floor(h)).slice(-2)+':'+(h%1?'30':'00'));return '<div class="pc-d">'+esc(s[0])+' '+s[1]+'〜'+s[2]+'</div><div class="pc-t">'+bt.map(function(t){return '<button type="button" data-id="'+id+'" data-op="pick" data-slot="'+esc(s[0]+' '+t)+'">'+t+'</button>';}).join('')+'</div>';}).join('')+'<button type="button" class="pc-no" data-id="'+id+'">合う日時がない（候補を送る）</button>')+'</div>';
+  if(m.type==='est')return '<div class="pc est"><div class="pc-h">確定見積もり</div><p class="amt">'+Number(x.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(x.memo)+'</dd><dt>着手予定日</dt><dd>'+esc(x.start)+'</dd><dt>支払い</dt><dd>'+esc(x.pay)+'</dd><dt>返事の期限</dt><dd>'+esc(x.due)+'</dd></dl>'+(x.done?done(x):'<div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="no">見送る</button><button type="button" data-id="'+id+'" data-op="yes">この内容で依頼する</button></div>')+'</div>';
+  if(m.type==='chg')return '<div class="pc"><div class="pc-h">金額変更の申請</div><p class="amt2"><s>'+yen(x.from)+'</s> → <b>'+yen(x.to)+'</b>（税込）</p><dl><dt>理由</dt><dd>'+esc(x.why)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">48時間以内にお返事ください。</p><div class="pc-b"><button type="button" class="g" data-talk="1">チャットで相談する</button><button type="button" data-id="'+id+'" data-op="ok">承諾する</button></div>')+'</div>';
+  if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告</div><dl><dt>作業日</dt><dd>'+esc(x.day)+'</dd><dt>作業内容</dt><dd>'+esc(x.what)+'</dd><dt>最終金額</dt><dd><b>'+yen(x.amt)+'</b>（税込）</dd></dl>'+(x.done?done(x):'<p class="pc-n">内容を確認して、問題なければ「完了を確認する」を押してください。7日たつと自動で完了になります。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="notyet">まだ終わっていない</button><button type="button" data-id="'+id+'" data-op="fin">完了を確認する</button></div>')+'</div>';
+  if(m.type==='visit')return '<div class="pc"><div class="pc-h">現地調査はいかがでしたか？</div>'+(x.done?done(x):'<div class="pc-b" style="flex-wrap:wrap">'+['予定どおり来た','遅れて来た','来なかった'].map(function(o){return '<button type="button" class="g" data-id="'+id+'" data-op="'+o+'">'+o+'</button>';}).join('')+'</div>')+'</div>';
+  return '';}
+function cardDo(id,op,slot){
+  if(op==='yes'&&!confirm('この内容で依頼しますか？ ほかの業者さんには「他社で決定」と伝わります。'))return;
+  api('cardAction',{bidId:CH.bid.id,msgId:id,op:op,slot:slot||''}).then(function(j){CH.msgs=j.msgs;CH.bid=j.bid;drawChat();if(op==='来なかった')visitNoShow();}).catch(fail);}
+function visitNoShow(){openSheet('<h3>ご迷惑をおかけしました</h3><p class="sp s2">運営に伝わりました。このあとどうしますか？</p><ul class="kbm"><li><button type="button" id="ns1">ほかの業者に相談する<small>依頼の画面にもどります</small></button></li><li><button type="button" id="ns2">日程を決め直す<small>チャットで業者さんに伝えてください</small></button></li></ul>');$('ns1').onclick=function(){closeSheet();openCase(CH.c.id);};$('ns2').onclick=function(){closeSheet();var t=$('tx');if(t)t.focus();};}
+function counter(id){
+  openSheet('<h3>ご都合のよい日時を送る</h3><p class="sp s2">業者さんが24時間以内に時刻を決めます。</p><input type="date" class="dtl" id="ctD" min="'+new Date(Date.now()+864e5).toISOString().slice(0,10)+'" aria-label="日付"><div style="display:flex;gap:8px;align-items:center"><input type="time" class="dtl" id="ct1" step="1800" value="10:00" aria-label="何時から">〜<input type="time" class="dtl" id="ct2" step="1800" value="12:00" aria-label="何時まで"></div><button type="button" class="big" id="ctS">この枠を送る</button>');
+  $('ctS').onclick=function(){var d=$('ctD').value;if(!d)return;var x=new Date(d+'T00:00');closeSheet();cardDo(id,'counter',(x.getMonth()+1)+'/'+x.getDate()+' '+$('ct1').value+'〜'+$('ct2').value);};
+}
+function openReview(v){
+  var star=0,vn=v.vendor.name;
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>口コミを書く</b><span>'+esc(vn)+'</span></div></div><div class="arw rvw"><p class="sp">'+esc(CUR.c.title)+'はいかがでしたか？</p><div class="stars" id="st" role="radiogroup" aria-label="評価">'+[1,2,3,4,5].map(function(n){return '<button type="button" role="radio" aria-checked="false" data-n="'+n+'" aria-label="星'+n+'つ">★</button>';}).join('')+'</div><label class="lab" for="rvT">感想</label><textarea id="rvT" rows="4" placeholder="例：説明がわかりやすく、作業もていねいでした"></textarea><p class="warn" id="rvW" hidden>星を選んでください</p><button type="button" class="big" id="rvS">口コミを投稿する</button></div>',function(){openCase(CUR.c.id);});
+  var bs=pane.querySelectorAll('#st button');each('#st button',pane,function(b){b.onclick=function(){star=+b.dataset.n;Array.prototype.forEach.call(bs,function(x){x.classList.toggle('on',+x.dataset.n<=star);x.setAttribute('aria-checked',x===b);});};});
+  $('rvS').onclick=function(){if(!star){$('rvW').hidden=false;return;}var t=$('rvT').value.trim();
+    api('postReview',{bidId:v.id,stars:star,text:t}).then(function(j){
+      setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>ありがとうございました</b><span>'+esc(vn)+'</span></div></div><div class="arw rvw"><p class="sp">口コミを投稿しました。'+esc(vn)+'の励みになります。</p>'+(j.googleUrl?'<div class="gbox"><b>Googleにも同じ口コミを書きませんか？</b><p class="sp s2">書いた文章をコピーして、Googleの口コミページを開きます。貼り付けて投稿するだけです。</p><button type="button" class="big" id="gB">文章をコピーしてGoogleを開く</button></div>':'')+'<button type="button" class="ghost" id="skB">依頼の画面にもどる</button></div>',function(){openCase(CUR.c.id);});
+      $('skB').onclick=function(){openCase(CUR.c.id);};
+      var g=$('gB');if(g)g.onclick=function(){try{navigator.clipboard.writeText(t);}catch(x){}window.open(j.googleUrl,'_blank','noopener');};
+    }).catch(fail);};
+}
+
+/* ===== テスト用：業者の動き（運営がTEST_MODEをonにしているときだけ動く） ===== */
+function testBox(){var c=CUR.c;if(c.status==='withdrawn'||c.status==='done')return '';var live=CUR.bids.filter(function(v){return ['lost','other','declined','done'].indexOf(v.state)<0;});
+  return '<div class="tbx"><b>テスト用：業者さん側の動きを再現</b>'+(CUR.bids.length<5?'<button type="button" data-t="bid">業者を1社立候補させる</button>':'')+(live.length?'<select id="tbV" aria-label="どの業者で試すか">'+live.map(function(v){return '<option value="'+v.id+'"'+(v.id===TSEL?' selected':'')+'>'+esc(v.vendor.name)+'</option>';}).join('')+'</select>'+[['msg','メッセージ'],['prop','現地調査の提案'],['visit','調査後のアンケート'],['est','確定見積もり'],['chg','金額変更'],['rep','完了報告']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'</button>';}).join(''):'')+'</div>';}
+var TSEL='';function bindTest(){each('.tbx [data-t]',pane,function(b){b.onclick=function(){b.disabled=true;var v=$('tbV');if(v)TSEL=v.value;api('test',{caseId:CUR.c.id,op:b.dataset.t,bidId:v?v.value:''}).then(function(j){CUR=j;drawCase();toast('届きました');}).catch(function(e){b.disabled=false;fail(e);});};});}
+
+/* ===== 依頼・チャット・マイページ ===== */
+function renderCases(){var ac=activeCases(),old=HOME.cases.filter(function(x){return activeCases().indexOf(x)<0;});
+  scr.innerHTML='<div class="mp"><div class="sec">進行中の依頼 <small>'+ac.length+'件</small></div>'+(ac.length?'<div class="list">'+ac.map(caseLine).join('')+'</div>':'<div class="empty">進行中の依頼はありません。ホームから気軽に相談してください</div>')+
+    (old.length?'<div class="sec">終わった依頼 <small>'+old.length+'件</small></div><div class="list">'+old.map(caseLine).join('')+'</div>':'')+'</div>';bindCases(scr);}
+function renderChats(){var rows=[];HOME.cases.forEach(function(x){x.bids.forEach(function(b){if(VST[b.state]&&VST[b.state][1]!=='off')rows.push([b.id,(b.vendor||{}).name||'業者',x.c.title,x.c.id]);});});
+  scr.innerHTML='<div class="mp"><div class="sec">チャット</div><div class="list"><button type="button" class="card bp crow" id="ccB">'+charaImg()+'<span><b>'+charaName()+'</b><span class="meta"><span>まち頼 コンシェルジュ</span></span></span></button>'+rows.map(function(r){return '<button type="button" class="card bp crow" data-b="'+r[0]+'" data-cc="'+r[3]+'"><span class="av sm">'+esc(r[1].slice(0,1))+'</span><span><b>'+esc(r[1])+'</b><span class="meta"><span>'+esc(r[2])+'</span></span></span></button>';}).join('')+'</div></div>';
+  $('ccB').onclick=function(){conc('何でも気軽に相談してください');};
+  each('[data-b]',scr,function(b){b.onclick=function(){openChat(b.dataset.b,closePane);};});}
+function level(p){return p>=30?['頼れる存在',100]:p>=10?['話し相手',Math.round(33+(p-10)/20*33)]:['顔見知り',Math.round(p/10*33)];}
+function renderMy(){var lv=level(Number(ME.points)||0);
+  scr.innerHTML='<div class="mp"><div class="mpp"><span class="av">'+esc((ME.callName||'？').slice(0,1))+'</span><div><b>'+esc(ME.callName||'')+'さん</b><small>'+(ME.provider==='line'?'LINEでログイン中':'メールでログイン中')+'・'+esc(ME.area||'')+'</small></div></div>'+
+    '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>'+charaName()+'との おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
+    '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ch','話し相手のキャラクター',charaName()],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+  function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
+  each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
+    if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="20" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
+    if(k==='ch'){openSheet('<h3>話し相手のキャラクター</h3><div class="chsel"><button type="button" data-c="sis"'+(ME.chara!=='bro'?' class="on"':'')+'><img src="chara.png" alt="">建築士のお姉さん</button><button type="button" data-c="bro"'+(ME.chara==='bro'?' class="on"':'')+'><span class="cf">大</span>大工のお兄さん</button></div>');each('.chsel button',sheet,function(x){x.onclick=function(){prof({chara:x.dataset.c});};});}
+    if(k==='ar'){openSheet('<h3>お住まいの市町村</h3><div class="fm">'+areaSel('arS',ME.area)+'</div><button type="button" class="big" id="arB">保存する</button>');$('arB').onclick=function(){prof({area:$('arS').value});};}
+    if(k==='qa')inquiry();
+    if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
+    if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');logoutLocal();}).catch(fail);};}
+  };});}
+function prof(d){api('saveProfile',d).then(function(j){ME=j.user;closeSheet();draw();}).catch(fail);}
+
+/* ===== お知らせ ===== */
+$('bell').onclick=function(){
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>お知らせ</b></div></div><div class="arw" id="nfL"><div class="load">読み込み中…</div></div>');
+  api('notifs',{markRead:true}).then(function(j){$('bellN').textContent='';var L=$('nfL');if(!L)return;
+    L.innerHTML=j.items.length?'<div class="list" style="padding:0">'+j.items.map(function(n){return '<button type="button" class="nf'+(n.read?'':' un')+'" data-l="'+esc(n.link)+'">'+esc(n.text)+'<small>'+mdhm(n.createdAt)+'</small></button>';}).join('')+'</div>':'<div class="empty">お知らせはまだありません</div>';
+    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('bid:')===0)openChat(l.slice(4),closePane);};});
+  }).catch(fail);
+};
+
+/* ===== 運営への問い合わせ ===== */
+var QT=['業者とのトラブル','業者から返事がない・対応してくれない','お金・キャンセルについて','アプリの使い方','機能改善の要望','登録・退会について','その他'];
+function inquiry(){
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>運営への問い合わせ</b><span>まち頼 運営事務局</span></div></div><div class="arw"><form class="pf pf2" id="qf" novalidate><div class="lab">お問い合わせの種類 <em class="rq">必須</em></div><div class="qty">'+QT.map(function(t){return '<label class="rd2"><input type="radio" name="qt" value="'+t+'">'+t+'</label>';}).join('')+'</div><label>内容 <em class="rq">必須</em><textarea id="qb" rows="6" placeholder="どの依頼のことか、何があったかを書いてください"></textarea></label><p class="warn" id="qw" hidden>種類を選び、内容を書いてください</p><button class="big" type="submit">送信する</button><p class="pc-n">1営業日以内に、アプリ内（この画面の「これまでの問い合わせ」）でご返信します。</p></form><div id="qh"></div></div>');
+  api('inquiries').then(function(j){var h=$('qh');if(!h||!j.items.length)return;h.innerHTML='<div class="sec">これまでの問い合わせ</div><div class="list">'+j.items.map(function(q){return '<div class="card"><span class="tag" style="'+(q.reply?'':'background:#e6eae8;color:var(--sb)')+'">'+(q.reply?'返信あり':'確認中')+'</span><b>'+esc(q.type)+'</b><span class="meta"><span>'+esc(q.body)+'</span></span>'+(q.reply?'<div class="qrep"><b>運営より</b>'+esc(q.reply)+'</div>':'')+'</div>';}).join('')+'</div>';}).catch(function(){});
+  $('qf').onsubmit=function(e){e.preventDefault();var r=document.querySelector('input[name=qt]:checked'),b=$('qb').value.trim();if(!r||!b){$('qw').hidden=false;return;}
+    api('inquiry',{type:r.value,body:b}).then(function(){toast('送信しました');inquiry();}).catch(fail);};
+}
+$('qaBtn').onclick=inquiry;
+
+boot();
+})();
+</script>
+</body>
+</html>
