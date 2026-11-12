@@ -468,7 +468,8 @@ var NAV_U=[['home','ホーム'],['list','依頼'],['chat','チャット'],['me',
 I.job='<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>';
 function renderNav(){var NAV=MODE==='pro'?NAV_P:NAV_U;nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
   each('button',nav,function(b){b.onclick=function(){tab=b.dataset.t;pane.classList.remove('on');stopChat();renderNav();refresh();};});}
-function refresh(){if(!ME)return;return api('home').then(function(j){HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';draw();}).catch(fail);}
+function showErr(e){scr.innerHTML='<div class="mp"><div class="empty" style="color:#C8321F;text-align:left"><b>うまく読み込めませんでした</b><br>'+esc((e&&e.message)||'通信エラー')+'<br><small>この画面を運営（開発担当）に送ってください</small></div></div>';}
+function refresh(){if(!ME)return;return api('home').then(function(j){HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';draw();}).catch(function(e){fail(e);showErr(e);});}
 function draw(){if(!HOME)return;if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='list')renderCases();else if(tab==='chat')renderChats();else renderMy();}
 function startPoll(){stopPoll();pollT=setInterval(function(){if(document.visibilityState==='visible'&&!pane.classList.contains('on'))refresh();},60000);}
 function stopPoll(){clearInterval(pollT);}
@@ -767,7 +768,7 @@ function renderPro(){if(tab==='me'){renderMy();return;}
     each('.jseg button',scr,function(b){b.onclick=function(){jobSub=b.dataset.s;renderPro();};});
     each('[data-nc]',scr,function(b){b.onclick=function(){newCase(f.filter(function(c){return c.id===b.dataset.nc;})[0]);};});
     each('[data-pb]',scr,function(b){b.onclick=function(){openPro(b.dataset.pb);};});
-  }).catch(fail);}
+  }).catch(function(e){fail(e);showErr(e);});}
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
 function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（見積もりだけの依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
