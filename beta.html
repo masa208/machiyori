@@ -248,6 +248,60 @@ body{background:#F3F4F1;margin:0}
 .scr{bottom:calc(62px + env(safe-area-inset-bottom))}
 .beta{font-size:10px;font-weight:700;color:#fff;background:#6E7D75;border-radius:4px;padding:1px 5px}
 .bell b:empty{display:none}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+@media (prefers-reduced-motion:reduce){.uh-cl{animation:none;transform:translateX(120px)}.uh-nv span{animation:none;padding-left:0}}
+.amtbox{background:#F3F6F4;border-radius:10px;padding:10px 12px;margin:10px 0}.amtbox span{display:block;font-size:12px;color:#6E7D75}.amtbox b{font-size:20px}.amtbox small{display:block;font-size:11px;color:#6E7D75}
+.ckl{display:flex!important;align-items:center;gap:6px;font-weight:700;font-size:13px;margin:10px 0 4px}.ckl input{width:auto!important;margin:0}
+.subf{border-left:3px solid #D5DED8;padding-left:10px;margin:4px 0 8px}
+.sumbox{background:#fff;border:1.5px solid #2F6B45;border-radius:10px;padding:10px 12px;margin:12px 0}.sumbox div{display:flex;justify-content:space-between;align-items:baseline;font-size:13px}.sumbox b{font-size:17px}.sumbox .pend{color:#C25A00;margin-top:4px}.sumbox p{font-size:11.5px;color:#6E7D75;margin:6px 0 0}
+.two{display:flex;gap:8px}.two label{flex:1;min-width:0}
+.rule{background:#FCEDEA;border-radius:10px;padding:9px 11px;font-size:12.5px;margin-bottom:10px}.rule b{display:block;color:#B3261E;font-size:13px;margin-bottom:2px}
+.celb{font-size:54px;line-height:1;animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
+.cels{font-size:15px;font-weight:700;margin:0 0 12px}
+.celn{display:inline-block;font-size:12.5px;color:#4B5A52;background:#fff;border:1.5px solid color-mix(in srgb,var(--cc) 40%,#fff);border-radius:12px;padding:8px 12px;margin:0 0 14px}
+.conf i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:fall 1.6s ease-in both}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(260px) rotate(540deg);opacity:0}}
+@keyframes pop{0%{transform:scale(.2)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.conf i,.celb{animation:none}.conf{display:none}}
+.pmenu{position:absolute;left:10px;right:10px;bottom:64px;background:#fff;border:1px solid #E3E6E2;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:6px;z-index:6}
+.pmi{display:flex;flex-wrap:wrap;align-items:center;gap:0 10px;width:100%;font:inherit;font-size:14px;font-weight:700;color:#23302A;background:none;border:0;border-radius:10px;padding:10px;cursor:pointer;text-align:left}
+.pmi:hover{background:#F3F6F4}.pmi span{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#E7F1EA;color:#2F6B45;font-size:13px}
+.pmi small{flex-basis:100%;padding-left:44px;font-size:11px;font-weight:400;color:#6E7D75;margin-top:-4px}
+.ic.plus{font-size:20px;font-weight:700;width:40px;border:0;cursor:pointer}.ic.plus.on{transform:rotate(45deg)}
+.undo{display:block;margin:6px 0 0 auto;font:inherit;font-size:12px;color:#6E7D75;background:none;border:0;text-decoration:underline;cursor:pointer}
+.stp span.skip{color:#B4BCB7}.stp span.skip i{background:#E3E6E2!important;border-color:#E3E6E2!important}
+.gs{background:#F6F7F5;border-radius:8px;padding:8px 10px;margin:4px 0 8px}.gs>b{font-size:12px;color:#6E7D75}.gs ul{list-style:none;margin:4px 0;padding:0}.gs li{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0;border-bottom:1px dashed #E3E6E2}.gs li:last-child{border:0}.gs li em{font-style:normal;font-weight:900;white-space:nowrap}.gs small{display:block;font-size:11px;color:#6E7D75}
+.gsr{border:1px solid #E3E6E2;border-radius:10px;padding:8px;margin-bottom:6px;background:#fff}.gsr input{font:inherit;font-size:15px;border:1px solid #D5DAD6;border-radius:8px;padding:7px;width:100%}.gsa{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px}.gsa input{flex:1;min-width:0}
+.addr{font:inherit;font-size:13px;font-weight:700;color:#2F6B45;background:#E7F1EA;border:0;border-radius:16px;padding:6px 12px;margin:0 0 10px;cursor:pointer}
+.two input{min-width:0}
+.cmw{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(20,30,25,0);transition:background .2s}
+.cmw.on{background:rgba(20,30,25,.55)}
+.cmb{position:relative;width:100%;max-width:340px;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.3);transform:scale(.85);opacity:0;transition:transform .28s cubic-bezier(.3,1.5,.5,1),opacity .2s}
+.cmw.on .cmb{transform:scale(1);opacity:1}
+.cmh{position:relative;height:118px;background:linear-gradient(135deg,var(--cc),color-mix(in srgb,var(--cc) 55%,#9BD6AE));display:flex;align-items:center;justify-content:center}
+.cmh::before,.cmh::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.14)}.cmh::before{width:120px;height:120px;left:-30px;top:-40px}.cmh::after{width:90px;height:90px;right:-20px;bottom:-35px}
+.cmst{position:absolute;left:14px;top:12px;font-size:11px;font-weight:900;letter-spacing:.06em;color:#fff;background:rgba(255,255,255,.22);border-radius:12px;padding:3px 10px}
+.cmic{width:78px;height:78px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 6px 16px rgba(0,0,0,.18);animation:pop .45s cubic-bezier(.3,1.6,.5,1) both;position:relative;z-index:1}
+.cmc{padding:16px 18px 18px;text-align:center}.cmc h3{font-size:20px;font-weight:900;color:var(--cc);margin:0 0 8px}.cmc>p{font-size:13.5px;line-height:1.7;margin:0 0 10px;text-align:left}
+.cmex{text-align:left;background:#F3F7F4;border-radius:12px;padding:8px 12px;margin:0 0 14px}.cmex b{font-size:11px;color:#fff;background:var(--cc);border-radius:8px;padding:1px 8px}.cmex ul{margin:6px 0 0;padding-left:18px;font-size:13.5px;font-weight:700}.cmex li{margin:2px 0}
+.cmok{background:var(--cc)!important;font-size:16px!important;margin-top:0!important}
+.cel2{background:linear-gradient(135deg,var(--cc),color-mix(in srgb,var(--cc) 50%,#FFD25A))}.cel2 .celb{font-size:62px;position:relative;z-index:1}
+.cmb .conf{position:absolute;inset:0;pointer-events:none;z-index:2}
+.cmb .cels{text-align:center!important;font-weight:700;font-size:15px!important}
+.cmb .celn{display:block;text-align:center!important}
+.ppf .pps{background:#fff;border:1px solid #E3E6E2;border-radius:14px;padding:12px;margin-bottom:12px}
+.pps h4{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:15px;font-weight:900}.pps h4 i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#2F6B45;color:#fff;font-size:13px}
+.pph{font-size:12px;color:#6E7D75;margin:0 0 8px}.ppn{font-size:11.5px;color:#6E7D75;margin:2px 0 0}
+.lab2{font-size:12.5px;font-weight:700;margin:10px 0 6px}.lab2 small{font-weight:400;color:#6E7D75;margin-left:4px}
+.slr{border:1px solid #E3E6E2;border-radius:10px;padding:8px;margin-bottom:6px}.slr input{font:inherit;font-size:15px;border:1px solid #D5DAD6;border-radius:8px;padding:7px;width:100%}
+.free{display:flex;justify-content:space-between;align-items:center;background:#E7F1EA;border-radius:10px;padding:9px 12px;margin-top:4px;font-size:13px}.free b{color:#2F6B45;font-size:16px}
+.pps select{width:100%;font:inherit;font-size:15px;border:1px solid #D5DAD6;border-radius:10px;padding:9px;background:#fff}
+.durs{display:flex;gap:8px}.durs button{flex:1;font:inherit;font-size:15px;font-weight:700;color:#4B5A52;background:#fff;border:1.5px solid #D5DAD6;border-radius:10px;padding:9px;cursor:pointer}.durs button.on{color:#fff;background:#2F6B45;border-color:#2F6B45}
+.jseg{display:flex;gap:4px;margin:10px 12px 2px;background:#E7ECE8;border-radius:10px;padding:3px}.jseg button{flex:1;font:inherit;font-size:13.5px;color:#4B5A52;background:none;border:0;border-radius:8px;padding:7px;cursor:pointer}.jseg button[aria-selected=true]{background:#fff;color:#2F6B45;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}.jseg small{font-size:11px;background:#2F6B45;color:#fff;border-radius:9px;padding:0 6px;margin-left:3px}
+.pmenu{bottom:calc(64px + env(safe-area-inset-bottom))}.ppf .pps label{display:block;font-size:12.5px;font-weight:700;margin:6px 0}.ppf .pps input:not([type=checkbox]){width:100%;font:inherit;font-size:15px;border:1px solid #D5DAD6;border-radius:8px;padding:8px}
+.phone[data-mode=pro] .uh{display:none}
+.cmp input#ptx{flex:1;min-width:0;font:inherit;font-size:16px;border:1px solid #cdd4d0;border-radius:18px;padding:7px 12px}
+.cmp input#tx,.cmp input#atx{font-size:16px}
 /* ログイン */
 .lg{position:absolute;inset:0;overflow-y:auto;background:#F3F4F1;z-index:20;padding:28px 20px 40px}
 .lg h1{font-size:26px;font-weight:900;color:#E8613C;margin:0;text-align:center}
@@ -391,7 +445,7 @@ function boot(){
   api('me').then(function(j){ME=j.user;afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
 }
 function afterLogin(){
-  lg.hidden=true;
+  lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
   if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();
 }
@@ -410,17 +464,18 @@ function areaSel(id,cur){return '<select id="'+id+'">'+AREAS.map(function(a){ret
 
 /* ===== 下のメニュー ===== */
 var I={home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',list:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',me:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>'};
-var NAV=[['home','ホーム'],['list','依頼'],['chat','チャット'],['me','マイページ']];
-function renderNav(){nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
+var NAV_U=[['home','ホーム'],['list','依頼'],['chat','チャット'],['me','マイページ']],NAV_P=[['job','案件'],['me','マイページ']];
+I.job='<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>';
+function renderNav(){var NAV=MODE==='pro'?NAV_P:NAV_U;nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
   each('button',nav,function(b){b.onclick=function(){tab=b.dataset.t;pane.classList.remove('on');stopChat();renderNav();refresh();};});}
 function refresh(){if(!ME)return;return api('home').then(function(j){HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';draw();}).catch(fail);}
-function draw(){if(!HOME)return;if(tab==='home')renderHome();else if(tab==='list')renderCases();else if(tab==='chat')renderChats();else renderMy();}
+function draw(){if(!HOME)return;if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='list')renderCases();else if(tab==='chat')renderChats();else renderMy();}
 function startPoll(){stopPoll();pollT=setInterval(function(){if(document.visibilityState==='visible'&&!pane.classList.contains('on'))refresh();},60000);}
 function stopPoll(){clearInterval(pollT);}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&ME&&!pane.classList.contains('on'))refresh();});
 
 /* ===== 案件の状態 ===== */
-var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],fixd:['調査日が決定',''],est:['確定見積もり到着','hot'],won:['依頼しました','ok'],done:['完了','ok'],lost:['見送り','off'],other:['見送り','off'],declined:['辞退','off']};
+var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],fixd:['調査日が決定',''],est:['見積もり到着','hot'],won:['依頼しました','ok'],done:['完了','ok'],lost:['見送り','off'],other:['見送り','off'],declined:['辞退','off']};
 function caseStage(c,bids){if(c.status==='done')return 6;if(bids.some(function(v){return v.state==='won';}))return 5;if(bids.some(function(v){return v.state==='est';}))return 4;if(bids.some(function(v){return v.state==='fixd'||v.state==='prop';}))return 3;if(bids.length)return 2;return 1;}
 function caseLine(x){var c=x.c,b=x.bids,t,m;
   if(c.status==='withdrawn'){t='取り下げ';m='';}
@@ -512,7 +567,7 @@ function openCase(id){
   api('getCase',{caseId:id}).then(function(j){CUR=j;drawCase();}).catch(function(e){fail(e);closePane();});
 }
 function drawCase(){
-  var c=CUR.c,bs=CUR.bids,st=caseStage(c,bs),steps=['投稿','立候補','やり取り','現地調査','見積もり','依頼','完了'];
+  var c=CUR.c,bs=CUR.bids,st0=caseStage(c,bs),st=st0<=2?Math.min(st0,1):st0-1,steps=['投稿','業者を選ぶ','現地調査','見積もり','依頼','完了'];
   var todo='',live=bs.filter(function(v){return VST[v.state]&&VST[v.state][1]!=='off';});
   var w=bs.filter(function(v){return v.state==='won';})[0],dn=bs.filter(function(v){return v.state==='done';})[0];
   if(c.status==='withdrawn')todo='<div class="todo1 inf"><b>取り下げました</b>この依頼は終了しています。</div>';
@@ -524,15 +579,15 @@ function drawCase(){
       lt==='chg'&&und?'<button type="button" class="todo1" data-v="'+w.id+'"><b>やること</b>'+esc(w.vendor.name)+'から金額変更の申請が届いています ›</button>':
       '<button type="button" class="todo1 inf" data-v="'+w.id+'"><b>工事の予定</b>'+esc(w.vendor.name)+'<small class="t1n">工事が終わったら、業者さんから完了報告が届きます</small></button>';}
   else{var e1=bs.filter(function(v){return v.state==='est';})[0],p1=bs.filter(function(v){return v.state==='prop';})[0];
-    if(e1)todo='<button type="button" class="todo1" data-v="'+e1.id+'"><b>やること</b>'+esc(e1.vendor.name)+'から確定見積もりが届いています。依頼するか決めてください ›</button>';
+    if(e1)todo='<button type="button" class="todo1" data-v="'+e1.id+'"><b>やること</b>'+esc(e1.vendor.name)+'から見積もりが届いています。依頼するか決めてください ›</button>';
     else if(p1)todo='<button type="button" class="todo1" data-v="'+p1.id+'"><b>やること</b>'+esc(p1.vendor.name)+'から現地調査の提案が届いています。日時を選んでください ›</button>';
     else if(!bs.length)todo='<div class="todo1 inf"><b>専門家の返事を待っています</b>立候補があると、ベルのお知らせでお伝えします。</div>';}
-  var lastTxt=function(v){var l=v.last;if(!l)return '';var t=l.type;return t==='text'?(l.body.text||''):t==='img'?'写真':t==='sys'?l.body.text:t==='prop'?'現地調査の提案が届きました':t==='est'?'確定見積もりが届きました':t==='chg'?'金額変更の申請が届きました':t==='rep'?'完了報告が届きました':t==='visit'?'現地調査はいかがでしたか？':'';};
+  var lastTxt=function(v){var l=v.last;if(!l)return '';var t=l.type;return t==='text'?(l.body.text||''):t==='img'?'写真':t==='sys'?l.body.text:t==='prop'?'現地調査の提案が届きました':t==='est'?'見積もりが届きました':t==='chg'?'金額変更の申請が届きました':t==='rep'?'完了報告が届きました':t==='visit'?'現地調査はいかがでしたか？':'';};
   var vsH=bs.length?'<div class="list">'+bs.map(function(v){var s=VST[v.state]||['',''],vn=v.vendor||{name:'業者'};
     return '<button type="button" class="card bp vc'+(s[1]==='off'?' off':'')+'" data-v="'+v.id+'"><span class="vhd"><b>'+esc(vn.name)+'</b><span class="vst '+s[1]+'">'+s[0]+'</span>'+(v.unread?'<span class="unr">'+v.unread+'</span>':'')+'</span><span class="meta"><span>★'+(vn.star||'-')+'（'+(vn.reviews||0)+'件）</span></span><span class="lm">'+esc(lastTxt(v))+'</span></button>';}).join('')+'</div>':'<div class="empty">まだ立候補はありません</div>';
   var rows=SK.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'');
   var pics=(c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':'';
-  var stt=c.status==='postponed'?'先送り中':c.status==='withdrawn'?'取り下げ':st>=6?'完了':steps[st];
+  var stt=c.status==='postponed'?'先送り中':c.status==='withdrawn'?'取り下げ':st>=5?'完了':steps[st];
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+stt+'</span></div>'+(c.status==='withdrawn'||c.status==='done'?'':'<button type="button" class="kebab" id="kbB" aria-label="その他の操作">…</button>')+'</div>'+
     '<div class="arw"><div class="stp">'+steps.map(function(t,i){return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div>'+todo+testBox()+
     '<div class="sec">立候補した業者 <small>'+bs.length+'社 ／ 最大5社'+(c.stopBids?'・締め切り済み':'')+'</small></div>'+vsH+
@@ -543,6 +598,7 @@ function drawCase(){
   e=$('nowB');if(e)e.onclick=function(){caseOp('resume');};
   e=$('kbB');if(e)e.onclick=kebab;
   bindTest();
+  uPop(c.id,uPhaseOf(c,bs));
 }
 function caseOp(op,extra){var d=extra||{};d.caseId=CUR.c.id;d.op=op;return api('caseAction',d).then(function(j){CUR=j;closeSheet();drawCase();}).catch(fail);}
 function kebab(){
@@ -573,6 +629,7 @@ function drawChat(){
     CH.back||function(){openCase(CH.c.id);});
   chatT=setInterval(pollChat,8000);
   drawMsgs();
+  (function(){var st=CH.bid.state,lr=null;CH.msgs.forEach(function(m){if(m.type==='rep')lr=m;});uPop(CH.c.id,st==='fixd'?3:st==='est'?4:st==='won'&&lr&&!(lr.body||{}).done?6:st==='won'||st==='done'?(seenNo('u_'+CH.c.id+'_5')?5:0):0);})();
   var f=$('vf');if(!f)return;
   f.onsubmit=function(e){e.preventDefault();var t=$('tx'),x=t.value.trim();if(!x)return;t.value='';send({text:x});};
   $('vimg').onchange=function(e){var fl=e.target.files[0];e.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
@@ -592,10 +649,10 @@ function drawMsgs(){
 }
 function done(b){return b.done?'<p class="pc-ok">'+esc(b.done)+'</p>':'';}
 function cardHTML(m){var x=m.body||{},id=m.id;
-  if(m.type==='prop')return '<div class="pc"><div class="pc-h">現地調査の提案</div><dl><dt>仮の見積もり</dt><dd>'+esc(x.kari)+'</dd><dt>当日やること</dt><dd>'+esc(x.todo)+'</dd><dt>調査の費用</dt><dd>無料</dd><dt>確定見積もり</dt><dd>'+esc(x.estDue)+'に届きます</dd></dl>'+
-    (x.done?done(x):'<div class="pc-s">ご都合のよい開始時刻を選んでください</div>'+(x.slots||[]).map(function(s){var h0=+s[1].slice(0,2),h1=+s[2].slice(0,2),bt=[];for(var h=h0;h<h1;h+=.5)bt.push(('0'+Math.floor(h)).slice(-2)+':'+(h%1?'30':'00'));return '<div class="pc-d">'+esc(s[0])+' '+s[1]+'〜'+s[2]+'</div><div class="pc-t">'+bt.map(function(t){return '<button type="button" data-id="'+id+'" data-op="pick" data-slot="'+esc(s[0]+' '+t)+'">'+t+'</button>';}).join('')+'</div>';}).join('')+'<button type="button" class="pc-no" data-id="'+id+'">合う日時がない（候補を送る）</button>')+'</div>';
-  if(m.type==='est')return '<div class="pc est"><div class="pc-h">確定見積もり</div><p class="amt">'+Number(x.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(x.memo)+'</dd><dt>着手予定日</dt><dd>'+esc(x.start)+'</dd><dt>支払い</dt><dd>'+esc(x.pay)+'</dd><dt>返事の期限</dt><dd>'+esc(x.due)+'</dd></dl>'+(x.done?done(x):'<div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="no">見送る</button><button type="button" data-id="'+id+'" data-op="yes">この内容で依頼する</button></div>')+'</div>';
-  if(m.type==='chg')return '<div class="pc"><div class="pc-h">金額変更の申請</div><p class="amt2"><s>'+yen(x.from)+'</s> → <b>'+yen(x.to)+'</b>（税込）</p><dl><dt>理由</dt><dd>'+esc(x.why)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">48時間以内にお返事ください。</p><div class="pc-b"><button type="button" class="g" data-talk="1">チャットで相談する</button><button type="button" data-id="'+id+'" data-op="ok">承諾する</button></div>')+'</div>';
+  if(m.type==='prop'){var du=x.dur||30;return '<div class="pc"><div class="pc-h">現地調査の提案</div>'+(x.rows?gsHTML(x.rows):'')+'<dl><dt>確認すること</dt><dd>'+esc(x.todo)+'</dd><dt>所要時間</dt><dd>約'+du+'分</dd><dt>調査費用</dt><dd>無料</dd><dt>見積もり</dt><dd>'+esc(x.estDue)+'に届きます</dd></dl>'+
+    (x.done?done(x):'<div class="pc-s">ご都合のよい開始時刻を選んでください（'+du+'分ほど）</div>'+(x.slots||[]).map(function(s){var h0=+s[1].slice(0,2)+(+s[1].slice(3,5))/60,h1=+s[2].slice(0,2)+(+s[2].slice(3,5))/60,stp=du/60,bt=[];for(var h=h0;h+stp<=h1+1e-9;h+=stp)bt.push(('0'+Math.floor(h)).slice(-2)+':'+(h%1?'30':'00'));return '<div class="pc-d">'+esc(s[0])+' '+s[1]+'〜'+s[2]+'</div><div class="pc-t">'+bt.map(function(t){return '<button type="button" data-id="'+id+'" data-op="pick" data-slot="'+esc(s[0]+' '+t)+'">'+t+'</button>';}).join('')+'</div>';}).join('')+'<button type="button" class="pc-no" data-id="'+id+'">合う日時がない（候補を送る）</button>')+'</div>';}
+  if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり</div><p class="amt">'+Number(x.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(x.memo)+'</dd><dt>工期</dt><dd>'+esc(x.start)+(x.end&&x.end!==x.start?' 〜 '+esc(x.end):'（1日）')+'</dd><dt>支払い</dt><dd>'+esc(x.pay)+'</dd><dt>返事の期限</dt><dd>'+esc(x.due)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">この金額で依頼すると成約します</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="no">見送る</button><button type="button" data-id="'+id+'" data-op="yes">この内容で依頼する</button></div>')+'</div>';
+  if(m.type==='chg')return '<div class="pc"><div class="pc-h">追加の作業の申請</div><p class="amt2"><s>'+yen(x.from)+'</s> → <b>'+yen(x.to)+'</b>（税込）</p><dl><dt>追加の金額</dt><dd>＋'+yen(x.ad||(x.to-x.from))+'</dd><dt>理由</dt><dd>'+esc(x.why)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">承諾すると、業者さんが追加の作業を始めます。わからない点はチャットで聞けます。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="ng">承諾しない</button><button type="button" data-id="'+id+'" data-op="ok">承諾する</button></div>')+'</div>';
   if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告</div><dl><dt>作業日</dt><dd>'+esc(x.day)+'</dd><dt>作業内容</dt><dd>'+esc(x.what)+'</dd><dt>最終金額</dt><dd><b>'+yen(x.amt)+'</b>（税込）</dd></dl>'+(x.done?done(x):'<p class="pc-n">内容を確認して、問題なければ「完了を確認する」を押してください。7日たつと自動で完了になります。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="notyet">まだ終わっていない</button><button type="button" data-id="'+id+'" data-op="fin">完了を確認する</button></div>')+'</div>';
   if(m.type==='visit')return '<div class="pc"><div class="pc-h">現地調査はいかがでしたか？</div>'+(x.done?done(x):'<div class="pc-b" style="flex-wrap:wrap">'+['予定どおり来た','遅れて来た','来なかった'].map(function(o){return '<button type="button" class="g" data-id="'+id+'" data-op="'+o+'">'+o+'</button>';}).join('')+'</div>')+'</div>';
   return '';}
@@ -621,7 +678,7 @@ function openReview(v){
 
 /* ===== テスト用：業者の動き（運営がTEST_MODEをonにしているときだけ動く） ===== */
 function testBox(){var c=CUR.c;if(c.status==='withdrawn'||c.status==='done')return '';var live=CUR.bids.filter(function(v){return ['lost','other','declined','done'].indexOf(v.state)<0;});
-  return '<div class="tbx"><b>テスト用：業者さん側の動きを再現</b>'+(CUR.bids.length<5?'<button type="button" data-t="bid">業者を1社立候補させる</button>':'')+(live.length?'<select id="tbV" aria-label="どの業者で試すか">'+live.map(function(v){return '<option value="'+v.id+'"'+(v.id===TSEL?' selected':'')+'>'+esc(v.vendor.name)+'</option>';}).join('')+'</select>'+[['msg','メッセージ'],['prop','現地調査の提案'],['visit','調査後のアンケート'],['est','確定見積もり'],['chg','金額変更'],['rep','完了報告']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'</button>';}).join(''):'')+'</div>';}
+  return '<div class="tbx"><b>テスト用：業者さん側の動きを再現</b>'+(CUR.bids.length<5?'<button type="button" data-t="bid">業者を1社立候補させる</button>':'')+(live.length?'<select id="tbV" aria-label="どの業者で試すか">'+live.map(function(v){return '<option value="'+v.id+'"'+(v.id===TSEL?' selected':'')+'>'+esc(v.vendor.name)+'</option>';}).join('')+'</select>'+[['msg','メッセージ'],['prop','現地調査の提案'],['visit','調査後のアンケート'],['est','見積もり'],['chg','金額変更'],['rep','完了報告']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'</button>';}).join(''):'')+'</div>';}
 var TSEL='';function bindTest(){each('.tbx [data-t]',pane,function(b){b.onclick=function(){b.disabled=true;var v=$('tbV');if(v)TSEL=v.value;api('test',{caseId:CUR.c.id,op:b.dataset.t,bidId:v?v.value:''}).then(function(j){CUR=j;drawCase();toast('届きました');}).catch(function(e){b.disabled=false;fail(e);});};});}
 
 /* ===== 依頼・チャット・マイページ ===== */
@@ -637,13 +694,14 @@ function renderMy(){var lv=level(Number(ME.points)||0);
   scr.innerHTML='<div class="mp"><div class="mpp"><span class="av">'+esc((ME.callName||'？').slice(0,1))+'</span><div><b>'+esc(ME.callName||'')+'さん</b><small>'+(ME.provider==='line'?'LINEでログイン中':'メールでログイン中')+'・'+esc(ME.area||'')+'</small></div></div>'+
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>'+charaName()+'との おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ch','話し相手のキャラクター',charaName()],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
-    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="20" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
     if(k==='ch'){openSheet('<h3>話し相手のキャラクター</h3><div class="chsel"><button type="button" data-c="sis"'+(ME.chara!=='bro'?' class="on"':'')+'><img src="chara.png" alt="">建築士のお姉さん</button><button type="button" data-c="bro"'+(ME.chara==='bro'?' class="on"':'')+'><span class="cf">大</span>大工のお兄さん</button></div>');each('.chsel button',sheet,function(x){x.onclick=function(){prof({chara:x.dataset.c});};});}
     if(k==='ar'){openSheet('<h3>お住まいの市町村</h3><div class="fm">'+areaSel('arS',ME.area)+'</div><button type="button" class="big" id="arB">保存する</button>');$('arB').onclick=function(){prof({area:$('arS').value});};}
     if(k==='qa')inquiry();
+    if(k==='rs')testReset();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
     if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');logoutLocal();}).catch(fail);};}
   };});}
@@ -667,9 +725,156 @@ function inquiry(){
     api('inquiry',{type:r.value,body:b}).then(function(){toast('送信しました');inquiry();}).catch(fail);};
 }
 $('qaBtn').onclick=inquiry;
-var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','一般の依頼に立候補して仕事を受ける（見本）','#2F6B45'],['member','会員ページ','会員どうしで仕事を頼む・受ける（見本）','#2B4C7E']];
-$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.map(function(x){return '<button type="button" class="opt'+(x[0]==='user'?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]==='user'?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">Proモードと会員ページは、いまは見本の画面です（準備中）。</p>');
-  each('.opt',sheet,function(b){b.onclick=function(){if(b.dataset.k==='user'){closeSheet();return;}try{localStorage.setItem('machiyori_mode',b.dataset.k);}catch(e){}location.href='mode.html';};});};
+/* ===== 画面中央のポップアップ ===== */
+function cmodal(html,col){var m=document.createElement('div');m.className='cmw';m.innerHTML='<div class="cmb" role="dialog" aria-modal="true" style="--cc:'+col+'">'+html+'</div>';ph.appendChild(m);requestAnimationFrame(function(){m.classList.add('on');});
+  var ok=m.querySelector('.cmok');try{ok.focus({preventScroll:true});}catch(e){}ph.scrollTop=0;ok.onclick=function(){ph.scrollTop=0;m.classList.remove('on');setTimeout(function(){m.remove();},220);};}
+function infoPop(t,msg,col,step,icon,ex){cmodal('<div class="cmh"><span class="cmst">'+step+'</span><div class="cmic">'+icon+'</div></div><div class="cmc"><h3>'+t+'</h3><p>'+msg+'</p>'+(ex?'<div class="cmex"><b>例</b><ul>'+ex.map(function(e){return '<li>'+e+'</li>';}).join('')+'</ul></div>':'')+'<button type="button" class="big cmok">OK</button></div>',col);}
+function celebrate(title,sub,note,col){var conf='';for(var q=0;q<22;q++)conf+='<i style="left:'+(3+q*4.4)+'%;animation-delay:'+(q%7)*0.1+'s;background:'+['#FFD25A','#E8613C','#5BC08A','#6AA6E8','#F59AB5'][q%5]+'"></i>';
+  cmodal('<div class="conf">'+conf+'</div><div class="cmh cel2"><div class="celb">🎉</div></div><div class="cmc"><h3>'+title+'</h3><p class="cels">'+sub+'</p>'+(note?'<p class="celn">'+note+'</p>':'')+'<button type="button" class="big cmok">OK！</button></div>',col);}
+function seen(k){try{if(localStorage.getItem('mph_'+k))return true;localStorage.setItem('mph_'+k,'1');}catch(e){}return false;}
+var UPH={1:['STEP 1　投稿','📮','相談を投稿しました','地元のプロからの連絡をお待ちください。届いたらお知らせします。'],
+  2:['STEP 2　業者選び','💬','気になる業者に相談しましょう','チャットで対応内容や費用の目安を確認しましょう。複数の業者に相談できます。'],
+  3:['STEP 3　現地調査','🔍','現地調査日が決まりました','当日は気になる箇所やご希望をお伝えください。調査は無料です。この時点では工事の契約は成立しません。'],
+  4:['STEP 4　見積もり','📝','見積もりが届きました','作業内容・金額・工期・支払い条件をご確認ください。不明点はチャットで相談し、納得してから承認しましょう。'],
+  6:['STEP 6　完了','✅','完了報告が届きました','仕上がりを確認し、問題がなければ完了確認をお願いします。気になる点は、確認前にチャットで業者へお伝えください。']};
+var PPH={1:['STEP 1　立候補','👂','まずは相談内容を確認しましょう','チャットで状況を確認し、現地調査前に費用の目安を提示してください。対応方法で費用が異なる場合は、条件ごとに記載してください。',['部分補修の場合：○万円〜','交換が必要な場合：○万円〜']],
+  2:['STEP 2　現地調査','🔍','現地調査日が決まりました','当日は現場の状態と必要な作業を確認し、依頼者に説明してください。調査後は、見積もりの提出または見送りの報告をお願いします。'],
+  3:['STEP 3　見積もり','📝','見積もりを送りましょう','調査結果をもとに、作業内容・金額・着手予定日・完了予定日・支払い条件を入力してください。詳しい内訳は、普段お使いの見積書を添付できます。'],
+  5:['STEP 5　工事','🛠️','工事の予定期間になりました','工事が終わったら、完了報告を送ってください。日程を変更する場合は、依頼者と相談のうえ、チャットの「＋」から申請してください。'],
+  6:['STEP 6　完了確認待ち','✅','完了報告を送りました','依頼者の確認、または報告から7日経過で完了となります。紹介手数料は翌月にまとめて請求します。']};
+function uPop(caseId,k){if(!k||seen('u_'+caseId+'_'+k))return;setTimeout(function(){if(k===5){celebrate('業者への依頼が決まりました！','STEP 5　依頼決定','工事に向けて、当日の流れを業者と確認しましょう。追加作業や費用の変更は、事前に内容を確認して承諾してください。','#E8613C');return;}var x=UPH[k];infoPop(x[2],x[3],'#E8613C',x[0],x[1]);},300);}
+function pPop(bidId,k){if(!k||seen('p_'+bidId+'_'+k))return;setTimeout(function(){if(k===4){celebrate('受注が決まりました！','STEP 4　成約','承認された内容で準備を進めてください。追加・変更が必要な場合は、作業前にこのチャットで依頼者の承諾を得てください。','#2F6B45');return;}var x=PPH[k];infoPop(x[2],x[3],'#2F6B45',x[0],x[1],x[4]);},300);}
+/* 依頼者側：今の段階 */
+function uPhaseOf(c,bs){if(c.status==='withdrawn')return 0;var w=bs.filter(function(v){return v.state==='won'||v.state==='done';})[0];
+  if(w){var l=w.last;if(w.state==='won'&&l&&l.type==='rep'&&!(l.body||{}).done)return 6;return seenNo('u_'+c.id+'_5')?5:0;}
+  if(bs.some(function(v){return v.state==='est';}))return 4;if(bs.some(function(v){return v.state==='fixd';}))return 3;if(bs.length)return 2;return 1;}
+function seenNo(k){try{return !localStorage.getItem('mph_'+k);}catch(e){return false;}}
+
+/* ===== モード ===== */
+var MODE='user';try{MODE=localStorage.getItem('machiyori_mode2')||'user';}catch(e){}
+var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','依頼に立候補して仕事を受ける（テスト）','#2F6B45'],['member','会員ページ','会員どうしで仕事を頼む・受ける（見本）','#2B4C7E']];
+function setMode(m){MODE=m;try{localStorage.setItem('machiyori_mode2',m);}catch(e){}ph.dataset.mode=m;$('chip').querySelector('span').textContent=m==='pro'?'Proモード':'依頼者モード';tab=m==='pro'?'job':'home';pane.classList.remove('on');stopChat();renderNav();refresh();}
+$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.map(function(x){return '<button type="button" class="opt'+(x[0]===MODE?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]===MODE?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">テスト版：同じアカウントのまま、自分の依頼にProモードで立候補して、流れを確かめられます。</p>');
+  each('.opt',sheet,function(b){b.onclick=function(){var k=b.dataset.k;closeSheet();if(k==='member'){try{localStorage.setItem('machiyori_mode','member');}catch(e){}location.href='mode.html';return;}if(k!==MODE)setMode(k);};});};
+
+/* ===== Proモード：案件 ===== */
+var PRO=null,jobSub='new';
+function renderPro(){if(tab==='me'){renderMy();return;}
+  api('proHome').then(function(j){PRO=j;var f=j.fresh,r=j.run;
+    scr.innerHTML='<div class="jseg" role="tablist"><button type="button" role="tab" data-s="new" aria-selected="'+(jobSub==='new')+'">新着 <small>'+f.length+'</small></button><button type="button" role="tab" data-s="run" aria-selected="'+(jobSub==='run')+'">進行中 <small>'+r.length+'</small></button></div><div class="mp" style="padding-top:4px">'+
+      (jobSub==='new'?(f.length?'<div class="list">'+f.map(function(c){return '<button type="button" class="card bp" data-nc="'+c.id+'"><span class="tag">新着</span><b>'+esc(c.title)+'</b><span class="meta"><span>'+esc(c.place||'')+'　'+esc(c.bunya||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">新着の依頼はありません。<br>依頼者モードで相談を投稿すると、ここに出ます（テスト版）</div>'):
+      (r.length?'<div class="list">'+r.map(function(x){return '<button type="button" class="card bp" data-pb="'+x.id+'"><span class="tag"'+(x.state==='lost'||x.state==='other'?' style="background:#e6eae8;color:var(--sb)"':'')+'>'+PLAB(x)+'</span><b>'+esc(x.c.title)+'</b><span class="meta"><span>'+esc(x.c.place||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">進行中の案件はありません</div>'))+'</div>';
+    each('.jseg button',scr,function(b){b.onclick=function(){jobSub=b.dataset.s;renderPro();};});
+    each('[data-nc]',scr,function(b){b.onclick=function(){newCase(f.filter(function(c){return c.id===b.dataset.nc;})[0]);};});
+    each('[data-pb]',scr,function(b){b.onclick=function(){openPro(b.dataset.pb);};});
+  }).catch(fail);}
+function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定'}[x.state]||x.state;}
+var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
+function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（見積もりだけの依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
+  $('bidB').onclick=function(){this.disabled=true;api('proBid',{caseId:c.id}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(fail);};}
+
+/* ===== Proモード：チャット ===== */
+var PC2=null;
+function openPro(bidId){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="pm"></div>');
+  api('proChat',{bidId:bidId}).then(function(j){PC2=j;PC2.first=1;drawPro();}).catch(function(e){fail(e);closePane();});}
+function proPoll(){if(!PC2||document.visibilityState!=='visible')return;var l=PC2.msgs[PC2.msgs.length-1];api('proChat',{bidId:PC2.bid.id,since:l?l.createdAt:''}).then(function(j){if(j.msgs.length||j.bid.state!==PC2.bid.state){PC2.msgs=PC2.msgs.concat(j.msgs);PC2.bid=j.bid;PC2.c=j.c;drawPro();}}).catch(function(){});}
+function pLast(t){var r=null;PC2.msgs.forEach(function(m){if(m.type===t)r=m;});return r;}
+function pStage(){var s=PC2.bid.state,rp=pLast('rep');if(s==='done')return 5;if(s==='won')return 4;if(s==='est')return 2;if(s==='fixd')return 1;return 0;}
+function drawPro(){
+  var x=PC2.bid,c=PC2.c,s=x.state,st=pStage(),rp=pLast('rep'),repWait=s==='won'&&rp&&!(rp.body||{}).done,closed=['lost','other','declined'].indexOf(s)>=0;
+  var steps=['立候補','現地調査','見積もり','成約','工事','完了'];
+  var nxt=closed?'このやり取りは終了しました':s==='chat'?'話を聞いて、現地調査の提案（費用の目安つき）を送ってください':s==='prop'?'依頼者が調査の日時を選ぶのを待っています':s==='fixd'?'現地調査をして、見積もりを送ってください':s==='est'?'依頼者の返事を待っています':s==='won'?(repWait?'依頼者の確認を待っています（7日で自動的に完了）':'工事が終わったら「完了報告」を送ってください'):s==='done'?'完了しました':'';
+  var task='';
+  if(s==='chat')task='<div class="pc tsk"><div class="pc-h">やること：現地調査の提案</div><p class="sp s2" style="margin:0 0 8px">話を聞いて、費用の目安を出しましょう</p><div class="pc-b"><button type="button" id="tProp">提案を作る</button></div><button type="button" class="undo" id="tNoSv" style="margin-left:0">現地調査なしで見積もりを出す</button></div>';
+  if(s==='fixd')task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">調査の結果をもとに、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tEst">見積もりを作る</button></div></div>';
+  if(s==='won'&&!repWait)task='<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 8px">工事が終わったら報告してください</p><div class="pc-b"><button type="button" id="tRep">完了報告をする</button></div></div>';
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+esc(c.place||'')+'・依頼者</span></div><button type="button" class="kebab" id="pInfo" aria-label="依頼の内容">…</button></div>'+
+    '<div class="msgs" id="pm"><div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>次に進むには</b>'+nxt+'</div><div id="pmL"></div>'+task+'</div>'+
+    (closed?'<div class="lock">このやり取りは終了しています。</div>':'<div class="pmenu" id="pmenu" hidden><label class="pmi"><span>📷</span>画像を送る<input type="file" accept="image/*" id="pImg" hidden></label>'+(s==='won'&&!repWait?'<button type="button" class="pmi" id="pChg"><span>＋円</span>追加の作業の申請<small>作業の前に、依頼者の承諾が必要です</small></button>':'')+'</div><form class="cmp" id="pf"><button type="button" class="ic plus" id="pmB" aria-label="メニュー" aria-expanded="false">＋</button><input id="ptx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
+    function(){PC2=null;closePane();});
+  chatT=setInterval(proPoll,8000);
+  drawProMsgs();
+  var e=$('tProp');if(e)e.onclick=propForm;e=$('tEst');if(e)e.onclick=function(){estForm();};e=$('tNoSv');if(e)e.onclick=function(){estForm(true);};e=$('tRep');if(e)e.onclick=repForm;
+  $('pInfo').onclick=function(){openSheet('<h3>依頼の内容</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+'</div>'+((c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':''));};
+  var f=$('pf');if(f){f.onsubmit=function(ev){ev.preventDefault();var t=$('ptx'),v=t.value.trim();if(!v)return;t.value='';pSend({text:v});};
+    var mb=$('pmB'),mn=$('pmenu');mb.onclick=function(){mn.hidden=!mn.hidden;mb.classList.toggle('on',!mn.hidden);mb.setAttribute('aria-expanded',!mn.hidden);};
+    e=$('pChg');if(e)e.onclick=chgForm;
+    $('pImg').onchange=function(ev){var fl=ev.target.files[0];ev.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){pSend({img:j.url});}).catch(fail);};}
+  // 段階ごとのポップアップ
+  if(s==='chat'&&!pLast('prop'))pPop(x.id,1);else if(s==='fixd')pPop(x.id,2);else if(s==='won'&&!repWait){if(seenNo('p_'+x.id+'_4'))pPop(x.id,4);else if(PC2.first)pPop(x.id,5);}
+  PC2.first=0;
+}
+function pSend(d){var l=PC2.msgs[PC2.msgs.length-1];d.bidId=PC2.bid.id;d.since=l?l.createdAt:'';api('proSend',d).then(function(j){PC2.msgs=PC2.msgs.concat(j.msgs);PC2.bid=j.bid;drawProMsgs();}).catch(fail);}
+function gsHTML(r){return '<div class="gs"><b>工事費の目安（税込）</b><ul>'+(r||[]).map(function(a){return '<li><span>'+esc(a[0])+'</span><em>'+esc(a[1])+'</em></li>';}).join('')+'</ul><small>※正式な金額は現地調査後に提示します</small></div>';}
+function drawProMsgs(){var box=$('pmL');if(!box)return;var me=PC2.vendor.id;
+  box.innerHTML=PC2.msgs.map(function(m){var b=m.body||{};
+    if(m.type==='sys')return '<div class="sys">'+esc(b.text)+'</div>';
+    if(m.type==='text'||m.type==='img')return m.from===me?'<div class="mg me"><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="送った写真">':'')+esc(b.text||'')+'</div></div>':'<div class="mg"><span class="wn">依頼者</span><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="">':'')+esc(b.text||'')+'</div></div>';
+    var st=b.done?'<p class="pc-ok">'+esc(b.done)+'</p>':'';
+    if(m.type==='prop')return '<div class="pc"><div class="pc-h">現地調査の提案（送信済み）</div>'+gsHTML(b.rows)+'<dl><dt>確認すること</dt><dd>'+esc(b.todo)+'</dd><dt>所要時間</dt><dd>約'+(b.dur||30)+'分</dd><dt>候補日時</dt><dd>'+(b.slots||[]).map(function(s){return esc(s[0]+' '+s[1]+'〜'+s[2]);}).join('<br>')+'</dd><dt>調査費用</dt><dd>無料</dd><dt>見積もり</dt><dd>'+esc(b.estDue)+'</dd></dl>'+(st||'<p class="pc-ok">依頼者が日時を選ぶのを待っています</p>')+'</div>';
+    if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり（送信済み）</div><p class="amt">'+Number(b.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(b.memo)+'</dd><dt>工期</dt><dd>'+esc(b.start)+(b.end&&b.end!==b.start?' 〜 '+esc(b.end):'（1日）')+'</dd><dt>支払い</dt><dd>'+esc(b.pay)+'</dd><dt>返事の期限</dt><dd>'+esc(b.due)+'</dd></dl>'+(st||'<p class="pc-ok">依頼者の返事を待っています</p>')+'</div>';
+    if(m.type==='chg')return '<div class="pc"><div class="pc-h">追加の作業の申請（'+(b.st==='ok'?'承諾されました':b.st==='ng'?'承諾されませんでした':'承諾待ち')+'）</div><p class="amt2">＋'+Number(b.ad).toLocaleString()+'円（税込）</p><dl><dt>理由</dt><dd>'+esc(b.why)+'</dd></dl>'+(b.st?'':'<p class="pc-n">承諾されるまで、追加の作業は始めないでください。</p>')+'</div>';
+    if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告（送信済み）</div><dl><dt>作業日</dt><dd>'+esc(b.day)+'</dd><dt>作業内容</dt><dd>'+esc(b.what)+'</dd><dt>最終金額</dt><dd><b>'+Number(b.amt).toLocaleString()+'円</b>（税込）</dd></dl>'+(st||'<p class="pc-ok">依頼者の確認を待っています</p><button type="button" class="undo" data-undo="'+m.id+'">報告を取り消す</button>')+'</div>';
+    if(m.type==='visit')return '<div class="sys">依頼者に「現地調査はいかがでしたか？」を送りました'+(b.done?'（'+esc(b.done)+'）':'')+'</div>';
+    return '';}).join('');
+  var sc=$('pm');sc.scrollTop=sc.scrollHeight;
+  each('[data-undo]',box,function(u){u.onclick=function(){api('proUndo',{bidId:PC2.bid.id,msgId:u.dataset.undo}).then(function(j){PC2.msgs=j.msgs;PC2.bid=j.bid;drawPro();toast('完了報告を取り消しました');}).catch(fail);};});}
+function proCard(type,body,after){api('proCard',{bidId:PC2.bid.id,type:type,body:body}).then(function(j){PC2.msgs=j.msgs;PC2.bid=j.bid;PC2.c=j.c;drawPro();if(after)after();}).catch(fail);}
+function formPane(title,html,onSubmit){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+title+'</b><span>'+esc(PC2.c.title)+'</span></div></div><div class="arw"><form class="pf pf2 ppf" id="xf" novalidate>'+html+'<p class="warn" id="xw" hidden></p></form></div>',drawPro);
+  $('xf').onsubmit=function(e){e.preventDefault();var w=onSubmit();if(w){$('xw').textContent=w;$('xw').hidden=false;}};}
+function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function mdW(v){var d=new Date(v+'T00:00');return (d.getMonth()+1)+'/'+d.getDate()+'（'+'日月火水木金土'[d.getDay()]+'）';}
+/* 現地調査の提案 */
+function propForm(){var rows=1,slots=1,dur=30;
+  function row(n){return '<div class="gsr"><input class="gsc" placeholder="'+(n===0?'例：部分補修の場合':'例：交換が必要な場合')+'" aria-label="作業内容・条件"><div class="gsa"><input type="number" inputmode="numeric" class="gs1" placeholder="15000" aria-label="いくらから">円〜<input type="number" inputmode="numeric" class="gs2" placeholder="20000" aria-label="いくらまで">円</div></div>';}
+  function slot(n){var t=new Date();t.setDate(t.getDate()+2+n*2);return '<div class="slr"><input type="date" class="sld" value="'+ymd(t)+'" min="'+ymd(new Date())+'" aria-label="日付"><div class="gsa"><input type="time" class="sl1" value="10:00" step="1800" aria-label="何時から">〜<input type="time" class="sl2" value="12:00" step="1800" aria-label="何時まで"></div></div>';}
+  formPane('現地調査の提案',
+    '<section class="pps"><h4><i>①</i>工事費の目安（税込）</h4><p class="pph">作業内容・条件と、概算金額を入れてください</p><div id="gsList">'+row(0)+'</div><button type="button" class="addr" id="gsAdd">＋ 対応パターンを追加</button><p class="ppn">※正式な金額は現地調査後に提示します</p></section>'+
+    '<section class="pps"><h4><i>②</i>現地調査について</h4><label>確認すること<input id="pp2" placeholder="例：状態と作業の範囲の確認"></label><div class="lab2">所要時間</div><div class="durs" role="radiogroup" aria-label="所要時間"><button type="button" role="radio" data-d="30" aria-checked="true" class="on">30分</button><button type="button" role="radio" data-d="60" aria-checked="false">60分</button></div><div class="lab2">調査の候補日時 <small id="durN">依頼者が30分単位で開始時刻を選びます</small></div><div id="slList">'+slot(0)+'</div><button type="button" class="addr" id="slAdd">＋ 候補を追加</button><div class="free"><span>調査費用</span><b>無料</b></div></section>'+
+    '<section class="pps"><h4><i>③</i>見積もりの提出予定</h4><select id="pp6" aria-label="見積もりの提出予定"><option>調査後3日以内</option><option>調査後5日以内</option><option selected>調査後7日以内</option><option>調査後14日以内</option></select></section>'+
+    '<button class="big" type="submit" style="background:#2F6B45">この内容で提案する</button>',
+    function(){var out=[],sl=[];
+      each('.gsr',pane,function(r){var c1=r.querySelector('.gsc').value.trim(),a=+r.querySelector('.gs1').value,b=+r.querySelector('.gs2').value;if(c1&&a)out.push([c1,a.toLocaleString()+'円〜'+(b&&b>a?b.toLocaleString()+'円':'')]);});
+      each('.slr',pane,function(r){var d=r.querySelector('.sld').value,t1=r.querySelector('.sl1').value,t2=r.querySelector('.sl2').value;if(d&&t1&&t2&&t2>t1)sl.push([mdW(d),t1,t2]);});
+      if(!out.length)return '工事費の目安を1つ以上入れてください';if(!$('pp2').value.trim())return '確認することを入れてください';if(!sl.length)return '候補日時を入れてください（終わりは始まりより後に）';
+      proCard('prop',{rows:out,todo:$('pp2').value.trim(),dur:dur,slots:sl,estDue:$('pp6').value});});
+  each('.durs button',pane,function(b){b.onclick=function(){dur=+b.dataset.d;each('.durs button',pane,function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-checked',x===b);});$('durN').textContent='依頼者が'+dur+'分単位で開始時刻を選びます';};});
+  $('gsAdd').onclick=function(){if(rows>=3)return;$('gsList').insertAdjacentHTML('beforeend',row(rows));rows++;if(rows>=3)this.hidden=true;};
+  $('slAdd').onclick=function(){if(slots>=3)return;$('slList').insertAdjacentHTML('beforeend',slot(slots));slots++;if(slots>=3)this.hidden=true;};}
+/* 見積もり */
+function estForm(noSurvey){pPop(PC2.bid.id,3);var t=new Date();t.setDate(t.getDate()+7);var d=ymd(t),edited=false;
+  formPane('見積もりを作る',
+    '<p class="pc-n" style="margin-top:0">ここに入れた金額と日付を、まち頼が請求や期限の管理に使います。</p>'+
+    '<label>合計金額（税込） <em class="rq">必須</em><input type="number" id="e1" inputmode="numeric" placeholder="例：38500"></label>'+
+    '<label>作業内容 <em class="rq">必須</em><textarea id="e2" rows="3" placeholder="例：水栓本体の交換と取り付け工事一式。古い水栓の処分を含みます"></textarea></label>'+
+    '<div class="two"><label>着手予定日 <em class="rq">必須</em><input type="date" id="e3" value="'+d+'"></label><label>完了予定日 <em class="rq">必須</em><input type="date" id="e4" value="'+d+'"></label></div>'+
+    '<label>支払いの時期 <em class="rq">必須</em><select id="e5"><option>工事完了後に一括</option><option>着手時に一部、完了後に残り</option><option>分割</option></select></label>'+
+    '<label>支払いの方法 <em class="rq">必須</em><select id="e6"><option>銀行振込</option><option>現金</option><option>その他</option></select></label>'+
+    '<label>見積書（詳しい内訳） <em class="op">任意・PDFか写真</em><input type="file" accept="application/pdf,image/*"></label>'+
+    '<button class="big" type="submit" style="background:#2F6B45">この内容で見積もりを送る</button>',
+    function(){var a=+$('e1').value,w=$('e2').value.trim();if(!a||!w)return '金額と作業内容を入れてください';if($('e4').value<$('e3').value)return '完了予定日は、着手予定日と同じか後にしてください';
+      if(!confirm('この内容で見積もりを送りますか？'))return '';
+      proCard('est',{amt:a,memo:w,start:mdW($('e3').value),end:mdW($('e4').value),pay:$('e5').value+'・'+$('e6').value,noSurvey:!!noSurvey});});
+  $('e3').onchange=function(){if(!edited||$('e4').value<$('e3').value)$('e4').value=$('e3').value;};$('e4').onchange=function(){edited=true;};}
+/* 追加の作業の申請 */
+function chgForm(){var cur=Number(PC2.bid.amount)||0;
+  formPane('追加の作業の申請','<div class="rule"><b>作業の前に、依頼者の承諾をもらってください</b></div><div class="amtbox"><span>今の金額（税込）</span><b>'+cur.toLocaleString()+'円</b></div>'+
+    '<label>追加の金額（税込） <em class="rq">必須</em><input type="number" id="c1" inputmode="numeric" placeholder="例：4400"></label><label>理由・追加する作業 <em class="rq">必須</em><textarea id="c2" rows="3"></textarea></label><div class="sumbox" id="cS"></div><button class="big" type="submit" style="background:#2F6B45">依頼者に申請する</button>',
+    function(){var a=+$('c1').value,w=$('c2').value.trim();if(!a||!w)return '金額と理由を入れてください';proCard('chg',{ad:a,why:w});});
+  var sm=function(){$('cS').innerHTML='<div><span>承諾されると</span><b>'+(cur+(+$('c1').value||0)).toLocaleString()+'円</b></div>';};$('c1').oninput=sm;sm();}
+/* 完了報告 */
+function repForm(){var cur=Number(PC2.bid.amount)||0;
+  formPane('完了報告','<label>作業日 <em class="rq">必須</em><input type="date" id="r1" value="'+ymd(new Date())+'"></label><label>作業内容 <em class="rq">必須</em><textarea id="r2" rows="2"></textarea></label>'+
+    '<div class="amtbox"><span>承諾済みの金額（税込）</span><b>'+cur.toLocaleString()+'円</b></div><label class="ckl"><input type="checkbox" id="rDn"> 減額がある（作業の一部をやめた など）</label><div id="rDnW" hidden class="subf"><label>減額後の金額（税込）<input type="number" id="rDnA" inputmode="numeric"></label></div>'+
+    '<label>施工後の写真 <em class="op">任意</em><input type="file" accept="image/*" multiple></label><button class="big" type="submit" style="background:#2F6B45">この内容で完了報告を送る</button>',
+    function(){var w=$('r2').value.trim();if(!w)return '作業内容を入れてください';var amt=cur;if($('rDn').checked){amt=+$('rDnA').value;if(!amt||amt>=cur)return '減額後の金額は、承諾済みの金額より小さくしてください';}
+      openSheet('<h3>完了報告を送りますか？</h3><p class="sp s2">依頼者に届きます。依頼者が確認するまでは取り消せます。</p><div class="pc-b"><button type="button" class="g" id="rcN">もどる</button><button type="button" id="rcY">送る</button></div>');
+      $('rcN').onclick=closeSheet;$('rcY').onclick=function(){closeSheet();proCard('rep',{day:mdW($('r1').value),what:w,amt:amt},function(){pPop(PC2.bid.id,6);});};});
+  $('rDn').onchange=function(){$('rDnW').hidden=!this.checked;};}
+
+/* ===== テストを最初からやり直す ===== */
+function testReset(){openSheet('<h3>テストを最初からやり直しますか？</h3><p class="sp s2">あなたの依頼・チャット・お知らせ・AIとの会話を、すべて消します。もとに戻せません。</p><button type="button" class="big" id="trY" style="background:#C8321F">消して、最初からやり直す</button>');
+  $('trY').onclick=function(){this.disabled=true;this.textContent='消しています…';api('testReset').then(function(){try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('mph_')===0)localStorage.removeItem(k);});}catch(e){}closeSheet();toast('最初の状態に戻しました');jobSub='new';setMode('user');}).catch(fail);};}
 
 boot();
 })();
