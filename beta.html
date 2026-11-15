@@ -608,12 +608,17 @@ function conc(op,firstText){
   cSay(op,0);
   if(firstText)cSend(firstText);
 }
-function cSay(t,me){var box=$('cl');if(!box)return;var d=document.createElement('div');d.className='mg'+(me?' me':' ai2');d.innerHTML=(me?'':charaImg())+'<div class="bb">'+esc(t).replace(/\n/g,'<br>')+'</div>';box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function cSay(t,me){var box=$('cl');if(!box)return;if(!me)t=String(t).replace(/\*\*/g,'').replace(/\[\[PLACE\]\]/g,'');var d=document.createElement('div');d.className='mg'+(me?' me':' ai2');d.innerHTML=(me?'':charaImg())+'<div class="bb">'+esc(t).replace(/\n/g,'<br>')+'</div>';box.appendChild(d);box.scrollTop=box.scrollHeight;}
 function cSend(v){
   cSay(v,1);C.busy=true;var box=$('cl'),w=document.createElement('div');w.className='typing';w.textContent=charaName()+'が入力中…';box.appendChild(w);box.scrollTop=box.scrollHeight;
   var data={text:v};if(C.tid)data.threadId=C.tid;else data.opening=C.opening;
-  api('concierge',data).then(function(j){if(j.threadId)C.tid=j.threadId;w.remove();cSay(j.reply,0);if(j.sheet)sheetCard(j.sheet,true);}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
+  api('concierge',data).then(function(j){if(j.threadId)C.tid=j.threadId;w.remove();cSay(j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
 }
+/* 場所は市町村をボタンで選ぶ（番地などを書いてしまわないように） */
+var PLACES=['松本市','塩尻市','安曇野市','大町市','山形村','朝日村','池田町','松川村','生坂村','麻績村','筑北村','木曽地域','その他の地域'];
+function placeBtns(){var box=$('cl');each('.cbt',box,function(x){x.remove();});var a=PLACES.slice();if(ME&&ME.area&&a.indexOf(ME.area)>0){a.splice(a.indexOf(ME.area),1);a.unshift(ME.area);}
+  var b=document.createElement('div');b.className='chs cbt';b.innerHTML=a.map(function(p){return '<button type="button">'+esc(p)+'</button>';}).join('');box.appendChild(b);box.scrollTop=box.scrollHeight;
+  each('button',b,function(x){x.onclick=function(){if(C.busy)return;b.remove();cSend(x.textContent);};});}
 var SK=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','専門家に確認したいこと']];
 function sheetCard(s,btns){var box=$('cl'),d=document.createElement('div');d.className='mg ai2 wide';
   d.innerHTML=charaImg()+'<div class="sht">'+SK.map(function(k){return s[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(s[k[0]])+'</b></div>':'';}).join('')+(s.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div>';
