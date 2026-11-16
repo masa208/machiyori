@@ -845,10 +845,10 @@ var QA=[
 var QF='all';
 function qaBest(x){return x.ans.some(function(a){return a.best;});}
 function qaItem(x){var b=qaBest(x);return '<button type="button" class="qai" data-q="'+x.id+'"><span class="qtag'+(b?' ok':'')+'">'+(b?'解決済み':'回答受付中')+'</span><b>Q. '+esc(x.q)+'</b><span class="meta"><span>'+esc(x.cat)+'</span><span>'+esc(x.ago)+'</span><span>回答 '+x.ans.length+'件</span></span></button>';}
-function qaHomeHTML(){return '<div class="uh-box"><div class="uh-sec">地域のプロに聞いてみよう<button type="button" class="uh-all" id="qaMore">もっと見る ›</button></div><p class="qahl">家のこと、地元のプロが答えてくれます。<span class="qamk">テスト版は見本です</span></p><div class="qal">'+QA.slice(0,2).map(qaItem).join('')+'</div><button type="button" class="qaaskb" id="qaAskH">＋ プロに質問する</button></div>';}
+function qaHomeHTML(){return '<div class="uh-box"><div class="uh-sec">地域のプロに聞いてみよう<button type="button" class="uh-all" id="qaMore">もっと見る ›</button></div><p class="qahl">地元のプロが住まいの疑問に答えます。<span class="qamk">テスト版は見本です</span></p><div class="qal">'+QA.slice(0,2).map(qaItem).join('')+'</div><button type="button" class="qaaskb" id="qaAskH">＋ プロに質問する</button></div>';}
 function bindQA(root){each('[data-q]',root,function(b){b.onclick=function(){qaOpen(QA.filter(function(x){return x.id===+b.dataset.q;})[0]);};});}
 function qaList(){var L=QA.filter(function(x){return QF==='all'||(QF==='open'?!qaBest(x):qaBest(x));});
-  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>地域のプロに聞いてみよう</b><span>家のこと、地元のプロが答えます</span></div></div><div class="arw"><button type="button" class="big" id="qaAskL">＋ プロに質問する</button>'+
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>地域のプロに聞いてみよう</b><span>地元のプロが住まいの疑問に答えます</span></div></div><div class="arw"><button type="button" class="big" id="qaAskL">＋ プロに質問する</button>'+
     '<div class="jseg" role="tablist">'+[['all','すべて'],['open','回答受付中'],['best','解決済み']].map(function(f){return '<button type="button" role="tab" data-f="'+f[0]+'" aria-selected="'+(QF===f[0])+'">'+f[1]+'</button>';}).join('')+'</div><div class="qal">'+L.map(qaItem).join('')+'</div>'+
     '<p class="qanote">回答するのは、まち頼に登録した地元の専門家です。ベストアンサーに選ばれると、その専門家の評価ポイントになります。（テスト版は見本のデータです）</p></div>',closePane);
   each('.jseg button',pane,function(b){b.onclick=function(){QF=b.dataset.f;qaList();};});bindQA(pane);$('qaAskL').onclick=qaAsk;}
