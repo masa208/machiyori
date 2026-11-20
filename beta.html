@@ -232,6 +232,11 @@ h2{font-size:17px;margin:0 0 10px}
 .bell b.urg{background:#D93A2B}
 #todo b{background:#6E7D75}#todo b.urg{background:#D93A2B}.bl li{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:13px}
 .bl .mt{flex-shrink:0;font-size:10px;font-weight:700;color:#fff;border-radius:6px;padding:1px 6px;height:18px;margin-top:2px}
+/* 対応エリア */
+.pmchips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.pmc{display:flex!important;flex-direction:row;align-items:center;gap:4px;font-size:12.5px;background:#fff;border:1px solid #D5DAD6;border-radius:16px;padding:4px 10px;font-weight:400!important;margin:0!important}
+.pmc input{width:auto!important;margin:0!important;padding:0!important}
+.arp{background:#fff;border-radius:10px;padding:8px;border:1px solid #E3E6E2}.arg{border-top:1px solid #EEF0EE;padding:6px 2px}.arg summary{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;list-style:none}.arg summary::-webkit-details-marker{display:none}.arn{margin-left:auto;font-size:11.5px;color:#6E7D75}.argall{margin:6px 0 4px!important;font-size:12px!important}.rgb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.rgbtn{font:inherit;font-size:13px;font-weight:700;border:1.5px solid #2F6B45;color:#2F6B45;background:#fff;border-radius:18px;padding:6px 12px;cursor:pointer}.rgbtn.on{background:#2F6B45;color:#fff}.rgbtn.part{background:#E7F1EA}
+.rgmap{display:block;width:62%;max-width:220px;margin:4px auto 0}.rgp{fill:#2F6B45;fill-opacity:0;stroke:#2F6B45;stroke-width:1.5;cursor:pointer;transition:fill-opacity .2s}.rgt{font-size:12px;font-weight:700;fill:#23302A;pointer-events:none}.rgn{font-size:10px;font-weight:400;fill:#23302A}.rgnote{font-size:10.5px;color:#6E7D75;text-align:center;margin:2px 0 6px}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -800,11 +805,13 @@ function renderMy(){var lv=level(Number(ME.points)||0);
   scr.innerHTML='<div class="mp"><div class="mpp"><span class="av">'+esc((ME.callName||'？').slice(0,1))+'</span><div><b>'+esc(ME.callName||'')+'さん</b><small>'+(ME.provider==='line'?'LINEでログイン中':'メールでログイン中')+'・'+esc(ME.area||'')+'</small></div></div>'+
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>まちことの おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
+    (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].map(row).join('')+'</div>':'')+
     '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="20" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
     if(k==='ar'){openSheet('<h3>お住まいの市町村</h3><div class="fm">'+areaSel('arS',ME.area)+'</div><button type="button" class="big" id="arB">保存する</button>');$('arB').onclick=function(){prof({area:$('arS').value});};}
+    if(k==='va'){if(PRO)areaPane();else api('proHome').then(function(j){PRO=j;areaPane();}).catch(fail);}
     if(k==='qa')inquiry();
     if(k==='rs')testReset();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
@@ -952,10 +959,53 @@ $('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div
 
 /* ===== Proモード：案件 ===== */
 var PRO=null,jobSub='new';
-function renderPro(){if(tab==='me'){renderMy();return;}
+
+/* ===== 業者の対応エリア（地域ボタン＋図＋77市町村） ===== */
+  var NAGANO=[
+    ['中信（松本・木曽・北アルプス）',['松本市','塩尻市','安曇野市','大町市','麻績村','生坂村','山形村','朝日村','筑北村','木曽町','上松町','南木曽町','木祖村','王滝村','大桑村','池田町','松川村','白馬村','小谷村']],
+    ['南信（諏訪・上伊那・南信州）',['岡谷市','諏訪市','茅野市','伊那市','駒ヶ根市','飯田市','下諏訪町','富士見町','原村','辰野町','箕輪町','飯島町','南箕輪村','中川村','宮田村','松川町','高森町','阿南町','阿智村','平谷村','根羽村','下條村','売木村','天龍村','泰阜村','喬木村','豊丘村','大鹿村']],
+    ['東信（佐久・上田）',['上田市','小諸市','佐久市','東御市','小海町','佐久穂町','軽井沢町','御代田町','立科町','川上村','南牧村','南相木村','北相木村','長和町','青木村']],
+    ['北信（長野・北信）',['長野市','須坂市','千曲市','中野市','飯山市','坂城町','小布施町','高山村','信濃町','小川村','飯綱町','山ノ内町','木島平村','野沢温泉村','栄村']]];
+  var RG_ORDER=[['北信',3],['中信',0],['東信',2],['南信',1]];
+  /* 長野県のおおよその形を4つの地域に分けた図（正確な境界ではない） */
+  var RG_SHAPE={
+    '北信':'M78,6 L118,4 L150,18 L168,44 L160,74 L132,88 L104,86 L84,72 L70,46 Z',
+    '中信':'M40,40 L70,46 L84,72 L104,86 L108,120 L96,150 L84,190 L70,222 L48,214 L36,178 L26,140 L30,96 Z',
+    '東信':'M132,88 L160,74 L184,96 L190,132 L176,160 L148,164 L122,150 L108,120 L104,86 Z',
+    '南信':'M108,120 L122,150 L148,164 L176,160 L172,196 L156,236 L138,270 L112,292 L92,276 L80,246 L70,222 L84,190 L96,150 Z'};
+  var RG_LABEL={'北信':[118,44],'中信':[62,150],'東信':[150,124],'南信':[124,226]};
+  function areaPicker(on){var all=[].concat.apply([],NAGANO.map(function(g){return g[1];}));
+    return '<div class="arp"><div class="rgb">'+'<button type="button" class="rgbtn" data-rg="all">長野県全域</button>'+RG_ORDER.map(function(r){return '<button type="button" class="rgbtn" data-rg="'+r[1]+'">'+r[0]+'</button>';}).join('')+'</div>'+
+      '<svg class="rgmap" viewBox="0 0 220 300" role="img" aria-label="選んでいる地域の図">'+RG_ORDER.map(function(r){return '<path class="rgp" data-rgp="'+r[1]+'" d="'+RG_SHAPE[r[0]]+'"/>';}).join('')+
+        RG_ORDER.map(function(r){var p=RG_LABEL[r[0]];return '<text x="'+p[0]+'" y="'+p[1]+'" text-anchor="middle" class="rgt"><tspan>'+r[0]+'</tspan><tspan x="'+p[0]+'" dy="14" class="rgn" data-rgn="'+r[1]+'"></tspan></text>';}).join('')+'</svg><p class="rgnote">図はおおよその形です。色が濃いほど多く選んでいます。</p>'+
+      '<input type="checkbox" data-all="1" hidden>'+RG_ORDER.map(function(r){var gi=r[1],g=NAGANO[gi];var n=g[1].filter(function(c){return on.indexOf(c)>=0;}).length;
+      return '<details class="arg"><summary><b>'+g[0]+'</b><small class="arn">'+n+'/'+g[1].length+'</small></summary><label class="pmc argall"><input type="checkbox" data-g="'+gi+'"'+(n===g[1].length?' checked':'')+'>この地域をすべて選ぶ</label><div class="pmchips">'+g[1].map(function(c){return '<label class="pmc"><input type="checkbox" class="arc" data-gi="'+gi+'" value="'+c+'"'+(on.indexOf(c)>=0?' checked':'')+'>'+c+'</label>';}).join('')+'</div></details>';}).join('')+'<p class="pc-n" id="arCnt"></p></div>';}
+  function bindArea(root){var cs=root.querySelectorAll('.arc'),grp=function(gi){return root.querySelectorAll('.arc[data-gi="'+gi+'"]');},cnt=function(gi){var k=0;Array.prototype.forEach.call(grp(gi),function(c){if(c.checked)k++;});return k;};
+    var upd=function(){var n=0;Array.prototype.forEach.call(cs,function(c){if(c.checked)n++;});root.querySelector('#arCnt').textContent='選んでいる市町村：'+n+' / 77';root.querySelector('[data-all]').checked=n===77;
+      root.querySelector('[data-rg="all"]').classList.toggle('on',n===77);
+      NAGANO.forEach(function(g,gi){var k=cnt(gi),tot=g[1].length,f=k/tot;
+        var gb=root.querySelector('[data-g="'+gi+'"]');gb.checked=k===tot;gb.closest('details').querySelector('.arn').textContent=k+'/'+tot;
+        root.querySelector('[data-rg="'+gi+'"]').classList.toggle('on',k===tot);root.querySelector('[data-rg="'+gi+'"]').classList.toggle('part',k>0&&k<tot);
+        var p=root.querySelector('[data-rgp="'+gi+'"]');p.style.fillOpacity=k?(0.25+0.75*f).toFixed(2):'0';p.classList.toggle('sel',k>0);
+        root.querySelector('[data-rgn="'+gi+'"]').textContent=k?(k===tot?'すべて':k+'市町村'):'';});};
+    var setG=function(gi,v){Array.prototype.forEach.call(grp(gi),function(c){c.checked=v;});};
+    Array.prototype.forEach.call(cs,function(c){c.onchange=upd;});
+    Array.prototype.forEach.call(root.querySelectorAll('[data-g]'),function(g){g.onchange=function(){setG(g.dataset.g,g.checked);upd();};});
+    Array.prototype.forEach.call(root.querySelectorAll('.rgbtn'),function(b){b.onclick=function(){var r=b.dataset.rg;
+      if(r==='all'){var v=!b.classList.contains('on');Array.prototype.forEach.call(cs,function(c){c.checked=v;});}else{var gi=+r;setG(gi,cnt(gi)!==NAGANO[gi][1].length);}upd();};});
+    Array.prototype.forEach.call(root.querySelectorAll('.rgp'),function(p){p.onclick=function(){root.querySelector('[data-rg="'+p.dataset.rgp+'"]').click();};});
+    upd();}
+
+function areaSum(a){if(a==='ALL'||!a)return '長野県全域';return a.length>3?a.slice(0,3).join('・')+' ほか'+(a.length-3):a.join('・');}
+function areaPane(){var cur=PRO&&PRO.areas||'ALL',all=[].concat.apply([],NAGANO.map(function(g){return g[1];})),on=cur==='ALL'?all:cur;
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>対応エリア</b><span>長野県内の市町村から選びます（いくつでも）</span></div></div><div class="arw">'+areaPicker(on)+'<p class="adesc">選んだ市町村の依頼が「新着」に届きます。市町村が分からない依頼（「その他の地域」）は、エリアに関係なく届きます。</p><button type="button" class="big" id="arSave">保存する</button></div>',function(){pane.classList.remove('on');});
+  bindArea(pane);
+  $('arSave').onclick=function(){var a=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(i){return i.checked;}).map(function(i){return i.value;});if(!a.length){toast('市町村を1つ以上選んでください');return;}
+    this.disabled=true;api('proArea',{areas:a}).then(function(j){if(PRO){PRO.vendor=j.vendor;PRO.areas=j.areas;}pane.classList.remove('on');toast('対応エリアを保存しました');draw();}).catch(function(e){$('arSave').disabled=false;fail(e);});};}
+function renderPro(){if(tab==='me'){renderMy();if(!PRO)api('proHome').then(function(j){PRO=j;if(tab==='me'&&MODE==='pro')renderMy();}).catch(function(){});return;}
   api('proHome').then(function(j){PRO=j;var f=j.fresh,r=j.run;
     scr.innerHTML='<div class="jseg" role="tablist"><button type="button" role="tab" data-s="new" aria-selected="'+(jobSub==='new')+'">新着 <small>'+f.length+'</small></button><button type="button" role="tab" data-s="run" aria-selected="'+(jobSub==='run')+'">進行中 <small>'+r.length+'</small></button></div><div class="mp" style="padding-top:4px">'+
-      (jobSub==='new'?(f.length?'<div class="list">'+f.map(function(c){return '<button type="button" class="card bp" data-nc="'+c.id+'"><span class="tag">新着</span><b>'+esc(c.title)+'</b><span class="meta"><span>'+esc(c.place||'')+'　'+esc(c.bunya||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">新着の依頼はありません。<br>依頼者モードで相談を投稿すると、ここに出ます（テスト版）</div>'):
+      (jobSub==='new'?(f.length?'<div class="list">'+f.map(function(c){return '<button type="button" class="card bp" data-nc="'+c.id+'"><span class="tag">新着</span><b>'+esc(c.title)+'</b><span class="meta"><span>'+esc(c.place||'')+'　'+esc(c.bunya||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">新着の依頼はありません。<br>依頼者モードで相談を投稿すると、ここに出ます（テスト版）</div>')+(j.outside?'<p class="adesc" style="margin-top:10px">対応エリアの外の依頼が'+j.outside+'件あります（マイページの「対応エリア」で変えられます）</p>':''):
       (r.length?'<div class="list">'+r.map(function(x){return '<button type="button" class="card bp" data-pb="'+x.id+'"><span class="tag"'+(x.state==='lost'||x.state==='other'||x.state==='expired'?' style="background:#e6eae8;color:var(--sb)"':'')+'>'+PLAB(x)+'</span><b>'+esc(x.c.title)+'</b><span class="meta"><span>'+esc(x.c.place||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">進行中の案件はありません</div>'))+'</div>';
     each('.jseg button',scr,function(b){b.onclick=function(){jobSub=b.dataset.s;renderPro();};});
     each('[data-nc]',scr,function(b){b.onclick=function(){newCase(f.filter(function(c){return c.id===b.dataset.nc;})[0]);};});
