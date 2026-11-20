@@ -499,7 +499,7 @@ function afterLogin(){
 }
 function welcome(){
   openSheet('<h3>はじめまして</h3><p class="sp s2">最初に2つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
-    '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc(ME.callName||ME.name||'')+'" maxlength="20" placeholder="例：まさ">'+
+    '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc((ME.callName||ME.name||'').slice(0,8))+'" maxlength="8" placeholder="例：まさ">'+
     '<label for="wcA">お住まいの市町村</label>'+areaSel('wcA',ME.area)+
     '<button class="big" type="submit">始める</button></form>');
   $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim();if(!n){$('wcN').focus();return;}
@@ -809,7 +809,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
-    if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="20" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
+    if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="8" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
     if(k==='ar'){openSheet('<h3>お住まいの市町村</h3><div class="fm">'+areaSel('arS',ME.area)+'</div><button type="button" class="big" id="arB">保存する</button>');$('arB').onclick=function(){prof({area:$('arS').value});};}
     if(k==='va'){if(PRO)areaPane();else api('proHome').then(function(j){PRO=j;areaPane();}).catch(fail);}
     if(k==='qa')inquiry();
