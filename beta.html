@@ -251,6 +251,7 @@ h2{font-size:17px;margin:0 0 10px}
 .mlcode{font-size:26px!important;letter-spacing:.45em;text-align:center;font-variant-numeric:tabular-nums}
 .mrow small{display:block;font-size:11.5px;color:#6E7D75;font-weight:400}
 .mset label.mrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box}.mset label.mrow input{width:22px;height:22px;flex:none}
+.obl b{color:#23302A}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -464,9 +465,9 @@ var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に�
 var U_PP=['取得する情報：呼ばれたい名前、市町村、依頼の内容と写真、チャット、（現地調査が決まったとき）お名前・住所・電話番号','使いみち：業者とつなぐ、やり取り、AIの相談、お知らせ、トラブルの防止','業者に伝わるもの：依頼の内容と市町村。お名前・住所・電話番号は現地調査の日が決まったときだけ','AIに送る前に、電話番号・住所などは「XX」に置き換えます','使っているサービス：Google、LINE、OpenAI、Stripe（日本国外を含む）','記録は依頼が終わってから5年保管し、そのあと消します','お問い合わせ：soft keys（softkeys33@gmail.com）'];
 var AGREED=false;
 function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type="button" class="lgbk" id="lgBk" aria-label="もどる">‹ もどる</button>':'')+'<h1>まち頼</h1>'+(sub?'<p class="lgs">'+sub+'</p>':'')+'<div class="lgbox">'+body+'</div>';if(back)$('lgBk').onclick=back;}
-function lgStart(){lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">どちらで登録しますか？</div>'+
+function lgStart(){lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">はじめての方（新規登録）</div>'+
     '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button>'+
-    '<button type="button" class="lnk2" id="obLg">登録済みの方はこちら（ログイン）</button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>');
+    '<div class="obq">登録済みの方</div><button type="button" class="obc obl" id="obLg"><b>ログイン</b><small>LINE・メールアドレスでログインする</small></button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>');
   $('obU').onclick=lgUser;$('obV').onclick=lgBiz;$('obLg').onclick=function(){showLogin('login');};}
 function lgBiz(){lgPage('仕事を受けたい','<p style="font-size:14px;line-height:1.8">業者の登録は、テスト版ではまだ準備中です。<br>いまは「依頼したい」で登録すると、上の「モード」から<b>Proモード</b>に切り替えて、業者の画面を試せます。</p><button type="button" class="big" id="bzU">依頼したいで登録する</button>',lgStart);$('bzU').onclick=lgUser;}
 function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><b>'+(i+1)+'.</b> '+esc(x)+'</p>';}).join('')+'</div>';}
