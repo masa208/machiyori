@@ -237,6 +237,20 @@ h2{font-size:17px;margin:0 0 10px}
 .pmc input{width:auto!important;margin:0!important;padding:0!important}
 .arp{background:#fff;border-radius:10px;padding:8px;border:1px solid #E3E6E2}.arg{border-top:1px solid #EEF0EE;padding:6px 2px}.arg summary{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;list-style:none}.arg summary::-webkit-details-marker{display:none}.arn{margin-left:auto;font-size:11.5px;color:#6E7D75}.argall{margin:6px 0 4px!important;font-size:12px!important}.rgb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.rgbtn{font:inherit;font-size:13px;font-weight:700;border:1.5px solid #2F6B45;color:#2F6B45;background:#fff;border-radius:18px;padding:6px 12px;cursor:pointer}.rgbtn.on{background:#2F6B45;color:#fff}.rgbtn.part{background:#E7F1EA}
 .rgmap{display:block;width:62%;max-width:220px;margin:4px auto 0}.rgp{fill:#2F6B45;fill-opacity:0;stroke:#2F6B45;stroke-width:1.5;cursor:pointer;transition:fill-opacity .2s}.rgt{font-size:12px;font-weight:700;fill:#23302A;pointer-events:none}.rgn{font-size:10px;font-weight:400;fill:#23302A}.rgnote{font-size:10.5px;color:#6E7D75;text-align:center;margin:2px 0 6px}
+/* はじめての人の入口 */
+.lgbk{position:absolute;left:12px;top:12px;border:0;background:none;font:inherit;font-size:14px;color:#4B5A52;cursor:pointer;padding:6px}
+.obh{text-align:center;margin:6px 0 12px}.obh b{display:block;font-size:19px}
+.obab{background:#FFF6F2;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.7;text-align:left}.obab b{display:block;font-size:13px;color:#E8613C}
+.obq{font-weight:700;font-size:15px;margin:16px 0 0;text-align:center}
+.obc{display:block;width:100%;text-align:left;font:inherit;background:#fff;border:1.5px solid #E3E6E2;border-radius:14px;padding:14px 16px;margin-top:10px;cursor:pointer}.obc b{display:block;font-size:16px;color:#E8613C}.obc small{display:block;font-size:12.5px;color:#4B5A52;margin-top:4px}
+.agr{display:flex;gap:8px;align-items:flex-start;font-size:14px;text-align:left;margin:4px 0 8px}.agr input{margin-top:3px}
+.tosd{text-align:left;font-size:13px;border-top:1px solid #EEF0EE;padding:6px 0}.tosd summary{cursor:pointer;color:#E8613C;font-weight:700}
+.tosb{font-size:12.5px;line-height:1.7;max-height:220px;overflow:auto;background:#fff;border:1px solid #E3E6E2;border-radius:8px;padding:6px 10px;margin-top:6px}.tosb p{margin:4px 0}
+.btn-line:disabled,.ghost2:disabled{opacity:.45;cursor:default}
+.ghost2{display:block;width:100%;font:inherit;font-size:14px;background:#fff;border:1.5px solid #D5DAD6;border-radius:10px;padding:10px;margin-top:10px;cursor:pointer;color:#23302A}
+.mlcode{font-size:26px!important;letter-spacing:.45em;text-align:center;font-variant-numeric:tabular-nums}
+.mrow small{display:block;font-size:11.5px;color:#6E7D75;font-weight:400}
+.mset label.mrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box}.mset label.mrow input{width:22px;height:22px;flex:none}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -445,7 +459,34 @@ function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt
 /* ===== ログイン ===== */
 function logoutLocal(){TOKEN='';ME=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
 function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);}catch(e){}lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
+/* ===== はじめての人の入口（11/20） ===== */
+var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
+var U_PP=['取得する情報：呼ばれたい名前、市町村、依頼の内容と写真、チャット、（現地調査が決まったとき）お名前・住所・電話番号','使いみち：業者とつなぐ、やり取り、AIの相談、お知らせ、トラブルの防止','業者に伝わるもの：依頼の内容と市町村。お名前・住所・電話番号は現地調査の日が決まったときだけ','AIに送る前に、電話番号・住所などは「XX」に置き換えます','使っているサービス：Google、LINE、OpenAI、Stripe（日本国外を含む）','記録は依頼が終わってから5年保管し、そのあと消します','お問い合わせ：soft keys（softkeys33@gmail.com）'];
+var AGREED=false;
+function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type="button" class="lgbk" id="lgBk" aria-label="もどる">‹ もどる</button>':'')+'<h1>まち頼</h1>'+(sub?'<p class="lgs">'+sub+'</p>':'')+'<div class="lgbox">'+body+'</div>';if(back)$('lgBk').onclick=back;}
+function lgStart(){lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">どちらで登録しますか？</div>'+
+    '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button>'+
+    '<button type="button" class="lnk2" id="obLg">登録済みの方はこちら（ログイン）</button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>');
+  $('obU').onclick=lgUser;$('obV').onclick=lgBiz;$('obLg').onclick=function(){showLogin('login');};}
+function lgBiz(){lgPage('仕事を受けたい','<p style="font-size:14px;line-height:1.8">業者の登録は、テスト版ではまだ準備中です。<br>いまは「依頼したい」で登録すると、上の「モード」から<b>Proモード</b>に切り替えて、業者の画面を試せます。</p><button type="button" class="big" id="bzU">依頼したいで登録する</button>',lgStart);$('bzU').onclick=lgUser;}
+function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><b>'+(i+1)+'.</b> '+esc(x)+'</p>';}).join('')+'</div>';}
+function lgUser(){lgPage('依頼したい','<div class="obh"><b>ログインの方法を選んでください</b></div><label class="agr obag"><input type="checkbox" id="obAg"'+(AGREED?' checked':'')+'><span>利用規約とプライバシーポリシーに同意する</span></label>'+
+    '<details class="tosd"><summary>利用規約（現時点の案）</summary>'+docList(U_TOS)+'</details><details class="tosd"><summary>プライバシーポリシー（現時点の案）</summary>'+docList(U_PP)+'</details><p class="note2" style="margin-top:4px">内容は今後変わることがあります。変わるときはアプリでお知らせします。</p>'+
+    '<button type="button" class="btn-line" id="lgLine"'+(AGREED?'':' disabled')+'>LINEでログイン <small>おすすめ</small></button><button type="button" class="ghost2" id="obM"'+(AGREED?'':' disabled')+'>メールアドレスで登録</button><p class="note2">一度ログインすると、次からはそのまま使えます。</p>',lgStart);
+  var ag=$('obAg');ag.onchange=function(){AGREED=ag.checked;$('lgLine').disabled=$('obM').disabled=!AGREED;};
+  $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}lineLogin();};$('obM').onclick=lgMail;}
+function lgMail(em){lgPage('メールアドレスで登録','<form class="fm" id="mlF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email" value="'+esc(em||'')+'"><label for="lgP">パスワード（8文字以上）</label><input id="lgP" type="password" autocomplete="new-password"><p class="err" id="lgErr" hidden></p><button class="big" type="submit">確認の番号を送る</button></form>',lgUser);
+  $('mlF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big'),m=$('lgE').value.trim(),pw=$('lgP').value;bt.disabled=true;
+    api('mailCodeSend',{email:m,password:pw}).then(function(){lgCode(m,pw);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};}
+function lgCode(m,pw){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
+  lgPage('メールの確認','<p style="font-size:14px"><b>'+esc(m)+'</b> に、6けたの番号をお送りしました。メールを開いて、番号を入れてください。</p><form class="fm" id="cdF" novalidate><input id="cdI" class="mlcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------" aria-label="6けたの番号"><p class="err" id="cdE" hidden></p><button class="big" type="submit">確認して登録する</button></form><p class="note2" id="cdX"></p><p class="note2">届かないときは、迷惑メールのフォルダも見てください。</p><button type="button" class="ghost2" id="cdR" disabled>番号を送り直す</button>',function(){clearInterval(tm);lgMail(m);});
+  var tick=function(){if(!$('cdX'))return clearInterval(tm);var l=Math.max(0,Math.ceil((exp-Date.now())/1000)),r=Math.max(0,Math.ceil((next-Date.now())/1000));$('cdX').textContent=l?'番号の有効期限：あと'+Math.floor(l/60)+'分'+('0'+l%60).slice(-2)+'秒':'番号の有効期限が切れました。送り直してください';$('cdR').disabled=r>0;$('cdR').textContent=r?'番号を送り直す（'+r+'秒）':'番号を送り直す';};tm=setInterval(tick,1000);tick();
+  $('cdI').oninput=function(){this.value=this.value.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/\D/g,'').slice(0,6);};
+  $('cdF').onsubmit=function(e){e.preventDefault();var er=$('cdE'),c=$('cdI').value;er.hidden=true;if(c.length!==6){er.textContent='6けたの数字を入れてください';er.hidden=false;return;}var bt=this.querySelector('.big');bt.disabled=true;
+    api('registerEmail',{email:m,password:pw,code:c,agreed:1}).then(function(j){clearInterval(tm);saveLogin(j);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){if($('cdF'))bt.disabled=false;});};
+  $('cdR').onclick=function(){if(Date.now()<next)return;api('mailCodeSend',{email:m,password:pw}).then(function(){exp=Date.now()+600e3;next=Date.now()+60e3;$('cdI').value='';$('cdE').hidden=true;toast('番号を送り直しました');tick();}).catch(fail);};}
 function showLogin(mode){
+  if(!mode){lgStart();return;}
   lg.hidden=false;mode=mode||'login';
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
     '<div class="lgbox"><button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
@@ -456,8 +497,9 @@ function showLogin(mode){
     '<p class="err" id="lgErr" hidden></p><button class="big" type="submit">'+(mode==='new'?'登録して始める':'ログイン')+'</button></form>'+
     (mode==='login'?'<button type="button" class="lnk2" id="lgFg">パスワードを忘れた方</button>':'')+'</div>'+
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
+  lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk">‹ もどる</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
-  each('.tabs2 button',lg,function(b){b.onclick=function(){showLogin(b.dataset.m);};});
+  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgUser();else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
     api(mode==='new'?'registerEmail':'loginEmail',{email:$('lgE').value,password:$('lgP').value}).then(saveLogin).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};
   var fg=$('lgFg');if(fg)fg.onclick=forgot;
@@ -481,7 +523,8 @@ function lineLogin(){
 }
 function finishLine(){
   var idt=null;try{idt=liff.getIDToken();}catch(e){}
-  return api('loginLine',idt?{idToken:idt}:{accessToken:liff.getAccessToken()}).then(saveLogin).catch(function(e){fail(e);showLogin();});
+  var ag=0;try{ag=localStorage.getItem('mchy_agree')?1:0;localStorage.removeItem('mchy_agree');}catch(e){}
+  return api('loginLine',idt?{idToken:idt,agreed:ag}:{accessToken:liff.getAccessToken(),agreed:ag}).then(saveLogin).catch(function(e){fail(e);showLogin();});
 }
 
 /* ===== 起動 ===== */
@@ -494,15 +537,22 @@ function boot(){
 }
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
-  if(!ME.callName||!ME.area){welcome();}
+  if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();
+}
+function notifSheet(){
+  openSheet('<h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
+    '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>');
+  $('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
 function welcome(){
   openSheet('<h3>はじめまして</h3><p class="sp s2">最初に2つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
     '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc((ME.callName||ME.name||'').slice(0,8))+'" maxlength="8" placeholder="例：まさ">'+
-    '<label for="wcA">お住まいの市町村</label>'+areaSel('wcA',ME.area)+
+    '<p class="sp s2" style="font-size:12px;margin-top:-4px">8文字まで。アプリの中で、この名前で呼びかけます</p>'+
+    '<label for="wcA">お住まいの市町村</label><select id="wcA"><option value="">選んでください</option>'+NAGANO.map(function(g){return '<optgroup label="'+g[0]+'">'+g[1].map(function(a){return '<option'+(a===ME.area?' selected':'')+'>'+a+'</option>';}).join('')+'</optgroup>';}).join('')+'</select><p class="err" id="wcE" hidden></p>'+
     '<button class="big" type="submit">始める</button></form>');
-  $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim();if(!n){$('wcN').focus();return;}
+  $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim(),er=$('wcE'),bad=function(t,el){er.textContent=t;er.hidden=false;el.focus();};er.hidden=true;
+    if(!n)return bad('呼ばれたい名前を入れてください',$('wcN'));if(n.length>8)return bad('呼ばれたい名前は8文字までです',$('wcN'));if(/\d{4,}|@|https?:|www\./i.test(n.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);})))return bad('電話番号やURLは使えません',$('wcN'));if(!$('wcA').value)return bad('お住まいの市町村を選んでください',$('wcA'));
     api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;closeSheet();refresh();}).catch(fail);};
 }
 var AREAS=['松本市','塩尻市','安曇野市','大町市','東筑摩郡山形村','東筑摩郡朝日村','東筑摩郡筑北村','東筑摩郡麻績村','東筑摩郡生坂村','北安曇郡池田町','北安曇郡松川村','北安曇郡白馬村','木曽郡','そのほか'];
