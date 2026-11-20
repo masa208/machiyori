@@ -498,7 +498,7 @@ function afterLogin(){
   renderNav();refresh();startPoll();
 }
 function welcome(){
-  openSheet('<h3>はじめまして</h3><p class="sp s2">最初に3つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
+  openSheet('<h3>はじめまして</h3><p class="sp s2">最初に2つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
     '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc(ME.callName||ME.name||'')+'" maxlength="20" placeholder="例：まさ">'+
     '<label for="wcA">お住まいの市町村</label>'+areaSel('wcA',ME.area)+
     '<button class="big" type="submit">始める</button></form>');
