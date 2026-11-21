@@ -435,7 +435,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var APPVER='11/21-17:00';var TK='machiyori_token';
+var APPVER='11/21-17:20';var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
@@ -637,16 +637,22 @@ var CATS=[['🚰','水のトラブル'],['🏠','外装工事'],['🛠️','リ�
 /* ===== 天気（Open-Meteo・キー不要）。毎日0:00に新しくする ===== */
 var WXA=[['松本',36.238,137.972],['札幌',43.064,141.347],['仙台',38.268,140.872],['東京',35.681,139.767],['名古屋',35.181,136.906],['大阪',34.694,135.502],['福岡',33.590,130.402]];
 var WX=null,WXT=null;
-function wxDay(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function wxDay(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+'_'+Math.floor(d.getHours()/3);}
+function pct(v){return v==null||v===''?'-':v+'%';}
+/* 降水確率は気象庁の予報で置きかえる（取れなければ「-」） */
+function applyPops(W,J){W.areas.forEach(function(ar,ai){var P=J&&J.areas&&J.areas[ai];if(!ar.daily)return;
+  ar.daily.precipitation_probability_max=ar.daily.time.map(function(d){return P&&P.day[d]!=null?P.day[d]:null;});
+  var bl=(P&&P.blocks||[]).map(function(b){return [new Date(b[0]).getTime(),b[1]];});
+  if(ar.hourly)ar.hourly.precipitation_probability=ar.hourly.time.map(function(t){var x=new Date(t).getTime();for(var i=0;i<bl.length;i++)if(x>=bl[i][0]&&x<bl[i][0]+216e5)return bl[i][1];return null;});});W.jma=1;}
 function loadWx(force){
   var key='mwx_'+wxDay();
   if(!force&&WX&&WX._k===key)return;
-  try{var c=JSON.parse(localStorage.getItem('mwx')||'null');if(!force&&c&&c._k===key){WX=c;wxPaint();wxTimer();return;}}catch(e){}
+  try{var c=JSON.parse(localStorage.getItem('mwx')||'null');if(!force&&c&&c._k===key&&c.jma){WX=c;wxPaint();wxTimer();return;}}catch(e){}
   var u='https://api.open-meteo.com/v1/forecast?latitude='+WXA.map(function(a){return a[1];}).join(',')+'&longitude='+WXA.map(function(a){return a[2];}).join(',')+
     '&hourly=weather_code,temperature_2m,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=7';
-  fetch(u).then(function(r){return r.json();}).then(function(j){var arr=Array.isArray(j)?j:[j];WX={_k:key,at:Date.now(),areas:arr};try{localStorage.setItem('mwx',JSON.stringify(WX));}catch(e){}wxPaint();wxTimer();}).catch(function(){});
+  Promise.all([fetch(u).then(function(r){return r.json();}),api('weather').catch(function(){return null;})]).then(function(x){var j=x[0];var arr=Array.isArray(j)?j:[j];WX={_k:key,at:Date.now(),areas:arr};applyPops(WX,x[1]);try{localStorage.setItem('mwx',JSON.stringify(WX));}catch(e){}wxPaint();wxTimer();}).catch(function(){});
 }
-function wxTimer(){clearTimeout(WXT);var n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,5);WXT=setTimeout(function(){loadWx(true);},m-n);}
+function wxTimer(){clearTimeout(WXT);var n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate(),(Math.floor(n.getHours()/3)+1)*3,0,5);WXT=setTimeout(function(){loadWx(true);},m-n);}
 function wxPaint(){var w=$('uhWx');if(w){w.outerHTML=wxHTML();bindWx();}var p=$('wxPane');if(p)p.innerHTML=wxPaneBody();}
 /* 天気の種類（気象庁ふうの言い方） */
 function wxCat(c){if(c==null)return 0;if(c<=2)return 1;if(c===3||c===45||c===48)return 2;if(c>=95)return 5;if((c>=71&&c<=77)||c===85||c===86)return 4;return 3;}
@@ -659,7 +665,7 @@ function dLabel(s,i){var d=new Date(s+'T00:00'),W='日月火水木金土';return
 /* ホームの小さい天気 */
 function wxHTML(){var d=new Date(),W='日月火水木金土',a=WX&&WX.areas&&WX.areas[0],ok=a&&a.daily;
   var p=ok?halfDay(a,0):null;
-  return '<button type="button" class="uh-wx" id="uhWx" aria-label="松本の天気。押すと詳しい天気予報"><div class="uh-wd"><span>'+(d.getMonth()+1)+'/'+d.getDate()+'（'+W[d.getDay()]+'）</span><span>松本</span></div><div class="uh-wm">'+(ok?wxIcons(p,'sm'):'')+'<span class="uh-wt">'+(ok?Math.round(a.daily.temperature_2m_max[0])+'°<small> / '+Math.round(a.daily.temperature_2m_min[0])+'°</small>':'…')+'</span></div><div class="uh-wr"><span>降水 今日</span><b>'+(ok?a.daily.precipitation_probability_max[0]+'%':'-')+'</b><span>降水 明日</span><b>'+(ok?a.daily.precipitation_probability_max[1]+'%':'-')+'</b></div><span class="uh-wmore">くわしく ›</span></button>';}
+  return '<button type="button" class="uh-wx" id="uhWx" aria-label="松本の天気。押すと詳しい天気予報"><div class="uh-wd"><span>'+(d.getMonth()+1)+'/'+d.getDate()+'（'+W[d.getDay()]+'）</span><span>松本</span></div><div class="uh-wm">'+(ok?wxIcons(p,'sm'):'')+'<span class="uh-wt">'+(ok?Math.round(a.daily.temperature_2m_max[0])+'°<small> / '+Math.round(a.daily.temperature_2m_min[0])+'°</small>':'…')+'</span></div><div class="uh-wr"><span>降水 今日</span><b>'+(ok?pct(a.daily.precipitation_probability_max[0]):'-')+'</b><span>降水 明日</span><b>'+(ok?pct(a.daily.precipitation_probability_max[1]):'-')+'</b></div><span class="uh-wmore">くわしく ›</span></button>';}
 function bindWx(){var w=$('uhWx');if(w)w.onclick=openWx;}
 /* まちこの一言（天気予報士ふう） */
 function wxTalk(){var a=WX.areas[0],d=a.daily,p=halfDay(a,0),mx=Math.round(d.temperature_2m_max[0]),mn=Math.round(d.temperature_2m_min[0]),rain=d.precipitation_probability_max[0],rain1=d.precipitation_probability_max[1],mn1=Math.round(d.temperature_2m_min[1]);
@@ -677,15 +683,15 @@ function wxPaneBody(){if(!WX||!WX.areas)return '<div class="load">天気を読�
   var a=WX.areas[0],h=a.hourly,now=new Date(),i0=0;
   for(var i=0;i<h.time.length;i++){if(new Date(h.time[i])>=now){i0=i;break;}}
   i0=i0-(new Date(h.time[i0]).getHours()%3);if(i0<0)i0=0;
-  var hrs=[];for(var k=i0;k<Math.min(h.time.length,i0+24);k+=3){var t=new Date(h.time[k]);hrs.push('<div class="wxh"><span>'+(t.getDate()!==now.getDate()?'<em>'+(t.getMonth()+1)+'/'+t.getDate()+'</em>':'')+t.getHours()+'時</span><b>'+WXE[wxCat(h.weather_code[k])]+'</b><strong>'+Math.round(h.temperature_2m[k])+'°</strong><small>'+(h.precipitation_probability[k]==null?'-':h.precipitation_probability[k])+'%</small></div>');}
+  var hrs=[];for(var k=i0;k<Math.min(h.time.length,i0+24);k+=3){var t=new Date(h.time[k]);hrs.push('<div class="wxh"><span>'+(t.getDate()!==now.getDate()?'<em>'+(t.getMonth()+1)+'/'+t.getDate()+'</em>':'')+t.getHours()+'時</span><b>'+WXE[wxCat(h.weather_code[k])]+'</b><strong>'+Math.round(h.temperature_2m[k])+'°</strong><small>'+pct(h.precipitation_probability[k])+'</small></div>');}
   var days=a.daily.time;
   var table='<div class="wxt"><table><thead><tr><th></th>'+days.map(function(s,i){return '<th>'+dLabel(s,i)+'</th>';}).join('')+'</tr></thead><tbody>'+
-    WX.areas.map(function(ar,ai){return '<tr'+(ai===0?' class="me"':'')+'><th>'+WXA[ai][0]+'</th>'+ar.daily.time.map(function(s,di){var p=halfDay(ar,di);return '<td>'+wxIcons(p)+'<span class="wxw">'+wxWord(p)+'</span><span class="wxtm"><b>'+Math.round(ar.daily.temperature_2m_max[di])+'</b>/'+Math.round(ar.daily.temperature_2m_min[di])+'</span><span class="wxpr">'+ar.daily.precipitation_probability_max[di]+'%</span></td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>';
+    WX.areas.map(function(ar,ai){return '<tr'+(ai===0?' class="me"':'')+'><th>'+WXA[ai][0]+'</th>'+ar.daily.time.map(function(s,di){var p=halfDay(ar,di);return '<td>'+wxIcons(p)+'<span class="wxw">'+wxWord(p)+'</span><span class="wxtm"><b>'+Math.round(ar.daily.temperature_2m_max[di])+'</b>/'+Math.round(ar.daily.temperature_2m_min[di])+'</span><span class="wxpr">'+pct(ar.daily.precipitation_probability_max[di])+'</span></td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>';
   var upd=new Date(WX.at);
   return '<div class="wxtalk">'+charaImg('wxav')+'<div class="wxbub"><b>まちこの天気予報</b>'+esc(wxTalk())+'</div></div>'+
     '<div class="sec">松本　3時間ごとの天気</div><div class="wxhs">'+hrs.join('')+'</div>'+
     '<div class="sec">1週間の天気 <small>左右にスクロールできます</small></div>'+table+
-    '<p class="wxnote">最高/最低気温（℃）と降水確率。毎日0時に新しくなります（最終更新 '+(upd.getMonth()+1)+'/'+upd.getDate()+' '+upd.getHours()+':'+('0'+upd.getMinutes()).slice(-2)+'）。予報：Open-Meteo</p>';}
+    '<p class="wxnote">最高/最低気温（℃）と降水確率。3時間ごとに新しくなります（最終更新 '+(upd.getMonth()+1)+'/'+upd.getDate()+' '+upd.getHours()+':'+('0'+upd.getMinutes()).slice(-2)+'）。予報：Open-Meteo、降水確率：気象庁</p>';}
 function openWx(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>天気予報</b><span>松本と全国の主要エリア</span></div></div><div class="arw" id="wxPane">'+wxPaneBody()+'</div>');if(!WX)loadWx();}
 function renderHome(){
   var ac=activeCases(),op=opening(),keep=scr.querySelector('.uh')?scr.scrollTop:0;
