@@ -512,7 +512,7 @@ function showLogin(mode){
     '<p class="err" id="lgErr" hidden></p><button class="big" type="submit">'+(mode==='new'?'登録して始める':'ログイン')+'</button></form>'+
     (mode==='login'?'<p class="note2" style="text-align:center">パスワードを忘れた場合は<button type="button" class="lnk2" id="lgFg" style="display:inline;padding:0 2px">こちら</button></p>':'')+'</div>'+
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
-  lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
+  lg.insertAdjacentHTML('beforeend','<p class="note2" style="text-align:center;opacity:.6">版 '+APPVER+'</p>');lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
   each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgStart();else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
