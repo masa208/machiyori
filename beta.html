@@ -427,7 +427,7 @@ body{background:#F3F4F1;margin:0}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=13;
+var APPVER_N=14;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -443,7 +443,7 @@ var LIFF_ID='2011196111-mkgGx8sO',LIFF_URL='https://liff.line.me/'+LIFF_ID;
 function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
-function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
+function openInLine(){return false&&isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
 var APPVER=APPVER_N;var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
@@ -544,6 +544,7 @@ function resetForm(rt){
 var LIFFP=null;
 function liffReady(){if(!LIFFP)LIFFP=new Promise(function(ok,ng){if(window.liff)return ok();var sc=document.createElement('script');sc.src='https://static.line-scdn.net/liff/edge/2/sdk.js';sc.onload=function(){ok();};sc.onerror=function(){LIFFP=null;ng(new Error('LINEの読み込みに失敗しました'));};document.head.appendChild(sc);}).then(function(){return liff.init({liffId:LIFF_ID});});return LIFFP;}
 function lineLogin(){
+  if(isPhone()&&!inLineApp()){location.href=LIFF_URL;return;} // スマホのブラウザからはLINEアプリで開く（メール・パスワード入力を避ける）
   liffReady().then(function(){
     if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname});return;}
     finishLine();
@@ -935,7 +936,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     if(k==='qa')inquiry();
     if(k==='rs')testReset();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
-    if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');logoutLocal();}).catch(fail);};}
+    if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');try{localStorage.removeItem('mchy_had');}catch(e){}logoutLocal();}).catch(fail);};}
   };});}
 function prof(d){api('saveProfile',d).then(function(j){ME=j.user;saveBoot();closeSheet();draw();}).catch(fail);}
 
