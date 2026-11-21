@@ -472,7 +472,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=18;
+var APPVER_N=19;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -555,7 +555,7 @@ function lgCode(m,pw,tc){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
   var tick=function(){if(!$('cdX'))return clearInterval(tm);var l=Math.max(0,Math.ceil((exp-Date.now())/1000)),r=Math.max(0,Math.ceil((next-Date.now())/1000));$('cdX').textContent=l?'番号の有効期限：あと'+Math.floor(l/60)+'分'+('0'+l%60).slice(-2)+'秒':'番号の有効期限が切れました。送り直してください';$('cdR').disabled=r>0;$('cdR').textContent=r?'番号を送り直す（'+r+'秒）':'番号を送り直す';};tm=setInterval(tick,1000);tick();
   $('cdI').oninput=function(){this.value=this.value.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/\D/g,'').slice(0,6);};
   $('cdF').onsubmit=function(e){e.preventDefault();var er=$('cdE'),c=$('cdI').value;er.hidden=true;if(c.length!==6){er.textContent='6けたの数字を入れてください';er.hidden=false;return;}var bt=this.querySelector('.big');bt.disabled=true;
-    api('registerEmail',{email:m,password:pw,code:c,agreed:1}).then(function(j){clearInterval(tm);saveLogin(j);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){if($('cdF'))bt.disabled=false;});};
+    api('registerEmail',{email:m,password:pw,code:c,agreed:1,biz:bizFlag()}).then(function(j){clearInterval(tm);saveLogin(j);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){if($('cdF'))bt.disabled=false;});};
   $('cdR').onclick=function(){if(Date.now()<next)return;api('mailCodeSend',{email:m,password:pw}).then(function(j){if(j.testCode)$('cdT').innerHTML='テスト版だけの表示：メールが届かないときは、この番号でも進めます → <b>'+j.testCode+'</b>';exp=Date.now()+600e3;next=Date.now()+60e3;$('cdI').value='';$('cdE').hidden=true;toast('番号を送り直しました');tick();}).catch(fail);};}
 function showLogin(mode){
   if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){START_BK=null;lgStart();return;}mode='login';}
@@ -602,8 +602,8 @@ function finishLine(){
   var ag=0;try{ag=localStorage.getItem('mchy_agree')?1:0;localStorage.removeItem('mchy_agree');}catch(e){}
   try{var d=liff.getDecodedIDToken();if(!d||!d.exp||d.exp*1000<Date.now()+60e3)idt=null;}catch(e){idt=null;}
   var at=null;try{at=liff.getAccessToken();}catch(e){}
-  var viaAT=function(){return api('loginLine',{accessToken:at,agreed:ag});};
-  return (idt?api('loginLine',{idToken:idt,agreed:ag}).catch(function(e){if(at)return viaAT();throw e;}):viaAT()).then(saveLogin).catch(function(e){
+  var viaAT=function(){return api('loginLine',{accessToken:at,agreed:ag,biz:bizFlag()});};
+  return (idt?api('loginLine',{idToken:idt,agreed:ag,biz:bizFlag()}).catch(function(e){if(at)return viaAT();throw e;}):viaAT()).then(saveLogin).catch(function(e){
     var k='mchy_lretry';var r=null;try{r=sessionStorage.getItem(k);}catch(x){}
     if(!r){try{sessionStorage.setItem(k,'1');if(ag)localStorage.setItem('mchy_agree','1');}catch(x){}try{liff.logout();}catch(x){}liff.login({redirectUri:location.origin+location.pathname});return;}
     try{sessionStorage.removeItem(k);}catch(x){}fail(e);showLogin();});
@@ -626,6 +626,7 @@ function boot(){
 /* 前回の画面をスマホに覚えておき、次に開いたときすぐ出す（中身は裏で新しくする） */
 var HOME_AT=0;
 function saveBoot(){try{localStorage.setItem('mchy_boot',JSON.stringify({t:TOKEN,ME:ME,HOME:HOME}));}catch(e){}}
+function bizFlag(){try{return localStorage.getItem('mchy_biz')?1:0;}catch(e){return 0;}}
 function bizWanted(){try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
@@ -1305,7 +1306,8 @@ var SU_ERR=[[/電話番号/,['u_tel','u_mtel']],[/メールアドレス/,['u_mai
 function suKey(){return 'mchy_su_'+(ME&&ME.id||'');}
 function hasContact(s){s=String(s||'');if(/[0-9０-９][0-9０-９\-ー－ ]{8,}[0-9０-９]/.test(s))return '電話番号';if(/@|＠/.test(s))return 'メールアドレス';if(/https?:|www\.|\.(com|jp|net)\b/i.test(s))return 'URL';return '';}
 function z2h(s){return String(s||'').replace(/[０-９Ａ-Ｚａ-ｚ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);});}
-function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSheet();var sv=null;try{sv=JSON.parse(localStorage.getItem(suKey())||'null');}catch(e){}
+function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSheet();
+  if(ME&&ME.role!=='vendor'){try{localStorage.removeItem(suKey());}catch(e){}openSheet('<h3>業者の登録はできません</h3><p class="sp s2">このアカウントは「依頼したい」で登録されています。業者として登録するときは、ログアウトしてから「はじめての方」→「仕事を受けたい」へ進み、別のLINEアカウントかメールアドレスで登録してください。</p><button type="button" class="big" id="nvOk">わかりました</button>');$('nvOk').onclick=function(){closeSheet();refresh();};return;}var sv=null;try{sv=JSON.parse(localStorage.getItem(suKey())||'null');}catch(e){}
   SU=sv&&sv.d?{i:sv.i||0,d:sv.d,resumed:sv.i>0}:{i:0,d:{svc:[],area:[],days:[1,2,3,4,5,6],from:'8:00',to:'18:00',exp:10,emp:3,agree:[],tos:false,ins:'',dmg:'',docs:{}}};
   if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
 function suStore(){try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
