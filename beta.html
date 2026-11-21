@@ -451,6 +451,14 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .sudone{text-align:center}
 .sudi{width:64px;height:64px;border-radius:50%;background:#2F6B45;color:#fff;font-size:34px;display:flex;align-items:center;justify-content:center;margin:20px auto 8px}
 .sudone p{font-size:13.5px;line-height:1.7;text-align:left}
+.su{font-size:15px;color:#23302A}.su .suh{font-size:20px}.su .note2{font-size:14.5px;color:#3E4B44;line-height:1.7}.su .pc-n{font-size:13px;color:#4B5A52;line-height:1.6}
+.su .pf label,.su .lab{font-size:14.5px;font-weight:700;color:#23302A;margin-top:12px}.su .pf input,.su .pf select,.su input.mlcode{font-size:16px;padding:10px}.su .rq,.su .op{font-size:11px}
+.su .agr{font-size:15px}.su .agr span{line-height:1.6}.su .pmc{font-size:14px!important;padding:7px 12px!important}.su .tosfull{font-size:14px}.su .pmg b{font-size:15px}.su .pmg small{font-size:13px}
+.sustep span{font-size:15px}.sustep small{font-size:13.5px;color:#2F6B45;font-weight:700}.sud{width:44px;height:44px;font-size:16px}.surg b{font-size:16px}.sutm select{font-size:16px}
+.svgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.svb{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:13px;font-weight:700;line-height:1.35;color:#23302A;background:#fff;border:2px solid #E3E6E2;border-radius:14px;padding:12px 4px 10px;min-height:104px;cursor:pointer;text-align:center}
+.svb i{font-style:normal;font-size:32px;line-height:1}.svb.on{border-color:#2F6B45;background:#EEF6F0}.svb em{position:absolute;top:5px;right:5px;font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:#2F6B45;border-radius:10px;padding:1px 7px}.svb small{font-size:11px;font-weight:400;color:#6E7D75}
+.svsh h3{font-size:19px;margin:0 0 4px}.svsh #svOk{position:sticky;bottom:0;box-shadow:0 -6px 14px rgba(255,255,255,.95)}.svsh .svall{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;background:#EEF6F0;border-radius:10px;padding:10px 12px;margin:8px 0}.svsh .svall input{width:20px;height:20px}
+.svsh .svgl{font-size:13.5px;color:#23302A;margin:12px 2px 4px}.svsh .svit{display:flex;align-items:center;gap:10px;font-size:15px;border-bottom:1px solid #EEF0EE;padding:11px 4px}.svsh .svit input{width:20px;height:20px;flex:none;accent-color:#2F6B45}
 .njbar{z-index:2}.su .agr{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
 </style>
 </head>
@@ -472,7 +480,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=23;
+var APPVER_N=24;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1331,6 +1339,18 @@ function suMark(msg){each('.ferr',pane,function(e){e.remove();});each('.bad',pan
   if(/必須|入れてください|入力/.test(msg))each('label',pane,function(l){var rq=l.querySelector('em.rq'),i=l.querySelector('input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select');if(rq&&i&&!i.value.trim())put(i,'入力してください');});
   SU_ERR.forEach(function(e){if(e[0].test(msg))e[1].forEach(function(id){var el=$(id);if(el&&el.value.trim())put(el,msg);});});return hit[0]||null;}
 function suDocRow(kind,label,req,note,multi){var d=SU.d,have=d.docs[kind]||[];return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input type="file" data-doc="'+kind+'" accept="image/*,.pdf"'+(multi?' multiple':'')+'></label>'+(have.length?'<p class="pc-n" style="color:#2F6B45">✓ 提出済み：'+have.map(function(x){return esc(x.name);}).join('、')+'（選び直すと差し替えます）</p>':'')+(note?'<p class="pc-n">'+note+'</p>':'');}
+var SV_ICON={'水のトラブル':'🚰','外装工事':'🏠','リフォーム':'🔨','機器設置・修理':'🔧','解体工事':'🏗️','外構工事・エクステリア':'🧱','庭の手入れ':'🌳','ハウスクリーニング':'🧽','害虫駆除・害獣駆除':'🐜','便利屋・片付け':'📦','鍵・防犯':'🔑','図面・役所の手続き':'📐','耐震診断・住宅診断':'🔍','税務・法務・労務の相談':'⚖️','ドローン撮影・測量':'🚁'};
+function svItems(c){return [].concat.apply([],c[1].map(function(g){return g[1];}));}
+function svGrid(){var on=SU.d.svc;return SVC.map(function(c,ci){var n=svItems(c).filter(function(x){return on.indexOf(x)>=0;}).length;return '<button type="button" class="svb'+(n?' on':'')+'" data-ci="'+ci+'" aria-pressed="'+(n>0)+'">'+(n?'<em>✓ '+n+'</em>':'')+'<i aria-hidden="true">'+(SV_ICON[c[0]]||'🛠️')+'</i>'+c[0]+(svLocked(c[0],'')?' 🔒':'')+'<small>'+svItems(c).length+'種類</small></button>';}).join('');}
+function svBindGrid(){each('.svb',pane,function(b){b.onclick=function(){svSheet(+b.dataset.ci);};});}
+function svSheet(ci){var c=SVC[ci],on=SU.d.svc,lk=svLocked(c[0],''),all=svItems(c);
+  openSheet('<div class="svsh"><h3>'+(SV_ICON[c[0]]||'')+' '+c[0]+'</h3>'+(lk?'<div class="svlk">🔒 この分類は資格・許可の証明書が必要です（Step 3で提出）</div>':'<p class="pc-n">できる作業にチェックを入れてください。</p>')+
+    '<label class="svall"><input type="checkbox" id="svAll"'+(all.every(function(x){return on.indexOf(x)>=0;})?' checked':'')+'>すべて選ぶ（'+all.length+'種類）</label>'+
+    c[1].map(function(g){var gl=lk||svLocked(c[0],g[0]);return (g[0]?'<div class="svgl">'+g[0]+(gl&&!lk?' 🔒':'')+'</div>':'')+g[1].map(function(x){return '<label class="svit"><input type="checkbox" class="svx" value="'+x+'"'+(on.indexOf(x)>=0?' checked':'')+'>'+x+(gl?' 🔒':'')+'</label>';}).join('');}).join('')+
+    '<button type="button" class="big" id="svOk">決定</button></div>','tall');
+  var xs=sheet.querySelectorAll('.svx');$('svAll').onchange=function(){var v=this.checked;Array.prototype.forEach.call(xs,function(x){x.checked=v;});};
+  Array.prototype.forEach.call(xs,function(x){x.onchange=function(){$('svAll').checked=Array.prototype.every.call(xs,function(y){return y.checked;});};});
+  $('svOk').onclick=function(){var keep=on.filter(function(x){return all.indexOf(x)<0;}),pick=Array.prototype.filter.call(xs,function(x){return x.checked;}).map(function(x){return x.value;});SU.d.svc=keep.concat(pick);suStore();closeSheet();$('svGrid').innerHTML=svGrid();svBindGrid();$('svCnt').textContent='選んでいる作業：'+SU.d.svc.length+'件';};}
 function suLocks(){return SU.d.svc.filter(function(x){return SVC.some(function(c){return c[1].some(function(g){return g[1].indexOf(x)>=0&&svLocked(c[0],g[0]);});});});}
 function suBody(i){var d=SU.d;
   if(i===0)return '<p class="note2" style="margin-top:0">業者の登録は、会員の方のための入口です。会員台帳に登録されている、お名前と電話番号を入れてください。</p><form class="pf pf2" onsubmit="return false"><div class="su2">'+suFld('u_mln','姓',1,d.mln,'山田')+suFld('u_mfn','名',1,d.mfn,'太郎')+'</div>'+suFld('u_mtel','電話番号',1,d.mtel,'例）09012345678','tel')+'</form><p class="pc-n">会員以外の業者の方は、運営から届いた専用リンクから開いてください（準備中）。</p>';
@@ -1342,10 +1362,7 @@ function suBody(i){var d=SU.d;
     return '<p class="note2" style="margin-top:0"><b>'+esc(d.mail)+'</b> に、6けたの番号をお送りします。メールを開いて、番号を入れてください。</p><form class="pf pf2" onsubmit="return false"><input id="u_code" class="mlcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------"><button type="button" class="big" id="mlGo">確認する</button></form>'+
       '<p class="pc-n" id="mlExp"></p><p class="pc-n">メールが届かないときは、迷惑メールのフォルダも見てください。</p><div class="mlb"><button type="button" class="ghost" id="mlRe">番号を送り直す</button><button type="button" class="ghost" id="mlFix">メールアドレスを直す</button></div><p class="pc-n" id="mlTest" style="color:#8A6A00" hidden></p>';}
   if(i===3)return '<p class="note2" style="margin-top:0">下にスクロールすると全文を読めます（現時点の案です）。</p><div class="tosfull" tabindex="0"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="u_tos"'+(d.tos?' checked':'')+'><span>利用規約とプライバシーポリシーに同意する</span></label>';
-  if(i===4){var on=d.svc;return '<p class="note2" style="margin-top:0">できる作業をすべて選んでください。選んだ作業の分類（例：水のトラブル）の依頼が届きます。🔒は、Step 3で資格・許可の証明書を出すと選べます。</p><div class="kw kw0"><input type="search" id="svq" placeholder="サービスを探す（例：給湯器）"></div>'+
-    SVC.map(function(c,ci){var lk=svLocked(c[0],'');var n=0;c[1].forEach(function(g){g[1].forEach(function(x){if(on.indexOf(x)>=0)n++;});});
-      return '<details class="arg svg"><summary><b>'+c[0]+'</b><small class="arn" data-cn="'+ci+'">'+n+'件</small></summary>'+(lk?'<div class="svlk">🔒 この分類は資格・許可の証明書が必要です（Step 3で提出）</div>':'')+'<label class="pmc argall"><input type="checkbox" data-sc="'+ci+'">この分類をすべて選ぶ</label>'+
-        c[1].map(function(g){var gl=lk||svLocked(c[0],g[0]);return (g[0]?'<div class="svgl">'+g[0]+(gl&&!lk?' 🔒':'')+'</div>':'')+'<div class="pmchips">'+g[1].map(function(x){return '<label class="pmc"><input type="checkbox" class="svc" data-ci="'+ci+'" value="'+x+'"'+(on.indexOf(x)>=0?' checked':'')+'>'+x+(gl?' 🔒':'')+'</label>';}).join('')+'</div>';}).join('')+'</details>';}).join('')+'<p class="pc-n" id="svCnt"></p>';}
+  if(i===4)return '<p class="note2" style="margin-top:0">できる仕事の分類を押して、その中の作業を選んでください。分類はいくつでも選べます。</p><div class="svgrid" id="svGrid">'+svGrid()+'</div><p class="pc-n" id="svCnt" style="margin-top:10px">選んでいる作業：'+d.svc.length+'件</p><p class="pc-n">🔒の分類・作業は、Step 3で資格・許可の証明書を出すと選べます。</p>';
   if(i===5){var W='日月火水木金土',hrs=[];for(var h=5;h<=22;h++)hrs.push(h+':00');return '<div class="lab">仕事をする曜日 <em class="rq">必須</em></div><div class="sudays">'+W.split('').map(function(w,k){return '<button type="button" class="sud'+(d.days.indexOf(k)>=0?' on':'')+'" data-d="'+k+'" aria-pressed="'+(d.days.indexOf(k)>=0)+'">'+w+'</button>';}).join('')+'</div>'+
     '<div class="lab">仕事ができる時間 <em class="rq">必須</em></div><div class="su2 sutm"><select id="u_from">'+hrs.map(function(x){return '<option'+(x===d.from?' selected':'')+'>'+x+'</option>';}).join('')+'</select><span>〜</span><select id="u_to">'+hrs.map(function(x){return '<option'+(x===d.to?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div>'+
     '<div class="lab">経験年数 <em class="rq">必須</em></div><div class="surg"><input type="range" id="u_exp" min="1" max="50" value="'+d.exp+'"><b><span id="u_expv">'+d.exp+'</span> 年</b></div>'+
@@ -1380,10 +1397,7 @@ function suBind(i){var d=SU.d;
       api('vMailCheck',{email:d.mail,code:c}).then(function(){d.mailok=d.mail;toast('メールアドレスを確認しました');suDraw();}).catch(function(e){bt.disabled=false;suWarn(e.message);});};
     $('mlRe').onclick=function(){if(Date.now()<d.mnext)return;$('suW').hidden=true;$('u_code').value='';suMailStart();setTimeout(tick,300);};
     $('mlFix').onclick=function(){SU.i=1;suDraw();};}
-  if(i===4){var cs=pane.querySelectorAll('.svc'),upd=function(){var n=0;each('.svc',pane,function(c){if(c.checked)n++;});$('svCnt').textContent='選んでいる作業：'+n+'件';SVC.forEach(function(c,ci){var k=0;each('.svc[data-ci="'+ci+'"]',pane,function(x){if(x.checked)k++;});pane.querySelector('[data-cn="'+ci+'"]').textContent=k+'件';});};
-    Array.prototype.forEach.call(cs,function(c){c.onchange=upd;});
-    each('[data-sc]',pane,function(a){a.onchange=function(){each('.svc[data-ci="'+a.dataset.sc+'"]',pane,function(x){x.checked=a.checked;});upd();};});
-    $('svq').oninput=function(e){var q=e.target.value.trim();each('.svg',pane,function(dd){var hit=0;each('.pmc',dd,function(l){if(l.classList.contains('argall'))return;var m=!q||l.textContent.indexOf(q)>=0;l.style.display=m?'':'none';if(m&&q)hit++;});if(q){dd.open=hit>0;dd.style.display=hit?'':'none';}else dd.style.display='';});};upd();}
+  if(i===4)svBindGrid();
   if(i===5){each('.sud',pane,function(b){b.onclick=function(){b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));};});$('u_exp').oninput=function(){$('u_expv').textContent=this.value;};$('u_emp').oninput=function(){$('u_empv').textContent=this.value;};}
   if(i===7)bindArea(pane);
   if(i===8)each('[name=u_ins]',pane,function(r){r.onchange=function(){$('insD').hidden=r.value!=='入っている';};});
@@ -1395,7 +1409,7 @@ function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.v
     if(check){if(need(['u_nm','u_zip','u_ad','u_ln','u_fn','u_lk','u_fk','u_tel','u_mail']))return '必須の項目を入れてください';if(!d.pref||!d.city||d.city==='調べています…')return '都道府県と市区町村を入れてください';if(!/^0\d{9,10}$/.test(d.tel))return '電話番号を確かめてください';if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail))return 'メールアドレスを確かめてください';if(d.inv2&&!/^T\d{13}$/.test(d.inv2))return 'インボイスの登録番号は「T」と数字13けたで入れてください';if(!/^[ぁ-んー\s　]+$/.test(d.lk+d.fk))return 'ふりがなは、ひらがなで入れてください';}}
   if(i===2&&check&&d.mailok!==d.mail)return 'メールに届いた6けたの番号を入れて「確認する」を押してください';
   if(i===3){d.tos=$('u_tos').checked;if(check&&!d.tos)return '利用規約とプライバシーポリシーに同意してください';}
-  if(i===4){d.svc=Array.prototype.filter.call(pane.querySelectorAll('.svc'),function(c){return c.checked;}).map(function(c){return c.value;});if(check&&!d.svc.length)return '作業を1つ以上選んでください';}
+  if(i===4){if(check&&!d.svc.length)return '分類を押して、作業を1つ以上選んでください';}
   if(i===5){d.days=Array.prototype.filter.call(pane.querySelectorAll('.sud'),function(b){return b.classList.contains('on');}).map(function(b){return +b.dataset.d;});d.from=v('u_from');d.to=v('u_to');d.exp=+v('u_exp');d.emp=+v('u_emp');if(check&&!d.days.length)return '曜日を1つ以上選んでください';if(check&&parseInt(d.from)>=parseInt(d.to))return '終わりの時間を、始まりより後にしてください';}
   if(i===6){d.pn=v('u_pn');d.base=v('u_base');if(check){if(!d.pn)return '会社名・屋号を入れてください';var why=hasContact(d.pn);if(why)return '「会社名・屋号」に'+why+'があります。公開の欄には書けません';}}
   if(i===7){d.area=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(c){return c.checked;}).map(function(c){return c.value;});if(check&&!d.area.length)return '市町村を1つ以上選んでください';}
