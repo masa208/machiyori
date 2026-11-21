@@ -252,6 +252,7 @@ h2{font-size:17px;margin:0 0 10px}
 .mrow small{display:block;font-size:11.5px;color:#6E7D75;font-weight:400}
 .mset label.mrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box}.mset label.mrow input{width:22px;height:22px;flex:none}
 .obl b{color:#23302A}
+.tsc{color:#8A6A00!important;background:#FFF8E1;border-radius:6px;padding:6px 8px}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -478,14 +479,14 @@ function lgUser(){lgPage('依頼したい','<div class="obh"><b>ログインの�
   $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}lineLogin();};$('obM').onclick=lgMail;}
 function lgMail(em){lgPage('メールアドレスで登録','<form class="fm" id="mlF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email" value="'+esc(em||'')+'"><label for="lgP">パスワード（8文字以上）</label><input id="lgP" type="password" autocomplete="new-password"><p class="err" id="lgErr" hidden></p><button class="big" type="submit">確認の番号を送る</button></form>',lgUser);
   $('mlF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big'),m=$('lgE').value.trim(),pw=$('lgP').value;bt.disabled=true;
-    api('mailCodeSend',{email:m,password:pw}).then(function(){lgCode(m,pw);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};}
-function lgCode(m,pw){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
-  lgPage('メールの確認','<p style="font-size:14px"><b>'+esc(m)+'</b> に、6けたの番号をお送りしました。メールを開いて、番号を入れてください。</p><form class="fm" id="cdF" novalidate><input id="cdI" class="mlcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------" aria-label="6けたの番号"><p class="err" id="cdE" hidden></p><button class="big" type="submit">確認して登録する</button></form><p class="note2" id="cdX"></p><p class="note2">届かないときは、迷惑メールのフォルダも見てください。</p><button type="button" class="ghost2" id="cdR" disabled>番号を送り直す</button>',function(){clearInterval(tm);lgMail(m);});
+    api('mailCodeSend',{email:m,password:pw}).then(function(j){lgCode(m,pw,j.testCode);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};}
+function lgCode(m,pw,tc){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
+  lgPage('メールの確認','<p style="font-size:14px"><b>'+esc(m)+'</b> に、6けたの番号をお送りしました。メールを開いて、番号を入れてください。</p><form class="fm" id="cdF" novalidate><input id="cdI" class="mlcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------" aria-label="6けたの番号"><p class="err" id="cdE" hidden></p><button class="big" type="submit">確認して登録する</button></form><p class="note2" id="cdX"></p><p class="note2">届かないときは、迷惑メールのフォルダも見てください。</p><button type="button" class="ghost2" id="cdR" disabled>番号を送り直す</button><p class="note2 tsc" id="cdT">'+(tc?'テスト版だけの表示：メールが届かないときは、この番号でも進めます → <b>'+tc+'</b>':'')+'</p>',function(){clearInterval(tm);lgMail(m);});
   var tick=function(){if(!$('cdX'))return clearInterval(tm);var l=Math.max(0,Math.ceil((exp-Date.now())/1000)),r=Math.max(0,Math.ceil((next-Date.now())/1000));$('cdX').textContent=l?'番号の有効期限：あと'+Math.floor(l/60)+'分'+('0'+l%60).slice(-2)+'秒':'番号の有効期限が切れました。送り直してください';$('cdR').disabled=r>0;$('cdR').textContent=r?'番号を送り直す（'+r+'秒）':'番号を送り直す';};tm=setInterval(tick,1000);tick();
   $('cdI').oninput=function(){this.value=this.value.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/\D/g,'').slice(0,6);};
   $('cdF').onsubmit=function(e){e.preventDefault();var er=$('cdE'),c=$('cdI').value;er.hidden=true;if(c.length!==6){er.textContent='6けたの数字を入れてください';er.hidden=false;return;}var bt=this.querySelector('.big');bt.disabled=true;
     api('registerEmail',{email:m,password:pw,code:c,agreed:1}).then(function(j){clearInterval(tm);saveLogin(j);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){if($('cdF'))bt.disabled=false;});};
-  $('cdR').onclick=function(){if(Date.now()<next)return;api('mailCodeSend',{email:m,password:pw}).then(function(){exp=Date.now()+600e3;next=Date.now()+60e3;$('cdI').value='';$('cdE').hidden=true;toast('番号を送り直しました');tick();}).catch(fail);};}
+  $('cdR').onclick=function(){if(Date.now()<next)return;api('mailCodeSend',{email:m,password:pw}).then(function(j){if(j.testCode)$('cdT').innerHTML='テスト版だけの表示：メールが届かないときは、この番号でも進めます → <b>'+j.testCode+'</b>';exp=Date.now()+600e3;next=Date.now()+60e3;$('cdI').value='';$('cdE').hidden=true;toast('番号を送り直しました');tick();}).catch(fail);};}
 function showLogin(mode){
   if(!mode){lgStart();return;}
   lg.hidden=false;mode=mode||'login';
@@ -496,7 +497,7 @@ function showLogin(mode){
     '<form class="fm" id="lgF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email">'+
     '<label for="lgP">パスワード'+(mode==='new'?'（8文字以上）':'')+'</label><input id="lgP" type="password" autocomplete="'+(mode==='new'?'new-password':'current-password')+'">'+
     '<p class="err" id="lgErr" hidden></p><button class="big" type="submit">'+(mode==='new'?'登録して始める':'ログイン')+'</button></form>'+
-    (mode==='login'?'<button type="button" class="lnk2" id="lgFg">パスワードを忘れた方</button>':'')+'</div>'+
+    (mode==='login'?'<p class="note2" style="text-align:center">パスワードを忘れた場合は<button type="button" class="lnk2" id="lgFg" style="display:inline;padding:0 2px">こちら</button></p>':'')+'</div>'+
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
   lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk">‹ もどる</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
@@ -508,7 +509,7 @@ function showLogin(mode){
 function forgot(){
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">パスワードの再設定</p><div class="lgbox"><form class="fm" id="fgF" novalidate><label for="fgE">登録したメールアドレス</label><input id="fgE" type="email" autocomplete="email"><button class="big" type="submit">再設定のメールを送る</button></form><button type="button" class="lnk2" id="fgB">ログイン画面にもどる</button></div>';
   $('fgB').onclick=function(){showLogin();};
-  $('fgF').onsubmit=function(e){e.preventDefault();api('resetRequest',{email:$('fgE').value}).then(function(){lg.querySelector('.lgbox').innerHTML='<p style="font-size:14px">登録があれば、再設定のメールを送りました。メールのリンクを1時間以内に開いてください。<br><small style="color:#6E7D75">届かないときは、迷惑メールのフォルダも見てください。</small></p><button type="button" class="lnk2" id="fgB2">ログイン画面にもどる</button>';$('fgB2').onclick=function(){showLogin();};}).catch(fail);};
+  $('fgF').onsubmit=function(e){e.preventDefault();api('resetRequest',{email:$('fgE').value}).then(function(j){lg.querySelector('.lgbox').innerHTML=(j.testReset?'<button type="button" class="ghost2" id="fgT">（テスト版だけ）メールが届かないときは、ここから再設定の画面を開く</button>':j.testNote?'<p class="note2 tsc">'+esc(j.testNote)+'</p>':'')+'<p style="font-size:14px">登録があれば、再設定のメールを送りました。メールのリンクを1時間以内に開いてください。<br><small style="color:#6E7D75">届かないときは、迷惑メールのフォルダも見てください。</small></p><button type="button" class="lnk2" id="fgB2">ログイン画面にもどる</button>';$('fgB2').onclick=function(){showLogin();};if(j.testReset)$('fgT').onclick=function(){resetForm(j.testReset);};}).catch(fail);};
 }
 function resetForm(rt){
   lg.hidden=false;
