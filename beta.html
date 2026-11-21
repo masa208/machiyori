@@ -257,6 +257,7 @@ h2{font-size:17px;margin:0 0 10px}
 .tosfull{text-align:left;height:300px;overflow-y:auto;border:1px solid #D5DAD6;border-radius:10px;background:#FAFBFA;padding:10px 14px;font-size:12.5px;line-height:1.75;color:#23302A;-webkit-overflow-scrolling:touch}
 .tosfull h3{font-size:15px;margin:6px 0 4px;padding-bottom:4px;border-bottom:2px solid #E8613C}.tosfull h3+h4{margin-top:6px}.tosfull h4{font-size:13px;margin:12px 0 4px}.tosfull p{margin:4px 0}.tosfull ol,.tosfull ul{margin:2px 0;padding-left:1.4em}.tosfull li{margin:2px 0}
 .tosfull table{border-collapse:collapse;width:100%;margin:4px 0;font-size:11.5px}.tosfull th,.tosfull td{border:1px solid #DDE2DE;padding:4px 6px;vertical-align:top;text-align:left}.tosfull th{background:#F0F3F1}
+.btn-lineapp{display:block;text-align:center;text-decoration:none;background:#fff;color:#06C755;border:2px solid #06C755;border-radius:10px;padding:10px;font-weight:800;font-size:15px;margin:6px 0 4px}.btn-lineapp small{display:block;font-size:11px;font-weight:500;color:#4B5A52}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -428,7 +429,11 @@ body{background:#F3F4F1;margin:0}
 'use strict';
 /* ===== 設定（キーやトークンはここに書かない） ===== */
 var GAS_URL='https://script.google.com/macros/s/AKfycbwhmZQHIQHoohEfH0tDXuXrx-cRX7x25vFYKqJvlJqbWxUijpmEUoMPNCBy3Stc_xoD/exec';
-var LIFF_ID='2011196111-mkgGx8sO';
+var LIFF_ID='2011196111-mkgGx8sO',LIFF_URL='https://liff.line.me/'+LIFF_ID;
+function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
+function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
+/* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
+function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><p class="note2" style="font-size:11.5px">LINEが開かないときは、まち頼の公式LINEのメニュー「まち頼を開く」から開いてください。</p><div class="or">または</div>':'';}
 var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
@@ -480,7 +485,7 @@ function lgBiz(){lgPage('仕事を受けたい','<p style="font-size:14px;line-h
 function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><b>'+(i+1)+'.</b> '+esc(x)+'</p>';}).join('')+'</div>';}
 function lgUser(){lgPage('依頼したい','<div class="obh"><b>利用規約とプライバシーポリシー</b></div><p class="note2" style="margin:0 0 6px">下にスクロールすると全文を読めます（現時点の案です。変わるときはアプリでお知らせします）。</p>'+
     '<div class="tosfull" tabindex="0"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div>'+
-    '<label class="agr obag"><input type="checkbox" id="obAg"'+(AGREED?' checked':'')+'><span>利用規約とプライバシーポリシーに同意する</span></label><div class="obh" style="margin-top:14px"><b style="font-size:16px">ログインの方法を選んでください</b></div>'+
+    '<label class="agr obag"><input type="checkbox" id="obAg"'+(AGREED?' checked':'')+'><span>利用規約とプライバシーポリシーに同意する</span></label><div class="obh" style="margin-top:14px"><b style="font-size:16px">ログインの方法を選んでください</b></div>'+openInLine()+
     '<button type="button" class="btn-line" id="lgLine"'+(AGREED?'':' disabled')+'>LINEでログイン <small>おすすめ</small></button><button type="button" class="ghost2" id="obM"'+(AGREED?'':' disabled')+'>メールアドレスで登録</button><p class="note2">一度ログインすると、次からはそのまま使えます。</p>',lgStart);
   var ag=$('obAg');ag.onchange=function(){AGREED=ag.checked;$('lgLine').disabled=$('obM').disabled=!AGREED;};
   $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}lineLogin();};$('obM').onclick=lgMail;}
@@ -498,7 +503,7 @@ function showLogin(mode){
   if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){lgStart();return;}mode='login';}
   lg.hidden=false;mode=mode||'login';
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
-    '<div class="lgbox"><button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
+    '<div class="lgbox">'+openInLine()+'<button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
     '<div class="or">または メールアドレスで</div>'+
     '<div class="tabs2"><button type="button" data-m="login" aria-pressed="'+(mode==='login')+'">ログイン</button><button type="button" data-m="new" aria-pressed="'+(mode==='new')+'">はじめての方</button></div>'+
     '<form class="fm" id="lgF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email">'+
@@ -543,13 +548,19 @@ function boot(){
   var q=new URLSearchParams(location.search);
   if(q.get('reset')){resetForm(q.get('reset'));return;}
   if(q.get('liffClientId')||q.get('code')||q.get('liff.state')){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
+  if(!TOKEN&&inLineApp()){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN){showLogin();return;}
   api('me').then(function(j){ME=j.user;afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
 }
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
-  if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area){welcome();}
+  if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();
+}
+function agreeSheet(){
+  openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
+  $('agC').onchange=function(){$('agOk').disabled=!this.checked;};
+  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
 }
 function notifSheet(){
   openSheet('<h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
