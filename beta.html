@@ -472,7 +472,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=21;
+var APPVER_N=22;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1312,7 +1312,8 @@ function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}close
   if(!SU.d.mail&&ME&&ME.email)SU.d.mail=ME.email;if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
 function suStore(){try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
 function suFld(id,label,req,val,ph,type,note){return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input id="'+id+'"'+(SU_AC[id]?' autocomplete="'+SU_AC[id]+'"':'')+(type?' type="'+type+'"':'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></label>'+(note?'<p class="pc-n">'+note+'</p>':'');}
-function suDraw(){stopChat();if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_STEPS[SU.i],inStep=SU_STEPS.filter(function(s){return s[0]===st[0];}),k=inStep.indexOf(st)+1;
+function suDraw(){stopChat();if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase()){SU.d.mailok=SU.d.mail;SU.i=3;} // 登録に使ったメールなら確認を飛ばす（再開時も）
+if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_STEPS[SU.i],inStep=SU_STEPS.filter(function(s){return s[0]===st[0];}),k=inStep.indexOf(st)+1;
   pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>業者として登録</b><span>途中でやめても、続きから再開できます</span></div></div>'+
     '<div class="sustep"><span><em>Step '+st[0]+'</em> '+st[1]+'</span><small>'+k+' / '+inStep.length+'</small><div class="subar"><i style="width:'+(k/inStep.length*100)+'%"></i></div></div>'+
     '<div class="arw su"><h3 class="suh">'+st[2]+'</h3>'+suBody(SU.i)+'<p class="warn" id="suW" hidden></p></div>'+
