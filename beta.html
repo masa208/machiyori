@@ -253,6 +253,7 @@ h2{font-size:17px;margin:0 0 10px}
 .mset label.mrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box}.mset label.mrow input{width:22px;height:22px;flex:none}
 .obl b{color:#23302A}
 .tsc{color:#8A6A00!important;background:#FFF8E1;border-radius:6px;padding:6px 8px}
+.sheet.tall{min-height:78%;padding-top:16px}.sheet.tall h3{font-size:19px;margin-top:6px}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -448,7 +449,7 @@ function api(a,data){
   });
 }
 function fail(e){toast((e&&e.message)||'通信に失敗しました。電波のよいところでもう一度お試しください');}
-function openSheet(html){sheet.innerHTML='<div class="grab"></div>'+html;ph.classList.add('open');}
+function openSheet(html,cls){sheet.className='sheet'+(cls?' '+cls:'');sheet.innerHTML='<div class="grab"></div>'+html;ph.classList.add('open');}
 function closeSheet(){ph.classList.remove('open');ph.scrollTop=0;}
 $('shade').onclick=closeSheet;
 function setPane(html,onBack){stopChat();pane.innerHTML=html;pane.classList.add('on');var b=pane.querySelector('.bk');if(b)b.onclick=onBack||closePane;}
@@ -544,7 +545,7 @@ function afterLogin(){
 }
 function notifSheet(){
   openSheet('<h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
-    '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>');
+    '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>','tall');
   $('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
 function welcome(){
@@ -552,7 +553,7 @@ function welcome(){
     '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc((ME.callName||ME.name||'').slice(0,8))+'" maxlength="8" placeholder="例：まさ">'+
     '<p class="sp s2" style="font-size:12px;margin-top:-4px">8文字まで。アプリの中で、この名前で呼びかけます</p>'+
     '<label for="wcA">お住まいの市町村</label><select id="wcA"><option value="">選んでください</option>'+NAGANO.map(function(g){return '<optgroup label="'+g[0]+'">'+g[1].map(function(a){return '<option'+(a===ME.area?' selected':'')+'>'+a+'</option>';}).join('')+'</optgroup>';}).join('')+'</select><p class="err" id="wcE" hidden></p>'+
-    '<button class="big" type="submit">始める</button></form>');
+    '<button class="big" type="submit">始める</button></form>','tall');
   $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim(),er=$('wcE'),bad=function(t,el){er.textContent=t;er.hidden=false;el.focus();};er.hidden=true;
     if(!n)return bad('呼ばれたい名前を入れてください',$('wcN'));if(n.length>8)return bad('呼ばれたい名前は8文字までです',$('wcN'));if(/\d{4,}|@|https?:|www\./i.test(n.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);})))return bad('電話番号やURLは使えません',$('wcN'));if(!$('wcA').value)return bad('お住まいの市町村を選んでください',$('wcA'));
     api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;closeSheet();refresh();}).catch(fail);};
