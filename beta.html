@@ -424,7 +424,6 @@ body{background:#F3F4F1;margin:0}
   <div class="lg" id="lg" hidden></div>
 </div>
 <div class="toast" id="toast" role="status"></div>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
 (function(){
 'use strict';
@@ -435,7 +434,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var APPVER='11/21-18:00';var TK='machiyori_token';
+var APPVER='11/21-18:20';var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
@@ -449,9 +448,10 @@ function toast(t){var x=$('toast');x.textContent=t;x.classList.add('on');clearTi
 function md(iso){var d=new Date(iso);return isNaN(d)?'':(d.getMonth()+1)+'/'+d.getDate();}
 function mdhm(iso){var d=new Date(iso);if(isNaN(d))return '';return (d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2);}
 function yen(n){return Number(n||0).toLocaleString()+'円';}
+var T0=Date.now(),BOOTMS=0,LASTAPI='';
 function api(a,data){
-  var b=data||{};b.a=a;b.token=TOKEN;
-  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){
+  var b=data||{};b.a=a;b.token=TOKEN;var t1=Date.now();
+  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){LASTAPI=a+' '+((Date.now()-t1)/1000).toFixed(1)+'秒';
     if(!j.ok&&j.error==='auth'){logoutLocal();throw new Error('ログインし直してください');}
     if(!j.ok)throw new Error(j.error||'うまくいきませんでした');
     return j;
@@ -531,7 +531,8 @@ function resetForm(rt){
   lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=function(){if(history.replaceState)history.replaceState(null,'',location.pathname);showLogin('login');};
   $('rsF').onsubmit=function(e){e.preventDefault();api('resetDo',{resetToken:rt,password:$('rsP').value}).then(saveLogin).catch(function(x){$('rsE').textContent=x.message;$('rsE').hidden=false;});};
 }
-function liffReady(){if(!window.liff)return Promise.reject(new Error('LINEの読み込みに失敗しました'));return liff.init({liffId:LIFF_ID});}
+var LIFFP=null;
+function liffReady(){if(!LIFFP)LIFFP=new Promise(function(ok,ng){if(window.liff)return ok();var sc=document.createElement('script');sc.src='https://static.line-scdn.net/liff/edge/2/sdk.js';sc.onload=function(){ok();};sc.onerror=function(){LIFFP=null;ng(new Error('LINEの読み込みに失敗しました'));};document.head.appendChild(sc);}).then(function(){return liff.init({liffId:LIFF_ID});});return LIFFP;}
 function lineLogin(){
   liffReady().then(function(){
     if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname});return;}
@@ -554,6 +555,7 @@ function finishLine(){
 function boot(){
   var q=new URLSearchParams(location.search);
   if(q.get('reset')){resetForm(q.get('reset'));return;}
+  if(TOKEN&&(q.get('liffClientId')||q.get('code')||q.get('liff.state'))){try{history.replaceState(null,'',location.pathname);}catch(e){}q=new URLSearchParams('');}
   if(q.get('liffClientId')||q.get('code')||q.get('liff.state')){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN&&inLineApp()){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN){showLogin();return;}
@@ -567,7 +569,7 @@ function saveBoot(){try{localStorage.setItem('mchy_boot',JSON.stringify({t:TOKEN
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area){welcome();}
-  renderNav();refresh();startPoll();
+  renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
 }
 function agreeSheet(){
   openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
@@ -913,7 +915,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>まちことの おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
     (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].map(row).join('')+'</div>':'')+
-    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="8" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
