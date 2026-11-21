@@ -460,7 +460,7 @@ function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt
 
 /* ===== ログイン ===== */
 function logoutLocal(){TOKEN='';ME=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
-function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);}catch(e){}lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
+function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
 /* ===== はじめての人の入口（11/20） ===== */
 var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
 var U_PP=['取得する情報：呼ばれたい名前、市町村、依頼の内容と写真、チャット、（現地調査が決まったとき）お名前・住所・電話番号','使いみち：業者とつなぐ、やり取り、AIの相談、お知らせ、トラブルの防止','業者に伝わるもの：依頼の内容と市町村。お名前・住所・電話番号は現地調査の日が決まったときだけ','AIに送る前に、電話番号・住所などは「XX」に置き換えます','使っているサービス：Google、LINE、OpenAI、Stripe（日本国外を含む）','記録は依頼が終わってから5年保管し、そのあと消します','お問い合わせ：soft keys（softkeys33@gmail.com）'];
@@ -488,7 +488,7 @@ function lgCode(m,pw,tc){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
     api('registerEmail',{email:m,password:pw,code:c,agreed:1}).then(function(j){clearInterval(tm);saveLogin(j);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){if($('cdF'))bt.disabled=false;});};
   $('cdR').onclick=function(){if(Date.now()<next)return;api('mailCodeSend',{email:m,password:pw}).then(function(j){if(j.testCode)$('cdT').innerHTML='テスト版だけの表示：メールが届かないときは、この番号でも進めます → <b>'+j.testCode+'</b>';exp=Date.now()+600e3;next=Date.now()+60e3;$('cdI').value='';$('cdE').hidden=true;toast('番号を送り直しました');tick();}).catch(fail);};}
 function showLogin(mode){
-  if(!mode){lgStart();return;}
+  if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){lgStart();return;}mode='login';}
   lg.hidden=false;mode=mode||'login';
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
     '<div class="lgbox"><button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
