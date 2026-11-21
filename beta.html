@@ -238,7 +238,7 @@ h2{font-size:17px;margin:0 0 10px}
 .arp{background:#fff;border-radius:10px;padding:8px;border:1px solid #E3E6E2}.arg{border-top:1px solid #EEF0EE;padding:6px 2px}.arg summary{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;list-style:none}.arg summary::-webkit-details-marker{display:none}.arn{margin-left:auto;font-size:11.5px;color:#6E7D75}.argall{margin:6px 0 4px!important;font-size:12px!important}.rgb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.rgbtn{font:inherit;font-size:13px;font-weight:700;border:1.5px solid #2F6B45;color:#2F6B45;background:#fff;border-radius:18px;padding:6px 12px;cursor:pointer}.rgbtn.on{background:#2F6B45;color:#fff}.rgbtn.part{background:#E7F1EA}
 .rgmap{display:block;width:62%;max-width:220px;margin:4px auto 0}.rgp{fill:#2F6B45;fill-opacity:0;stroke:#2F6B45;stroke-width:1.5;cursor:pointer;transition:fill-opacity .2s}.rgt{font-size:12px;font-weight:700;fill:#23302A;pointer-events:none}.rgn{font-size:10px;font-weight:400;fill:#23302A}.rgnote{font-size:10.5px;color:#6E7D75;text-align:center;margin:2px 0 6px}
 /* はじめての人の入口 */
-.lgbk{position:absolute;left:12px;top:12px;border:0;background:none;font:inherit;font-size:14px;color:#4B5A52;cursor:pointer;padding:6px}
+.lgbk{position:absolute;left:12px;top:12px;width:42px;height:42px;border-radius:50%;border:1px solid #E3E6E2;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);font:inherit;font-size:26px;line-height:1;color:#23302A;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 0 3px;z-index:3}.lgbk:active{background:#F2F4F2}
 .obh{text-align:center;margin:6px 0 12px}.obh b{display:block;font-size:19px}
 .obab{background:#FFF6F2;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.7;text-align:left}.obab b{display:block;font-size:13px;color:#E8613C}
 .obq{font-weight:700;font-size:15px;margin:16px 0 0;text-align:center}
@@ -466,7 +466,7 @@ function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN)
 var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
 var U_PP=['取得する情報：呼ばれたい名前、市町村、依頼の内容と写真、チャット、（現地調査が決まったとき）お名前・住所・電話番号','使いみち：業者とつなぐ、やり取り、AIの相談、お知らせ、トラブルの防止','業者に伝わるもの：依頼の内容と市町村。お名前・住所・電話番号は現地調査の日が決まったときだけ','AIに送る前に、電話番号・住所などは「XX」に置き換えます','使っているサービス：Google、LINE、OpenAI、Stripe（日本国外を含む）','記録は依頼が終わってから5年保管し、そのあと消します','お問い合わせ：soft keys（softkeys33@gmail.com）'];
 var AGREED=false;
-function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type="button" class="lgbk" id="lgBk" aria-label="もどる">‹ もどる</button>':'')+'<h1>まち頼</h1>'+(sub?'<p class="lgs">'+sub+'</p>':'')+'<div class="lgbox">'+body+'</div>';if(back)$('lgBk').onclick=back;}
+function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>':'')+'<h1>まち頼</h1>'+(sub?'<p class="lgs">'+sub+'</p>':'')+'<div class="lgbox">'+body+'</div>';if(back)$('lgBk').onclick=back;}
 function lgStart(){lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">はじめての方（新規登録）</div>'+
     '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button>'+
     '<div class="obq">登録済みの方</div><button type="button" class="obc obl" id="obLg"><b>ログイン</b><small>LINE・メールアドレスでログインする</small></button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>');
@@ -500,7 +500,7 @@ function showLogin(mode){
     '<p class="err" id="lgErr" hidden></p><button class="big" type="submit">'+(mode==='new'?'登録して始める':'ログイン')+'</button></form>'+
     (mode==='login'?'<p class="note2" style="text-align:center">パスワードを忘れた場合は<button type="button" class="lnk2" id="lgFg" style="display:inline;padding:0 2px">こちら</button></p>':'')+'</div>'+
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
-  lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk">‹ もどる</button>');$('lgBk').onclick=lgStart;
+  lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
   each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgUser();else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
@@ -509,12 +509,14 @@ function showLogin(mode){
 }
 function forgot(){
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">パスワードの再設定</p><div class="lgbox"><form class="fm" id="fgF" novalidate><label for="fgE">登録したメールアドレス</label><input id="fgE" type="email" autocomplete="email"><button class="big" type="submit">再設定のメールを送る</button></form><button type="button" class="lnk2" id="fgB">ログイン画面にもどる</button></div>';
-  $('fgB').onclick=function(){showLogin();};
+  lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=function(){showLogin('login');};
+  $('fgB').onclick=function(){showLogin('login');};
   $('fgF').onsubmit=function(e){e.preventDefault();api('resetRequest',{email:$('fgE').value}).then(function(j){lg.querySelector('.lgbox').innerHTML=(j.testReset?'<button type="button" class="ghost2" id="fgT">（テスト版だけ）メールが届かないときは、ここから再設定の画面を開く</button>':j.testNote?'<p class="note2 tsc">'+esc(j.testNote)+'</p>':'')+'<p style="font-size:14px">登録があれば、再設定のメールを送りました。メールのリンクを1時間以内に開いてください。<br><small style="color:#6E7D75">届かないときは、迷惑メールのフォルダも見てください。</small></p><button type="button" class="lnk2" id="fgB2">ログイン画面にもどる</button>';$('fgB2').onclick=function(){showLogin();};if(j.testReset)$('fgT').onclick=function(){resetForm(j.testReset);};}).catch(fail);};
 }
 function resetForm(rt){
   lg.hidden=false;
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">新しいパスワードを決める</p><div class="lgbox"><form class="fm" id="rsF" novalidate><label for="rsP">新しいパスワード（8文字以上）</label><input id="rsP" type="password" autocomplete="new-password"><p class="err" id="rsE" hidden></p><button class="big" type="submit">保存してログイン</button></form></div>';
+  lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=function(){if(history.replaceState)history.replaceState(null,'',location.pathname);showLogin('login');};
   $('rsF').onsubmit=function(e){e.preventDefault();api('resetDo',{resetToken:rt,password:$('rsP').value}).then(saveLogin).catch(function(x){$('rsE').textContent=x.message;$('rsE').hidden=false;});};
 }
 function liffReady(){if(!window.liff)return Promise.reject(new Error('LINEの読み込みに失敗しました'));return liff.init({liffId:LIFF_ID});}
