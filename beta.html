@@ -434,7 +434,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var APPVER='11/21-18:20';var TK='machiyori_token';
+var APPVER='11/21-18:40';var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
@@ -514,7 +514,7 @@ function showLogin(mode){
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
   lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
-  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgUser(function(){showLogin('login');});else showLogin('login');};});
+  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgStart();else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
     api(mode==='new'?'registerEmail':'loginEmail',{email:$('lgE').value,password:$('lgP').value}).then(saveLogin).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};
   var fg=$('lgFg');if(fg)fg.onclick=forgot;
