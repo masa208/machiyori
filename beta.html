@@ -435,7 +435,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var APPVER='11/21-17:40';var TK='machiyori_token';
+var APPVER='11/21-18:00';var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
@@ -469,7 +469,7 @@ function charaName(){return 'まちこ';}
 function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt="">';}
 
 /* ===== ログイン ===== */
-function logoutLocal(){TOKEN='';ME=null;HOME=null;PRO=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
+function logoutLocal(){TOKEN='';ME=null;HOME=null;PRO=null;try{localStorage.removeItem('mchy_boot');}catch(e){}try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
 function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}if(ME.callName&&ME.area&&ME.notifySet&&ME.agreedAt)setTimeout(function(){toast(ME.callName+'さん、おかえりなさい');},400);lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
 /* ===== はじめての人の入口（11/20） ===== */
 var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
@@ -557,8 +557,13 @@ function boot(){
   if(q.get('liffClientId')||q.get('code')||q.get('liff.state')){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN&&inLineApp()){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN){showLogin();return;}
-  api('me').then(function(j){ME=j.user;afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
+  var bc=null;try{bc=JSON.parse(localStorage.getItem('mchy_boot')||'null');}catch(e){}
+  if(bc&&bc.t===TOKEN&&bc.ME&&bc.HOME){ME=bc.ME;HOME=bc.HOME;afterLogin();return;}
+  api('home').then(function(j){HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
 }
+/* 前回の画面をスマホに覚えておき、次に開いたときすぐ出す（中身は裏で新しくする） */
+var HOME_AT=0;
+function saveBoot(){try{localStorage.setItem('mchy_boot',JSON.stringify({t:TOKEN,ME:ME,HOME:HOME}));}catch(e){}}
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area){welcome();}
@@ -567,12 +572,12 @@ function afterLogin(){
 function agreeSheet(){
   openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
   $('agC').onchange=function(){$('agOk').disabled=!this.checked;};
-  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
+  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;saveBoot();closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
 }
 function notifSheet(){
   openSheet('<h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
     '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>','tall');
-  $('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
+  $('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
 function doneSheet(){
   openSheet('<div class="dnw"><div class="dni">✓</div><h3>登録が済みました</h3><p>'+esc(ME.callName)+'さん、ようこそ。<br>家のことで気になることがあれば、気軽に相談してみてください。</p><button type="button" class="big" id="dnOk">はじめる</button></div>','tall');
@@ -586,7 +591,7 @@ function welcome(){
     '<button class="big" type="submit">始める</button></form>','tall');
   $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim(),er=$('wcE'),bad=function(t,el){er.textContent=t;er.hidden=false;el.focus();};er.hidden=true;
     if(!n)return bad('呼ばれたい名前を入れてください',$('wcN'));if(n.length>8)return bad('呼ばれたい名前は8文字までです',$('wcN'));if(/\d{4,}|@|https?:|www\./i.test(n.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);})))return bad('電話番号やURLは使えません',$('wcN'));if(!$('wcA').value)return bad('お住まいの市町村を選んでください',$('wcA'));
-    var first=!ME.callName||!ME.area;api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;closeSheet();refresh();if(first)setTimeout(doneSheet,300);}).catch(fail);};
+    var first=!ME.callName||!ME.area;api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;saveBoot();closeSheet();refresh();if(first)setTimeout(doneSheet,300);}).catch(fail);};
 }
 var AREAS=['松本市','塩尻市','安曇野市','大町市','東筑摩郡山形村','東筑摩郡朝日村','東筑摩郡筑北村','東筑摩郡麻績村','東筑摩郡生坂村','北安曇郡池田町','北安曇郡松川村','北安曇郡白馬村','木曽郡','そのほか'];
 function areaSel(id,cur){return '<select id="'+id+'">'+AREAS.map(function(a){return '<option'+(a===cur?' selected':'')+'>'+a+'</option>';}).join('')+'</select>';}
@@ -602,7 +607,8 @@ var LOADING='<div class="mp"><div class="empty">読み込み中…</div></div>';
 function busyForm(){var a=document.activeElement;return a&&scr.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);}
 function refresh(){if(!ME)return;var m=MODE,t=tab,had=!!HOME;
   if(had)draw();else if(MODE==='pro')renderPro();else scr.innerHTML=LOADING;
-  return api('home').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(HOME);HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';
+  if(had&&Date.now()-HOME_AT<4000)return;
+  return api('home').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(HOME);HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();$('bellN').textContent=j.unread||'';
     if(MODE!==m||tab!==t||pane.classList.contains('on'))return;
     if(MODE==='pro'&&tab!=='me')return;
     if(same||(had&&busyForm()))return;draw();
@@ -918,7 +924,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
     if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');logoutLocal();}).catch(fail);};}
   };});}
-function prof(d){api('saveProfile',d).then(function(j){ME=j.user;closeSheet();draw();}).catch(fail);}
+function prof(d){api('saveProfile',d).then(function(j){ME=j.user;saveBoot();closeSheet();draw();}).catch(fail);}
 
 /* ===== お知らせ ===== */
 $('bell').onclick=function(){
