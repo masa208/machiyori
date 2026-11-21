@@ -472,7 +472,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=17;
+var APPVER_N=18;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -626,21 +626,21 @@ function boot(){
 /* 前回の画面をスマホに覚えておき、次に開いたときすぐ出す（中身は裏で新しくする） */
 var HOME_AT=0;
 function saveBoot(){try{localStorage.setItem('mchy_boot',JSON.stringify({t:TOKEN,ME:ME,HOME:HOME}));}catch(e){}}
-function bizWanted(){try{return !!localStorage.getItem('mchy_biz');}catch(e){return false;}}
+function bizWanted(){try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
-  if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area){welcome();}else if(bizWanted())setTimeout(vendorSignup,300);
+  if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(vendorSignup,300);else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
 }
 function agreeSheet(){
   openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
   $('agC').onchange=function(){$('agOk').disabled=!this.checked;};
-  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;saveBoot();closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
+  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;saveBoot();closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(bizWanted())vendorSignup();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
 }
 function notifSheet(){
   openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
     '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>','tall');
-  $('shBk').onclick=agreeSheet;$('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
+  $('shBk').onclick=agreeSheet;$('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(bizWanted())setTimeout(vendorSignup,250);else if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
 function doneSheet(){
   openSheet('<div class="dnw"><div class="dni">✓</div><h3>登録が済みました</h3><p>'+esc(ME.callName)+'さん、ようこそ。<br>家のことで気になることがあれば、気軽に相談してみてください。</p><button type="button" class="big" id="dnOk">はじめる</button></div>','tall');
@@ -977,13 +977,13 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>まちことの おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
     (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].map(row).join('')+'</div>':'')+
-    '<div class="sec">そのほか</div><div class="list mset">'+[['vs','業者として登録する',''],['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="8" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
     if(k==='ar'){openSheet('<h3>お住まいの市町村</h3><div class="fm">'+areaSel('arS',ME.area)+'</div><button type="button" class="big" id="arB">保存する</button>');$('arB').onclick=function(){prof({area:$('arS').value});};}
     if(k==='va'){if(PRO)areaPane();else api('proHome').then(function(j){PRO=j;areaPane();}).catch(fail);}
-    if(k==='vs')vendorSignup();if(k==='qa')inquiry();
+    if(k==='qa')inquiry();
     if(k==='rs')testReset();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
     if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');try{localStorage.removeItem('mchy_had');}catch(e){}logoutLocal();}).catch(fail);};}
