@@ -258,6 +258,7 @@ h2{font-size:17px;margin:0 0 10px}
 .tosfull h3{font-size:15px;margin:6px 0 4px;padding-bottom:4px;border-bottom:2px solid #E8613C}.tosfull h3+h4{margin-top:6px}.tosfull h4{font-size:13px;margin:12px 0 4px}.tosfull p{margin:4px 0}.tosfull ol,.tosfull ul{margin:2px 0;padding-left:1.4em}.tosfull li{margin:2px 0}
 .tosfull table{border-collapse:collapse;width:100%;margin:4px 0;font-size:11.5px}.tosfull th,.tosfull td{border:1px solid #DDE2DE;padding:4px 6px;vertical-align:top;text-align:left}.tosfull th{background:#F0F3F1}
 .btn-lineapp{display:block;text-align:center;text-decoration:none;background:#fff;color:#06C755;border:2px solid #06C755;border-radius:10px;padding:10px;font-weight:800;font-size:15px;margin:6px 0 4px}.btn-lineapp small{display:block;font-size:11px;font-weight:500;color:#4B5A52}
+.dnw{text-align:center;padding-top:8vh}.dni{width:68px;height:68px;border-radius:50%;background:#E8613C;color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}.dnw h3{font-size:20px;margin:6px 0}.dnw p{font-size:14px;line-height:1.8;color:#4B5A52;margin:6px 0 22px}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
 html,body{height:100%}
@@ -469,7 +470,7 @@ function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt
 
 /* ===== ログイン ===== */
 function logoutLocal(){TOKEN='';ME=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
-function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
+function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}if(ME.callName&&ME.area&&ME.notifySet&&ME.agreedAt)setTimeout(function(){toast(ME.callName+'さん、おかえりなさい');},400);lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
 /* ===== はじめての人の入口（11/20） ===== */
 var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
 var U_PP=['取得する情報：呼ばれたい名前、市町村、依頼の内容と写真、チャット、（現地調査が決まったとき）お名前・住所・電話番号','使いみち：業者とつなぐ、やり取り、AIの相談、お知らせ、トラブルの防止','業者に伝わるもの：依頼の内容と市町村。お名前・住所・電話番号は現地調査の日が決まったときだけ','AIに送る前に、電話番号・住所などは「XX」に置き換えます','使っているサービス：Google、LINE、OpenAI、Stripe（日本国外を含む）','記録は依頼が終わってから5年保管し、そのあと消します','お問い合わせ：soft keys（softkeys33@gmail.com）'];
@@ -567,6 +568,10 @@ function notifSheet(){
     '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>','tall');
   $('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
+function doneSheet(){
+  openSheet('<div class="dnw"><div class="dni">✓</div><h3>登録が済みました</h3><p>'+esc(ME.callName)+'さん、ようこそ。<br>家のことで気になることがあれば、気軽に相談してみてください。</p><button type="button" class="big" id="dnOk">はじめる</button></div>','tall');
+  $('dnOk').onclick=function(){closeSheet();};
+}
 function welcome(){
   openSheet('<h3>はじめまして</h3><p class="sp s2">最初に2つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
     '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc((ME.callName||ME.name||'').slice(0,8))+'" maxlength="8" placeholder="例：まさ">'+
@@ -575,7 +580,7 @@ function welcome(){
     '<button class="big" type="submit">始める</button></form>','tall');
   $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim(),er=$('wcE'),bad=function(t,el){er.textContent=t;er.hidden=false;el.focus();};er.hidden=true;
     if(!n)return bad('呼ばれたい名前を入れてください',$('wcN'));if(n.length>8)return bad('呼ばれたい名前は8文字までです',$('wcN'));if(/\d{4,}|@|https?:|www\./i.test(n.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);})))return bad('電話番号やURLは使えません',$('wcN'));if(!$('wcA').value)return bad('お住まいの市町村を選んでください',$('wcA'));
-    api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;closeSheet();refresh();}).catch(fail);};
+    var first=!ME.callName||!ME.area;api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;closeSheet();refresh();if(first)setTimeout(doneSheet,300);}).catch(fail);};
 }
 var AREAS=['松本市','塩尻市','安曇野市','大町市','東筑摩郡山形村','東筑摩郡朝日村','東筑摩郡筑北村','東筑摩郡麻績村','東筑摩郡生坂村','北安曇郡池田町','北安曇郡松川村','北安曇郡白馬村','木曽郡','そのほか'];
 function areaSel(id,cur){return '<select id="'+id+'">'+AREAS.map(function(a){return '<option'+(a===cur?' selected':'')+'>'+a+'</option>';}).join('')+'</select>';}
