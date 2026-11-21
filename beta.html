@@ -469,7 +469,7 @@ function charaName(){return 'まちこ';}
 function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt="">';}
 
 /* ===== ログイン ===== */
-function logoutLocal(){TOKEN='';ME=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
+function logoutLocal(){TOKEN='';ME=null;HOME=null;PRO=null;try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
 function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}if(ME.callName&&ME.area&&ME.notifySet&&ME.agreedAt)setTimeout(function(){toast(ME.callName+'さん、おかえりなさい');},400);lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
 /* ===== はじめての人の入口（11/20） ===== */
 var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
@@ -598,7 +598,15 @@ I.req='<path d="M12 6v12M6 12h12"/>';I.job='<rect x="3" y="7" width="18" height=
 function renderNav(){var NAV=MODE==='pro'?NAV_P:NAV_U;nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+(n[0]==='req'?' ctr':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
   each('button',nav,function(b){b.onclick=function(){tab=b.dataset.t;pane.classList.remove('on');stopChat();renderNav();refresh();};});}
 function showErr(e){scr.innerHTML='<div class="mp"><div class="empty" style="color:#C8321F;text-align:left"><b>うまく読み込めませんでした</b><br>'+esc((e&&e.message)||'通信エラー')+'<br><small>この画面を運営（開発担当）に送ってください</small></div></div>';}
-function refresh(){if(!ME)return;return api('home').then(function(j){HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';draw();}).catch(function(e){fail(e);showErr(e);});}
+var LOADING='<div class="mp"><div class="empty">読み込み中…</div></div>';
+function busyForm(){var a=document.activeElement;return a&&scr.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);}
+function refresh(){if(!ME)return;var m=MODE,t=tab,had=!!HOME;
+  if(had)draw();else if(MODE==='pro')renderPro();else scr.innerHTML=LOADING;
+  return api('home').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(HOME);HOME=j;ME=j.user;$('bellN').textContent=j.unread||'';
+    if(MODE!==m||tab!==t||pane.classList.contains('on'))return;
+    if(MODE==='pro'&&tab!=='me')return;
+    if(same||(had&&busyForm()))return;draw();
+  }).catch(function(e){fail(e);if(!had)showErr(e);});}
 function draw(){if(!HOME)return;if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='req')renderReq();else renderMy();}
 function startPoll(){stopPoll();pollT=setInterval(function(){if(document.visibilityState==='visible'&&!pane.classList.contains('on'))refresh();},60000);}
 function stopPoll(){clearInterval(pollT);}
@@ -1086,14 +1094,18 @@ function areaPane(){var cur=PRO&&PRO.areas||'ALL',all=[].concat.apply([],NAGANO.
   $('arSave').onclick=function(){var a=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(i){return i.checked;}).map(function(i){return i.value;});if(!a.length){toast('市町村を1つ以上選んでください');return;}
     this.disabled=true;api('proArea',{areas:a}).then(function(j){if(PRO){PRO.vendor=j.vendor;PRO.areas=j.areas;}pane.classList.remove('on');toast('対応エリアを保存しました');draw();}).catch(function(e){$('arSave').disabled=false;fail(e);});};}
 function renderPro(){if(tab==='me'){renderMy();if(!PRO)api('proHome').then(function(j){PRO=j;if(tab==='me'&&MODE==='pro')renderMy();}).catch(function(){});return;}
-  api('proHome').then(function(j){PRO=j;var f=j.fresh,r=j.run;
+  var had=!!PRO;if(had)paintPro(PRO);else scr.innerHTML=LOADING;
+  api('proHome').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(PRO);PRO=j;
+    if(MODE!=='pro'||tab==='me'||pane.classList.contains('on')||same)return;paintPro(j);
+  }).catch(function(e){fail(e);if(!had)showErr(e);});}
+function paintPro(j){var f=j.fresh,r=j.run;
     scr.innerHTML='<div class="jseg" role="tablist"><button type="button" role="tab" data-s="new" aria-selected="'+(jobSub==='new')+'">新着 <small>'+f.length+'</small></button><button type="button" role="tab" data-s="run" aria-selected="'+(jobSub==='run')+'">進行中 <small>'+r.length+'</small></button></div><div class="mp" style="padding-top:4px">'+
       (jobSub==='new'?(f.length?'<div class="list">'+f.map(function(c){return '<button type="button" class="card bp" data-nc="'+c.id+'"><span class="tag">新着</span><b>'+esc(c.title)+'</b><span class="meta"><span>'+esc(c.place||'')+'　'+esc(c.bunya||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">新着の依頼はありません。<br>依頼者モードで相談を投稿すると、ここに出ます（テスト版）</div>')+(j.outside?'<p class="adesc" style="margin-top:10px">対応エリアの外の依頼が'+j.outside+'件あります（マイページの「対応エリア」で変えられます）</p>':''):
       (r.length?'<div class="list">'+r.map(function(x){return '<button type="button" class="card bp" data-pb="'+x.id+'"><span class="tag"'+(x.state==='lost'||x.state==='other'||x.state==='expired'?' style="background:#e6eae8;color:var(--sb)"':'')+'>'+PLAB(x)+'</span><b>'+esc(x.c.title)+'</b><span class="meta"><span>'+esc(x.c.place||'')+'</span></span></button>';}).join('')+'</div>':'<div class="empty">進行中の案件はありません</div>'))+'</div>';
-    each('.jseg button',scr,function(b){b.onclick=function(){jobSub=b.dataset.s;renderPro();};});
+    each('.jseg button',scr,function(b){b.onclick=function(){jobSub=b.dataset.s;paintPro(PRO);};});
     each('[data-nc]',scr,function(b){b.onclick=function(){newCase(f.filter(function(c){return c.id===b.dataset.nc;})[0]);};});
     each('[data-pb]',scr,function(b){b.onclick=function(){openPro(b.dataset.pb);};});
-  }).catch(function(e){fail(e);showErr(e);});}
+}
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定',expired:'連絡がなく終了'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
 function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（見積もりだけの依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
