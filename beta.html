@@ -426,6 +426,15 @@ body{background:#F3F4F1;margin:0}
 </div>
 <div class="toast" id="toast" role="status"></div>
 <script>
+/* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
+var APPVER_N=13;
+function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+  if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
+  var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
+}).catch(function(){});}catch(e){}}
+verCheck();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')verCheck();});
+</script>
+<script>
 (function(){
 'use strict';
 /* ===== 設定（キーやトークンはここに書かない） ===== */
@@ -435,7 +444,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var APPVER='11/21-19:00';var TK='machiyori_token';
+var APPVER=APPVER_N;var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
