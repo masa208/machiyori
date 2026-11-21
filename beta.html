@@ -406,6 +406,7 @@ body{background:#F3F4F1;margin:0}
 .rch{margin-left:auto;font:inherit;font-size:11.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.6);border-radius:14px;padding:4px 10px;cursor:pointer;white-space:nowrap}
 .rcline{display:flex;align-items:center;gap:4px;width:100%;font:inherit;font-size:12.5px;text-align:left;color:#23302A;background:#FFF1EA;border:0;border-bottom:1px solid #F6CDBD;padding:8px 14px;cursor:pointer;flex:none}.rcline span{color:#6E7D75;flex:none}.rcline b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rcline i{font-style:normal;margin-left:auto;color:var(--m)}
 .vstp{flex:none;margin:0;border-radius:0;border-bottom:1px solid #E3E6E2;background:#fff}.vstp.off{padding:8px 14px;font-size:12px;color:#6E7D75;text-align:center}
+.shbk{width:38px;height:38px;border-radius:50%;border:1px solid #E3E6E2;background:#fff;font:inherit;font-size:22px;line-height:1;color:#23302A;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 0 3px;margin:0 0 4px}
 </style>
 </head>
 <body>
@@ -434,7 +435,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var APPVER='11/21-18:50';var TK='machiyori_token';
+var APPVER='11/21-19:00';var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
@@ -478,9 +479,9 @@ var TOS_FULL="<h4>第1条 この規約について</h4><ol><li>この規約は�
 var PP_FULL="<p>まち頼は、依頼者と業者から預かる個人情報を、マッチングと安全な取引のためだけに使います。</p><h4>1. 運営者と対象</h4><ul><li>運営者：soft keys（代表者：滝澤雅大）／長野県松本市大字里山辺3949-1 グランデュール出井3 202</li><li>対象：依頼者（相談・依頼をする方）と業者（立候補して仕事を受ける方）の両方</li></ul><h4>2. 取得する情報</h4><table><tr><th>だれの</th><th>情報</th><th>どこで受け取るか</th></tr><tr><td>共通</td><td>LINEのユーザーID・表示名、またはメールアドレスとパスワード（元に戻せない形に変えて保存）</td><td>ログイン</td></tr><tr><td>共通</td><td>チャットの内容、送った写真、口コミ、お問い合わせ</td><td>アプリの利用</td></tr><tr><td>依頼者</td><td>呼ばれたい名前、地域（市町村）、お名前・住所・電話番号（現地調査の日が決まったとき）</td><td>登録・現地調査の日程</td></tr><tr><td>依頼者</td><td>AIとの相談内容、依頼の内容</td><td>相談・依頼</td></tr><tr><td>業者</td><td>事業者名、所在地、担当者名とふりがな、電話番号、メール、HP、Googleの口コミのURL</td><td>業者登録</td></tr><tr><td>業者</td><td>本人確認書類、履歴事項全部証明書（法人）、法人番号、資格・許可の証明書、保険の加入状況、インボイスの登録番号</td><td>業者登録</td></tr><tr><td>業者</td><td>会社情報（写真・自己紹介・実績など）、対応サービスとエリア、営業日</td><td>業者登録・マイページ</td></tr></table><p>クレジットカードの番号は、まち頼では受け取りません。業者が決済会社（Stripe）の画面で直接入力します。</p><h4>3. 利用目的</h4><ol><li>依頼を、分野とエリアの合う業者に届けるため</li><li>依頼者と業者のチャット、現地調査、見積もり、完了までのやり取りを進めるため</li><li>AIが相談に答え、依頼の内容をまとめるため</li><li>業者の本人確認、資格・許可の確認のため</li><li>立候補料・紹介手数料の請求のため</li><li>お知らせ、返信の期限などの通知のため（LINE・メール・アプリ内）</li><li>規約違反（中抜きなど）を防ぐこと、トラブルやお問い合わせに対応するため</li><li>個人が分からない形にまとめて、サービスをよくするため</li></ol><h4>4. 第三者への提供（依頼者と業者のあいだ）</h4><p>まち頼は、本人の同意なく第三者に個人情報を渡しません。ただし、サービスの仕組みとして次のタイミングで相手に表示します。</p><table><tr><th>タイミング</th><th>相手に見えるもの</th></tr><tr><td>依頼を出したとき</td><td>依頼の内容、市町村まで（くわしい住所・名前・電話番号は見えません）</td></tr><tr><td>業者が立候補したとき</td><td>業者の会社名・自己紹介・実績・拠点の市町村・口コミ・写真</td></tr><tr><td>現地調査の日が決まったとき</td><td>依頼者のお名前・住所・電話番号を、その業者だけに表示</td></tr><tr><td>成約したとき</td><td>業者の電話番号・メール・HP・Googleの口コミを、その依頼者だけに表示</td></tr></table><p>次の場合は、同意なく提供することがあります。</p><ul><li>法律にもとづく場合（警察・裁判所などからの正式な求め）</li><li>人の命・体・財産を守るために必要で、本人の同意を得るのが難しい場合</li></ul><h4>5. 使っている外部サービスと外国への移転</h4><table><tr><th>サービス</th><th>使いみち</th><th>置き場所</th></tr><tr><td>Google（スプレッドシート・ドライブ・Apps Script）</td><td>データの保管、アプリの処理</td><td>日本国外を含む（場所は選べません）</td></tr><tr><td>LINE</td><td>ログイン、通知</td><td>日本など</td></tr><tr><td>OpenAI</td><td>AIの相談への返答</td><td>アメリカ</td></tr><tr><td>Stripe</td><td>カード決済</td><td>アメリカなど</td></tr><tr><td>GitHub</td><td>アプリの画面の公開（個人情報は置きません）</td><td>アメリカ</td></tr></table><ul><li>AIに送る前に、電話番号・メールアドレス・番地などは「XX」に置き換えます。</li><li>OpenAIは、APIで送られた内容をAIの学習に使わない方針です。</li></ul><h4>6. 保管期間と削除</h4><table><tr><th>情報</th><th>保管期間</th></tr><tr><td>本人確認書類の画像</td><td>確認が終わったら削除（確認した結果だけを残します）</td></tr><tr><td>チャット・依頼の記録</td><td>依頼が終わってから5年</td></tr><tr><td>お支払いの記録</td><td>法律で決められた期間</td></tr><tr><td>その他の登録情報</td><td>退会するまで</td></tr></table><p>退会したときは、法律で残す必要があるものと、未払いの料金の記録をのぞいて削除します。</p><p>万一に備えて控え（バックアップ）を取っています。退会などで削除した情報も、控えの中には最長1年残り、その後自動で消えます。</p><h4>7. 安全管理</h4><ul><li>個人情報を見られるのは運営者だけにします。</li><li>APIキーなどの鍵は、アプリの画面やプログラムの公開部分には書かず、別の場所に保管します。</li><li>公開欄やチャットに電話番号・メール・URLが書かれた場合は、送信前に止めます。</li><li>カード番号はまち頼では持たず、Stripeが管理します。</li><li>万一、情報が漏れたおそれがあるときは、本人と個人情報保護委員会に知らせます。</li></ul><h4>8. 開示・訂正・削除のご請求とお問い合わせ</h4><p>自分の情報を見たい・直したい・消したい・使うのを止めてほしいときは、アプリ内の「お問い合わせ」か、メール（softkeys33@gmail.com）で連絡してください。本人であることを確認したうえで対応します。</p><h4>9. 改定</h4><p>この方針を変えるときは、アプリ内でお知らせします。</p>";
 var AGREED=false;
 function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>':'')+'<h1>まち頼</h1>'+(sub?'<p class="lgs">'+sub+'</p>':'')+'<div class="lgbox">'+body+'</div><p class="note2" style="text-align:center;opacity:.6">版 '+APPVER+'</p>';if(back)$('lgBk').onclick=back;}
-function lgStart(){lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">はじめての方（新規登録）</div>'+
+var START_BK=null;function lgStart(bk){if(typeof bk==='function')START_BK=bk;lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">はじめての方（新規登録）</div>'+
     '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button>'+
-    '<div class="obq">登録済みの方</div><button type="button" class="obc obl" id="obLg"><b>ログイン</b><small>LINE・メールアドレスでログインする</small></button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>');
+    '<div class="obq">登録済みの方</div><button type="button" class="obc obl" id="obLg"><b>ログイン</b><small>LINE・メールアドレスでログインする</small></button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>',START_BK);
   $('obU').onclick=function(){lgUser(lgStart);};$('obV').onclick=lgBiz;$('obLg').onclick=function(){showLogin('login');};}
 function lgBiz(){lgPage('仕事を受けたい','<p style="font-size:14px;line-height:1.8">業者の登録は、テスト版ではまだ準備中です。<br>いまは「依頼したい」で登録すると、上の「モード」から<b>Proモード</b>に切り替えて、業者の画面を試せます。</p><button type="button" class="big" id="bzU">依頼したいで登録する</button>',lgStart);$('bzU').onclick=lgUser;}
 function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><b>'+(i+1)+'.</b> '+esc(x)+'</p>';}).join('')+'</div>';}
@@ -501,7 +502,7 @@ function lgCode(m,pw,tc){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
     api('registerEmail',{email:m,password:pw,code:c,agreed:1}).then(function(j){clearInterval(tm);saveLogin(j);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){if($('cdF'))bt.disabled=false;});};
   $('cdR').onclick=function(){if(Date.now()<next)return;api('mailCodeSend',{email:m,password:pw}).then(function(j){if(j.testCode)$('cdT').innerHTML='テスト版だけの表示：メールが届かないときは、この番号でも進めます → <b>'+j.testCode+'</b>';exp=Date.now()+600e3;next=Date.now()+60e3;$('cdI').value='';$('cdE').hidden=true;toast('番号を送り直しました');tick();}).catch(fail);};}
 function showLogin(mode){
-  if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){lgStart();return;}mode='login';}
+  if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){START_BK=null;lgStart();return;}mode='login';}
   lg.hidden=false;mode=mode||'login';
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
     '<div class="lgbox">'+openInLine()+'<button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
@@ -514,7 +515,7 @@ function showLogin(mode){
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
   lg.insertAdjacentHTML('beforeend','<p class="note2" style="text-align:center;opacity:.6">版 '+APPVER+'</p>');lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
-  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgStart();else showLogin('login');};});
+  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgStart(function(){showLogin('login');});else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
     api(mode==='new'?'registerEmail':'loginEmail',{email:$('lgE').value,password:$('lgP').value}).then(saveLogin).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};
   var fg=$('lgFg');if(fg)fg.onclick=forgot;
@@ -577,20 +578,21 @@ function agreeSheet(){
   $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;saveBoot();closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
 }
 function notifSheet(){
-  openSheet('<h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
+  openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
     '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>','tall');
-  $('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
+  $('shBk').onclick=agreeSheet;$('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
 function doneSheet(){
   openSheet('<div class="dnw"><div class="dni">✓</div><h3>登録が済みました</h3><p>'+esc(ME.callName)+'さん、ようこそ。<br>家のことで気になることがあれば、気軽に相談してみてください。</p><button type="button" class="big" id="dnOk">はじめる</button></div>','tall');
   $('dnOk').onclick=function(){closeSheet();};
 }
 function welcome(){
-  openSheet('<h3>はじめまして</h3><p class="sp s2">最初に2つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
+  openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>はじめまして</h3><p class="sp s2">最初に2つだけ教えてください。あとからマイページで変えられます。</p><form class="fm" id="wcF">'+
     '<label for="wcN">呼ばれたい名前</label><input id="wcN" value="'+esc((ME.callName||ME.name||'').slice(0,8))+'" maxlength="8" placeholder="例：まさ">'+
     '<p class="sp s2" style="font-size:12px;margin-top:-4px">8文字まで。アプリの中で、この名前で呼びかけます</p>'+
     '<label for="wcA">お住まいの市町村</label><select id="wcA"><option value="">選んでください</option>'+NAGANO.map(function(g){return '<optgroup label="'+g[0]+'">'+g[1].map(function(a){return '<option'+(a===ME.area?' selected':'')+'>'+a+'</option>';}).join('')+'</optgroup>';}).join('')+'</select><p class="err" id="wcE" hidden></p>'+
     '<button class="big" type="submit">始める</button></form>','tall');
+  $('shBk').onclick=notifSheet;
   $('wcF').onsubmit=function(e){e.preventDefault();var n=$('wcN').value.trim(),er=$('wcE'),bad=function(t,el){er.textContent=t;er.hidden=false;el.focus();};er.hidden=true;
     if(!n)return bad('呼ばれたい名前を入れてください',$('wcN'));if(n.length>8)return bad('呼ばれたい名前は8文字までです',$('wcN'));if(/\d{4,}|@|https?:|www\./i.test(n.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);})))return bad('電話番号やURLは使えません',$('wcN'));if(!$('wcA').value)return bad('お住まいの市町村を選んでください',$('wcA'));
     var first=!ME.callName||!ME.area;api('saveProfile',{callName:n,area:$('wcA').value,chara:'sis'}).then(function(j){ME=j.user;saveBoot();closeSheet();refresh();if(first)setTimeout(doneSheet,300);}).catch(fail);};
