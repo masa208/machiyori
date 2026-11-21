@@ -353,7 +353,7 @@ body{background:#F3F4F1;margin:0}
 .lg .lgs{text-align:center;font-size:13px;color:#6E7D75;margin:2px 0 14px}
 .lg .lgc{display:block;height:130px;margin:0 auto 8px}
 .lgbox{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
-.btn-line{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-size:15px;font-weight:700;color:#fff;background:#06C755;border:0;border-radius:12px;padding:13px;cursor:pointer}
+.btn-line.off{opacity:.45;pointer-events:none}.btn-line{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-size:15px;font-weight:700;color:#fff;background:#06C755;border:0;border-radius:12px;padding:13px;cursor:pointer}
 .btn-line small{font-size:11px;font-weight:700;background:#fff;color:#06A046;border-radius:10px;padding:1px 7px}
 .or{display:flex;align-items:center;gap:8px;color:#6E7D75;font-size:12px;margin:16px 0 12px}.or::before,.or::after{content:"";flex:1;height:1px;background:#E3E6E2}
 .fm label{display:block;font-size:12.5px;font-weight:700;margin:10px 0 4px}
@@ -427,7 +427,7 @@ body{background:#F3F4F1;margin:0}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=15;
+var APPVER_N=16;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -443,6 +443,8 @@ var LIFF_ID='2011196111-mkgGx8sO',LIFF_URL='https://liff.line.me/'+LIFF_ID;
 function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
+/* スマホのブラウザでは、LINEアプリへ直接つながるリンクにする（LINEのメール・パスワード画面を通さない） */
+function lineBtn(label,reg,off){if(isPhone()&&!inLineApp())return '<a class="btn-line'+(off?' off':'')+'" id="lgLine" style="text-decoration:none" href="'+LIFF_URL+(reg?'?agreed=1':'')+'">'+label+'</a>';return '<button type="button" class="btn-line" id="lgLine"'+(off?' disabled':'')+'>'+label+'</button>';}
 function openInLine(){return false&&isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
 var APPVER=APPVER_N;var TK='machiyori_token';
 
@@ -497,9 +499,9 @@ function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><
 function lgUser(bk){bk=typeof bk==='function'?bk:lgStart;lgPage('依頼したい','<div class="obh"><b>利用規約とプライバシーポリシー</b></div><p class="note2" style="margin:0 0 6px">下にスクロールすると全文を読めます（現時点の案です。変わるときはアプリでお知らせします）。</p>'+
     '<div class="tosfull" tabindex="0"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div>'+
     '<label class="agr obag"><input type="checkbox" id="obAg"'+(AGREED?' checked':'')+'><span>利用規約とプライバシーポリシーに同意する</span></label><div class="obh" style="margin-top:14px"><b style="font-size:16px">登録の方法を選んでください</b></div>'+openInLine()+
-    '<button type="button" class="btn-line" id="lgLine"'+(AGREED?'':' disabled')+'>LINEで登録 <small>おすすめ</small></button><button type="button" class="ghost2" id="obM"'+(AGREED?'':' disabled')+'>メールアドレスで登録</button><p class="note2">一度登録すると、次からはそのまま使えます。</p>',bk);
-  var ag=$('obAg');ag.onchange=function(){AGREED=ag.checked;$('lgLine').disabled=$('obM').disabled=!AGREED;};
-  $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}lineLogin();};$('obM').onclick=function(){lgMail('',bk);};}
+    lineBtn('LINEで登録 <small>おすすめ</small>',1,!AGREED)+'<button type="button" class="ghost2" id="obM"'+(AGREED?'':' disabled')+'>メールアドレスで登録</button><p class="note2">一度登録すると、次からはそのまま使えます。</p>',bk);
+  var ag=$('obAg');ag.onchange=function(){AGREED=ag.checked;$('lgLine').disabled=$('obM').disabled=!AGREED;$('lgLine').classList.toggle('off',!AGREED);};
+  $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}if(this.tagName==='A')return;lineLogin();};$('obM').onclick=function(){lgMail('',bk);};}
 var LG_BK=null;function lgMail(em,bk){if(bk)LG_BK=bk;lgPage('メールアドレスで登録','<form class="fm" id="mlF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email" value="'+esc(em||'')+'"><label for="lgP">パスワード（8文字以上）</label><input id="lgP" type="password" autocomplete="new-password"><p class="err" id="lgErr" hidden></p><button class="big" type="submit">確認の番号を送る</button></form>',function(){lgUser(LG_BK);});
   $('mlF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big'),m=$('lgE').value.trim(),pw=$('lgP').value;bt.disabled=true;
     api('mailCodeSend',{email:m,password:pw}).then(function(j){lgCode(m,pw,j.testCode);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};}
@@ -514,7 +516,7 @@ function showLogin(mode){
   if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){START_BK=null;lgStart();return;}mode='login';}
   lg.hidden=false;mode=mode||'login';
   lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
-    '<div class="lgbox">'+openInLine()+'<button type="button" class="btn-line" id="lgLine">LINEでログイン <small>おすすめ</small></button>'+
+    '<div class="lgbox">'+openInLine()+lineBtn('LINEでログイン <small>おすすめ</small>')+
     '<div class="or">または メールアドレスで</div>'+
     '<div class="tabs2"><button type="button" data-m="login" aria-pressed="'+(mode==='login')+'">ログイン</button><button type="button" data-m="new" aria-pressed="'+(mode==='new')+'">はじめての方</button></div>'+
     '<form class="fm" id="lgF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email">'+
@@ -523,7 +525,7 @@ function showLogin(mode){
     (mode==='login'?'<p class="note2" style="text-align:center">パスワードを忘れた場合は<button type="button" class="lnk2" id="lgFg" style="display:inline;padding:0 2px">こちら</button></p>':'')+'</div>'+
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
   lg.insertAdjacentHTML('beforeend','<p class="note2" style="text-align:center;opacity:.6">版 '+APPVER+'</p>');lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
-  $('lgLine').onclick=lineLogin;
+  $('lgLine').onclick=function(){if(this.tagName==='A')return;lineLogin();};
   each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgStart(function(){showLogin('login');});else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
     api(mode==='new'?'registerEmail':'loginEmail',{email:$('lgE').value,password:$('lgP').value}).then(saveLogin).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};
@@ -565,6 +567,7 @@ function finishLine(){
 /* ===== 起動 ===== */
 function boot(){
   var q=new URLSearchParams(location.search);
+  if(q.get('agreed')==='1'||/agreed%3D1|agreed=1/.test(q.get('liff.state')||'')){try{localStorage.setItem('mchy_agree','1');}catch(e){}}
   if(q.get('reset')){resetForm(q.get('reset'));return;}
   if(TOKEN&&(q.get('liffClientId')||q.get('code')||q.get('liff.state'))){try{history.replaceState(null,'',location.pathname);}catch(e){}q=new URLSearchParams('');}
   if(q.get('liffClientId')||q.get('code')||q.get('liff.state')){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
