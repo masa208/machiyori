@@ -435,7 +435,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 function openInLine(){return isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
-var TK='machiyori_token';
+var APPVER='11/21-17:00';var TK='machiyori_token';
 
 var ph=document.getElementById('ph'),scr=document.getElementById('scr'),nav=document.getElementById('nav'),pane=document.getElementById('pane'),sheet=document.getElementById('sheet'),lg=document.getElementById('lg');
 var TOKEN='',ME=null,HOME=null,tab='home',pollT=null,chatT=null;
@@ -897,7 +897,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>まちことの おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
     (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].map(row).join('')+'</div>':'')+
-    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="8" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
