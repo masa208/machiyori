@@ -481,16 +481,16 @@ function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type=
 function lgStart(){lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">はじめての方（新規登録）</div>'+
     '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button>'+
     '<div class="obq">登録済みの方</div><button type="button" class="obc obl" id="obLg"><b>ログイン</b><small>LINE・メールアドレスでログインする</small></button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>');
-  $('obU').onclick=lgUser;$('obV').onclick=lgBiz;$('obLg').onclick=function(){showLogin('login');};}
+  $('obU').onclick=function(){lgUser(lgStart);};$('obV').onclick=lgBiz;$('obLg').onclick=function(){showLogin('login');};}
 function lgBiz(){lgPage('仕事を受けたい','<p style="font-size:14px;line-height:1.8">業者の登録は、テスト版ではまだ準備中です。<br>いまは「依頼したい」で登録すると、上の「モード」から<b>Proモード</b>に切り替えて、業者の画面を試せます。</p><button type="button" class="big" id="bzU">依頼したいで登録する</button>',lgStart);$('bzU').onclick=lgUser;}
 function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><b>'+(i+1)+'.</b> '+esc(x)+'</p>';}).join('')+'</div>';}
-function lgUser(){lgPage('依頼したい','<div class="obh"><b>利用規約とプライバシーポリシー</b></div><p class="note2" style="margin:0 0 6px">下にスクロールすると全文を読めます（現時点の案です。変わるときはアプリでお知らせします）。</p>'+
+function lgUser(bk){bk=typeof bk==='function'?bk:lgStart;lgPage('依頼したい','<div class="obh"><b>利用規約とプライバシーポリシー</b></div><p class="note2" style="margin:0 0 6px">下にスクロールすると全文を読めます（現時点の案です。変わるときはアプリでお知らせします）。</p>'+
     '<div class="tosfull" tabindex="0"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div>'+
     '<label class="agr obag"><input type="checkbox" id="obAg"'+(AGREED?' checked':'')+'><span>利用規約とプライバシーポリシーに同意する</span></label><div class="obh" style="margin-top:14px"><b style="font-size:16px">ログインの方法を選んでください</b></div>'+openInLine()+
-    '<button type="button" class="btn-line" id="lgLine"'+(AGREED?'':' disabled')+'>LINEでログイン <small>おすすめ</small></button><button type="button" class="ghost2" id="obM"'+(AGREED?'':' disabled')+'>メールアドレスで登録</button><p class="note2">一度ログインすると、次からはそのまま使えます。</p>',lgStart);
+    '<button type="button" class="btn-line" id="lgLine"'+(AGREED?'':' disabled')+'>LINEでログイン <small>おすすめ</small></button><button type="button" class="ghost2" id="obM"'+(AGREED?'':' disabled')+'>メールアドレスで登録</button><p class="note2">一度ログインすると、次からはそのまま使えます。</p>',bk);
   var ag=$('obAg');ag.onchange=function(){AGREED=ag.checked;$('lgLine').disabled=$('obM').disabled=!AGREED;};
-  $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}lineLogin();};$('obM').onclick=lgMail;}
-function lgMail(em){lgPage('メールアドレスで登録','<form class="fm" id="mlF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email" value="'+esc(em||'')+'"><label for="lgP">パスワード（8文字以上）</label><input id="lgP" type="password" autocomplete="new-password"><p class="err" id="lgErr" hidden></p><button class="big" type="submit">確認の番号を送る</button></form>',lgUser);
+  $('lgLine').onclick=function(){try{localStorage.setItem('mchy_agree','1');}catch(e){}lineLogin();};$('obM').onclick=function(){lgMail('',bk);};}
+var LG_BK=null;function lgMail(em,bk){if(bk)LG_BK=bk;lgPage('メールアドレスで登録','<form class="fm" id="mlF" novalidate><label for="lgE">メールアドレス</label><input id="lgE" type="email" autocomplete="email" inputmode="email" value="'+esc(em||'')+'"><label for="lgP">パスワード（8文字以上）</label><input id="lgP" type="password" autocomplete="new-password"><p class="err" id="lgErr" hidden></p><button class="big" type="submit">確認の番号を送る</button></form>',function(){lgUser(LG_BK);});
   $('mlF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big'),m=$('lgE').value.trim(),pw=$('lgP').value;bt.disabled=true;
     api('mailCodeSend',{email:m,password:pw}).then(function(j){lgCode(m,pw,j.testCode);}).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};}
 function lgCode(m,pw,tc){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
@@ -514,7 +514,7 @@ function showLogin(mode){
     '<p class="note2">一度ログインすると、次からはそのまま使えます。<br>これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>';
   lg.insertAdjacentHTML('afterbegin','<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>');$('lgBk').onclick=lgStart;
   $('lgLine').onclick=lineLogin;
-  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgUser();else showLogin('login');};});
+  each('.tabs2 button',lg,function(b){b.onclick=function(){if(b.dataset.m==='new')lgUser(function(){showLogin('login');});else showLogin('login');};});
   $('lgF').onsubmit=function(e){e.preventDefault();var er=$('lgErr');er.hidden=true;var bt=this.querySelector('.big');bt.disabled=true;
     api(mode==='new'?'registerEmail':'loginEmail',{email:$('lgE').value,password:$('lgP').value}).then(saveLogin).catch(function(x){er.textContent=x.message;er.hidden=false;}).then(function(){bt.disabled=false;});};
   var fg=$('lgFg');if(fg)fg.onclick=forgot;
@@ -541,7 +541,13 @@ function lineLogin(){
 function finishLine(){
   var idt=null;try{idt=liff.getIDToken();}catch(e){}
   var ag=0;try{ag=localStorage.getItem('mchy_agree')?1:0;localStorage.removeItem('mchy_agree');}catch(e){}
-  return api('loginLine',idt?{idToken:idt,agreed:ag}:{accessToken:liff.getAccessToken(),agreed:ag}).then(saveLogin).catch(function(e){fail(e);showLogin();});
+  try{var d=liff.getDecodedIDToken();if(!d||!d.exp||d.exp*1000<Date.now()+60e3)idt=null;}catch(e){idt=null;}
+  var at=null;try{at=liff.getAccessToken();}catch(e){}
+  var viaAT=function(){return api('loginLine',{accessToken:at,agreed:ag});};
+  return (idt?api('loginLine',{idToken:idt,agreed:ag}).catch(function(e){if(at)return viaAT();throw e;}):viaAT()).then(saveLogin).catch(function(e){
+    var k='mchy_lretry';var r=null;try{r=sessionStorage.getItem(k);}catch(x){}
+    if(!r){try{sessionStorage.setItem(k,'1');if(ag)localStorage.setItem('mchy_agree','1');}catch(x){}try{liff.logout();}catch(x){}liff.login({redirectUri:location.origin+location.pathname});return;}
+    try{sessionStorage.removeItem(k);}catch(x){}fail(e);showLogin();});
 }
 
 /* ===== 起動 ===== */
