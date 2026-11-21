@@ -472,7 +472,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=20;
+var APPVER_N=21;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1309,7 +1309,7 @@ function z2h(s){return String(s||'').replace(/[０-９Ａ-Ｚａ-ｚ]/g,function
 function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSheet();
   if(ME&&ME.role!=='vendor'){try{localStorage.removeItem(suKey());}catch(e){}openSheet('<h3>業者の登録はできません</h3><p class="sp s2">このアカウントは「依頼したい」で登録されています。業者として登録するときは、ログアウトしてから「はじめての方」→「仕事を受けたい」へ進み、別のLINEアカウントかメールアドレスで登録してください。</p><button type="button" class="big" id="nvOk">わかりました</button>');$('nvOk').onclick=function(){closeSheet();refresh();};return;}var sv=null;try{sv=JSON.parse(localStorage.getItem(suKey())||'null');}catch(e){}
   SU=sv&&sv.d?{i:sv.i||0,d:sv.d,resumed:sv.i>0}:{i:0,d:{svc:[],area:[],days:[1,2,3,4,5,6],from:'8:00',to:'18:00',exp:10,emp:3,agree:[],tos:false,ins:'',dmg:'',docs:{}}};
-  if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
+  if(!SU.d.mail&&ME&&ME.email)SU.d.mail=ME.email;if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
 function suStore(){try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
 function suFld(id,label,req,val,ph,type,note){return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input id="'+id+'"'+(SU_AC[id]?' autocomplete="'+SU_AC[id]+'"':'')+(type?' type="'+type+'"':'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></label>'+(note?'<p class="pc-n">'+note+'</p>':'');}
 function suDraw(){stopChat();if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_STEPS[SU.i],inStep=SU_STEPS.filter(function(s){return s[0]===st[0];}),k=inStep.indexOf(st)+1;
@@ -1318,11 +1318,11 @@ function suDraw(){stopChat();if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_S
     '<div class="arw su"><h3 class="suh">'+st[2]+'</h3>'+suBody(SU.i)+'<p class="warn" id="suW" hidden></p></div>'+
     '<div class="njbar"><button type="button" class="ghost" id="suB">'+(SU.i?'もどる':'やめる')+'</button><button type="button" class="big" id="suN">'+(SU.i===SU_STEPS.length-1?'登録を申し込む':'次へ')+'</button></div>';
   pane.classList.add('on');pane.querySelector('.arw').scrollTop=0;suStore();
-  var back=function(){if(SU.tm){clearInterval(SU.tm);SU.tm=0;}if(!SU.i){pane.classList.remove('on');return;}suSave();SU.i--;suDraw();};
+  var back=function(){if(SU.tm){clearInterval(SU.tm);SU.tm=0;}if(!SU.i){pane.classList.remove('on');return;}suSave();SU.i--;if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase())SU.i--;suDraw();};
   pane.querySelector('.bk').onclick=back;$('suB').onclick=back;
   if(SU.resumed){var rs=document.createElement('button');rs.type='button';rs.className='lnk surs';rs.textContent='最初からやり直す';pane.querySelector('.sustep').appendChild(rs);rs.onclick=function(){try{localStorage.removeItem(suKey());}catch(e){}vendorSignup();};SU.resumed=false;}
   $('suN').onclick=function(){var bt=this,err=suSave(true);if(err)return suWarn(err);bt.disabled=true;var t0=bt.textContent;bt.textContent='確認しています…';
-    suAsync(SU.i).then(function(){if(SU.i===SU_STEPS.length-1)return suSubmit();SU.i++;suDraw();}).catch(function(e){bt.disabled=false;bt.textContent=t0;suWarn((e&&e.message)||'うまくいきませんでした');});};
+    suAsync(SU.i).then(function(){if(SU.i===SU_STEPS.length-1)return suSubmit();SU.i++;if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase()){SU.d.mailok=SU.d.mail;SU.i++;}suDraw();}).catch(function(e){bt.disabled=false;bt.textContent=t0;suWarn((e&&e.message)||'うまくいきませんでした');});};
   suBind(SU.i);}
 function suWarn(msg){var w=$('suW');w.textContent=msg;w.hidden=false;var first=suMark(msg),ar=pane.querySelector('.arw'),tg=first||w;ar.scrollTop=Math.max(0,tg.offsetTop-140);if(first&&first.focus)first.focus({preventScroll:true});}
 function suMark(msg){each('.ferr',pane,function(e){e.remove();});each('.bad',pane,function(e){e.classList.remove('bad');});
@@ -1336,7 +1336,7 @@ function suBody(i){var d=SU.d;
   if(i===1)return '<div class="pmg"><b>依頼者には表示されません</b><small>確認と、運営からの連絡に使います</small></div><form class="pf pf2" onsubmit="return false">'+suFld('u_nm','事業者名',1,d.nm,'例）まちより工務店','','個人事業主の方は屋号またはお名前')+
     suFld('u_zip','郵便番号',1,d.zip,'例）3900811','','7けたを入れると住所が自動で入ります')+'<div class="su2"><label>都道府県 <em class="rq">必須</em><input id="u_pref" value="'+esc(d.pref||'')+'" placeholder="例）長野県"></label><label>市区町村 <em class="rq">必須</em><input id="u_city" value="'+esc(d.city||'')+'" placeholder="例）松本市"></label></div>'+
     suFld('u_ad','町名・番地',1,d.ad,'例）中央1-2-3')+suFld('u_bl','建物名・部屋番号',0,d.bl,'')+'<div class="su2">'+suFld('u_ln','担当者 姓',1,d.ln,'山田')+suFld('u_fn','名',1,d.fn,'太郎')+'</div><div class="su2">'+suFld('u_lk','せい',1,d.lk,'やまだ')+suFld('u_fk','めい',1,d.fk,'たろう')+'</div>'+
-    suFld('u_tel','電話番号',1,d.tel,'例）09012345678','tel','成約した依頼者にだけ表示されます')+suFld('u_mail','メールアドレス',1,d.mail,'例）taro@example.com','email','成約した依頼者にだけ表示されます。次の画面で、6けたの番号をメールで送ります')+suFld('u_inv2','インボイスの登録番号',0,d.inv2,'例）T1234567890123','','「T」と数字13けたです。お持ちの方だけ')+'</form>';
+    suFld('u_tel','電話番号',1,d.tel,'例）09012345678','tel','成約した依頼者にだけ表示されます')+suFld('u_mail','メールアドレス',1,d.mail,'例）taro@example.com','email',(ME&&ME.email?'成約した依頼者にだけ表示されます。登録に使ったメールアドレスを入れてあります。別のアドレスにするときは、次の画面で確認の番号を送ります':'成約した依頼者にだけ表示されます。次の画面で、6けたの番号をメールで送ります'))+suFld('u_inv2','インボイスの登録番号',0,d.inv2,'例）T1234567890123','','「T」と数字13けたです。お持ちの方だけ')+'</form>';
   if(i===2){if(d.mailok===d.mail)return '<div class="mlok"><b>✓ 確認できました</b><span>'+esc(d.mail)+'</span></div><p class="pc-n">「次へ」で進んでください。</p>';
     return '<p class="note2" style="margin-top:0"><b>'+esc(d.mail)+'</b> に、6けたの番号をお送りします。メールを開いて、番号を入れてください。</p><form class="pf pf2" onsubmit="return false"><input id="u_code" class="mlcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------"><button type="button" class="big" id="mlGo">確認する</button></form>'+
       '<p class="pc-n" id="mlExp"></p><p class="pc-n">メールが届かないときは、迷惑メールのフォルダも見てください。</p><div class="mlb"><button type="button" class="ghost" id="mlRe">番号を送り直す</button><button type="button" class="ghost" id="mlFix">メールアドレスを直す</button></div><p class="pc-n" id="mlTest" style="color:#8A6A00" hidden></p>';}
