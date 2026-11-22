@@ -491,6 +491,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .sheet textarea{display:block;width:100%;box-sizing:border-box;margin:8px 0;font:inherit;font-size:14px;border:1.5px solid #d9d5cc;border-radius:10px;padding:9px 10px}.rdo input[type=radio]{width:auto!important;display:inline-block!important;flex:none;margin:4px 0 0!important}.rdo span{flex:1}.pc-b button.g{background:#fff;color:#444;border:1.5px solid #888}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}.chips button{font:inherit;font-size:13px;border:1.5px solid #d9d5cc;border-radius:999px;padding:6px 12px;background:#fff;cursor:pointer}.chips button.on{background:#2F6B45;border-color:#2F6B45;color:#fff;font-weight:700}
 .rdo.warnr{border-color:#e0a59c}.rdo.warnr small{color:#8a2a1e}
+.mjv{display:block;width:100%;background:#eef2f8;border:1px solid #c9d4e6;border-radius:10px;padding:8px 12px;font:inherit;font-size:12.5px;color:#2B4C7E;text-align:left;margin-bottom:8px;cursor:pointer}.mjv b{margin-left:6px}
 .rebar{background:#fff;border-top:1px solid var(--bd);padding:8px 12px;font-size:12.5px;color:#555;text-align:center}.rebar button{font:inherit;font-size:12.5px;font-weight:700;color:#E8613C;background:none;border:1.5px solid #E8613C;border-radius:999px;padding:4px 10px;margin-left:4px;cursor:pointer}.rebar small{display:block;color:#999;margin-top:3px}.lock.ro .big{margin-top:10px}
 </style>
 </head>
@@ -512,7 +513,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=47;
+var APPVER_N=48;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -529,7 +530,7 @@ function inLineApp(){return /\bLine\//i.test(navigator.userAgent);}
 function isPhone(){return /iPhone|iPad|Android/i.test(navigator.userAgent);}
 /* スマホのブラウザで開いた人に「LINEアプリで開く」（入力なしでログイン） */
 /* スマホのブラウザでは、LINEアプリへ直接つながるリンクにする（LINEのメール・パスワード画面を通さない） */
-function lineBtn(label,reg,off){if(isPhone()&&!inLineApp())return '<a class="btn-line'+(off?' off':'')+'" id="lgLine" style="text-decoration:none" href="'+LIFF_URL+(reg?'?agreed=1'+(localStorage.getItem('mchy_biz')?'&biz=1':''):'')+'">'+label+'</a>';return '<button type="button" class="btn-line" id="lgLine"'+(off?' disabled':'')+'>'+label+'</button>';}
+function lineBtn(label,reg,off){if(isPhone()&&!inLineApp())return '<a class="btn-line'+(off?' off':'')+'" id="lgLine" style="text-decoration:none" href="'+LIFF_URL+(reg?'?agreed=1'+(localStorage.getItem('mchy_biz')?'&biz='+localStorage.getItem('mchy_biz'):''):'')+'">'+label+'</a>';return '<button type="button" class="btn-line" id="lgLine"'+(off?' disabled':'')+'>'+label+'</button>';}
 function openInLine(){return false&&isPhone()&&!inLineApp()?'<a class="btn-lineapp" href="'+LIFF_URL+'">LINEアプリで開く<small>メール・パスワードの入力なしでログイン</small></a><div class="or">または</div>':'';}
 var APPVER=APPVER_N;var TK='machiyori_token';
 
@@ -578,10 +579,11 @@ var PP_FULL="<p>まち頼は、依頼者と業者から預かる個人情報を�
 var AGREED=false;
 function lgPage(sub,body,back){lg.hidden=false;lg.innerHTML=(back?'<button type="button" class="lgbk" id="lgBk" aria-label="1つ前にもどる">‹</button>':'')+'<h1>まち頼</h1>'+(sub?'<p class="lgs">'+sub+'</p>':'')+'<div class="lgbox">'+body+'</div><p class="note2" style="text-align:center;opacity:.6">版 '+APPVER+'</p>';if(back)$('lgBk').onclick=back;}
 var START_BK=null;function lgStart(bk){if(typeof bk==='function')START_BK=bk;lgPage('','<div class="obh"><b>まち頼へようこそ🎉</b></div><div class="obab"><b>まち頼とは</b><span>くらしのお困りごとを地元のプロに相談・依頼できるアプリです。</span></div><div class="obq">はじめての方（新規登録）</div>'+
-    '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button>'+
+    '<button type="button" class="obc" id="obU"><b>依頼したい</b><small>まちの専門家に相談・依頼する</small></button><button type="button" class="obc" id="obV"><b>仕事を受けたい</b><small>業者として登録し、依頼に立候補する（依頼者としても利用できます）</small></button><button type="button" class="obc" id="obK"><b>会員の方</b><small>会員ページを使う（会員の名簿で確認します）</small></button>'+
     '<div class="obq">登録済みの方</div><button type="button" class="obc obl" id="obLg"><b>ログイン</b><small>LINE・メールアドレスでログインする</small></button><p class="note2">これはテスト版です。登録した内容は、本番の前に消すことがあります。</p>',START_BK);
-  $('obU').onclick=function(){lgUser(lgStart);};$('obV').onclick=lgBiz;$('obLg').onclick=function(){showLogin('login');};}
+  $('obU').onclick=function(){lgUser(lgStart);};$('obV').onclick=lgBiz;$('obK').onclick=lgMem;$('obLg').onclick=function(){showLogin('login');};}
 function lgBiz(){try{localStorage.setItem('mchy_biz','1');}catch(e){}lgUser(lgStart,'仕事を受けたい');}
+function lgMem(){try{localStorage.setItem('mchy_biz','2');}catch(e){}lgUser(lgStart,'会員の方');}
 function docList(L){return '<div class="tosb">'+L.map(function(x,i){return '<p><b>'+(i+1)+'.</b> '+esc(x)+'</p>';}).join('')+'</div>';}
 function lgUser(bk,ttl){bk=typeof bk==='function'?bk:lgStart;lgPage(ttl||'依頼したい','<div class="obh"><b>利用規約とプライバシーポリシー</b></div><p class="note2" style="margin:0 0 6px">下にスクロールすると全文を読めます（現時点の案です。変わるときはアプリでお知らせします）。</p>'+
     '<div class="tosfull" tabindex="0"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div>'+
@@ -654,7 +656,7 @@ function finishLine(){
 /* ===== 起動 ===== */
 function boot(){
   var q=new URLSearchParams(location.search);
-  if(q.get('biz')==='1'||/biz%3D1|biz=1/.test(q.get('liff.state')||'')){try{localStorage.setItem('mchy_biz','1');}catch(e){}}
+  var bz=q.get('biz')||(((q.get('liff.state')||'').match(/biz(?:%3D|=)(\d)/)||[])[1]);if(bz==='1'||bz==='2'){try{localStorage.setItem('mchy_biz',bz);}catch(e){}}
   if(q.get('agreed')==='1'||/agreed%3D1|agreed=1/.test(q.get('liff.state')||'')){try{localStorage.setItem('mchy_agree','1');}catch(e){}}
   if(q.get('reset')){resetForm(q.get('reset'));return;}
   if(TOKEN&&(q.get('liffClientId')||q.get('code')||q.get('liff.state'))){try{history.replaceState(null,'',location.pathname);}catch(e){}q=new URLSearchParams('');}
@@ -662,28 +664,31 @@ function boot(){
   if(!TOKEN&&inLineApp()){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN){showLogin();return;}
   var bc=null;try{bc=JSON.parse(localStorage.getItem('mchy_boot')||'null');}catch(e){}
-  if(bc&&bc.t===TOKEN&&bc.ME&&bc.HOME){ME=bc.ME;HOME=bc.HOME;afterLogin();return;}
-  api('home').then(function(j){HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
+  if(bc&&bc.t===TOKEN&&bc.ME&&bc.HOME){ME=bc.ME;HOME=bc.HOME;modeGuard();afterLogin();return;}
+  api('home').then(function(j){HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();modeGuard();afterLogin();}).catch(function(e){if(TOKEN)fail(e);if(!TOKEN)showLogin();});
 }
 /* 前回の画面をスマホに覚えておき、次に開いたときすぐ出す（中身は裏で新しくする） */
 var HOME_AT=0;
 function saveBoot(){try{localStorage.setItem('mchy_boot',JSON.stringify({t:TOKEN,ME:ME,HOME:HOME}));}catch(e){}}
-function bizFlag(){try{return localStorage.getItem('mchy_biz')?1:0;}catch(e){return 0;}}
+function bizFlag(){try{var v=localStorage.getItem('mchy_biz');return v==='2'?2:v?1:0;}catch(e){return 0;}}
+/* 使えないモードにいたら依頼者モードへ（依頼者はProモード・会員ページなし・11/22） */
+function modeGuard(){var b=(MODE==='pro'&&HOME&&HOME.pro===false)||(MODE==='member'&&HOME&&!HOME.member&&!(ME&&ME.role==='member'));if(b){MODE='user';try{localStorage.setItem('machiyori_mode2','user');}catch(e){}ph.dataset.mode='user';tab='home';}return b;}
+function bizGo(){if(bizFlag()===2)memberJoin();else vendorSignup();}
 function bizWanted(){try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':MODE==='member'?'会員ページ':'依頼者モード';if(MODE==='pro')tab='job';if(MODE==='member')tab='board';
-  if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(vendorSignup,300);else if(!ME.callName||!ME.area){welcome();}
+  if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(bizGo,300);else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
 }
 function agreeSheet(){
   openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
   $('agC').onchange=function(){$('agOk').disabled=!this.checked;};
-  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;saveBoot();closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(bizWanted())vendorSignup();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
+  $('agOk').onclick=function(){this.disabled=true;api('saveProfile',{agreed:1}).then(function(j){ME=j.user;saveBoot();closeSheet();setTimeout(function(){if(!ME.notifySet)notifSheet();else if(bizWanted())bizGo();else if(!ME.callName||!ME.area)welcome();else refresh();},250);}).catch(function(e){$('agOk').disabled=false;fail(e);});};
 }
 function notifSheet(){
   openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>お知らせの受け取り方</h3><p class="sp s2">見積もりやメッセージが届いたときのお知らせです。あとからマイページで変えられます。</p><div class="list mset"><label class="mrow pmtg"><span>アプリの通知<small>スマホの画面に出ます</small></span><input type="checkbox" id="nfP" checked></label><label class="mrow pmtg"><span>LINEで受け取る<small>まち頼の公式アカウントを友だち追加します</small></span><input type="checkbox" id="nfL" checked></label></div>'+
     '<p class="sp s2" style="font-size:12px">iPhoneでアプリの通知を受け取るには、まち頼をホーム画面に追加してください。どちらもオフにすると、アプリを開いたときだけお知らせが見られます。（テスト版では、選んだ内容の保存までです）</p><button type="button" class="big" id="nfOk">決定</button>','tall');
-  $('shBk').onclick=agreeSheet;$('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(bizWanted())setTimeout(vendorSignup,250);else if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
+  $('shBk').onclick=agreeSheet;$('nfOk').onclick=function(){this.disabled=true;api('saveProfile',{notifySet:1,notifyPush:$('nfP').checked?1:0,notifyLine:$('nfL').checked?1:0}).then(function(j){ME=j.user;saveBoot();closeSheet();if(bizWanted())setTimeout(bizGo,250);else if(!ME.callName||!ME.area)setTimeout(welcome,250);else refresh();}).catch(function(e){$('nfOk').disabled=false;fail(e);});};
 }
 function doneSheet(){
   openSheet('<div class="dnw"><div class="dni">✓</div><h3>登録が済みました</h3><p>'+esc(ME.callName)+'さん、ようこそ。<br>家のことで気になることがあれば、気軽に相談してみてください。</p><button type="button" class="big" id="dnOk">はじめる</button></div>','tall');
@@ -715,7 +720,7 @@ function busyForm(){var a=document.activeElement;return a&&scr.contains(a)&&/^(I
 function refresh(){if(!ME)return;var m=MODE,t=tab,had=!!HOME;
   if(had)draw();else if(MODE==='pro')renderPro();else if(MODE==='member')renderMember();else scr.innerHTML=LOADING;
   if(had&&Date.now()-HOME_AT<4000)return;
-  return api('home').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(HOME);HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();$('bellN').textContent=j.unread||'';
+  return api('home').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(HOME);HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();if(modeGuard()){setTimeout(function(){setMode('user');},0);return;}$('bellN').textContent=j.unread||'';
     if(MODE!==m||tab!==t||pane.classList.contains('on'))return;
     if(MODE==='pro'&&tab!=='me')return;
     if(MODE==='member')return;
@@ -1209,7 +1214,7 @@ function seenNo(k){try{return !localStorage.getItem('mph_'+k);}catch(e){return f
 var MODE='user';try{MODE=localStorage.getItem('machiyori_mode2')||'user';}catch(e){}
 var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','依頼に立候補して仕事を受ける（テスト）','#2F6B45'],['member','会員ページ','会員どうしで仕事の相談・人手の募集をする','#2B4C7E']];
 function setMode(m){MODE=m;try{localStorage.setItem('machiyori_mode2',m);}catch(e){}ph.dataset.mode=m;$('chip').querySelector('span').textContent=m==='pro'?'Proモード':m==='member'?'会員ページ':'依頼者モード';tab=m==='pro'?'job':m==='member'?'board':'home';pane.classList.remove('on');stopChat();renderNav();refresh();}
-$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.filter(function(x){return x[0]!=='member'||(HOME&&HOME.member);}).map(function(x){return '<button type="button" class="opt'+(x[0]===MODE?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]===MODE?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">テスト版：同じアカウントのまま、自分の依頼にProモードで立候補して、流れを確かめられます。</p>');
+$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.filter(function(x){return x[0]==='member'?(HOME&&HOME.member)||(ME&&ME.role==='member'):x[0]==='pro'?(HOME&&HOME.pro):true;}).map(function(x){return '<button type="button" class="opt'+(x[0]===MODE?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]===MODE?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">テスト版：同じアカウントのまま、自分の依頼にProモードで立候補して、流れを確かめられます。</p>');
   each('.opt',sheet,function(b){b.onclick=function(){var k=b.dataset.k;closeSheet();if(k!==MODE)setMode(k);};});};
 
 /* ===== Proモード：案件 ===== */
@@ -1457,9 +1462,11 @@ function suKey(){return 'mchy_su_'+(ME&&ME.id||'');}
 function hasContact(s){s=String(s||'');if(/[0-9０-９][0-9０-９\-ー－ ]{8,}[0-9０-９]/.test(s))return '電話番号';if(/[A-Za-z0-9._%+\-]+[@＠][A-Za-z0-9.\-]+\.[A-Za-z]{2,}/.test(s))return 'メールアドレス';if(/https?:|www\.|\.(com|jp|net)\b/i.test(s))return 'URL';return '';}
 function z2h(s){return String(s||'').replace(/[０-９Ａ-Ｚａ-ｚ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);});}
 function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSheet();
-  if(ME&&ME.role!=='vendor'){try{localStorage.removeItem(suKey());}catch(e){}openSheet('<h3>業者の登録はできません</h3><p class="sp s2">このアカウントは「依頼したい」で登録されています。業者として登録するときは、ログアウトしてから「はじめての方」→「仕事を受けたい」へ進み、別のLINEアカウントかメールアドレスで登録してください。</p><button type="button" class="big" id="nvOk">わかりました</button>');$('nvOk').onclick=function(){closeSheet();refresh();};return;}var sv=null;try{sv=JSON.parse(localStorage.getItem(suKey())||'null');}catch(e){}
+  if(ME&&ME.role!=='vendor'&&ME.role!=='member'){try{localStorage.removeItem(suKey());}catch(e){}openSheet('<h3>業者の登録はできません</h3><p class="sp s2">このアカウントは「依頼したい」で登録されています。業者として登録するときは、ログアウトしてから「はじめての方」→「仕事を受けたい」へ進み、別のLINEアカウントかメールアドレスで登録してください。</p><button type="button" class="big" id="nvOk">わかりました</button>');$('nvOk').onclick=function(){closeSheet();refresh();};return;}var sv=null;try{sv=JSON.parse(localStorage.getItem(suKey())||'null');}catch(e){}
   SU=sv&&sv.d?{i:sv.i||0,d:sv.d,resumed:sv.i>0}:{i:0,d:{svc:[],area:[],days:[1,2,3,4,5,6],from:'8:00',to:'18:00',exp:10,emp:3,agree:[],tos:false,ins:'',dmg:'',docs:{}}};
   var allSv=[].concat.apply([],SVC.map(svItems));SU.d.svc=(SU.d.svc||[]).filter(function(x){return allSv.indexOf(x)>=0;}); // 一覧が変わったときの古い名前を外す
+  if(!SU.i)SU.i=1; // 会員の確認の画面は使わない（会員は会員の入口で確認済み・11/22）
+  var mm=HOME&&HOME.meMember;if(mm&&!SU.d.ln){SU.d.ln=mm.ln;SU.d.fn=mm.fn;SU.d.lk=mm.lk;SU.d.fk=mm.fk;SU.d.tel=mm.tel;SU.d.nm=SU.d.nm||mm.company;}
   if(!SU.d.mail&&ME&&ME.email)SU.d.mail=ME.email;if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
 function suStore(){if(SU&&SU.noStore)return;try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
 function suFld(id,label,req,val,ph,type,note){return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input id="'+id+'"'+(SU_AC[id]?' autocomplete="'+SU_AC[id]+'"':'')+(type?' type="'+type+'"':'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></label>'+(note?'<p class="pc-n">'+note+'</p>':'');}
@@ -1468,9 +1475,9 @@ if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_STEPS[SU.i],inStep=SU_STEPS.fi
   pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>業者として登録</b><span>途中でやめても、続きから再開できます</span></div></div>'+
     '<div class="sustep"><span><em>Step '+st[0]+' / 3</em> '+st[1]+'</span><small>'+(SU_STEPS.length-1-SU.i?'あと'+(SU_STEPS.length-1-SU.i)+'画面':'これで最後です')+'</small><div class="subar"><i style="width:'+((SU.i+1)/SU_STEPS.length*100)+'%"></i></div></div>'+
     '<div class="arw su"><h3 class="suh">'+st[2]+'</h3>'+suBody(SU.i)+'<p class="warn" id="suW" hidden></p></div>'+
-    '<div class="njbar"><button type="button" class="ghost" id="suB">'+(SU.i?'もどる':'やめる')+'</button><button type="button" class="big" id="suN">'+(SU.i===SU_STEPS.length-1?'登録を申し込む':'次へ')+'</button></div>';
+    '<div class="njbar"><button type="button" class="ghost" id="suB">'+(SU.i>1?'もどる':'やめる')+'</button><button type="button" class="big" id="suN">'+(SU.i===SU_STEPS.length-1?'登録を申し込む':'次へ')+'</button></div>';
   pane.classList.add('on');pane.querySelector('.arw').scrollTop=0;suStore();
-  var back=function(){if(SU.tm){clearInterval(SU.tm);SU.tm=0;}if(!SU.i){pane.classList.remove('on');return;}suSave();SU.i--;if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase())SU.i--;suDraw();};
+  var back=function(){if(SU.tm){clearInterval(SU.tm);SU.tm=0;}if(SU.i<=1){pane.classList.remove('on');return;}suSave();SU.i--;if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase())SU.i--;suDraw();};
   pane.querySelector('.bk').onclick=back;$('suB').onclick=back;
   if(SU.resumed){var rs=document.createElement('button');rs.type='button';rs.className='lnk surs';rs.textContent='最初からやり直す';pane.querySelector('.sustep').appendChild(rs);rs.onclick=function(){try{localStorage.removeItem(suKey());}catch(e){}vendorSignup();};SU.resumed=false;}
   $('suN').onclick=function(){var bt=this,err=suSave(true);if(err)return suWarn(err);bt.disabled=true;var t0=bt.textContent;bt.textContent='確認しています…';
@@ -1602,8 +1609,19 @@ function renderMember(){mFab(false);
   if(MJ===null){scr.innerHTML=LOADING;api('mMe').then(function(j){MJ=j.member||false;MJR=j;MW=j.canWrite!==false;MNEED=j.need||[];renderMember();}).catch(function(e){showErr(e);});return;}
   if(!MJ)return mJoinView();
   if(tab==='mem')return mMembersView();if(tab==='dm')return mDMsView();mBoardView();}
+function memberJoin(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSheet();
+  if(ME&&ME.role!=='member'&&ME.role!=='vendor'){openSheet('<h3>会員ページは使えません</h3><p class="sp s2">このアカウントは「依頼したい」で登録されています。会員の方は、ログアウトしてから「はじめての方」→「会員の方」へ進み、別のLINEアカウントかメールアドレスで登録してください。</p><button type="button" class="big" id="mjOk">わかりました</button>');$('mjOk').onclick=function(){closeSheet();refresh();};return;}
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員の確認</b><span>会員ページを使うために</span></div></div><div class="arw su"><p class="note2" style="margin-top:0">会員の名簿と照らし合わせます。本名と電話番号は、名簿に登録したものを入れてください。</p><form class="pf pf2" id="mjF" onsubmit="return false">'+
+    '<div class="su2"><label>姓 <em class="rq">必須</em><input id="mj1" autocomplete="family-name" placeholder="山田"></label><label>名 <em class="rq">必須</em><input id="mj2" autocomplete="given-name" placeholder="太郎"></label></div>'+
+    '<div class="su2"><label>せい <em class="rq">必須</em><input id="mj3" placeholder="やまだ"></label><label>めい <em class="rq">必須</em><input id="mj4" placeholder="たろう"></label></div>'+
+    '<label>会社名 <em class="rq">必須</em><input id="mj5" autocomplete="organization" placeholder="例）まちより工務店"></label><p class="pc-n">個人事業主の方は屋号を入れてください。会員の一覧に表示されます</p>'+
+    '<label>電話番号 <em class="rq">必須</em><input id="mj6" type="tel" autocomplete="tel" placeholder="例）09012345678"></label><p class="warn" id="mjW" hidden></p><button type="button" class="big" id="mjS">確認して会員ページを使う</button></form>'+
+    '<p class="pc-n">仕事を受けたい方は、確認のあとマイページから業者登録に進めます。</p></div>',function(){closePane();refresh();});
+  $('mjS').onclick=function(){var v=function(i){return $('mj'+i).value.trim();},bt=this;bt.disabled=true;
+    api('mJoin',{ln:v(1),fn:v(2),lk:v(3),fk:v(4),company:v(5),tel:z2h(v(6))}).then(function(){closePane();toast('会員の確認ができました');MJ=null;api('home').then(function(j){HOME=j;ME=j.user;saveBoot();setMode('member');});}).catch(function(e){bt.disabled=false;var w=$('mjW');w.textContent=e.message;w.hidden=false;});};}
 function mJoinView(){var r=MJR||{};var msg=r.app==='pending'?'業者登録の申し込みを受け付けています。運営の承認が済むと、会員ページを使えるようになります。':r.role==='vendor'?'会員ページは、会員の業者のための場所です。業者登録が済んで運営が承認すると使えるようになります。':'会員ページは、会員の業者のための場所です。業者としての登録は「はじめての方」→「仕事を受けたい」からお願いします。';
-  scr.innerHTML='<div class="mp mj"><h3>会員ページ</h3><p class="note2">'+msg+'</p>'+(r.role==='vendor'&&r.app!=='pending'&&r.app!=='approved'?'<button type="button" class="big" id="mjB">業者登録をする</button>':'')+'</div>';var b=$('mjB');if(b)b.onclick=vendorSignup;}
+  if(r.role==='member'||r.role==='vendor')msg='会員の方は、会員の確認をすると会員ページを使えます（本名・会社名・電話番号を会員の名簿と照らし合わせます）。';
+  scr.innerHTML='<div class="mp mj"><h3>会員ページ</h3><p class="note2">'+msg+'</p>'+(r.role==='member'||r.role==='vendor'?'<button type="button" class="big" id="mjJ">会員の確認をする</button>':'')+'</div>';var b=$('mjJ');if(b)b.onclick=memberJoin;}
 function mJST(iso){var d=new Date(new Date(iso).getTime()+9*3600e3);return d.toISOString().slice(0,10);}
 function mToday(){return mJST(new Date().toISOString());}
 function mDays(dl){return Math.round((new Date(dl+'T00:00:00Z')-new Date(mToday()+'T00:00:00Z'))/864e5);}
@@ -1623,13 +1641,13 @@ function mBindCtl(root,redraw){var q=root.querySelector('#mq');q.oninput=functio
 function mBoardView(){var had=!!MB;if(had)mBoardPaint();else scr.innerHTML=LOADING;mFab(MW);
   api('mBoard').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(MB);MB=j;if(MODE==='member'&&tab==='board'&&!pane.classList.contains('on')&&!same&&!busyForm())mBoardPaint();}).catch(function(e){if(e&&/会員ページは/.test(e.message)){MJ=false;renderMember();}else if(!had)showErr(e);});}
 function mBoardPaint(){var L=mList('any'),past=(MB.posts||[]).filter(function(p){return p.at==='past';});
-  scr.innerHTML='<div class="mp mbd">'+mLock()+mCtl(true)+'<div id="mbl"></div><button type="button" class="pbox" id="mpastB"><span><b>過去の案件</b>（'+past.length+'件）<small>投稿から1か月以上たった期限なしの募集や、募集が終了した案件</small></span><i aria-hidden="true">›</i></button>'+
+  scr.innerHTML='<div class="mp mbd">'+mLock()+(MJ&&MJ.pageOnly&&!(HOME&&HOME.pro)?'<button type="button" class="mjv" id="mjV">仕事も受けたい方は<b>業者登録へ ›</b></button>':'')+mCtl(true)+'<div id="mbl"></div><button type="button" class="pbox" id="mpastB"><span><b>過去の案件</b>（'+past.length+'件）<small>投稿から1か月以上たった期限なしの募集や、募集が終了した案件</small></span><i aria-hidden="true">›</i></button>'+
     (MB.newm&&MB.newm.length?'<div class="sec">新しく入った会員</div><div class="nmem">'+MB.newm.map(function(m){return '<button type="button" class="nm" data-u="'+m.userId+'"><span class="av">'+esc((m.company||m.name).slice(0,1))+'</span><b>'+esc(m.company||m.name)+'</b><small>'+esc(m.company?m.name:'')+'</small></button>';}).join('')+'</div>':'')+'<div style="height:80px"></div></div>';
   var draw=function(keep){var L=mList('any');$('mbl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<div class="none0"><p class="empty">条件に合う案件はありません</p><button type="button" class="clr" id="mclr">条件を解除する</button></div>';
     each('.mpc',$('mbl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id);};});var c=$('mclr');if(c)c.onclick=function(){MF={q:'',past:false,f:'all',srt:'new'};mBoardPaint();};
     if(!keep)each('[data-f]',scr,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(scr,draw);draw();
-  $('mpastB').onclick=mPastView;mLockBind();each('.nm',scr,function(b){b.onclick=function(){if(b.dataset.u&&b.dataset.u!==(MB&&MB.me))mOpenDM(b.dataset.u);};});}
+  $('mpastB').onclick=mPastView;mLockBind();var mv=$('mjV');if(mv)mv.onclick=vendorSignup;each('.nm',scr,function(b){b.onclick=function(){if(b.dataset.u&&b.dataset.u!==(MB&&MB.me))mOpenDM(b.dataset.u);};});}
 function mPastView(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>過去の案件</b></div></div><div class="arw"><p class="adesc">投稿から1か月以上経過した期限なしの募集や、募集が終了した案件を掲載しています。</p><div id="mpc">'+mCtl(false)+'</div><div id="mpl"></div></div>');
   var draw=function(keep){var L=mList('past');$('mpl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<p class="empty">条件に合う案件はありません</p>';each('.mpc',$('mpl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id,mPastView);};});if(!keep)each('[data-f]',pane,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(pane,draw);draw();}
