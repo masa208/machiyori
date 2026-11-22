@@ -495,7 +495,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=36;
+var APPVER_N=37;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1001,7 +1001,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
   scr.innerHTML='<div class="mp"><div class="mpp"><span class="av">'+esc((ME.callName||'？').slice(0,1))+'</span><div><b>'+esc(ME.callName||'')+'さん</b><small>'+(ME.provider==='line'?'LINEでログイン中':'メールでログイン中')+'・'+esc(ME.area||'')+'</small></div></div>'+
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>まちことの おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
-    (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].concat(PRO&&PRO.lic&&PRO.lic.length?[['lic','<i class="exm">!</i> 資格の書類',licSum(PRO.lic)||'任意の書類のみ']]:[]).map(row).join('')+'</div>':'')+
+    (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].concat(PRO&&PRO.svc&&PRO.svc.can?[['vsv','対応サービス',PRO.svc.pending?'変更の審査中':PRO.svc.list.length+'件']]:[]).concat(PRO&&PRO.lic&&PRO.lic.length?[['lic','<i class="exm">!</i> 資格の書類',licSum(PRO.lic)||'任意の書類のみ']]:[]).map(row).join('')+'</div>':'')+
     '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
@@ -1009,6 +1009,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     if(k==='ar'){openSheet('<h3>お住まいの市町村</h3><div class="fm">'+areaSel('arS',ME.area)+'</div><button type="button" class="big" id="arB">保存する</button>');$('arB').onclick=function(){prof({area:$('arS').value});};}
     if(k==='va'){if(PRO)areaPane();else api('proHome').then(function(j){PRO=j;areaPane();}).catch(fail);}
     if(k==='lic')licPane();
+    if(k==='vsv')svcPane();
     if(k==='qa')inquiry();
     if(k==='rs')testReset();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
@@ -1218,6 +1219,14 @@ var LIC_ST={none:'未提出',pending:'審査中',approved:'承認済み',rejecte
 function licSum(L){L=L.filter(function(x){return !x.optional;});if(!L.length)return '';var n=L.filter(function(x){return x.status==='none'||x.status==='rejected';}).length,p=L.filter(function(x){return x.status==='pending';}).length;return n?'未提出 '+n+'件':p?'審査中 '+p+'件':'すべて承認済み';}
 function licNudge(j){if(!j||!j.lic)return;var n=j.lic.filter(function(x){return !x.optional&&(x.status==='none'||x.status==='rejected');});if(!n.length)return;try{if(sessionStorage.getItem('mchy_licn'))return;sessionStorage.setItem('mchy_licn','1');}catch(e){}
   setTimeout(function(){openSheet('<h3><i class="exm">!</i> 資格の書類を出してください</h3><p class="sp s2">選んだ作業の中に、資格・許可の書類が必要なものがあります。書類の審査が通るまで、その作業の依頼には立候補できません。</p><ul style="font-size:14px;padding-left:18px">'+n.map(function(x){return '<li>'+esc(x.name)+'</li>';}).join('')+'</ul><button type="button" class="big" id="lnGo">書類を出す</button><button type="button" class="ghost" id="lnLt" style="width:100%;margin-top:8px">あとで（マイページからも出せます）</button>');$('lnLt').onclick=closeSheet;$('lnGo').onclick=function(){closeSheet();licPane();};},400);}
+/* 対応サービスの変更（審査あり） */
+function svcPane(){var st=PRO.svc,base=(st.pending||st.list).slice();SU={i:4,d:{svc:base},noStore:true};
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>対応サービス</b><span>変えると、運営の審査のあとで反映されます</span></div></div><div class="arw su">'+(st.pending?'<div class="pmg"><b>変更の審査中です</b><small>審査が終わるまでは、前の内容で依頼が届きます。もう一度変えると、申請を出し直します。</small></div>':'')+
+    '<p class="note2" style="margin-top:0">分類を押して、できる作業を選んでください。📄の作業は、審査のあとで資格の書類が必要になります。</p><div class="svgrid" id="svGrid">'+svGrid()+'</div><p class="pc-n" id="svCnt" style="margin-top:10px">選んでいる作業：'+SU.d.svc.length+'件</p><button type="button" class="big" id="svReq">変更を申請する</button></div>');
+  svBindGrid();
+  $('svReq').onclick=function(){var bt=this;if(!SU.d.svc.length)return toast('作業を1つ以上選んでください');bt.disabled=true;
+    var cats=SVC.filter(function(c){return svItems(c).some(function(x){return SU.d.svc.indexOf(x)>=0;});}).map(function(c){return c[0];});
+    api('vSvcReq',{svc:SU.d.svc,cats:cats,needKeys:svDocs(1)}).then(function(j){PRO.svc=j.svc;SU=null;toast('変更を申請しました。審査のあとで反映されます');closePane();}).catch(function(e){bt.disabled=false;fail(e);});};}
 function licPane(){var L=PRO&&PRO.lic||[];
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>資格の書類</b><span>審査が通ると、その作業の依頼に立候補できます</span></div></div><div class="arw su">'+
     (L.length?L.map(function(x,i){var done=x.status==='approved',pend=x.status==='pending';return '<div class="lcard"><b>'+esc(x.name)+'</b><span class="lst '+(x.optional&&x.status==='none'?'pending':x.status)+'">'+(x.optional&&x.status==='none'?'任意':(LIC_ST[x.status]||x.status))+'</span>'+(x.note?'<p class="pc-n">運営より：'+esc(x.note)+'</p>':'')+
@@ -1355,7 +1364,7 @@ function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}close
   SU=sv&&sv.d?{i:sv.i||0,d:sv.d,resumed:sv.i>0}:{i:0,d:{svc:[],area:[],days:[1,2,3,4,5,6],from:'8:00',to:'18:00',exp:10,emp:3,agree:[],tos:false,ins:'',dmg:'',docs:{}}};
   var allSv=[].concat.apply([],SVC.map(svItems));SU.d.svc=(SU.d.svc||[]).filter(function(x){return allSv.indexOf(x)>=0;}); // 一覧が変わったときの古い名前を外す
   if(!SU.d.mail&&ME&&ME.email)SU.d.mail=ME.email;if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
-function suStore(){try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
+function suStore(){if(SU&&SU.noStore)return;try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
 function suFld(id,label,req,val,ph,type,note){return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input id="'+id+'"'+(SU_AC[id]?' autocomplete="'+SU_AC[id]+'"':'')+(type?' type="'+type+'"':'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></label>'+(note?'<p class="pc-n">'+note+'</p>':'');}
 function suDraw(){stopChat();if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase()){SU.d.mailok=SU.d.mail;SU.i=3;} // 登録に使ったメールなら確認を飛ばす（再開時も）
 if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_STEPS[SU.i],inStep=SU_STEPS.filter(function(s){return s[0]===st[0];}),k=inStep.indexOf(st)+1;
