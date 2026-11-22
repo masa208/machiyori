@@ -495,7 +495,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=35;
+var APPVER_N=36;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -702,7 +702,7 @@ function refresh(){if(!ME)return;var m=MODE,t=tab,had=!!HOME;
     if(MODE==='member')return;
     if(same||(had&&busyForm()))return;draw();
   }).catch(function(e){fail(e);if(!had)showErr(e);});}
-function draw(){if(!HOME)return;if(MODE==='member'){renderMember();return;}mFab(false);if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='req')renderReq();else renderMy();}
+function draw(){if(!HOME)return;if(MODE==='member'&&!HOME.member){setMode('user');return;}if(MODE==='member'){renderMember();return;}mFab(false);if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='req')renderReq();else renderMy();}
 function startPoll(){stopPoll();pollT=setInterval(function(){if(document.visibilityState==='visible'&&!pane.classList.contains('on'))refresh();},60000);}
 function stopPoll(){clearInterval(pollT);}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&ME&&!pane.classList.contains('on'))refresh();});
@@ -1151,7 +1151,7 @@ function seenNo(k){try{return !localStorage.getItem('mph_'+k);}catch(e){return f
 var MODE='user';try{MODE=localStorage.getItem('machiyori_mode2')||'user';}catch(e){}
 var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','依頼に立候補して仕事を受ける（テスト）','#2F6B45'],['member','会員ページ','会員どうしで仕事の相談・人手の募集をする','#2B4C7E']];
 function setMode(m){MODE=m;try{localStorage.setItem('machiyori_mode2',m);}catch(e){}ph.dataset.mode=m;$('chip').querySelector('span').textContent=m==='pro'?'Proモード':m==='member'?'会員ページ':'依頼者モード';tab=m==='pro'?'job':m==='member'?'board':'home';pane.classList.remove('on');stopChat();renderNav();refresh();}
-$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.map(function(x){return '<button type="button" class="opt'+(x[0]===MODE?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]===MODE?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">テスト版：同じアカウントのまま、自分の依頼にProモードで立候補して、流れを確かめられます。</p>');
+$('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.filter(function(x){return x[0]!=='member'||(HOME&&HOME.member);}).map(function(x){return '<button type="button" class="opt'+(x[0]===MODE?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]===MODE?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">テスト版：同じアカウントのまま、自分の依頼にProモードで立候補して、流れを確かめられます。</p>');
   each('.opt',sheet,function(b){b.onclick=function(){var k=b.dataset.k;closeSheet();if(k!==MODE)setMode(k);};});};
 
 /* ===== Proモード：案件 ===== */
