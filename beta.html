@@ -513,7 +513,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=48;
+var APPVER_N=49;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1616,7 +1616,7 @@ function memberJoin(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSh
     '<div class="su2"><label>せい <em class="rq">必須</em><input id="mj3" placeholder="やまだ"></label><label>めい <em class="rq">必須</em><input id="mj4" placeholder="たろう"></label></div>'+
     '<label>会社名 <em class="rq">必須</em><input id="mj5" autocomplete="organization" placeholder="例）まちより工務店"></label><p class="pc-n">個人事業主の方は屋号を入れてください。会員の一覧に表示されます</p>'+
     '<label>電話番号 <em class="rq">必須</em><input id="mj6" type="tel" autocomplete="tel" placeholder="例）09012345678"></label><p class="warn" id="mjW" hidden></p><button type="button" class="big" id="mjS">確認して会員ページを使う</button></form>'+
-    '<p class="pc-n">仕事を受けたい方は、確認のあとマイページから業者登録に進めます。</p></div>',function(){closePane();refresh();});
+    '<p class="pc-n">仕事も受けたい方は、確認のあと会員ページの「業者登録へ」から進めます。</p></div>',function(){closePane();refresh();});
   $('mjS').onclick=function(){var v=function(i){return $('mj'+i).value.trim();},bt=this;bt.disabled=true;
     api('mJoin',{ln:v(1),fn:v(2),lk:v(3),fk:v(4),company:v(5),tel:z2h(v(6))}).then(function(){closePane();toast('会員の確認ができました');MJ=null;api('home').then(function(j){HOME=j;ME=j.user;saveBoot();setMode('member');});}).catch(function(e){bt.disabled=false;var w=$('mjW');w.textContent=e.message;w.hidden=false;});};}
 function mJoinView(){var r=MJR||{};var msg=r.app==='pending'?'業者登録の申し込みを受け付けています。運営の承認が済むと、会員ページを使えるようになります。':r.role==='vendor'?'会員ページは、会員の業者のための場所です。業者登録が済んで運営が承認すると使えるようになります。':'会員ページは、会員の業者のための場所です。業者としての登録は「はじめての方」→「仕事を受けたい」からお願いします。';
