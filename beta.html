@@ -472,6 +472,8 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .lfl{margin-top:10px}.lfi{display:flex;align-items:center;gap:8px;background:#F6F7F5;border-radius:8px;padding:8px 10px;margin-top:6px;font-size:14px}.lfi span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lfi button{border:0;background:#fff;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer}.lfile{color:#2F6B45}
 .mj{padding:18px 16px}.mj h3{font-size:19px;margin:0 0 6px}.mpc .bl1{margin-bottom:3px}.mtx{font-size:15px;line-height:1.75;white-space:pre-wrap;margin:8px 0}.mth .ppd{margin:10px}.mcl{padding:4px 10px 12px}.mcl .mn,.bb .mn{color:#2B4C7E;font-weight:700}.mmr[disabled]{opacity:.65;cursor:default}.mbd .pbox{margin:12px 0}
 .cmp input#mct,.cmp input#mdt{flex:1;min-width:0;font:inherit;font-size:16px;border:1px solid #cdd4d0;border-radius:18px;padding:7px 12px}
+.mlock{background:#FDECE6;border-radius:12px;padding:10px 12px;margin:0 0 10px}.mlock b{display:flex;align-items:center;gap:4px;font-size:14px;color:#B4321F}.mlock small{display:block;font-size:12.5px;color:#4B5A52;margin:3px 0 6px}.mlock button{font:inherit;font-size:13px;font-weight:700;color:#fff;background:#B4321F;border:0;border-radius:16px;padding:6px 14px;cursor:pointer}
+.mnm{display:block;font-size:12.5px;color:#4B5A52}.mme{font-size:11px;font-weight:400;color:#fff;background:#2B4C7E;border-radius:8px;padding:0 6px;margin-left:4px}.mcats{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.mcats i{font-style:normal;font-size:11.5px;color:#2B4C7E;background:#E6ECF5;border-radius:8px;padding:1px 7px}
 .njbar{z-index:2}.su .agr{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
 </style>
 </head>
@@ -493,7 +495,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=34;
+var APPVER_N=35;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1467,28 +1469,29 @@ function suAsync(i){var d=SU.d;
     return p;}
   return Promise.resolve();}
 function suSubmit(){var d=SU.d,docs=[];Object.keys(d.docs).forEach(function(k){(d.docs[k]||[]).forEach(function(x){docs.push({kind:k,id:x.id,name:x.name});});});
-  var data={};Object.keys(d).forEach(function(k){if(['docs','mnext','mexp','miss','msentTo'].indexOf(k)<0)data[k]=d[k];});var need=svDocs();data.needDocs=need;data.needKeys=svDocs(1);
+  var data={};Object.keys(d).forEach(function(k){if(['docs','mnext','mexp','miss','msentTo'].indexOf(k)<0)data[k]=d[k];});var need=svDocs();data.needDocs=need;data.needKeys=svDocs(1);data.cats=SVC.filter(function(c){return svItems(c).some(function(x){return d.svc.indexOf(x)>=0;});}).map(function(c){return c[0];});
   return api('vApply',{data:data,docs:docs}).then(function(){try{localStorage.removeItem(suKey());}catch(e){}
     pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="とじる">‹</button><div class="pt"><b>業者として登録</b><span>申し込み完了</span></div></div><div class="arw su sudone"><div class="sudi">✓</div><h3>申し込みを受け付けました</h3><p>運営が本人確認書類と資格を確認します。確認が終わったら、運営からご連絡します。そのあと、上の「モード」から<b>Proモード</b>に切り替えて仕事を受けられます。</p>'+(need.length?'<div class="pmg" style="text-align:left"><b>📄 あとで出す書類があります</b><small>'+esc(need.join('、'))+'。出して審査が通るまで、📄の作業の依頼には立候補できません。</small></div>':'')+
       '<div class="njs">'+[['事業者名',d.nm],['対応サービス',d.svc.length+'件'],['対応エリア',d.area.length===77?'長野県全域':d.area.length+'市町村'],['営業日',d.days.map(function(k){return '日月火水木金土'[k];}).join('')+' '+d.from+'〜'+d.to]].map(function(r){return '<div class="gsr2"><span>'+r[0]+'</span><b>'+esc(String(r[1]))+'</b></div>';}).join('')+'</div><p class="pc-n">確認には数日かかることがあります。会社情報・対応サービス・対応エリアは、あとからProモードのマイページで変えられます。</p><button type="button" class="big" id="suHome">まち頼をはじめる</button></div>';
     pane.querySelector('.bk').onclick=closePane;$('suHome').onclick=closePane;});}
 
 /* ===== 会員ページ（11/22）：掲示板・会員・チャット ===== */
-var MB=null,MJ=null,MF={q:'',past:false,f:'all',srt:'new'},MP=null,MD=null;
+var MB=null,MJ=null,MJR=null,MW=true,MNEED=[],MF={q:'',past:false,f:'all',srt:'new'},MP=null,MD=null;
 I.board='<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';I.mem='<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.3.2 4 1.8 4.5 4.6"/>';I.dm='<path d="M4 5h16v11H9l-5 4z"/>';
 var NAV_M=[['board','掲示板'],['mem','会員'],['dm','チャット']];
 function mFab(on){var f=$('mfab');if(f)f.remove();if(!on)return;f=document.createElement('button');f.type='button';f.id='mfab';f.className='fab';f.setAttribute('aria-label','相談を投稿する');f.innerHTML='<span aria-hidden="true">＋</span><small>投稿</small>';ph.appendChild(f);f.onclick=mPostForm;}
 function renderMember(){mFab(false);
-  if(MJ===null){scr.innerHTML=LOADING;api('mMe').then(function(j){MJ=j.member||false;renderMember();}).catch(function(e){showErr(e);});return;}
+  if(MJ===null){scr.innerHTML=LOADING;api('mMe').then(function(j){MJ=j.member||false;MJR=j;MW=j.canWrite!==false;MNEED=j.need||[];renderMember();}).catch(function(e){showErr(e);});return;}
   if(!MJ)return mJoinView();
   if(tab==='mem')return mMembersView();if(tab==='dm')return mDMsView();mBoardView();}
-function mJoinView(){scr.innerHTML='<div class="mp mj"><h3>会員ページに入る</h3><p class="note2">会員ページは、会員どうしで仕事の相談や人手の募集をする場所です。はじめに、会員台帳に登録されているお名前と電話番号で確認します。</p><form class="pf" id="mjF" onsubmit="return false"><div class="two"><label>姓<input id="mjL" autocomplete="family-name" placeholder="山田"></label><label>名<input id="mjN" autocomplete="given-name" placeholder="太郎"></label></div><label>電話番号<input id="mjT" type="tel" autocomplete="tel" placeholder="例）09012345678"></label><p class="warn" id="mjW" hidden></p><button type="button" class="big" id="mjB">確認して入る</button></form></div>';
-  $('mjB').onclick=function(){var bt=this,nm=$('mjL').value.trim()+$('mjN').value.trim(),tl=z2h($('mjT').value).replace(/[^0-9]/g,'');if(!nm||!tl){$('mjW').hidden=false;$('mjW').textContent='お名前と電話番号を入れてください';return;}bt.disabled=true;
-    api('mJoin',{name:nm,tel:tl}).then(function(j){MJ=j.member;toast('確認できました。ようこそ');renderMember();}).catch(function(e){bt.disabled=false;$('mjW').hidden=false;$('mjW').textContent=e.message;});};}
+function mJoinView(){var r=MJR||{};var msg=r.app==='pending'?'業者登録の申し込みを受け付けています。運営の承認が済むと、会員ページを使えるようになります。':r.role==='vendor'?'会員ページは、会員の業者のための場所です。業者登録が済んで運営が承認すると使えるようになります。':'会員ページは、会員の業者のための場所です。業者としての登録は「はじめての方」→「仕事を受けたい」からお願いします。';
+  scr.innerHTML='<div class="mp mj"><h3>会員ページ</h3><p class="note2">'+msg+'</p>'+(r.role==='vendor'&&r.app!=='pending'&&r.app!=='approved'?'<button type="button" class="big" id="mjB">業者登録をする</button>':'')+'</div>';var b=$('mjB');if(b)b.onclick=vendorSignup;}
 function mJST(iso){var d=new Date(new Date(iso).getTime()+9*3600e3);return d.toISOString().slice(0,10);}
 function mToday(){return mJST(new Date().toISOString());}
 function mDays(dl){return Math.round((new Date(dl+'T00:00:00Z')-new Date(mToday()+'T00:00:00Z'))/864e5);}
 function mBadge(p){if(p.st!=='open')return '<span class="bdg end">募集終了</span>';if(!p.dl)return p.at==='past'?'<span class="bdg none">募集中・期限なし</span>':'<span class="bdg none">期限なし</span>';var n=mDays(p.dl);return n<=0?'<span class="bdg today">本日締切</span>':'<span class="bdg'+(n<=3?' soon':'')+'">残り'+n+'日</span>';}
+function mLock(){return MW?'':'<div class="mlock"><b><i class="exm">!</i> 資格の書類の審査が済むと書き込めます</b><small>'+esc(MNEED.map(function(x){return x.name;}).join('、'))+'</small><button type="button" id="mlkB">資格の書類を出す</button></div>';}
+function mLockBind(){var b=$('mlkB');if(b)b.onclick=function(){if(PRO)licPane();else api('proHome').then(function(j){PRO=j;licPane();}).catch(fail);};}
 function mCard(p){return '<button type="button" class="card bp mpc" data-id="'+p.id+'"><span class="bl1">'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.slice(5).replace('-','/')+'まで</span>':'')+'</span><b>'+esc(p.title)+'</b><span class="meta"><span>'+esc(p.who)+'</span>'+(p.place?'<span>'+esc(p.place)+'</span>':'')+'<span>'+mdhm(p.createdAt).split(' ')[0]+'</span><span>コメント'+p.cmts+'</span></span></button>';}
 function mWords(q){return String(q||'').replace(/　/g,' ').split(' ').filter(function(x){return x;});}
 function mList(place){var q=mWords(MF.q),L=(MB&&MB.posts||[]).filter(function(p){return (place==='any'?(MF.past||p.at==='top'):p.at===place)&&(MF.f==='all'||(MF.f==='dl'?!!p.dl:!p.dl))&&q.every(function(w){return (p.title+' '+p.body+' '+p.who+' '+(p.place||'')).indexOf(w)>=0;});});
@@ -1499,16 +1502,16 @@ function mCtl(withPast){return '<div class="kw kw0"><svg viewBox="0 0 24 24" ari
   '<div class="ctl"><div class="seg">'+[['all','すべて'],['dl','期限あり'],['nodl','期限なし']].map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(MF.f===x[0])+'">'+x[1]+'</button>';}).join('')+'</div><select id="msrt" aria-label="並び替え"><option value="new"'+(MF.srt==='new'?' selected':'')+'>新着順</option><option value="dl"'+(MF.srt==='dl'?' selected':'')+'>締切が近い順</option></select></div>';}
 function mBindCtl(root,redraw){var q=root.querySelector('#mq');q.oninput=function(){MF.q=q.value;redraw(true);};var pc=root.querySelector('#mpast');if(pc)pc.onchange=function(){MF.past=pc.checked;redraw();};
   each('[data-f]',root,function(b){b.onclick=function(){MF.f=b.dataset.f;redraw();};});root.querySelector('#msrt').onchange=function(e){MF.srt=e.target.value;redraw();};}
-function mBoardView(){var had=!!MB;if(had)mBoardPaint();else scr.innerHTML=LOADING;mFab(true);
-  api('mBoard').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(MB);MB=j;if(MODE==='member'&&tab==='board'&&!pane.classList.contains('on')&&!same&&!busyForm())mBoardPaint();}).catch(function(e){if(e&&/会員の確認/.test(e.message)){MJ=false;renderMember();}else if(!had)showErr(e);});}
+function mBoardView(){var had=!!MB;if(had)mBoardPaint();else scr.innerHTML=LOADING;mFab(MW);
+  api('mBoard').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(MB);MB=j;if(MODE==='member'&&tab==='board'&&!pane.classList.contains('on')&&!same&&!busyForm())mBoardPaint();}).catch(function(e){if(e&&/会員ページは/.test(e.message)){MJ=false;renderMember();}else if(!had)showErr(e);});}
 function mBoardPaint(){var L=mList('any'),past=(MB.posts||[]).filter(function(p){return p.at==='past';});
-  scr.innerHTML='<div class="mp mbd">'+mCtl(true)+'<div id="mbl"></div><button type="button" class="pbox" id="mpastB"><span><b>過去の案件</b>（'+past.length+'件）<small>投稿から1か月以上たった期限なしの募集や、募集が終了した案件</small></span><i aria-hidden="true">›</i></button>'+
+  scr.innerHTML='<div class="mp mbd">'+mLock()+mCtl(true)+'<div id="mbl"></div><button type="button" class="pbox" id="mpastB"><span><b>過去の案件</b>（'+past.length+'件）<small>投稿から1か月以上たった期限なしの募集や、募集が終了した案件</small></span><i aria-hidden="true">›</i></button>'+
     (MB.newm&&MB.newm.length?'<div class="sec">新しく入った会員</div><div class="nmem">'+MB.newm.map(function(m){return '<button type="button" class="nm" data-u="'+m.userId+'"><span class="av">'+esc((m.company||m.name).slice(0,1))+'</span><b>'+esc(m.company||m.name)+'</b><small>'+esc(m.company?m.name:'')+'</small></button>';}).join('')+'</div>':'')+'<div style="height:80px"></div></div>';
   var draw=function(keep){var L=mList('any');$('mbl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<div class="none0"><p class="empty">条件に合う案件はありません</p><button type="button" class="clr" id="mclr">条件を解除する</button></div>';
     each('.mpc',$('mbl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id);};});var c=$('mclr');if(c)c.onclick=function(){MF={q:'',past:false,f:'all',srt:'new'};mBoardPaint();};
     if(!keep)each('[data-f]',scr,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(scr,draw);draw();
-  $('mpastB').onclick=mPastView;each('.nm',scr,function(b){b.onclick=function(){if(b.dataset.u&&b.dataset.u!==(MB&&MB.me))mOpenDM(b.dataset.u);};});}
+  $('mpastB').onclick=mPastView;mLockBind();each('.nm',scr,function(b){b.onclick=function(){if(b.dataset.u&&b.dataset.u!==(MB&&MB.me))mOpenDM(b.dataset.u);};});}
 function mPastView(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>過去の案件</b></div></div><div class="arw"><p class="adesc">投稿から1か月以上経過した期限なしの募集や、募集が終了した案件を掲載しています。</p><div id="mpc">'+mCtl(false)+'</div><div id="mpl"></div></div>');
   var draw=function(keep){var L=mList('past');$('mpl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<p class="empty">条件に合う案件はありません</p>';each('.mpc',$('mpl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id,mPastView);};});if(!keep)each('[data-f]',pane,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(pane,draw);draw();}
@@ -1536,10 +1539,11 @@ function mPostPaint(){var p=MP,mn=[];
     '<div class="ppd"><div class="bl1">'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.replace(/-/g,'/')+'まで</span>':'')+'</div><p class="mtx">'+esc(p.body)+'</p>'+
     (p.want?'<p class="mtx"><b>どうしてほしいか</b><br>'+esc(p.want)+'</p>':'')+'<dl class="dl2">'+(p.place?'<dt>場所</dt><dd>'+esc(p.place)+'</dd>':'')+(p.budget?'<dt>予算</dt><dd>'+esc(p.budget)+'</dd>':'')+'</dl>'+
     (p.photos.length?'<div class="thumbs">'+p.photos.map(function(u){return '<div class="tb"><img src="'+esc(u)+'" alt="投稿の写真"></div>';}).join('')+'</div>':'')+
-    (p.mine?(p.st==='open'?'<div class="pvb"><button type="button" id="mEd">期限を変更</button><button type="button" id="mEnd">募集を終了する</button></div>':''):(p.st==='open'?'<button type="button" class="big" id="mCan">対応できます（投稿者とチャット）</button>':'<p class="pc-n">募集は終了しています。新しい問い合わせはできません。</p>'))+'</div>'+
+    (!MW?'<p class="pc-n">資格の書類の審査が済むと、コメントや「対応できます」を使えます。</p>':p.mine?(p.st==='open'?'<div class="pvb"><button type="button" id="mEd">期限を変更</button><button type="button" id="mEnd">募集を終了する</button></div>':''):(p.st==='open'?'<button type="button" class="big" id="mCan">対応できます（投稿者とチャット）</button>':'<p class="pc-n">募集は終了しています。新しい問い合わせはできません。</p>'))+'</div>'+
     '<div class="sec">コメント <small>'+p.comments.length+'件</small></div><div class="msgs mcl">'+(p.comments.length?p.comments.map(function(c){return '<div class="mg'+(c.userId===ME.id?' me':'')+'"><span class="wn">'+esc(c.who)+'・'+mdhm(c.createdAt)+'</span><div class="bb">'+(c.img?'<img src="'+esc(c.img)+'" alt="">':'')+mMention(c.text)+'</div></div>';}).join(''):'<p class="empty">まだコメントはありません</p>')+'</div></div>'+
-    '<form class="cmp" id="mcf"><button type="button" class="ic" id="mat">＠</button><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mci" hidden></label><input id="mct" placeholder="コメントを書く" autocomplete="off" aria-label="コメント"><button class="sd">送信</button></form>',p.back);
+    (MW?'<form class="cmp" id="mcf"><button type="button" class="ic" id="mat">＠</button><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mci" hidden></label><input id="mct" placeholder="コメントを書く" autocomplete="off" aria-label="コメント"><button class="sd">送信</button></form>':''),p.back);
   var ar=pane.querySelector('.arw');var send=function(d){d.id=p.id;d.mentions=mn.filter(function(x){return (d.text||'').indexOf('@'+x.name)>=0;}).map(function(x){return x.userId;});api('mComment',d).then(function(j){var bk=MP.back;MP=j.post;MP.back=bk;mPostPaint();var a=pane.querySelector('.arw');a.scrollTop=a.scrollHeight;}).catch(fail);};
+  if(!MW)return;
   $('mcf').onsubmit=function(e){e.preventDefault();var t=$('mct').value.trim();if(!t)return;if(hasContact(t))return toast('電話番号・メールアドレスは書けません');$('mct').value='';send({text:t});};
   $('mci').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;toast('写真を送っています…');shrink(f).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
   $('mat').onclick=function(){openSheet('<h3>会員を呼ぶ</h3><p class="sp s2">選んだ会員に、このコメントのお知らせが届きます。</p><div class="list">'+(p.members.length?p.members.map(function(m,i){return '<button type="button" class="card bp" data-mi="'+i+'"><b>'+esc(m.name)+'</b></button>';}).join(''):'<p class="empty">ほかの会員はまだいません</p>')+'</div>');
@@ -1551,16 +1555,17 @@ function mPostPaint(){var p=MP,mn=[];
     $('edOk').onclick=function(){var use=sheet.querySelector('[name=edl]:checked').value==='1',v=use?$('edd').value:'';if(use&&!v)return toast('日付を選んでください');api('mPostEdit',{id:p.id,setDl:1,dl:v}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('期限を変更しました');}).catch(fail);};};}
 function mMention(t){return esc(t||'').replace(/@([^\s　]+)/g,'<span class="mn">@$1</span>');}
 function mMembersView(){scr.innerHTML=LOADING;api('mMembers').then(function(j){var L=j.members;
-  scr.innerHTML='<div class="mp"><div class="sec">会員 <small>'+L.length+'名</small></div><div class="list">'+L.map(function(m,i){return '<button type="button" class="card bp mmr" data-i="'+i+'"'+(m.userId&&!m.me?'':' disabled')+'><span class="crow"><span class="av sm">'+esc((m.company||m.name).slice(0,1))+'</span><span class="tt"><b>'+esc(m.company||m.name)+'</b><span class="meta"><span>'+esc(m.company?m.name:'')+'</span><span>'+(m.me?'あなた':m.userId?'まち頼に登録済み':'まだ登録していません')+'</span></span></span></span></button>';}).join('')+'</div><p class="note">登録済みの会員を押すと、1対1のチャットが開きます</p></div>';
-  each('.mmr',scr,function(b){b.onclick=function(){var m=L[+b.dataset.i];if(m.userId&&!m.me)mOpenDM(m.userId);};});}).catch(function(e){if(e&&/会員の確認/.test(e.message)){MJ=false;renderMember();}else showErr(e);});}
+  scr.innerHTML='<div class="mp"><div class="sec">会員 <small>'+L.length+'名</small></div><div class="list">'+L.map(function(m,i){return '<button type="button" class="card bp mmr" data-i="'+i+'"'+(m.me?' disabled':'')+'><span class="crow"><span class="av sm">'+esc((m.company||m.name).slice(0,1))+'</span><span class="tt"><b>'+esc(m.company||m.name)+(m.me?' <small class="mme">あなた</small>':'')+'</b><span class="mnm">'+esc(m.name)+'</span>'+(m.cats&&m.cats.length?'<span class="mcats">'+m.cats.map(function(c){return '<i>'+esc(c)+'</i>';}).join('')+'</span>':'')+'</span></span></button>';}).join('')+'</div><p class="note">会員を押すと、1対1のチャットが開きます</p></div>';
+  each('.mmr',scr,function(b){b.onclick=function(){var m=L[+b.dataset.i];if(!m.me)mOpenDM(m.userId);};});}).catch(function(e){if(e&&e.needJoin!==undefined||/会員ページは/.test(e&&e.message)){MJ=false;renderMember();}else showErr(e);});}
 function mDMsView(){scr.innerHTML=LOADING;api('mDMs').then(function(j){var L=j.list;
   scr.innerHTML='<div class="mp"><div class="sec">チャット</div>'+(L.length?'<div class="list">'+L.map(function(x){return '<button type="button" class="card bp mdr" data-u="'+x.with+'"><span class="crow"><span class="av sm">'+esc(x.name.slice(0,1))+'</span><span class="tt"><b>'+esc(x.name)+'</b><span class="lm">'+esc(x.text)+'</span></span>'+(x.unread?'<span class="unr">'+x.unread+'</span>':'')+'</span></button>';}).join('')+'</div>':'<p class="empty">まだやり取りはありません。「会員」の一覧から話しかけられます。</p>')+'</div>';
-  each('.mdr',scr,function(b){b.onclick=function(){mOpenDM(b.dataset.u);};});}).catch(function(e){if(e&&/会員の確認/.test(e.message)){MJ=false;renderMember();}else showErr(e);});}
+  each('.mdr',scr,function(b){b.onclick=function(){mOpenDM(b.dataset.u);};});}).catch(function(e){if(e&&/会員ページは/.test(e.message)){MJ=false;renderMember();}else showErr(e);});}
 function mOpenDM(uid,back){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="mdl"></div>',back);
   api('mDM',{with:uid}).then(function(j){MD=j;MD.back=back;
-    setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(j.name)+'</b><span>1対1のチャット</span></div></div><div class="msgs" id="mdl"></div><form class="cmp" id="mdf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mdi" hidden></label><input id="mdt" placeholder="メッセージを書く" autocomplete="off" aria-label="メッセージ"><button class="sd">送信</button></form>',back);
+    setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(j.name)+'</b><span>1対1のチャット</span></div></div><div class="msgs" id="mdl"></div>'+(MW?'<form class="cmp" id="mdf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mdi" hidden></label><input id="mdt" placeholder="メッセージを書く" autocomplete="off" aria-label="メッセージ"><button class="sd">送信</button></form>':'<div class="lock">資格の書類の審査が済むと、メッセージを送れます</div>'),back);
     mDMPaint();chatT=setInterval(function(){if(!MD||document.visibilityState!=='visible')return;var l=MD.msgs[MD.msgs.length-1];api('mDM',{with:MD.with,since:l?l.createdAt:''}).then(function(k){if(k.msgs.length){MD.msgs=MD.msgs.concat(k.msgs);mDMPaint();}}).catch(function(){});},8000);
     var sd=function(d){var l=MD.msgs[MD.msgs.length-1];d.with=MD.with;d.since=l?l.createdAt:'';api('mDMSend',d).then(function(k){MD.msgs=MD.msgs.concat(k.msgs);mDMPaint();}).catch(fail);};
+    if(!MW)return;
     $('mdf').onsubmit=function(e){e.preventDefault();var t=$('mdt').value.trim();if(!t)return;$('mdt').value='';sd({text:t});};
     $('mdi').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;toast('写真を送っています…');shrink(f).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(k){sd({img:k.url,text:''});}).catch(fail);};
   }).catch(function(e){fail(e);closePane();});}
