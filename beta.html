@@ -476,7 +476,21 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .mnm{display:block;font-size:12.5px;color:#4B5A52}.mme{font-size:11px;font-weight:400;color:#fff;background:#2B4C7E;border-radius:8px;padding:0 6px;margin-left:4px}.mcats{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.mcats i{font-style:normal;font-size:11.5px;color:#2B4C7E;background:#E6ECF5;border-radius:8px;padding:1px 7px}
 .tset{border:2px dashed #E39B1B}.tset .mrow span{color:#8A5A00;font-weight:700}
 .njbar{z-index:2}.su .agr{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
-.urow{display:flex;gap:6px;align-items:center;margin-top:8px}.urow .uurl{flex:1;margin:0}.udel{flex:none;width:40px;height:40px;border:1px solid #ccc;border-radius:10px;background:#fff;color:#666;font-size:18px}.uadd{margin-top:10px;padding:10px 14px;border:1.5px dashed #2F6B45;border-radius:10px;background:#fff;color:#2F6B45;font-weight:700;font-size:15px}</style>
+.urow{display:flex;gap:6px;align-items:center;margin-top:8px}.urow .uurl{flex:1;margin:0}.udel{flex:none;width:40px;height:40px;border:1px solid #ccc;border-radius:10px;background:#fff;color:#666;font-size:18px}.uadd{margin-top:10px;padding:10px 14px;border:1.5px dashed #2F6B45;border-radius:10px;background:#fff;color:#2F6B45;font-weight:700;font-size:15px}.tray2[hidden]{display:none}.tray2{display:flex;justify-content:space-around;background:#fff;border-top:1px solid var(--bd);padding:10px 6px 8px}.tray2 button,.tray2 label{font:inherit;font-size:11px;color:#444;background:none;border:0;text-align:center;width:80px;cursor:pointer}.tray2 i{display:block;width:44px;height:44px;border-radius:14px;background:#f3f2ee;margin:0 auto 4px;font-style:normal;font-size:20px;line-height:44px}.tray2 .red{color:#c0392b}.tray2 .red i{background:#fdecea}
+.cmp .plus{font-size:22px;font-weight:400;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--m);color:var(--m);background:#fff;padding:0;display:flex;align-items:center;justify-content:center;transition:transform .15s}.cmp .plus.on{background:var(--m);color:#fff;transform:rotate(45deg)}
+.pin2{position:sticky;top:0;z-index:2;background:#fff8e6;border:1px solid #f0d58c;border-radius:12px;padding:9px 11px;font-size:12.5px;line-height:1.6;margin-bottom:8px}
+.rdo{display:flex;gap:8px;align-items:flex-start;border:1.5px solid #d9d5cc;border-radius:10px;padding:9px 10px;margin-top:7px;font-size:13.5px;line-height:1.5;cursor:pointer;background:#fff}.rdo input{margin-top:4px;width:auto}.rdo:has(input:checked){border-color:#2F6B45;background:#eef6f0}.rdo em{font-style:normal;color:#2F6B45;font-weight:700;font-size:12px}
+.pc-v{display:flex;flex-direction:column;gap:6px;margin-top:10px}.pc-v button{font:inherit;font-size:14px;font-weight:700;border:0;border-radius:10px;padding:10px;background:#2F6B45;color:#fff;cursor:pointer}.pc-v button.w{background:#fff;color:#2F6B45;border:1.5px solid #2F6B45}.pc-v button.g{background:#fff;color:#666;border:1.5px solid #ccc}
+.pc-m{font-size:13px;background:#f3f2ee;border-radius:10px;padding:8px 10px;margin:8px 0 0}.pc.mine{background:#f6faf7}.pc.alert{border:1.5px solid #E8613C}.tm{display:inline-block;background:#E8613C;color:#fff;border-radius:6px;font-size:11px;padding:2px 7px;font-weight:700;margin-bottom:4px}
+.rept{display:block;margin:10px auto 0;background:none;border:0;font:inherit;font-size:11.5px;color:#888;text-decoration:underline;cursor:pointer}
+.days{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.days button{font:inherit;font-size:13px;border:1.5px solid #d9d5cc;border-radius:10px;padding:8px 10px;background:#fff;cursor:pointer}
+.wsr{border:1.5px solid #d9d5cc;border-radius:10px;padding:8px;margin-top:8px}.wsr b{font-size:12px;color:#2F6B45}.wsr .tr{gap:6px}.wsr select{flex:1}
+.addr2{margin-top:8px}.big:disabled{background:#cfd8d2!important;cursor:default}
+.cnd{border:1.5px solid #d9d5cc;border-radius:12px;padding:10px;margin-top:10px;background:#fbfaf7}.cnd>b{font-size:13px;color:#2F6B45}.cnd .c5{margin-top:6px}
+.pc textarea,.pc .dtl{display:block;width:100%;box-sizing:border-box;margin-top:4px;font:inherit;font-size:14px;border:1.5px solid #d9d5cc;border-radius:10px;padding:9px 10px;background:#fff}.pc .lab{display:block;margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}.chips button{font:inherit;font-size:13px;border:1.5px solid #d9d5cc;border-radius:999px;padding:6px 12px;background:#fff;cursor:pointer}.chips button.on{background:#2F6B45;border-color:#2F6B45;color:#fff;font-weight:700}
+.rdo.warnr{border-color:#e0a59c}.rdo.warnr small{color:#8a2a1e}
+</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -496,7 +510,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=42;
+var APPVER_N=43;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -711,7 +725,7 @@ function stopPoll(){clearInterval(pollT);}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&ME&&!pane.classList.contains('on'))refresh();});
 
 /* ===== 案件の状態 ===== */
-var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],fixd:['調査日が決定',''],est:['見積もり到着','hot'],won:['依頼しました','ok'],done:['完了','ok'],lost:['見送り','off'],other:['見送り','off'],declined:['辞退','off'],expired:['連絡がなく終了','off']};
+var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],fixd:['調査日が決定',''],est:['見積もり到着','hot'],won:['依頼しました','ok'],done:['完了','ok'],lost:['見送り','off'],other:['見送り','off'],declined:['辞退','off'],expired:['連絡がなく終了','off'],canceled:['キャンセル','off']};
 function caseStage(c,bids){if(c.status==='done')return 6;if(bids.some(function(v){return v.state==='won';}))return 5;if(bids.some(function(v){return v.state==='est';}))return 4;if(bids.some(function(v){return v.state==='fixd'||v.state==='prop';}))return 3;if(bids.length)return 2;return 1;}
 function caseLine(x){var c=x.c,b=x.bids,t,m;
   if(c.status==='withdrawn'){t='取り下げ';m='';}
@@ -927,6 +941,7 @@ function postpone(){
 /* ===== 業者とのチャット ===== */
 var CH=null;
 function stopChat(){clearInterval(chatT);chatT=null;}
+if(location.hostname==='app.local')window.__t={openChat:openChat,openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
 function openChat(bidId,back){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
   api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
@@ -935,25 +950,31 @@ function pollChat(){if(!CH||document.visibilityState!=='visible')return;var l=CH
 function drawChat(){
   var v=CH.vendor||{name:'業者'},s=VST[CH.bid.state]||['',''],closed=s[1]==='off';
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(v.name)+'</b><span>★'+(v.star||'-')+'（口コミ'+(v.reviews||0)+'件）・'+s[0]+'</span></div></div>'+vStep()+'<div class="msgs" id="vm"></div>'+
-    (closed?'<div class="lock">このやり取りは終了しています。</div>':'<form class="cmp" id="vf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="vimg" hidden></label><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
+    (closed?'<div class="lock">このやり取りは終了しています。</div>':'<div class="tray2" id="vtray" hidden><button type="button" id="trS"><i>📅</i>日程の変更</button><label><i>📷</i>写真<input type="file" accept="image/*" id="vimg" hidden></label>'+(CH.bid.state==='won'?'<button type="button" class="red" id="trC"><i>✕</i>キャンセルを依頼</button>':'')+'</div><form class="cmp" id="vf"><button type="button" class="ic plus" id="vpB" aria-label="メニュー" aria-expanded="false">＋</button><input id="tx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
     CH.back||function(){openCase(CH.c.id);});
   chatT=setInterval(pollChat,8000);
   drawMsgs();
   (function(){var st=CH.bid.state,lr=null;CH.msgs.forEach(function(m){if(m.type==='rep')lr=m;});uPop(CH.c.id,st==='fixd'?3:st==='est'?4:st==='won'&&lr&&!(lr.body||{}).done?6:st==='won'||st==='done'?(seenNo('u_'+CH.c.id+'_5')?5:0):0);})();
   var f=$('vf');if(!f)return;
   f.onsubmit=function(e){e.preventDefault();var t=$('tx'),x=t.value.trim();if(!x)return;t.value='';send({text:x});};
-  $('vimg').onchange=function(e){var fl=e.target.files[0];e.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
+  var vb=$('vpB'),vt=$('vtray');vb.onclick=function(){vt.hidden=!vt.hidden;vb.classList.toggle('on',!vt.hidden);vb.setAttribute('aria-expanded',!vt.hidden);};
+  $('trS').onclick=function(){vt.hidden=true;vb.classList.remove('on');var t=$('tx');t.value='日程の変更を相談させてください。';t.focus();};
+  var tc=$('trC');if(tc)tc.onclick=function(){vt.hidden=true;vb.classList.remove('on');cxReqSheet();};
+  $('vimg').onchange=function(e){vt.hidden=true;vb.classList.remove('on');var fl=e.target.files[0];e.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
 }
 function send(d){var l=CH.msgs[CH.msgs.length-1];d.bidId=CH.bid.id;d.since=l?l.createdAt:'';api('sendMsg',d).then(function(j){CH.msgs=CH.msgs.concat(j.msgs);CH.bid=j.bid;drawMsgs();}).catch(fail);}
 function drawMsgs(){
   var box=$('vm');if(!box)return;var vn=(CH.vendor||{}).name||'業者';
-  box.innerHTML=CH.msgs.map(function(m){var b=m.body||{};
+  box.innerHTML=schPin(CH.msgs)+CH.msgs.map(function(m){var b=m.body||{};
     if(m.type==='sys')return '<div class="sys">'+esc(b.text)+'</div>';
+    if(m.type==='schc')return '<div class="pc mine"><div class="pc-h">希望の日程を送りました</div><dl>'+(b.wishes||[]).map(function(w,i){return '<dt>希望'+(i+1)+'</dt><dd>'+esc(w.date+' '+w.slot)+'</dd>';}).join('')+'</dl>'+(b.msg?'<p class="pc-m">💬 '+esc(b.msg)+'</p>':'')+(b.done?done(b):'<p class="pc-ok">業者が24時間以内に決めます</p>')+'</div>';
+    if(m.type==='cxr')return '<div class="pc mine"><div class="pc-h">キャンセルを依頼しました</div><dl><dt>理由</dt><dd>'+esc(b.reason)+'</dd></dl>'+(b.done?done(b):'<p class="pc-ok">業者の返事を待っています（'+esc(b.due)+'まで）</p>')+'<button type="button" class="rept" data-rep="1">業者が対応しない場合は運営へ報告</button></div>';
     if(m.from===ME.id)return '<div class="mg me"><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="送った写真">':'')+esc(b.text||'')+'</div></div>';
     if(m.type==='text'||m.type==='img')return '<div class="mg"><span class="wn">'+esc(vn)+'</span><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="">':'')+esc(b.text||'')+'</div></div>';
     return cardHTML(m);}).join('');
   box.scrollTop=box.scrollHeight;
-  each('[data-op]',box,function(x){x.onclick=function(){cardDo(x.dataset.id,x.dataset.op,x.dataset.slot);};});
+  each('[data-op]',box,function(x){x.onclick=function(){if(x.dataset.op==='no')return noSheet(x.dataset.id);if(x.dataset.op==='schpick'){var sel=box.querySelector('input[name="sc_'+x.dataset.id+'"]:checked');if(!sel)return toast('候補を1つ選んでください');return cardDo(x.dataset.id,'pick',sel.value);}if(x.dataset.op==='schcounter')return wishSheet(x.dataset.id);if(x.dataset.op==='schlater')return laterSheet(x.dataset.id);if(x.dataset.op==='cxok'&&!confirm('キャンセルで確定しますか？'))return;cardDo(x.dataset.id,x.dataset.op,x.dataset.slot);};});
+  each('[data-rep]',box,function(x){x.onclick=repSheet;});
   each('.pc-no',box,function(x){x.onclick=function(){counter(x.dataset.id);};});
   each('[data-talk]',box,function(x){x.onclick=function(){var t=$('tx');if(t)t.focus();};});
 }
@@ -964,11 +985,31 @@ function cardHTML(m){var x=m.body||{},id=m.id;
   if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり</div><p class="amt">'+Number(x.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(x.memo)+'</dd><dt>工期</dt><dd>'+esc(x.start)+(x.end&&x.end!==x.start?' 〜 '+esc(x.end):'（1日）')+'</dd><dt>支払い</dt><dd>'+esc(x.pay)+'</dd><dt>有効期限</dt><dd>'+esc(x.due)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">この金額で依頼すると成約します</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="no">見送る</button><button type="button" data-id="'+id+'" data-op="yes">この内容で依頼する</button></div>')+'</div>';
   if(m.type==='chg')return '<div class="pc"><div class="pc-h">追加の作業の申請</div><p class="amt2"><s>'+yen(x.from)+'</s> → <b>'+yen(x.to)+'</b>（税込）</p><dl><dt>追加の金額</dt><dd>＋'+yen(x.ad||(x.to-x.from))+'</dd><dt>理由</dt><dd>'+esc(x.why)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">承諾すると、業者さんが追加の作業を始めます。わからない点はチャットで聞けます。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="ng">承諾しない</button><button type="button" data-id="'+id+'" data-op="ok">承諾する</button></div>')+'</div>';
   if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告</div><dl><dt>作業日</dt><dd>'+esc(x.day)+'</dd><dt>作業内容</dt><dd>'+esc(x.what)+'</dd><dt>最終金額</dt><dd><b>'+yen(x.amt)+'</b>（税込）</dd></dl>'+(x.done?done(x):'<p class="pc-n">内容を確認して、問題なければ「完了を確認する」を押してください。7日たつと自動で完了になります。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="notyet">まだ終わっていない</button><button type="button" data-id="'+id+'" data-op="fin">完了を確認する</button></div>')+'</div>';
+  if(m.type==='sch')return '<div class="pc"><div class="pc-h">初回の着工日の候補</div><p class="pc-n" style="margin-top:0">1つ選んでください。2日目以降の作業日は、チャットで相談します</p>'+(x.cands||[]).map(function(k,i){return '<label class="rdo"><input type="radio" name="sc_'+id+'" value="'+i+'"'+(x.done?' disabled':'')+'><span><b>'+esc(k.start+' '+k.time)+'</b><br>完了予定 '+esc(k.end)+'<br><em>立ち会い：'+esc(k.tachi+(k.tachiNote?'（'+k.tachiNote+'）':''))+'</em></span></label>';}).join('')+(x.msg?'<p class="pc-m">💬 '+esc(x.msg)+'</p>':'')+
+    (x.done?done(x):(x.later?'<p class="pc-n">'+esc(x.later.md)+' までに返事する予定です</p>':'')+'<div class="pc-v"><button type="button" data-id="'+id+'" data-op="schpick">この日程で確定</button><button type="button" class="w" data-id="'+id+'" data-op="schcounter">別の日程を希望</button>'+(x.later?'':'<button type="button" class="g" data-id="'+id+'" data-op="schlater">まだ決められない</button>')+'</div>')+'</div>';
+  if(m.type==='cxa'){var wait=(x.kind==='other'||x.kind==='nocontact')&&!x.done;return '<div class="pc'+(wait?' alert':'')+'"><div class="pc-h">業者からキャンセルの申請が届きました</div>'+(wait?'<span class="tm">'+esc(x.due)+'まで</span>':'')+'<dl><dt>業者の申告</dt><dd>'+esc(x.kindText)+'</dd>'+(wait?'<dt>確定日時</dt><dd>'+esc(x.due)+'<br><small>この日時までに返事がなければ、キャンセルで確定します</small></dd>':'')+'</dl>'+(x.done?done(x):(wait?'<div class="pc-v"><button type="button" data-id="'+id+'" data-op="cxok">キャンセルで合っている</button><button type="button" class="w" data-id="'+id+'" data-op="cxng">キャンセルに同意していない</button></div>':''))+'<button type="button" class="rept" data-rep="1">業者が対応しない場合は運営へ報告</button></div>';}
   if(m.type==='visit')return '<div class="pc"><div class="pc-h">現地調査はいかがでしたか？</div>'+(x.done?done(x):'<div class="pc-b" style="flex-wrap:wrap">'+['予定どおり来た','遅れて来た','来なかった'].map(function(o){return '<button type="button" class="g" data-id="'+id+'" data-op="'+o+'">'+o+'</button>';}).join('')+'</div>')+'</div>';
   return '';}
-function cardDo(id,op,slot){
+function cardDo(id,op,slot,ext){
   if(op==='yes'&&!confirm('この内容で依頼しますか？ ほかの業者さんには「他社で決定」と伝わります。'))return;
-  api('cardAction',{bidId:CH.bid.id,msgId:id,op:op,slot:slot||''}).then(function(j){CH.msgs=j.msgs;CH.bid=j.bid;drawChat();if(op==='来なかった')visitNoShow();}).catch(fail);}
+  var d={bidId:CH.bid.id,msgId:id,op:op,slot:slot||''};if(ext)Object.keys(ext).forEach(function(k){d[k]=ext[k];});
+  api('cardAction',d).then(function(j){CH.msgs=j.msgs;CH.bid=j.bid;drawChat();if(op==='来なかった')visitNoShow();}).catch(fail);}
+function schPin(ms){var f=null;(ms||[]).forEach(function(m){var b=m.body||{};if(b.fixed)f=b.fixed;});return f?'<div class="pin2">📌 <b>初回の着工日 '+esc(f.start+' '+f.time)+'</b><br>完了予定 '+esc(f.end)+(f.tachi?'／立ち会い：'+esc(f.tachi+(f.tachiNote?'（'+f.tachiNote+'）':'')):'')+'</div>':'';}
+function rdoList(name,opts){return opts.map(function(o){return '<label class="rdo"><input type="radio" name="'+name+'" value="'+esc(o)+'"><span>'+esc(o)+'</span></label>';}).join('');}
+function noSheet(id){openSheet('<h3>見送る理由を教えてください</h3><p class="sp s2">業者には「見送られた」というお知らせだけが届き、理由は表示されません。</p>'+rdoList('nr',['金額が予算と合わなかった','内容が希望と違った','ほかの業者に頼みたい','今回は依頼しない','その他'])+'<textarea id="nrM" rows="2" placeholder="見送る理由について（任意）"></textarea><button type="button" class="big" id="nrS" disabled>送信する</button>');
+  each('input[name=nr]',sheet,function(r){r.onchange=function(){$('nrS').disabled=false;};});
+  $('nrS').onclick=function(){var r=sheet.querySelector('input[name=nr]:checked');if(!r)return;closeSheet();cardDo(id,'no','',{reason:r.value,memo:$('nrM').value.trim()});};}
+function wishRow(n){var t=new Date(Date.now()+(n+2)*864e5);return '<div class="wsr"><b>希望 '+(n+1)+'</b><div class="tr"><input type="date" class="dtl wd" min="'+ymd(new Date(Date.now()+864e5))+'" value="'+ymd(t)+'" aria-label="日付"><select class="ws" aria-label="時間帯"><option>午前</option><option>午後</option><option>終日</option><option>夕方以降</option></select></div></div>';}
+function wishSheet(id){var n=1;openSheet('<h3>希望の日程を教えてください</h3><p class="sp s2">3つまで入れられます</p><div id="wsL">'+wishRow(0)+'</div><button type="button" class="addr" id="wsA">＋ 希望を追加</button><label class="lab">メッセージ（任意）</label><textarea id="wsM" rows="2" placeholder="例：平日は18時以降なら家にいます"></textarea><button type="button" class="big" id="wsS">送信する</button>');
+  $('wsA').onclick=function(){if(n>=3)return;$('wsL').insertAdjacentHTML('beforeend',wishRow(n));n++;if(n>=3)this.hidden=true;};
+  $('wsS').onclick=function(){var ws=[];each('.wsr',sheet,function(r){var d=r.querySelector('.wd').value;if(d)ws.push({date:mdW(d),ymd:d,slot:r.querySelector('.ws').value});});if(!ws.length)return toast('日付を入れてください');closeSheet();cardDo(id,'counter','',{wishes:ws,msg:$('wsM').value.trim()});};}
+function laterSheet(id){var ds=[];for(var i=1;i<=7;i++)ds.push(ymd(new Date(Date.now()+i*864e5)));openSheet('<h3>いつまでに返事できますか？</h3><p class="sp s2">選んだ日に、もう一度お知らせします。業者にも、この日までに返事が来ることを伝えます。「まだ決められない」は1回だけ使えます。</p><div class="days">'+ds.map(function(d,i){return '<button type="button" data-d="'+d+'">'+(i===0?'明日':mdW(d))+'</button>';}).join('')+'</div>');
+  each('.days button',sheet,function(b){b.onclick=function(){closeSheet();cardDo(id,'later','',{until:b.dataset.d});};});}
+function cxReqSheet(){openSheet('<h3>キャンセルを依頼する</h3><p class="sp s2">業者にキャンセルの希望を伝えます。業者がアプリで申請すると、キャンセルが確定します。</p><div class="lab">キャンセルの理由</div>'+rdoList('cr',['予定が合わなくなった','ほかの方法で解決した','費用の都合','その他'])+'<textarea id="crM" rows="2" placeholder="キャンセルの理由について（任意）"></textarea><p class="warn" style="margin:6px 0">見積もりの条件によっては、業者からキャンセル料を請求される場合があります。請求と支払いは、業者とのあいだで行います。</p><button type="button" class="big" id="crS" disabled>送信する</button>');
+  each('input[name=cr]',sheet,function(r){r.onchange=function(){$('crS').disabled=false;};});
+  $('crS').onclick=function(){var r=sheet.querySelector('input[name=cr]:checked');if(!r)return;this.disabled=true;api('cxReq',{bidId:CH.bid.id,reason:r.value,memo:$('crM').value.trim()}).then(function(j){closeSheet();CH.msgs=j.msgs;CH.bid=j.bid;drawChat();toast('業者にキャンセルの依頼を送りました');}).catch(function(e){closeSheet();fail(e);});};}
+function repSheet(){openSheet('<h3>運営へ報告</h3><p class="sp s2">業者がキャンセルや連絡に対応しないときにお使いください。運営が1営業日以内にご連絡します。</p><label class="lab">状況（任意）</label><textarea id="rpT" rows="3"></textarea><button type="button" class="big" id="rpS">送信する</button>');
+  $('rpS').onclick=function(){api('cxReport',{bidId:CH.bid.id,text:$('rpT').value.trim()}).then(function(){closeSheet();toast('運営に報告しました');}).catch(fail);};}
 function visitNoShow(){openSheet('<h3>ご迷惑をおかけしました</h3><p class="sp s2">運営に伝わりました。このあとどうしますか？</p><ul class="kbm"><li><button type="button" id="ns1">ほかの業者に相談する<small>依頼の画面にもどります</small></button></li><li><button type="button" id="ns2">日程を決め直す<small>チャットで業者さんに伝えてください</small></button></li></ul>');$('ns1').onclick=function(){closeSheet();openCase(CH.c.id);};$('ns2').onclick=function(){closeSheet();var t=$('tx');if(t)t.focus();};}
 function counter(id){
   openSheet('<h3>ご都合のよい日時を送る</h3><p class="sp s2">業者さんが24時間以内に時刻を決めます。</p><input type="date" class="dtl" id="ctD" min="'+new Date(Date.now()+864e5).toISOString().slice(0,10)+'" aria-label="日付"><div style="display:flex;gap:8px;align-items:center"><input type="time" class="dtl" id="ct1" step="1800" value="10:00" aria-label="何時から">〜<input type="time" class="dtl" id="ct2" step="1800" value="12:00" aria-label="何時まで"></div><button type="button" class="big" id="ctS">この枠を送る</button>');
@@ -988,7 +1029,7 @@ function openReview(v){
 
 /* ===== テスト用：業者の動き（運営がTEST_MODEをonにしているときだけ動く） ===== */
 function testBox(){var c=CUR.c;if(c.status==='withdrawn'||c.status==='done')return '';var live=CUR.bids.filter(function(v){return ['lost','other','declined','done','expired'].indexOf(v.state)<0;});
-  return '<div class="tbx"><b>テスト用：業者さん側の動きを再現</b>'+(CUR.bids.length<5?'<button type="button" data-t="bid">業者を1社立候補させる</button>':'')+(live.length?'<select id="tbV" aria-label="どの業者で試すか">'+live.map(function(v){return '<option value="'+v.id+'"'+(v.id===TSEL?' selected':'')+'>'+esc(v.vendor.name)+'</option>';}).join('')+'</select>'+[['msg','メッセージ'],['prop','現地調査の提案'],['visit','調査後のアンケート'],['est','見積もり'],['chg','金額変更'],['rep','完了報告']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'</button>';}).join('')+'<b style="margin-top:6px">時間がたったことにする（返信の期限を試す）</b>'+[['age24','24時間'],['age72','72時間'],['age96','96時間']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'たった</button>';}).join(''):'')+'</div>';}
+  return '<div class="tbx"><b>テスト用：業者さん側の動きを再現</b>'+(CUR.bids.length<5?'<button type="button" data-t="bid">業者を1社立候補させる</button>':'')+(live.length?'<select id="tbV" aria-label="どの業者で試すか">'+live.map(function(v){return '<option value="'+v.id+'"'+(v.id===TSEL?' selected':'')+'>'+esc(v.vendor.name)+'</option>';}).join('')+'</select>'+[['msg','メッセージ'],['prop','現地調査の提案'],['visit','調査後のアンケート'],['est','見積もり'],['sch','着工日の候補'],['cxa','キャンセル申請'],['chg','金額変更'],['rep','完了報告']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'</button>';}).join('')+'<b style="margin-top:6px">時間がたったことにする（返信の期限を試す）</b>'+[['age24','24時間'],['age72','72時間'],['age96','96時間']].map(function(x){return '<button type="button" data-t="'+x[0]+'">'+x[1]+'たった</button>';}).join(''):'')+'</div>';}
 var TSEL='';function bindTest(){each('.tbx [data-t]',pane,function(b){b.onclick=function(){b.disabled=true;var v=$('tbV');if(v)TSEL=v.value;api('test',{caseId:CUR.c.id,op:b.dataset.t,bidId:v?v.value:''}).then(function(j){CUR=j;drawCase();toast(/^age/.test(b.dataset.t)?'時間を進めました':'届きました');}).catch(function(e){b.disabled=false;fail(e);});};});}
 
 /* ===== 依頼・チャット・マイページ ===== */
@@ -1118,7 +1159,7 @@ function concExtras(showLine){var h=pane.querySelector('.ph2');if(h&&!$('rcH')){
   if(!showLine)return;api('threads').then(function(j){var t=j.items&&j.items[0],cl=$('cl');if(!t||!cl||C.tid||C.sent)return;
     var l=document.createElement('button');l.type='button';l.className='rcline';l.id='rcLine';l.innerHTML='<span>前回の続き：</span><b>'+esc(t.title)+'</b><i>›</i>';l.onclick=function(){concResume(t.id);};cl.parentNode.insertBefore(l,cl);}).catch(function(){});}
 /* 業者ごとの進み具合（業者とのチャットの上に出す） */
-function vStep(){var s=CH.bid.state;if(['lost','other','declined','expired'].indexOf(s)>=0)return '<div class="vstp off">この業者とのやり取りは終了しています</div>';
+function vStep(){var s=CH.bid.state;if(['lost','other','declined','expired','canceled'].indexOf(s)>=0)return '<div class="vstp off">この業者とのやり取りは終了しています</div>';
   var steps=['やり取り','現地調査','見積もり','依頼','完了'],k={chat:0,prop:1,fixd:1,est:2,won:3,done:5}[s];if(k==null)k=0;var skip=CH.c&&CH.c.estOnly&&CH.c.estOnly!=='svy';
   return '<div class="stp vstp">'+steps.map(function(t,i){var sk=skip&&i===1;return '<span class="'+(sk?'skip':i<k?'dn':i===k?'cur':'')+'"><i></i>'+(sk?'調査なし':t)+'</span>';}).join('')+'</div>';}
 
@@ -1147,7 +1188,7 @@ var PPH={1:['STEP 1　立候補','👂','まずは相談内容を確認しまし
   5:['STEP 5　工事','🛠️','工事の予定期間になりました','工事が終わったら、完了報告を送ってください。日程を変更する場合は、依頼者と相談のうえ、チャットの「＋」から申請してください。'],
   6:['STEP 6　完了確認待ち','✅','完了報告を送りました','依頼者の確認、または報告から7日経過で完了となります。紹介手数料は翌月にまとめて請求します。']};
 function uPop(caseId,k){if(!k||seen('u_'+caseId+'_'+k))return;setTimeout(function(){if(k===5){celebrate('業者への依頼が決まりました！','STEP 5　依頼決定','工事に向けて、当日の流れを業者と確認しましょう。追加作業や費用の変更は、事前に内容を確認して承諾してください。','#E8613C');return;}var x=UPH[k];infoPop(x[2],x[3],'#E8613C',x[0],x[1]);},300);}
-function pPop(bidId,k){if(!k||seen('p_'+bidId+'_'+k))return;setTimeout(function(){if(k===4){celebrate('受注が決まりました！','STEP 4　成約','承認された内容で準備を進めてください。追加・変更が必要な場合は、作業前にこのチャットで依頼者の承諾を得てください。','#2F6B45');return;}var x=PPH[k];infoPop(x[2],x[3],'#2F6B45',x[0],x[1],x[4]);},300);}
+function pPop(bidId,k){if(!k||seen('p_'+bidId+'_'+k))return;setTimeout(function(){if(k===4){celebrate('見積もりが承認されました！','STEP 4　成約','依頼者が見積もり内容を承認し、正式に依頼が決まりました。チャットで着工までの流れを案内してください。作業内容や金額に変更が生じる場合は、事前に依頼者の承認を得てください。次は「着工日を提案する」から、初回の着工日の候補を送りましょう。','#2F6B45');return;}var x=PPH[k];infoPop(x[2],x[3],'#2F6B45',x[0],x[1],x[4]);},300);}
 /* 依頼者側：今の段階 */
 function uPhaseOf(c,bs){if(c.status==='withdrawn')return 0;var w=bs.filter(function(v){return v.state==='won'||v.state==='done';})[0];
   if(w){var l=w.last;if(w.state==='won'&&l&&l.type==='rep'&&!(l.body||{}).done)return 6;return seenNo('u_'+c.id+'_5')?5:0;}
@@ -1255,26 +1296,29 @@ function openPro(bidId){setPane('<div class="ph2"><button type="button" class="b
   api('proChat',{bidId:bidId}).then(function(j){PC2=j;PC2.first=1;drawPro();}).catch(function(e){fail(e);closePane();});}
 function proPoll(){if(!PC2||document.visibilityState!=='visible')return;var l=PC2.msgs[PC2.msgs.length-1];api('proChat',{bidId:PC2.bid.id,since:l?l.createdAt:''}).then(function(j){if(j.msgs.length||j.bid.state!==PC2.bid.state){PC2.msgs=PC2.msgs.concat(j.msgs);PC2.bid=j.bid;PC2.c=j.c;drawPro();}}).catch(function(){});}
 function pLast(t){var r=null;PC2.msgs.forEach(function(m){if(m.type===t)r=m;});return r;}
-function pStage(){var s=PC2.bid.state,rp=pLast('rep');if(s==='done')return 5;if(s==='won')return 4;if(s==='est')return 2;if(s==='fixd')return 1;return 0;}
+function pFixed(){var f=null;PC2.msgs.forEach(function(m){if((m.body||{}).fixed)f=m.body.fixed;});return f;}
+function pOpen(t){var r=null;PC2.msgs.forEach(function(m){if(m.type===t&&!(m.body||{}).done)r=m;});return r;}
+function pStage(){var s=PC2.bid.state,rp=pLast('rep');if(s==='done')return 5;if(s==='won')return pFixed()?4:3;if(s==='est')return 2;if(s==='fixd')return 1;return 0;}
 function drawPro(){
-  var x=PC2.bid,c=PC2.c,s=x.state,st=pStage(),rp=pLast('rep'),repWait=s==='won'&&rp&&!(rp.body||{}).done,closed=['lost','other','declined','expired'].indexOf(s)>=0;
+  var x=PC2.bid,c=PC2.c,s=x.state,st=pStage(),rp=pLast('rep'),repWait=s==='won'&&rp&&!(rp.body||{}).done,closed=['lost','other','declined','expired','canceled'].indexOf(s)>=0,fx=s==='won'&&pFixed(),cxOpen=pOpen('cxa');
   var steps=['立候補','現地調査','見積もり','成約','工事','完了'];
-  var nxt=closed?'このやり取りは終了しました':s==='chat'?'話を聞いて、現地調査の提案（費用の目安つき）を送ってください':s==='prop'?'依頼者が調査の日時を選ぶのを待っています':s==='fixd'?'現地調査をして、見積もりを送ってください':s==='est'?'依頼者の返事を待っています':s==='won'?(repWait?'依頼者の確認を待っています（7日で自動的に完了）':'工事が終わったら「完了報告」を送ってください'):s==='done'?'完了しました':'';
+  var nxt=closed?'このやり取りは終了しました':s==='chat'?'話を聞いて、現地調査の提案（費用の目安つき）を送ってください':s==='prop'?'依頼者が調査の日時を選ぶのを待っています':s==='fixd'?'現地調査をして、見積もりを送ってください':s==='est'?'依頼者の返事を待っています':s==='won'?(cxOpen?'キャンセル申請の結果を待っています':repWait?'依頼者の確認を待っています（7日で自動的に完了）':!fx?(pOpen('sch')?'依頼者が着工日を選ぶのを待っています':'着工日の候補を送ってください'):'工事が終わったら「完了報告」を送ってください'):s==='done'?'完了しました':'';
   var task='';
   if(s==='chat')task='<div class="pc tsk"><div class="pc-h">やること：現地調査の提案</div><p class="sp s2" style="margin:0 0 8px">話を聞いて、費用の目安を出しましょう</p><div class="pc-b"><button type="button" id="tProp">提案を作る</button></div><button type="button" class="undo" id="tNoSv" style="margin-left:0">現地調査なしで見積もりを出す</button></div>';
   if(s==='fixd')task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">調査の結果をもとに、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tEst">見積もりを作る</button></div></div>';
-  if(s==='won'&&!repWait)task='<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 8px">工事が終わったら報告してください</p><div class="pc-b"><button type="button" id="tRep">完了報告をする</button></div></div>';
+  if(s==='won'&&!fx&&!cxOpen&&!pOpen('sch')&&!pOpen('schc'))task='<div class="pc tsk"><div class="pc-h">やること：着工日の提案</div><p class="sp s2" style="margin:0 0 8px">初回の着工日の候補を、3つまで送りましょう</p><div class="pc-b"><button type="button" id="tSch">着工日を提案する</button></div></div>';
+  else if(s==='won'&&fx&&!repWait&&!cxOpen)task='<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 8px">工事が終わったら報告してください</p><div class="pc-b"><button type="button" id="tRep">完了報告をする</button></div></div>';
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+esc(c.place||'')+'・依頼者</span></div><button type="button" class="kebab" id="pInfo" aria-label="依頼の内容">…</button></div>'+
-    '<div class="msgs" id="pm"><div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>次に進むには</b>'+nxt+'</div><div id="pmL"></div>'+task+'</div>'+
-    (closed?'<div class="lock">このやり取りは終了しています。</div>':'<div class="pmenu" id="pmenu" hidden><label class="pmi"><span>📷</span>画像を送る<input type="file" accept="image/*" id="pImg" hidden></label>'+(s==='won'&&!repWait?'<button type="button" class="pmi" id="pChg"><span>＋円</span>追加の作業の申請<small>作業の前に、依頼者の承諾が必要です</small></button>':'')+'</div><form class="cmp" id="pf"><button type="button" class="ic plus" id="pmB" aria-label="メニュー" aria-expanded="false">＋</button><input id="ptx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
+    '<div class="msgs" id="pm">'+schPin(PC2.msgs)+'<div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>次に進むには</b>'+nxt+'</div><div id="pmL"></div>'+task+'</div>'+
+    (closed?'<div class="lock">このやり取りは終了しています。</div>':'<div class="pmenu" id="pmenu" hidden><label class="pmi"><span>📷</span>画像を送る<input type="file" accept="image/*" id="pImg" hidden></label>'+(s==='won'&&!repWait?'<button type="button" class="pmi" id="pChg"><span>＋円</span>追加の作業の申請<small>作業の前に、依頼者の承諾が必要です</small></button>':'')+(s==='won'?'<button type="button" class="pmi" id="pSchM"><span>📅</span>着工日を提案（変更）<small>変えるときは、依頼者の承認が必要です</small></button>':'')+(s==='won'&&!cxOpen?'<button type="button" class="pmi" id="pCx" style="color:#c0392b"><span>✕</span>キャンセル申請</button>':'')+'</div><form class="cmp" id="pf"><button type="button" class="ic plus" id="pmB" aria-label="メニュー" aria-expanded="false">＋</button><input id="ptx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
     function(){PC2=null;closePane();});
   chatT=setInterval(proPoll,8000);
   drawProMsgs();
-  var e=$('tProp');if(e)e.onclick=propForm;e=$('tEst');if(e)e.onclick=function(){estForm();};e=$('tNoSv');if(e)e.onclick=function(){estForm(true);};e=$('tRep');if(e)e.onclick=repForm;
+  var e=$('tProp');if(e)e.onclick=propForm;e=$('tEst');if(e)e.onclick=function(){estForm();};e=$('tNoSv');if(e)e.onclick=function(){estForm(true);};e=$('tRep');if(e)e.onclick=repForm;e=$('tSch');if(e)e.onclick=schForm;
   $('pInfo').onclick=function(){openSheet('<h3>依頼の内容</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+'</div>'+((c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':''));};
   var f=$('pf');if(f){f.onsubmit=function(ev){ev.preventDefault();var t=$('ptx'),v=t.value.trim();if(!v)return;t.value='';pSend({text:v});};
     var mb=$('pmB'),mn=$('pmenu');mb.onclick=function(){mn.hidden=!mn.hidden;mb.classList.toggle('on',!mn.hidden);mb.setAttribute('aria-expanded',!mn.hidden);};
-    e=$('pChg');if(e)e.onclick=chgForm;
+    e=$('pChg');if(e)e.onclick=chgForm;e=$('pSchM');if(e)e.onclick=schForm;e=$('pCx');if(e)e.onclick=cxForm;
     $('pImg').onchange=function(ev){var fl=ev.target.files[0];ev.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){pSend({img:j.url});}).catch(fail);};}
   // 段階ごとのポップアップ
   if(s==='chat'&&!pLast('prop'))pPop(x.id,1);else if(s==='fixd')pPop(x.id,2);else if(s==='won'&&!repWait){if(seenNo('p_'+x.id+'_4'))pPop(x.id,4);else if(PC2.first)pPop(x.id,5);}
@@ -1291,9 +1335,19 @@ function drawProMsgs(){var box=$('pmL');if(!box)return;var me=PC2.vendor.id;
     if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり（送信済み）</div><p class="amt">'+Number(b.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(b.memo)+'</dd><dt>工期</dt><dd>'+esc(b.start)+(b.end&&b.end!==b.start?' 〜 '+esc(b.end):'（1日）')+'</dd><dt>支払い</dt><dd>'+esc(b.pay)+'</dd><dt>有効期限</dt><dd>'+esc(b.due)+'</dd></dl>'+(st||'<p class="pc-ok">依頼者の返事を待っています</p>')+'</div>';
     if(m.type==='chg')return '<div class="pc"><div class="pc-h">追加の作業の申請（'+(b.st==='ok'?'承諾されました':b.st==='ng'?'承諾されませんでした':'承諾待ち')+'）</div><p class="amt2">＋'+Number(b.ad).toLocaleString()+'円（税込）</p><dl><dt>理由</dt><dd>'+esc(b.why)+'</dd></dl>'+(b.st?'':'<p class="pc-n">承諾されるまで、追加の作業は始めないでください。</p>')+'</div>';
     if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告（送信済み）</div><dl><dt>作業日</dt><dd>'+esc(b.day)+'</dd><dt>作業内容</dt><dd>'+esc(b.what)+'</dd><dt>最終金額</dt><dd><b>'+Number(b.amt).toLocaleString()+'円</b>（税込）</dd></dl>'+(st||'<p class="pc-ok">依頼者の確認を待っています</p><button type="button" class="undo" data-undo="'+m.id+'">報告を取り消す</button>')+'</div>';
+    if(m.type==='sch')return '<div class="pc"><div class="pc-h">着工日の候補（送信済み）</div><dl>'+(b.cands||[]).map(function(k,i){return '<dt>候補'+(i+1)+'</dt><dd>'+esc(k.start+' '+k.time)+'<br>完了予定 '+esc(k.end)+'／立ち会い：'+esc(k.tachi+(k.tachiNote?'（'+k.tachiNote+'）':''))+'</dd>';}).join('')+'</dl>'+(b.msg?'<p class="pc-m">💬 '+esc(b.msg)+'</p>':'')+(st||(b.later?'<p class="pc-ok">依頼者は '+esc(b.later.md)+' までに返事する予定です</p>':'<p class="pc-ok">依頼者が選ぶのを待っています</p>'))+'</div>';
+    if(m.type==='schc')return '<div class="pc'+(b.done?'':' alert')+'"><div class="pc-h">依頼者の希望日</div>'+(b.done?'':'<span class="tm">'+esc(b.due)+'までに返事</span><p class="pc-n" style="margin:4px 0 0">1つ選ぶと確定します</p>')+(b.wishes||[]).map(function(w,i){return '<label class="rdo"><input type="radio" name="wp_'+m.id+'" value="'+i+'" data-ymd="'+esc(w.ymd||'')+'"'+(b.done?' disabled':'')+'><span><b>'+esc(w.date+' '+w.slot)+'</b></span></label>';}).join('')+(b.msg?'<p class="pc-m">💬 '+esc(b.msg)+'</p>':'')+
+      (b.done?st:'<label class="lab">完了予定日</label><input type="date" class="dtl" id="we_'+m.id+'"><div class="lab">立ち会い</div><div class="chips" id="wt_'+m.id+'"><button type="button" data-t="必要">必要</button><button type="button" data-t="一部だけ必要">一部だけ必要</button><button type="button" data-t="いらない">いらない</button></div><input class="dtl" id="wn_'+m.id+'" placeholder="立ち会いが要る時間（例：最初の30分）"><label class="lab">メッセージ（任意）</label><textarea id="wm_'+m.id+'" rows="2"></textarea><div class="pc-v"><button type="button" data-wpick="'+m.id+'">この日で確定</button><button type="button" class="g" data-wagain="'+m.id+'">どれも合わない（候補を出し直す）</button></div>')+'</div>';
+    if(m.type==='cxr')return '<div class="pc'+(b.done?'':' alert')+'"><div class="pc-h">依頼者からキャンセルの依頼が届きました</div>'+(b.done?st:'<span class="tm">返事の期限 '+esc(b.due)+'</span><p class="pc-n">内容を確認し、キャンセル申請を出すか、チャットで相談してください。48時間以内に返事がないと、期限切れになります。</p><div class="pc-v"><button type="button" data-cxgo="1">キャンセル申請へ進む</button><button type="button" class="w" data-cxtalk="1">チャットで相談する</button></div>')+'</div>';
+    if(m.type==='cxa')return '<div class="pc'+(b.done?'':' alert')+'"><div class="pc-h">キャンセル申請'+(b.done?'':'中（依頼者の確認待ち）')+'</div><dl><dt>理由</dt><dd>'+esc(b.kindText)+'</dd>'+(b.due&&!b.done?'<dt>確定</dt><dd>'+esc(b.due)+'までに異議がなければ確定</dd>':'')+(b.fee?'<dt>キャンセル料</dt><dd>'+Number(b.fee).toLocaleString()+'円（紹介手数料と同額）</dd>':'')+'</dl>'+(st||'<p class="pc-n">確定したら、この依頼の紹介手数料はかかりません。見積もりの条件にキャンセル料を書いていた場合は、依頼者に直接請求できます（まち頼は関わりません）。</p>')+'</div>';
     if(m.type==='visit')return '<div class="sys">依頼者に「現地調査はいかがでしたか？」を送りました'+(b.done?'（'+esc(b.done)+'）':'')+'</div>';
     return '';}).join('');
   var sc=$('pm');sc.scrollTop=sc.scrollHeight;
+  each('.chips',box,function(g){each('button',g,function(b){b.onclick=function(){each('button',g,function(x){x.classList.toggle('on',x===b);});};});});
+  each('[data-wpick]',box,function(bt){bt.onclick=function(){var id=bt.dataset.wpick,r=box.querySelector('input[name="wp_'+id+'"]:checked'),e=$('we_'+id).value,t=box.querySelector('#wt_'+id+' .on');if(!r)return toast('希望日を1つ選んでください');if(!e)return toast('完了予定日を入れてください');if(r.dataset.ymd&&e<r.dataset.ymd)return toast('完了予定日は、着工日と同じか後にしてください');
+    api('proAct',{bidId:PC2.bid.id,msgId:id,op:'pick',slot:r.value,end:mdW(e),endYmd:e,tachi:t?t.dataset.t:'',tachiNote:$('wn_'+id).value.trim(),msg:$('wm_'+id).value.trim()}).then(function(j){PC2.msgs=j.msgs;PC2.bid=j.bid;drawPro();}).catch(fail);};});
+  each('[data-wagain]',box,function(bt){bt.onclick=function(){api('proAct',{bidId:PC2.bid.id,msgId:bt.dataset.wagain,op:'again'}).then(function(j){PC2.msgs=j.msgs;PC2.bid=j.bid;schForm();}).catch(fail);};});
+  each('[data-cxgo]',box,function(bt){bt.onclick=cxForm;});each('[data-cxtalk]',box,function(bt){bt.onclick=function(){var t=$('ptx');if(t)t.focus();};});
   each('[data-undo]',box,function(u){u.onclick=function(){api('proUndo',{bidId:PC2.bid.id,msgId:u.dataset.undo}).then(function(j){PC2.msgs=j.msgs;PC2.bid=j.bid;drawPro();toast('完了報告を取り消しました');}).catch(fail);};});}
 function proCard(type,body,after){api('proCard',{bidId:PC2.bid.id,type:type,body:body}).then(function(j){PC2.msgs=j.msgs;PC2.bid=j.bid;PC2.c=j.c;drawPro();if(after)after();}).catch(fail);}
 function formPane(title,html,onSubmit){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+title+'</b><span>'+esc(PC2.c.title)+'</span></div></div><div class="arw"><form class="pf pf2 ppf" id="xf" novalidate>'+html+'<p class="warn" id="xw" hidden></p></form></div>',drawPro);
@@ -1332,6 +1386,20 @@ function estForm(noSurvey){pPop(PC2.bid.id,3);var t=new Date();t.setDate(t.getDa
       if(!confirm('この内容で見積もりを送りますか？'))return '';
       proCard('est',{amt:a,memo:w,start:mdW($('e3').value),end:mdW($('e4').value),pay:$('e5').value+'・'+$('e6').value,noSurvey:!!noSurvey});});
   $('e3').onchange=function(){if(!edited||$('e4').value<$('e3').value)$('e4').value=$('e3').value;};$('e4').onchange=function(){edited=true;};}
+/* 着工日の提案（成約のあと・11/22） */
+function schForm(){var n=1,es=pLast('est'),eb=es?es.body||{}:{};
+  function cand(i){var t=new Date(Date.now()+(i+3)*864e5),d=ymd(t);return '<div class="cnd"><b>候補 '+(i+1)+'</b><div class="two"><label>初回の着工日<input type="date" class="c1" value="'+d+'" min="'+ymd(new Date())+'"></label><label>完了予定日<input type="date" class="c2" value="'+d+'"></label></div><div class="lab2">時間帯</div><div class="gsa"><input type="time" class="c3" value="09:00" step="1800">〜<input type="time" class="c4" value="12:00" step="1800"></div><div class="lab2">立ち会い</div><div class="chips"><button type="button" data-t="必要">必要</button><button type="button" data-t="一部だけ必要" class="on">一部だけ必要</button><button type="button" data-t="いらない">いらない</button></div><input class="c5" placeholder="立ち会いが要る時間（例：最初の30分）"></div>';}
+  formPane('着工日を提案',(eb.start?'<p class="pc-n" style="margin-top:0">見積もりに書いた予定：着手 '+esc(eb.start)+'／完了 '+esc(eb.end||eb.start)+'</p>':'')+'<p class="pc-n">2日目以降の作業日は、チャットで相談してください。</p><div id="cnL">'+cand(0)+'</div><button type="button" class="addr" id="cnA">＋ 候補を追加</button><label>メッセージ（任意）<textarea id="cnM" rows="2" placeholder="例：2日目は配管の仕上げです。立ち会いなしで大丈夫です"></textarea></label><button class="big" type="submit" style="background:#2F6B45">送信する</button>',
+    function(){var cs=[],er='';each('.cnd',pane,function(r,i){var a=r.querySelector('.c1').value,b=r.querySelector('.c2').value,t1=r.querySelector('.c3').value,t2=r.querySelector('.c4').value,tc=r.querySelector('.chips .on');if(!a||!b||!t1||!t2){er='候補の日付と時間帯を入れてください';return;}if(b<a){er='完了予定日は、着工日と同じか後にしてください';return;}if(t2<=t1){er='時間帯の終わりは、始まりより後にしてください';return;}
+      cs.push({start:mdW(a),startYmd:a,end:mdW(b),endYmd:b,time:t1.replace(/^0/,'')+'〜'+t2.replace(/^0/,''),tachi:tc?tc.dataset.t:'',tachiNote:r.querySelector('.c5').value.trim()});});
+      if(er)return er;if(!cs.length)return '候補を1つ以上入れてください';if(cs.some(function(k){return !k.tachi;}))return '立ち会いを選んでください';proCard('sch',{cands:cs,msg:$('cnM').value.trim()});});
+  var bindChips=function(){each('.chips',pane,function(g){each('button',g,function(b){b.onclick=function(){each('button',g,function(x){x.classList.toggle('on',x===b);});};});});each('.cnd',pane,function(r){var a=r.querySelector('.c1'),b=r.querySelector('.c2');a.onchange=function(){if(b.value<a.value)b.value=a.value;};});};bindChips();
+  $('cnA').onclick=function(){if(n>=3)return;$('cnL').insertAdjacentHTML('beforeend',cand(n));n++;bindChips();if(n>=3)this.hidden=true;};}
+/* キャンセル申請（成約のあと・11/22） */
+function cxForm(){var amt=Number(PC2.bid.amount)||0,fee=Math.max(1100,Math.ceil(amt*0.066));
+  var K=[['chat','チャットで依頼者がキャンセルを希望・承諾している','すぐに確定します'],['other','チャット以外（電話・対面など）でキャンセルに合意した','依頼者に確認し、48時間で確定'],['nocontact','依頼者と連絡が取れない','依頼者に確認し、48時間で確定'],['self','自社の都合でキャンセルする','キャンセル料（紹介手数料と同額・'+fee.toLocaleString()+'円）がかかります']];
+  formPane('キャンセル申請','<div class="lab">申請の理由</div>'+K.map(function(k){return '<label class="rdo'+(k[0]==='self'?' warnr':'')+'"><input type="radio" name="cxk" value="'+k[0]+'"><span><b>'+k[1]+'</b><br><small>→ '+k[2]+'</small></span></label>';}).join('')+'<label>くわしい状況（任意・依頼者には表示されません）<textarea id="cxM" rows="2"></textarea></label><button class="big" type="submit" style="background:#2F6B45">申請する</button>',
+    function(){var r=pane.querySelector('input[name=cxk]:checked');if(!r)return '申請の理由を選んでください';if(r.value==='self'&&!confirm('自社の都合でキャンセルすると、キャンセル料 '+fee.toLocaleString()+'円 がかかります。申請しますか？'))return '';if(r.value!=='self'&&!confirm('キャンセル申請を出しますか？'))return '';proCard('cxa',{kind:r.value,memo:$('cxM').value.trim()});});}
 /* 追加の作業の申請 */
 function chgForm(){var cur=Number(PC2.bid.amount)||0;
   formPane('追加の作業の申請','<div class="rule"><b>作業の前に、依頼者の承諾をもらってください</b></div><div class="amtbox"><span>今の金額（税込）</span><b>'+cur.toLocaleString()+'円</b></div>'+
