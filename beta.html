@@ -511,7 +511,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=44;
+var APPVER_N=45;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -730,6 +730,7 @@ var VST={chat:['やり取り中',''],prop:['現地調査の提案あり','hot'],
 function caseStage(c,bids){if(c.status==='done')return 6;if(bids.some(function(v){return v.state==='won';}))return 5;if(bids.some(function(v){return v.state==='est';}))return 4;if(bids.some(function(v){return v.state==='fixd'||v.state==='prop';}))return 3;if(bids.length)return 2;return 1;}
 function caseLine(x){var c=x.c,b=x.bids,t,m;
   if(c.status==='withdrawn'){t='取り下げ';m='';}
+  else if(c.status==='canceled'){t='キャンセル';m='';}
   else if(c.status==='postponed'){t='先送り中';m='再開予定 '+mdhm(c.postponeAt);}
   else if(c.status==='done'){t='完了';m=(b.filter(function(v){return v.state==='done';})[0]||{vendor:{}}).vendor.name||'';}
   else if(!b.length){t='返事を待っています';m='投稿 '+md(c.createdAt);}
@@ -942,7 +943,7 @@ function postpone(){
 /* ===== 業者とのチャット ===== */
 var CH=null;
 function stopChat(){clearInterval(chatT);chatT=null;}
-if(location.hostname==='app.local')window.__t={openChat:openChat,openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
+if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
 function openChat(bidId,back){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
   api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
