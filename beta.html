@@ -488,6 +488,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .addr2{margin-top:8px}.big:disabled{background:#cfd8d2!important;cursor:default}
 .cnd{border:1.5px solid #d9d5cc;border-radius:12px;padding:10px;margin-top:10px;background:#fbfaf7}.cnd>b{font-size:13px;color:#2F6B45}.cnd .c5{margin-top:6px}
 .pc textarea,.pc .dtl{display:block;width:100%;box-sizing:border-box;margin-top:4px;font:inherit;font-size:14px;border:1.5px solid #d9d5cc;border-radius:10px;padding:9px 10px;background:#fff}.pc .lab{display:block;margin-top:10px}
+.sheet textarea{display:block;width:100%;box-sizing:border-box;margin:8px 0;font:inherit;font-size:14px;border:1.5px solid #d9d5cc;border-radius:10px;padding:9px 10px}.rdo input[type=radio]{width:auto!important;display:inline-block!important;flex:none;margin:4px 0 0!important}.rdo span{flex:1}.pc-b button.g{background:#fff;color:#444;border:1.5px solid #888}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}.chips button{font:inherit;font-size:13px;border:1.5px solid #d9d5cc;border-radius:999px;padding:6px 12px;background:#fff;cursor:pointer}.chips button.on{background:#2F6B45;border-color:#2F6B45;color:#fff;font-weight:700}
 .rdo.warnr{border-color:#e0a59c}.rdo.warnr small{color:#8a2a1e}
 </style>
@@ -510,7 +511,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=43;
+var APPVER_N=44;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -965,7 +966,7 @@ function drawChat(){
 function send(d){var l=CH.msgs[CH.msgs.length-1];d.bidId=CH.bid.id;d.since=l?l.createdAt:'';api('sendMsg',d).then(function(j){CH.msgs=CH.msgs.concat(j.msgs);CH.bid=j.bid;drawMsgs();}).catch(fail);}
 function drawMsgs(){
   var box=$('vm');if(!box)return;var vn=(CH.vendor||{}).name||'業者';
-  box.innerHTML=schPin(CH.msgs)+CH.msgs.map(function(m){var b=m.body||{};
+  box.innerHTML=schPin(CH.msgs,CH.bid.state)+CH.msgs.map(function(m){var b=m.body||{};
     if(m.type==='sys')return '<div class="sys">'+esc(b.text)+'</div>';
     if(m.type==='schc')return '<div class="pc mine"><div class="pc-h">希望の日程を送りました</div><dl>'+(b.wishes||[]).map(function(w,i){return '<dt>希望'+(i+1)+'</dt><dd>'+esc(w.date+' '+w.slot)+'</dd>';}).join('')+'</dl>'+(b.msg?'<p class="pc-m">💬 '+esc(b.msg)+'</p>':'')+(b.done?done(b):'<p class="pc-ok">業者が24時間以内に決めます</p>')+'</div>';
     if(m.type==='cxr')return '<div class="pc mine"><div class="pc-h">キャンセルを依頼しました</div><dl><dt>理由</dt><dd>'+esc(b.reason)+'</dd></dl>'+(b.done?done(b):'<p class="pc-ok">業者の返事を待っています（'+esc(b.due)+'まで）</p>')+'<button type="button" class="rept" data-rep="1">業者が対応しない場合は運営へ報告</button></div>';
@@ -994,7 +995,7 @@ function cardDo(id,op,slot,ext){
   if(op==='yes'&&!confirm('この内容で依頼しますか？ ほかの業者さんには「他社で決定」と伝わります。'))return;
   var d={bidId:CH.bid.id,msgId:id,op:op,slot:slot||''};if(ext)Object.keys(ext).forEach(function(k){d[k]=ext[k];});
   api('cardAction',d).then(function(j){CH.msgs=j.msgs;CH.bid=j.bid;drawChat();if(op==='来なかった')visitNoShow();}).catch(fail);}
-function schPin(ms){var f=null;(ms||[]).forEach(function(m){var b=m.body||{};if(b.fixed)f=b.fixed;});return f?'<div class="pin2">📌 <b>初回の着工日 '+esc(f.start+' '+f.time)+'</b><br>完了予定 '+esc(f.end)+(f.tachi?'／立ち会い：'+esc(f.tachi+(f.tachiNote?'（'+f.tachiNote+'）':'')):'')+'</div>':'';}
+function schPin(ms,st){if(['canceled','lost','other','declined','expired'].indexOf(st)>=0)return '';var f=null;(ms||[]).forEach(function(m){var b=m.body||{};if(b.fixed)f=b.fixed;});return f?'<div class="pin2">📌 <b>初回の着工日 '+esc(f.start+' '+f.time)+'</b><br>完了予定 '+esc(f.end)+(f.tachi?'／立ち会い：'+esc(f.tachi+(f.tachiNote?'（'+f.tachiNote+'）':'')):'')+'</div>':'';}
 function rdoList(name,opts){return opts.map(function(o){return '<label class="rdo"><input type="radio" name="'+name+'" value="'+esc(o)+'"><span>'+esc(o)+'</span></label>';}).join('');}
 function noSheet(id){openSheet('<h3>見送る理由を教えてください</h3><p class="sp s2">業者には「見送られた」というお知らせだけが届き、理由は表示されません。</p>'+rdoList('nr',['金額が予算と合わなかった','内容が希望と違った','ほかの業者に頼みたい','今回は依頼しない','その他'])+'<textarea id="nrM" rows="2" placeholder="見送る理由について（任意）"></textarea><button type="button" class="big" id="nrS" disabled>送信する</button>');
   each('input[name=nr]',sheet,function(r){r.onchange=function(){$('nrS').disabled=false;};});
@@ -1307,9 +1308,9 @@ function drawPro(){
   if(s==='chat')task='<div class="pc tsk"><div class="pc-h">やること：現地調査の提案</div><p class="sp s2" style="margin:0 0 8px">話を聞いて、費用の目安を出しましょう</p><div class="pc-b"><button type="button" id="tProp">提案を作る</button></div><button type="button" class="undo" id="tNoSv" style="margin-left:0">現地調査なしで見積もりを出す</button></div>';
   if(s==='fixd')task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">調査の結果をもとに、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tEst">見積もりを作る</button></div></div>';
   if(s==='won'&&!fx&&!cxOpen&&!pOpen('sch')&&!pOpen('schc'))task='<div class="pc tsk"><div class="pc-h">やること：着工日の提案</div><p class="sp s2" style="margin:0 0 8px">初回の着工日の候補を、3つまで送りましょう</p><div class="pc-b"><button type="button" id="tSch">着工日を提案する</button></div></div>';
-  else if(s==='won'&&fx&&!repWait&&!cxOpen)task='<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 8px">工事が終わったら報告してください</p><div class="pc-b"><button type="button" id="tRep">完了報告をする</button></div></div>';
+  else if(s==='won'&&fx&&!repWait&&!cxOpen&&!pOpen('cxr'))task='<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 8px">工事が終わったら報告してください</p><div class="pc-b"><button type="button" id="tRep">完了報告をする</button></div></div>';
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+esc(c.place||'')+'・依頼者</span></div><button type="button" class="kebab" id="pInfo" aria-label="依頼の内容">…</button></div>'+
-    '<div class="msgs" id="pm">'+schPin(PC2.msgs)+'<div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>次に進むには</b>'+nxt+'</div><div id="pmL"></div>'+task+'</div>'+
+    '<div class="msgs" id="pm">'+schPin(PC2.msgs,s)+'<div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>次に進むには</b>'+nxt+'</div><div id="pmL"></div>'+task+'</div>'+
     (closed?'<div class="lock">このやり取りは終了しています。</div>':'<div class="pmenu" id="pmenu" hidden><label class="pmi"><span>📷</span>画像を送る<input type="file" accept="image/*" id="pImg" hidden></label>'+(s==='won'&&!repWait?'<button type="button" class="pmi" id="pChg"><span>＋円</span>追加の作業の申請<small>作業の前に、依頼者の承諾が必要です</small></button>':'')+(s==='won'?'<button type="button" class="pmi" id="pSchM"><span>📅</span>着工日を提案（変更）<small>変えるときは、依頼者の承認が必要です</small></button>':'')+(s==='won'&&!cxOpen?'<button type="button" class="pmi" id="pCx" style="color:#c0392b"><span>✕</span>キャンセル申請</button>':'')+'</div><form class="cmp" id="pf"><button type="button" class="ic plus" id="pmB" aria-label="メニュー" aria-expanded="false">＋</button><input id="ptx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
     function(){PC2=null;closePane();});
   chatT=setInterval(proPoll,8000);
