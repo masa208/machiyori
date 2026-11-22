@@ -470,6 +470,8 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .su input[hidden]{display:none!important}.agbox{height:300px;overflow-y:auto;background:#fff;border:1px solid #D5DAD6;border-radius:10px;padding:10px 14px;font-size:14.5px;line-height:1.7}.agbox p{margin:0 0 10px}
 .exm{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#D93A2B;color:#fff;font-style:normal;font-weight:900;font-size:12px;line-height:1;vertical-align:1px;margin:0 2px}.svb .exm{position:static}
 .lfl{margin-top:10px}.lfi{display:flex;align-items:center;gap:8px;background:#F6F7F5;border-radius:8px;padding:8px 10px;margin-top:6px;font-size:14px}.lfi span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lfi button{border:0;background:#fff;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer}.lfile{color:#2F6B45}
+.mj{padding:18px 16px}.mj h3{font-size:19px;margin:0 0 6px}.mpc .bl1{margin-bottom:3px}.mtx{font-size:15px;line-height:1.75;white-space:pre-wrap;margin:8px 0}.mth .ppd{margin:10px}.mcl{padding:4px 10px 12px}.mcl .mn,.bb .mn{color:#2B4C7E;font-weight:700}.mmr[disabled]{opacity:.65;cursor:default}.mbd .pbox{margin:12px 0}
+.cmp input#mct,.cmp input#mdt{flex:1;min-width:0;font:inherit;font-size:16px;border:1px solid #cdd4d0;border-radius:18px;padding:7px 12px}
 .njbar{z-index:2}.su .agr{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
 </style>
 </head>
@@ -491,7 +493,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=33;
+var APPVER_N=34;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -545,7 +547,7 @@ function charaName(){return 'まちこ';}
 function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt="">';}
 
 /* ===== ログイン ===== */
-function logoutLocal(){TOKEN='';ME=null;HOME=null;PRO=null;try{localStorage.removeItem('mchy_boot');}catch(e){}try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
+function logoutLocal(){TOKEN='';ME=null;HOME=null;PRO=null;MB=null;MJ=null;try{localStorage.removeItem('mchy_boot');}catch(e){}try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
 function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}if(ME.callName&&ME.area&&ME.notifySet&&ME.agreedAt)setTimeout(function(){toast(ME.callName+'さん、おかえりなさい');},400);lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
 /* ===== はじめての人の入口（11/20） ===== */
 var U_TOS=['依頼者は、まち頼を無料で使えます','1つの依頼に立候補できる業者は5社まで。募集は投稿から14日です（延ばせます）','成約する前なら、いつでも依頼を取り下げられます','工事代金は、依頼者から業者へ直接支払います。まち頼は代金を預かりません','お名前・住所・電話番号は、現地調査の日が決まったときに、その業者にだけ伝わります','まち頼で知り合った業者と、まち頼を通さずに取引することは禁止です','口コミは、工事が完了した依頼者だけが書けます','支払い済みの案件で業者と連絡が取れなくなったときは、条件を満たせば最大10万円まで、やり直しの手配か返金を行います','うその内容での依頼、なりすまし、相手を脅す・しつこく連絡することは禁止です','運営は工事の当事者ではなく、工事の内容・品質・事故について責任を負いません（保証を除く）'];
@@ -648,7 +650,7 @@ function saveBoot(){try{localStorage.setItem('mchy_boot',JSON.stringify({t:TOKEN
 function bizFlag(){try{return localStorage.getItem('mchy_biz')?1:0;}catch(e){return 0;}}
 function bizWanted(){try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
 function afterLogin(){
-  lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':'依頼者モード';if(MODE==='pro')tab='job';
+  lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':MODE==='member'?'会員ページ':'依頼者モード';if(MODE==='pro')tab='job';if(MODE==='member')tab='board';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(vendorSignup,300);else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
 }
@@ -684,20 +686,21 @@ function areaSel(id,cur){return '<select id="'+id+'">'+AREAS.map(function(a){ret
 var I={home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',list:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',me:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>'};
 var NAV_U=[['home','ホーム'],['req','依頼する'],['me','マイページ']],NAV_P=[['job','案件'],['me','マイページ']];
 I.req='<path d="M12 6v12M6 12h12"/>';I.job='<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>';
-function renderNav(){var NAV=MODE==='pro'?NAV_P:NAV_U;nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+(n[0]==='req'?' ctr':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
+function renderNav(){var NAV=MODE==='pro'?NAV_P:MODE==='member'?NAV_M:NAV_U;nav.innerHTML=NAV.map(function(n){return '<button type="button" data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+(n[0]==='req'?' ctr':'')+'"'+(tab===n[0]?' aria-current="page"':'')+'><svg viewBox="0 0 24 24">'+I[n[0]]+'</svg>'+n[1]+'</button>';}).join('');
   each('button',nav,function(b){b.onclick=function(){tab=b.dataset.t;pane.classList.remove('on');stopChat();renderNav();refresh();};});}
 function showErr(e){scr.innerHTML='<div class="mp"><div class="empty" style="color:#C8321F;text-align:left"><b>うまく読み込めませんでした</b><br>'+esc((e&&e.message)||'通信エラー')+'<br><small>この画面を運営（開発担当）に送ってください</small></div></div>';}
 var LOADING='<div class="mp"><div class="empty">読み込み中…</div></div>';
 function busyForm(){var a=document.activeElement;return a&&scr.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);}
 function refresh(){if(!ME)return;var m=MODE,t=tab,had=!!HOME;
-  if(had)draw();else if(MODE==='pro')renderPro();else scr.innerHTML=LOADING;
+  if(had)draw();else if(MODE==='pro')renderPro();else if(MODE==='member')renderMember();else scr.innerHTML=LOADING;
   if(had&&Date.now()-HOME_AT<4000)return;
   return api('home').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(HOME);HOME=j;ME=j.user;HOME_AT=Date.now();saveBoot();$('bellN').textContent=j.unread||'';
     if(MODE!==m||tab!==t||pane.classList.contains('on'))return;
     if(MODE==='pro'&&tab!=='me')return;
+    if(MODE==='member')return;
     if(same||(had&&busyForm()))return;draw();
   }).catch(function(e){fail(e);if(!had)showErr(e);});}
-function draw(){if(!HOME)return;if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='req')renderReq();else renderMy();}
+function draw(){if(!HOME)return;if(MODE==='member'){renderMember();return;}mFab(false);if(MODE==='pro'){renderPro();return;}if(tab==='home')renderHome();else if(tab==='req')renderReq();else renderMy();}
 function startPoll(){stopPoll();pollT=setInterval(function(){if(document.visibilityState==='visible'&&!pane.classList.contains('on'))refresh();},60000);}
 function stopPoll(){clearInterval(pollT);}
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&ME&&!pane.classList.contains('on'))refresh();});
@@ -1016,7 +1019,7 @@ $('bell').onclick=function(){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>お知らせ</b></div></div><div class="arw" id="nfL"><div class="load">読み込み中…</div></div>');
   api('notifs',{markRead:true}).then(function(j){$('bellN').textContent='';var L=$('nfL');if(!L)return;
     L.innerHTML=j.items.length?'<div class="list" style="padding:0">'+j.items.map(function(n){return '<button type="button" class="nf'+(n.read?'':' un')+'" data-l="'+esc(n.link)+'">'+esc(n.text)+'<small>'+mdhm(n.createdAt)+'</small></button>';}).join('')+'</div>':'<div class="empty">お知らせはまだありません</div>';
-    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('bid:')===0)openChat(l.slice(4),closePane);};});
+    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('mpost:')===0){if(MODE!=='member')setMode('member');mOpenPost(l.slice(6));}else if(l.indexOf('mdm:')===0){if(MODE!=='member')setMode('member');mOpenDM(l.slice(4));}else if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('bid:')===0)openChat(l.slice(4),closePane);};});
   }).catch(fail);
 };
 
@@ -1144,10 +1147,10 @@ function seenNo(k){try{return !localStorage.getItem('mph_'+k);}catch(e){return f
 
 /* ===== モード ===== */
 var MODE='user';try{MODE=localStorage.getItem('machiyori_mode2')||'user';}catch(e){}
-var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','依頼に立候補して仕事を受ける（テスト）','#2F6B45'],['member','会員ページ','会員どうしで仕事を頼む・受ける（見本）','#2B4C7E']];
-function setMode(m){MODE=m;try{localStorage.setItem('machiyori_mode2',m);}catch(e){}ph.dataset.mode=m;$('chip').querySelector('span').textContent=m==='pro'?'Proモード':'依頼者モード';tab=m==='pro'?'job':'home';pane.classList.remove('on');stopChat();renderNav();refresh();}
+var MODES=[['user','依頼者モード','自分の家の困りごとを相談・依頼する','#E8613C'],['pro','Proモード','依頼に立候補して仕事を受ける（テスト）','#2F6B45'],['member','会員ページ','会員どうしで仕事の相談・人手の募集をする','#2B4C7E']];
+function setMode(m){MODE=m;try{localStorage.setItem('machiyori_mode2',m);}catch(e){}ph.dataset.mode=m;$('chip').querySelector('span').textContent=m==='pro'?'Proモード':m==='member'?'会員ページ':'依頼者モード';tab=m==='pro'?'job':m==='member'?'board':'home';pane.classList.remove('on');stopChat();renderNav();refresh();}
 $('chip').onclick=function(){openSheet('<h3>モードを切り替える</h3><div class="rail">'+MODES.map(function(x){return '<button type="button" class="opt'+(x[0]===MODE?' cur':'')+'" data-k="'+x[0]+'" style="--m:'+x[3]+'"><span class="sw" style="background:'+x[3]+'"></span><span class="t"><b>'+x[1]+'</b>'+x[2]+'</span>'+(x[0]===MODE?'<span class="ck">使用中</span>':'')+'</button>';}).join('')+'</div><p class="note2">テスト版：同じアカウントのまま、自分の依頼にProモードで立候補して、流れを確かめられます。</p>');
-  each('.opt',sheet,function(b){b.onclick=function(){var k=b.dataset.k;closeSheet();if(k==='member'){try{localStorage.setItem('machiyori_mode','member');}catch(e){}location.href='mode.html';return;}if(k!==MODE)setMode(k);};});};
+  each('.opt',sheet,function(b){b.onclick=function(){var k=b.dataset.k;closeSheet();if(k!==MODE)setMode(k);};});};
 
 /* ===== Proモード：案件 ===== */
 var PRO=null,jobSub='new';
@@ -1343,7 +1346,7 @@ var SU=null,SU_STEPS=[[1,'事業者の情報','会員の確認'],[1,'事業者�
 var SU_AC={u_nm:'organization',u_zip:'postal-code',u_ad:'address-line1',u_bl:'address-line2',u_ln:'family-name',u_fn:'given-name',u_tel:'tel',u_mail:'email',u_mln:'family-name',u_mfn:'given-name',u_mtel:'tel',u_pn:'organization'};
 var SU_ERR=[[/電話番号/,['u_tel','u_mtel']],[/メールアドレス/,['u_mail']],[/郵便番号/,['u_zip']],[/ふりがな/,['u_lk','u_fk']],[/インボイス/,['u_inv2']],[/法人番号/,['u_corp']],[/会社名/,['u_pn']]];
 function suKey(){return 'mchy_su_'+(ME&&ME.id||'');}
-function hasContact(s){s=String(s||'');if(/[0-9０-９][0-9０-９\-ー－ ]{8,}[0-9０-９]/.test(s))return '電話番号';if(/@|＠/.test(s))return 'メールアドレス';if(/https?:|www\.|\.(com|jp|net)\b/i.test(s))return 'URL';return '';}
+function hasContact(s){s=String(s||'');if(/[0-9０-９][0-9０-９\-ー－ ]{8,}[0-9０-９]/.test(s))return '電話番号';if(/[A-Za-z0-9._%+\-]+[@＠][A-Za-z0-9.\-]+\.[A-Za-z]{2,}/.test(s))return 'メールアドレス';if(/https?:|www\.|\.(com|jp|net)\b/i.test(s))return 'URL';return '';}
 function z2h(s){return String(s||'').replace(/[０-９Ａ-Ｚａ-ｚ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);});}
 function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSheet();
   if(ME&&ME.role!=='vendor'){try{localStorage.removeItem(suKey());}catch(e){}openSheet('<h3>業者の登録はできません</h3><p class="sp s2">このアカウントは「依頼したい」で登録されています。業者として登録するときは、ログアウトしてから「はじめての方」→「仕事を受けたい」へ進み、別のLINEアカウントかメールアドレスで登録してください。</p><button type="button" class="big" id="nvOk">わかりました</button>');$('nvOk').onclick=function(){closeSheet();refresh();};return;}var sv=null;try{sv=JSON.parse(localStorage.getItem(suKey())||'null');}catch(e){}
@@ -1469,6 +1472,99 @@ function suSubmit(){var d=SU.d,docs=[];Object.keys(d.docs).forEach(function(k){(
     pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="とじる">‹</button><div class="pt"><b>業者として登録</b><span>申し込み完了</span></div></div><div class="arw su sudone"><div class="sudi">✓</div><h3>申し込みを受け付けました</h3><p>運営が本人確認書類と資格を確認します。確認が終わったら、運営からご連絡します。そのあと、上の「モード」から<b>Proモード</b>に切り替えて仕事を受けられます。</p>'+(need.length?'<div class="pmg" style="text-align:left"><b>📄 あとで出す書類があります</b><small>'+esc(need.join('、'))+'。出して審査が通るまで、📄の作業の依頼には立候補できません。</small></div>':'')+
       '<div class="njs">'+[['事業者名',d.nm],['対応サービス',d.svc.length+'件'],['対応エリア',d.area.length===77?'長野県全域':d.area.length+'市町村'],['営業日',d.days.map(function(k){return '日月火水木金土'[k];}).join('')+' '+d.from+'〜'+d.to]].map(function(r){return '<div class="gsr2"><span>'+r[0]+'</span><b>'+esc(String(r[1]))+'</b></div>';}).join('')+'</div><p class="pc-n">確認には数日かかることがあります。会社情報・対応サービス・対応エリアは、あとからProモードのマイページで変えられます。</p><button type="button" class="big" id="suHome">まち頼をはじめる</button></div>';
     pane.querySelector('.bk').onclick=closePane;$('suHome').onclick=closePane;});}
+
+/* ===== 会員ページ（11/22）：掲示板・会員・チャット ===== */
+var MB=null,MJ=null,MF={q:'',past:false,f:'all',srt:'new'},MP=null,MD=null;
+I.board='<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';I.mem='<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.3.2 4 1.8 4.5 4.6"/>';I.dm='<path d="M4 5h16v11H9l-5 4z"/>';
+var NAV_M=[['board','掲示板'],['mem','会員'],['dm','チャット']];
+function mFab(on){var f=$('mfab');if(f)f.remove();if(!on)return;f=document.createElement('button');f.type='button';f.id='mfab';f.className='fab';f.setAttribute('aria-label','相談を投稿する');f.innerHTML='<span aria-hidden="true">＋</span><small>投稿</small>';ph.appendChild(f);f.onclick=mPostForm;}
+function renderMember(){mFab(false);
+  if(MJ===null){scr.innerHTML=LOADING;api('mMe').then(function(j){MJ=j.member||false;renderMember();}).catch(function(e){showErr(e);});return;}
+  if(!MJ)return mJoinView();
+  if(tab==='mem')return mMembersView();if(tab==='dm')return mDMsView();mBoardView();}
+function mJoinView(){scr.innerHTML='<div class="mp mj"><h3>会員ページに入る</h3><p class="note2">会員ページは、会員どうしで仕事の相談や人手の募集をする場所です。はじめに、会員台帳に登録されているお名前と電話番号で確認します。</p><form class="pf" id="mjF" onsubmit="return false"><div class="two"><label>姓<input id="mjL" autocomplete="family-name" placeholder="山田"></label><label>名<input id="mjN" autocomplete="given-name" placeholder="太郎"></label></div><label>電話番号<input id="mjT" type="tel" autocomplete="tel" placeholder="例）09012345678"></label><p class="warn" id="mjW" hidden></p><button type="button" class="big" id="mjB">確認して入る</button></form></div>';
+  $('mjB').onclick=function(){var bt=this,nm=$('mjL').value.trim()+$('mjN').value.trim(),tl=z2h($('mjT').value).replace(/[^0-9]/g,'');if(!nm||!tl){$('mjW').hidden=false;$('mjW').textContent='お名前と電話番号を入れてください';return;}bt.disabled=true;
+    api('mJoin',{name:nm,tel:tl}).then(function(j){MJ=j.member;toast('確認できました。ようこそ');renderMember();}).catch(function(e){bt.disabled=false;$('mjW').hidden=false;$('mjW').textContent=e.message;});};}
+function mJST(iso){var d=new Date(new Date(iso).getTime()+9*3600e3);return d.toISOString().slice(0,10);}
+function mToday(){return mJST(new Date().toISOString());}
+function mDays(dl){return Math.round((new Date(dl+'T00:00:00Z')-new Date(mToday()+'T00:00:00Z'))/864e5);}
+function mBadge(p){if(p.st!=='open')return '<span class="bdg end">募集終了</span>';if(!p.dl)return p.at==='past'?'<span class="bdg none">募集中・期限なし</span>':'<span class="bdg none">期限なし</span>';var n=mDays(p.dl);return n<=0?'<span class="bdg today">本日締切</span>':'<span class="bdg'+(n<=3?' soon':'')+'">残り'+n+'日</span>';}
+function mCard(p){return '<button type="button" class="card bp mpc" data-id="'+p.id+'"><span class="bl1">'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.slice(5).replace('-','/')+'まで</span>':'')+'</span><b>'+esc(p.title)+'</b><span class="meta"><span>'+esc(p.who)+'</span>'+(p.place?'<span>'+esc(p.place)+'</span>':'')+'<span>'+mdhm(p.createdAt).split(' ')[0]+'</span><span>コメント'+p.cmts+'</span></span></button>';}
+function mWords(q){return String(q||'').replace(/　/g,' ').split(' ').filter(function(x){return x;});}
+function mList(place){var q=mWords(MF.q),L=(MB&&MB.posts||[]).filter(function(p){return (place==='any'?(MF.past||p.at==='top'):p.at===place)&&(MF.f==='all'||(MF.f==='dl'?!!p.dl:!p.dl))&&q.every(function(w){return (p.title+' '+p.body+' '+p.who+' '+(p.place||'')).indexOf(w)>=0;});});
+  var byNew=function(a,b){return a.createdAt<b.createdAt?1:-1;};
+  if(MF.srt==='dl')L.sort(function(a,b){var ea=a.st!=='open',eb=b.st!=='open';if(ea!==eb)return ea?1:-1;if(!!a.dl!==!!b.dl)return a.dl?-1:1;if(a.dl&&b.dl&&a.dl!==b.dl)return a.dl<b.dl?-1:1;return byNew(a,b);});else L.sort(byNew);return L;}
+function mCtl(withPast){return '<div class="kw kw0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="mq" placeholder="案件を探す（例：足場、ユンボ）" value="'+esc(MF.q)+'" aria-label="キーワード"></div>'+
+  (withPast?'<label class="chk"><input type="checkbox" id="mpast"'+(MF.past?' checked':'')+'>過去の案件も含める</label>':'')+
+  '<div class="ctl"><div class="seg">'+[['all','すべて'],['dl','期限あり'],['nodl','期限なし']].map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(MF.f===x[0])+'">'+x[1]+'</button>';}).join('')+'</div><select id="msrt" aria-label="並び替え"><option value="new"'+(MF.srt==='new'?' selected':'')+'>新着順</option><option value="dl"'+(MF.srt==='dl'?' selected':'')+'>締切が近い順</option></select></div>';}
+function mBindCtl(root,redraw){var q=root.querySelector('#mq');q.oninput=function(){MF.q=q.value;redraw(true);};var pc=root.querySelector('#mpast');if(pc)pc.onchange=function(){MF.past=pc.checked;redraw();};
+  each('[data-f]',root,function(b){b.onclick=function(){MF.f=b.dataset.f;redraw();};});root.querySelector('#msrt').onchange=function(e){MF.srt=e.target.value;redraw();};}
+function mBoardView(){var had=!!MB;if(had)mBoardPaint();else scr.innerHTML=LOADING;mFab(true);
+  api('mBoard').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(MB);MB=j;if(MODE==='member'&&tab==='board'&&!pane.classList.contains('on')&&!same&&!busyForm())mBoardPaint();}).catch(function(e){if(e&&/会員の確認/.test(e.message)){MJ=false;renderMember();}else if(!had)showErr(e);});}
+function mBoardPaint(){var L=mList('any'),past=(MB.posts||[]).filter(function(p){return p.at==='past';});
+  scr.innerHTML='<div class="mp mbd">'+mCtl(true)+'<div id="mbl"></div><button type="button" class="pbox" id="mpastB"><span><b>過去の案件</b>（'+past.length+'件）<small>投稿から1か月以上たった期限なしの募集や、募集が終了した案件</small></span><i aria-hidden="true">›</i></button>'+
+    (MB.newm&&MB.newm.length?'<div class="sec">新しく入った会員</div><div class="nmem">'+MB.newm.map(function(m){return '<button type="button" class="nm" data-u="'+m.userId+'"><span class="av">'+esc((m.company||m.name).slice(0,1))+'</span><b>'+esc(m.company||m.name)+'</b><small>'+esc(m.company?m.name:'')+'</small></button>';}).join('')+'</div>':'')+'<div style="height:80px"></div></div>';
+  var draw=function(keep){var L=mList('any');$('mbl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<div class="none0"><p class="empty">条件に合う案件はありません</p><button type="button" class="clr" id="mclr">条件を解除する</button></div>';
+    each('.mpc',$('mbl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id);};});var c=$('mclr');if(c)c.onclick=function(){MF={q:'',past:false,f:'all',srt:'new'};mBoardPaint();};
+    if(!keep)each('[data-f]',scr,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
+  mBindCtl(scr,draw);draw();
+  $('mpastB').onclick=mPastView;each('.nm',scr,function(b){b.onclick=function(){if(b.dataset.u&&b.dataset.u!==(MB&&MB.me))mOpenDM(b.dataset.u);};});}
+function mPastView(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>過去の案件</b></div></div><div class="arw"><p class="adesc">投稿から1か月以上経過した期限なしの募集や、募集が終了した案件を掲載しています。</p><div id="mpc">'+mCtl(false)+'</div><div id="mpl"></div></div>');
+  var draw=function(keep){var L=mList('past');$('mpl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<p class="empty">条件に合う案件はありません</p>';each('.mpc',$('mpl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id,mPastView);};});if(!keep)each('[data-f]',pane,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
+  mBindCtl(pane,draw);draw();}
+function mPostForm(){var ph3=[];var max=function(){var d=new Date(Date.now()+9*3600e3);d.setUTCMonth(d.getUTCMonth()+3);return d.toISOString().slice(0,10);};
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員に相談する</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw su"><form class="pf pf2" onsubmit="return false">'+
+    '<label>相談タイトル <em class="rq">必須</em><input id="mt" maxlength="60" placeholder="例）足場を2日間貸してほしい"></label><label>相談内容・背景 <em class="rq">必須</em><textarea id="mb" rows="5" placeholder="何に困っていて、なぜ必要か"></textarea></label><label>どうしてほしいか <em class="op">任意</em><textarea id="mw" rows="2" placeholder="例）貸してほしい／一緒に見積もりしてほしい／相談して決めたい"></textarea></label>'+
+    '<div class="lab">募集期限 <em class="rq">必須</em></div><label class="agr"><input type="radio" name="mdl" value="" checked><span>期限なし</span></label><label class="agr"><input type="radio" name="mdl" value="1"><span>期限を設定する</span></label><input type="date" id="mdd" min="'+mToday()+'" max="'+max()+'" hidden>'+
+    '<p class="pc-n">期限なしの投稿は、1か月後に「過去の案件」へ移動します。移動後も募集は続きます。期限ありの投稿は、期限まで通常一覧に掲載します（最長3か月）。</p>'+
+    '<label>場所 <em class="op">任意</em><input id="mpl2" maxlength="60" placeholder="例）松本市（必要な場合だけ）"></label><label>予算の希望 <em class="op">任意</em><input id="mbg" maxlength="60" placeholder="例）1日1万円くらい"></label>'+
+    '<div class="lab">写真 <em class="op">任意・3枚まで</em></div><div class="thumbs" id="mth"></div><label class="lfile">＋ 写真を追加<input type="file" id="mph" accept="image/*" hidden></label>'+
+    '<p class="pc-n">電話番号・メールアドレスは書けません。くわしいやり取りは1対1のチャットでどうぞ。</p><p class="warn" id="mfw" hidden></p><button type="button" class="big" id="mgo">投稿する</button></form></div>',function(){closePane();});
+  each('[name=mdl]',pane,function(r){r.onchange=function(){$('mdd').hidden=r.value!=='1'||!r.checked;};});
+  var th=function(){$('mth').innerHTML=ph3.map(function(u,i){return '<div class="tb"><img src="'+u+'" alt=""><button type="button" data-x="'+i+'" aria-label="外す">✕</button></div>';}).join('');each('[data-x]',$('mth'),function(b){b.onclick=function(){ph3.splice(+b.dataset.x,1);th();};});};
+  $('mph').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;if(ph3.length>=3)return toast('写真は3枚までです');shrink(f).then(function(u){ph3.push(u);th();}).catch(fail);};
+  $('mgo').onclick=function(){var bt=this,w=$('mfw'),useDl=pane.querySelector('[name=mdl]:checked').value==='1',dl=useDl?$('mdd').value:'';
+    var d={title:$('mt').value.trim(),body:$('mb').value.trim(),want:$('mw').value.trim(),place:$('mpl2').value.trim(),budget:$('mbg').value.trim(),dl:dl};
+    var err=!d.title||!d.body?'相談タイトルと、相談内容・背景を入れてください':useDl&&!dl?'期限の日付を選んでください':useDl&&(dl<mToday()||dl>max())?'期限は今日から3か月以内で選んでください':(hasContact(d.title+' '+d.body)?'電話番号・メールアドレスは書けません':'');
+    if(err){w.hidden=false;w.textContent=err;return;}bt.disabled=true;bt.textContent='投稿しています…';var urls=[];
+    ph3.reduce(function(p,u){return p.then(function(){return api('uploadPhoto',{dataUrl:u}).then(function(j){urls.push(j.url);});});},Promise.resolve())
+      .then(function(){d.photos=urls;return api('mPost',d);}).then(function(j){toast('投稿しました');MB=null;mOpenPost(j.id,function(){closePane();});}).catch(function(e){bt.disabled=false;bt.textContent='投稿する';w.hidden=false;w.textContent=e.message;});};}
+function mOpenPost(id,back){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div>',back);
+  api('mPostGet',{id:id}).then(function(j){MP=j.post;MP.back=back;mPostPaint();}).catch(function(e){fail(e);closePane();});}
+function mPostPaint(){var p=MP,mn=[];
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(p.title)+'</b><span>'+esc(p.who)+'・'+mdhm(p.createdAt)+'</span></div></div><div class="arw mth">'+
+    '<div class="ppd"><div class="bl1">'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.replace(/-/g,'/')+'まで</span>':'')+'</div><p class="mtx">'+esc(p.body)+'</p>'+
+    (p.want?'<p class="mtx"><b>どうしてほしいか</b><br>'+esc(p.want)+'</p>':'')+'<dl class="dl2">'+(p.place?'<dt>場所</dt><dd>'+esc(p.place)+'</dd>':'')+(p.budget?'<dt>予算</dt><dd>'+esc(p.budget)+'</dd>':'')+'</dl>'+
+    (p.photos.length?'<div class="thumbs">'+p.photos.map(function(u){return '<div class="tb"><img src="'+esc(u)+'" alt="投稿の写真"></div>';}).join('')+'</div>':'')+
+    (p.mine?(p.st==='open'?'<div class="pvb"><button type="button" id="mEd">期限を変更</button><button type="button" id="mEnd">募集を終了する</button></div>':''):(p.st==='open'?'<button type="button" class="big" id="mCan">対応できます（投稿者とチャット）</button>':'<p class="pc-n">募集は終了しています。新しい問い合わせはできません。</p>'))+'</div>'+
+    '<div class="sec">コメント <small>'+p.comments.length+'件</small></div><div class="msgs mcl">'+(p.comments.length?p.comments.map(function(c){return '<div class="mg'+(c.userId===ME.id?' me':'')+'"><span class="wn">'+esc(c.who)+'・'+mdhm(c.createdAt)+'</span><div class="bb">'+(c.img?'<img src="'+esc(c.img)+'" alt="">':'')+mMention(c.text)+'</div></div>';}).join(''):'<p class="empty">まだコメントはありません</p>')+'</div></div>'+
+    '<form class="cmp" id="mcf"><button type="button" class="ic" id="mat">＠</button><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mci" hidden></label><input id="mct" placeholder="コメントを書く" autocomplete="off" aria-label="コメント"><button class="sd">送信</button></form>',p.back);
+  var ar=pane.querySelector('.arw');var send=function(d){d.id=p.id;d.mentions=mn.filter(function(x){return (d.text||'').indexOf('@'+x.name)>=0;}).map(function(x){return x.userId;});api('mComment',d).then(function(j){var bk=MP.back;MP=j.post;MP.back=bk;mPostPaint();var a=pane.querySelector('.arw');a.scrollTop=a.scrollHeight;}).catch(fail);};
+  $('mcf').onsubmit=function(e){e.preventDefault();var t=$('mct').value.trim();if(!t)return;if(hasContact(t))return toast('電話番号・メールアドレスは書けません');$('mct').value='';send({text:t});};
+  $('mci').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;toast('写真を送っています…');shrink(f).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
+  $('mat').onclick=function(){openSheet('<h3>会員を呼ぶ</h3><p class="sp s2">選んだ会員に、このコメントのお知らせが届きます。</p><div class="list">'+(p.members.length?p.members.map(function(m,i){return '<button type="button" class="card bp" data-mi="'+i+'"><b>'+esc(m.name)+'</b></button>';}).join(''):'<p class="empty">ほかの会員はまだいません</p>')+'</div>');
+    each('[data-mi]',sheet,function(b){b.onclick=function(){var m=p.members[+b.dataset.mi];mn.push(m);var t=$('mct');t.value=(t.value?t.value+' ':'')+'@'+m.name+' ';closeSheet();t.focus();};});};
+  var c=$('mCan');if(c)c.onclick=function(){c.disabled=true;api('mInquire',{id:p.id}).then(function(j){toast('投稿者にメッセージを送りました');mOpenDM(j.with,function(){mOpenPost(p.id,p.back);});}).catch(function(e){c.disabled=false;fail(e);});};
+  var en=$('mEnd');if(en)en.onclick=function(){openSheet('<h3>募集を終了しますか？</h3><p class="sp s2">終了すると「過去の案件」に移り、新しい問い合わせは受け付けません。今までのやり取りは続けられます。もとには戻せません。</p><button type="button" class="big" id="mEndOk">募集を終了する</button>');$('mEndOk').onclick=function(){api('mPostEdit',{id:p.id,close:1}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('募集を終了しました');}).catch(fail);};};
+  var ed=$('mEd');if(ed)ed.onclick=function(){var cr=new Date(new Date(p.createdAt).getTime()+9*3600e3);cr.setUTCMonth(cr.getUTCMonth()+3);var mx=cr.toISOString().slice(0,10);
+    openSheet('<h3>期限を変更</h3><label class="agr"><input type="radio" name="edl" value=""'+(p.dl?'':' checked')+'><span>期限なし</span></label><label class="agr"><input type="radio" name="edl" value="1"'+(p.dl?' checked':'')+'><span>期限を設定する</span></label><input type="date" id="edd" class="nmi" min="'+mToday()+'" max="'+mx+'" value="'+(p.dl||'')+'"><p class="sp s2">期限は、最初に投稿した日から3か月以内（'+mx.replace(/-/g,'/')+'まで）です。</p><button type="button" class="big" id="edOk">変更する</button>');
+    $('edOk').onclick=function(){var use=sheet.querySelector('[name=edl]:checked').value==='1',v=use?$('edd').value:'';if(use&&!v)return toast('日付を選んでください');api('mPostEdit',{id:p.id,setDl:1,dl:v}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('期限を変更しました');}).catch(fail);};};}
+function mMention(t){return esc(t||'').replace(/@([^\s　]+)/g,'<span class="mn">@$1</span>');}
+function mMembersView(){scr.innerHTML=LOADING;api('mMembers').then(function(j){var L=j.members;
+  scr.innerHTML='<div class="mp"><div class="sec">会員 <small>'+L.length+'名</small></div><div class="list">'+L.map(function(m,i){return '<button type="button" class="card bp mmr" data-i="'+i+'"'+(m.userId&&!m.me?'':' disabled')+'><span class="crow"><span class="av sm">'+esc((m.company||m.name).slice(0,1))+'</span><span class="tt"><b>'+esc(m.company||m.name)+'</b><span class="meta"><span>'+esc(m.company?m.name:'')+'</span><span>'+(m.me?'あなた':m.userId?'まち頼に登録済み':'まだ登録していません')+'</span></span></span></span></button>';}).join('')+'</div><p class="note">登録済みの会員を押すと、1対1のチャットが開きます</p></div>';
+  each('.mmr',scr,function(b){b.onclick=function(){var m=L[+b.dataset.i];if(m.userId&&!m.me)mOpenDM(m.userId);};});}).catch(function(e){if(e&&/会員の確認/.test(e.message)){MJ=false;renderMember();}else showErr(e);});}
+function mDMsView(){scr.innerHTML=LOADING;api('mDMs').then(function(j){var L=j.list;
+  scr.innerHTML='<div class="mp"><div class="sec">チャット</div>'+(L.length?'<div class="list">'+L.map(function(x){return '<button type="button" class="card bp mdr" data-u="'+x.with+'"><span class="crow"><span class="av sm">'+esc(x.name.slice(0,1))+'</span><span class="tt"><b>'+esc(x.name)+'</b><span class="lm">'+esc(x.text)+'</span></span>'+(x.unread?'<span class="unr">'+x.unread+'</span>':'')+'</span></button>';}).join('')+'</div>':'<p class="empty">まだやり取りはありません。「会員」の一覧から話しかけられます。</p>')+'</div>';
+  each('.mdr',scr,function(b){b.onclick=function(){mOpenDM(b.dataset.u);};});}).catch(function(e){if(e&&/会員の確認/.test(e.message)){MJ=false;renderMember();}else showErr(e);});}
+function mOpenDM(uid,back){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="mdl"></div>',back);
+  api('mDM',{with:uid}).then(function(j){MD=j;MD.back=back;
+    setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(j.name)+'</b><span>1対1のチャット</span></div></div><div class="msgs" id="mdl"></div><form class="cmp" id="mdf"><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mdi" hidden></label><input id="mdt" placeholder="メッセージを書く" autocomplete="off" aria-label="メッセージ"><button class="sd">送信</button></form>',back);
+    mDMPaint();chatT=setInterval(function(){if(!MD||document.visibilityState!=='visible')return;var l=MD.msgs[MD.msgs.length-1];api('mDM',{with:MD.with,since:l?l.createdAt:''}).then(function(k){if(k.msgs.length){MD.msgs=MD.msgs.concat(k.msgs);mDMPaint();}}).catch(function(){});},8000);
+    var sd=function(d){var l=MD.msgs[MD.msgs.length-1];d.with=MD.with;d.since=l?l.createdAt:'';api('mDMSend',d).then(function(k){MD.msgs=MD.msgs.concat(k.msgs);mDMPaint();}).catch(fail);};
+    $('mdf').onsubmit=function(e){e.preventDefault();var t=$('mdt').value.trim();if(!t)return;$('mdt').value='';sd({text:t});};
+    $('mdi').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;toast('写真を送っています…');shrink(f).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(k){sd({img:k.url,text:''});}).catch(fail);};
+  }).catch(function(e){fail(e);closePane();});}
+function mDMPaint(){var box=$('mdl');if(!box)return;box.innerHTML=MD.msgs.length?MD.msgs.map(function(m){return '<div class="mg'+(m.from===MD.me?' me':'')+'"><span class="wn">'+mdhm(m.createdAt)+'</span><div class="bb">'+(m.img?'<img src="'+esc(m.img)+'" alt="">':'')+esc(m.text||'')+'</div></div>';}).join(''):'<p class="empty">まだメッセージはありません</p>';box.scrollTop=box.scrollHeight;}
 
 boot();
 })();
