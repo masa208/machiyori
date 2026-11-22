@@ -496,7 +496,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=39;
+var APPVER_N=40;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -530,6 +530,8 @@ function md(iso){var d=new Date(iso);return isNaN(d)?'':(d.getMonth()+1)+'/'+d.g
 function mdhm(iso){var d=new Date(iso);if(isNaN(d))return '';return (d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2);}
 function yen(n){return Number(n||0).toLocaleString()+'円';}
 var T0=Date.now(),BOOTMS=0,LASTAPI='';
+function estLbl(x){return x&&x.estOnly?'<div class="sht-r"><span>希望</span><b>'+(x.estOnly==='svy'?'現地調査だけお願いしたい':'見積もりだけ欲しい')+'</b></div>':'';}
+document.addEventListener('change',function(e){var t=e.target;if(t&&t.checked&&(t.id==='pc_est'||t.id==='pc_svy')){var o=document.getElementById(t.id==='pc_est'?'pc_svy':'pc_est');if(o)o.checked=false;}});
 function api(a,data){
   var b=data||{};b.a=a;b.token=TOKEN;var t1=Date.now();
   return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){LASTAPI=a+' '+((Date.now()-t1)/1000).toFixed(1)+'秒';
@@ -847,7 +849,7 @@ function placeBtns(){var box=$('cl');each('.cbt',box,function(x){x.remove();});v
   each('button',b,function(x){x.onclick=function(){if(C.busy)return;b.remove();cSend(x.textContent);};});}
 var SK=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','専門家に確認したいこと']];
 function sheetCard(s,btns){var box=$('cl'),d=document.createElement('div');d.className='mg ai2 wide';
-  d.innerHTML=charaImg()+'<div class="sht">'+SK.map(function(k){return s[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(s[k[0]])+'</b></div>':'';}).join('')+(s.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div>';
+  d.innerHTML=charaImg()+'<div class="sht">'+SK.map(function(k){return s[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(s[k[0]])+'</b></div>':'';}).join('')+estLbl(s)+'</div>';
   box.appendChild(d);if(!btns){box.scrollTop=box.scrollHeight;return;}each('.cbt',box,function(x){x.remove();});var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button" id="cfix">訂正する</button><button type="button" class="pri" id="cpost">この内容で投稿する</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
   $('cfix').onclick=function(){b.remove();$('atx').placeholder='例：場所は塩尻市です';$('atx').focus();};
   $('cpost').onclick=function(){postConfirm(s);};
@@ -856,12 +858,12 @@ function postConfirm(s){
   var photos=[];
   openSheet('<h3>投稿する内容の確認</h3><p class="sp s2">この内容が、対応できる地元の専門家に届きます。お名前と詳しい住所は、現地調査が決まるまで伝わりません。</p><form class="fm" id="pcF">'+
     SK.map(function(k){return '<label for="pc_'+k[0]+'">'+k[1]+'</label>'+(k[0]==='detail'?'<textarea id="pc_'+k[0]+'" rows="3">'+esc(s[k[0]]||'')+'</textarea>':'<input id="pc_'+k[0]+'" value="'+esc(s[k[0]]||'')+'">');}).join('')+
-    '<label><input type="checkbox" id="pc_est"'+(s.estOnly?' checked':'')+' style="width:auto;margin-right:6px">見積もりだけ欲しい（まだ依頼するか決めていない）</label>'+
+    '<label><input type="checkbox" id="pc_est"'+(s.estOnly&&s.estOnly!=='svy'?' checked':'')+' style="width:auto;margin-right:6px">見積もりだけ欲しい（まだ依頼するか決めていない）</label>'+'<label><input type="checkbox" id="pc_svy"'+(s.estOnly==='svy'?' checked':'')+' style="width:auto;margin-right:6px">現地調査だけお願いしたい（まず見てもらいたい）</label>'+
     '<label>写真（3枚まで・なくても大丈夫）</label><div class="phs" id="pcPh"><label class="phadd">＋ 追加<input type="file" accept="image/*" id="pcIn" hidden></label></div>'+
     '<p class="err" id="pcE" hidden></p><button class="big" type="submit" id="pcB">この内容で投稿する</button></form>');
   $('pcIn').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f||photos.length>=3)return;shrink(f).then(function(u){photos.push(u);var im=document.createElement('img');im.src=u;im.alt='添付する写真';$('pcPh').insertBefore(im,$('pcPh').lastChild);if(photos.length>=3)$('pcPh').lastChild.hidden=true;});};
   $('pcF').onsubmit=function(e){e.preventDefault();var b=$('pcB');b.disabled=true;b.textContent='送っています…';
-    var data={};SK.forEach(function(k){data[k[0]]=$('pc_'+k[0]).value.trim();});data.estOnly=$('pc_est').checked;
+    var data={};SK.forEach(function(k){data[k[0]]=$('pc_'+k[0]).value.trim();});data.estOnly=$('pc_svy').checked?'svy':$('pc_est').checked;
     var urls=[];photos.reduce(function(p,u){return p.then(function(){return api('uploadPhoto',{dataUrl:u}).then(function(j){urls.push(j.url);});});},Promise.resolve())
       .then(function(){return api('postCase',{sheet:data,photos:urls});})
       .then(function(j){closeSheet();cSay('投稿しました。専門家から返事が届いたら、ベルのお知らせでお伝えしますね。',0);toast('投稿しました');setTimeout(function(){openCase(j.caseId);},900);})
@@ -893,7 +895,7 @@ function drawCase(){
   var lastTxt=function(v){var l=v.last;if(!l)return '';var t=l.type;return t==='text'?(l.body.text||''):t==='img'?'写真':t==='sys'?l.body.text:t==='prop'?'現地調査の提案が届きました':t==='est'?'見積もりが届きました':t==='chg'?'金額変更の申請が届きました':t==='rep'?'完了報告が届きました':t==='visit'?'現地調査はいかがでしたか？':'';};
   var vsH=bs.length?'<div class="list">'+bs.map(function(v){var s=VST[v.state]||['',''],vn=v.vendor||{name:'業者'};
     return '<button type="button" class="card bp vc'+(s[1]==='off'?' off':'')+'" data-v="'+v.id+'"><span class="vhd"><b>'+esc(vn.name)+'</b><span class="vst '+s[1]+'">'+s[0]+'</span>'+(v.unread?'<span class="unr">'+v.unread+'</span>':'')+'</span><span class="meta"><span>★'+(vn.star||'-')+'（'+(vn.reviews||0)+'件）</span></span><span class="lm">'+esc(lastTxt(v))+'</span></button>';}).join('')+'</div>':'<div class="empty">まだ立候補はありません</div>';
-  var rows=SK.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'');
+  var rows=SK.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c);
   var pics=(c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':'';
   var stt=c.status==='postponed'?'先送り中':c.status==='withdrawn'?'取り下げ':st>=5?'完了':steps[st];
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+stt+'</span></div>'+(c.status==='withdrawn'||c.status==='done'?'':'<button type="button" class="kebab" id="kbB" aria-label="その他の操作">…</button>')+'</div>'+
@@ -1117,7 +1119,7 @@ function concExtras(showLine){var h=pane.querySelector('.ph2');if(h&&!$('rcH')){
     var l=document.createElement('button');l.type='button';l.className='rcline';l.id='rcLine';l.innerHTML='<span>前回の続き：</span><b>'+esc(t.title)+'</b><i>›</i>';l.onclick=function(){concResume(t.id);};cl.parentNode.insertBefore(l,cl);}).catch(function(){});}
 /* 業者ごとの進み具合（業者とのチャットの上に出す） */
 function vStep(){var s=CH.bid.state;if(['lost','other','declined','expired'].indexOf(s)>=0)return '<div class="vstp off">この業者とのやり取りは終了しています</div>';
-  var steps=['やり取り','現地調査','見積もり','依頼','完了'],k={chat:0,prop:1,fixd:1,est:2,won:3,done:5}[s];if(k==null)k=0;var skip=CH.c&&CH.c.estOnly;
+  var steps=['やり取り','現地調査','見積もり','依頼','完了'],k={chat:0,prop:1,fixd:1,est:2,won:3,done:5}[s];if(k==null)k=0;var skip=CH.c&&CH.c.estOnly&&CH.c.estOnly!=='svy';
   return '<div class="stp vstp">'+steps.map(function(t,i){var sk=skip&&i===1;return '<span class="'+(sk?'skip':i<k?'dn':i===k?'cur':'')+'"><i></i>'+(sk?'調査なし':t)+'</span>';}).join('')+'</div>';}
 
 function inquiry(){
@@ -1244,7 +1246,7 @@ function licPane(){var L=PRO&&PRO.lic||[];
     p.then(function(){return api('vLicSubmit',{key:x.key,files:got});}).then(function(j){PRO.lic=j.lic;toast('書類を出しました。審査をお待ちください');licPane();}).catch(function(e){bt.disabled=false;bt.textContent='提出する';fail(e);});};});}
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定',expired:'連絡がなく終了'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
-function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+(c.estOnly?'<div class="sht-r"><span>希望</span><b>見積もりだけ欲しい</b></div>':'')+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（見積もりだけの依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
+function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'の依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
   $('bidB').onclick=function(){this.disabled=true;api('proBid',{caseId:c.id}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(fail);};}
 
 /* ===== Proモード：チャット ===== */
