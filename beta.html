@@ -476,7 +476,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .mnm{display:block;font-size:12.5px;color:#4B5A52}.mme{font-size:11px;font-weight:400;color:#fff;background:#2B4C7E;border-radius:8px;padding:0 6px;margin-left:4px}.mcats{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.mcats i{font-style:normal;font-size:11.5px;color:#2B4C7E;background:#E6ECF5;border-radius:8px;padding:1px 7px}
 .tset{border:2px dashed #E39B1B}.tset .mrow span{color:#8A5A00;font-weight:700}
 .njbar{z-index:2}.su .agr{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
-</style>
+.urow{display:flex;gap:6px;align-items:center;margin-top:8px}.urow .uurl{flex:1;margin:0}.udel{flex:none;width:40px;height:40px;border:1px solid #ccc;border-radius:10px;background:#fff;color:#666;font-size:18px}.uadd{margin-top:10px;padding:10px 14px;border:1.5px dashed #2F6B45;border-radius:10px;background:#fff;color:#2F6B45;font-weight:700;font-size:15px}</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -496,7 +496,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=40;
+var APPVER_N=41;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1226,13 +1226,13 @@ function licSum(L){L=L.filter(function(x){return !x.optional;});if(!L.length)ret
 function licNudge(j){if(!j||!j.lic)return;var n=j.lic.filter(function(x){return !x.optional&&(x.status==='none'||x.status==='rejected');});if(!n.length)return;try{if(sessionStorage.getItem('mchy_licn'))return;sessionStorage.setItem('mchy_licn','1');}catch(e){}
   setTimeout(function(){openSheet('<h3><i class="exm">!</i> 資格の書類を出してください</h3><p class="sp s2">選んだ作業の中に、資格・許可の書類が必要なものがあります。書類の審査が通るまで、その作業の依頼には立候補できません。</p><ul style="font-size:14px;padding-left:18px">'+n.map(function(x){return '<li>'+esc(x.name)+'</li>';}).join('')+'</ul><button type="button" class="big" id="lnGo">書類を出す</button><button type="button" class="ghost" id="lnLt" style="width:100%;margin-top:8px">あとで（マイページからも出せます）</button>');$('lnLt').onclick=closeSheet;$('lnGo').onclick=function(){closeSheet();licPane();};},400);}
 /* 対応サービスの変更（審査あり） */
-function svcPane(){var st=PRO.svc,base=(st.pending||st.list).slice(),urls={};SU={i:4,d:{svc:base},noStore:true};
+function svcPane(){var st=PRO.svc,base=(st.pending||st.list).slice(),urls=[];SU={i:4,d:{svc:base},noStore:true};
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>対応サービス</b><span>今の大カテゴリの中の作業は、すぐ変えられます</span></div></div><div class="arw su">'+(st.pending?'<div class="pmg"><b>大カテゴリの追加を審査中です</b><small>審査が終わるまでは、前の内容で依頼が届きます。もう一度変えると、申請を出し直します。</small></div>':'')+
-    '<p class="note2" style="margin-top:0">分類を押して、できる作業を選んでください。新しい大カテゴリを足すときは、その業務を扱っていることが分かるURLを付けて審査になります。📄の作業は資格の書類が必要です。</p><div class="svgrid" id="svGrid">'+svGrid()+'</div><p class="pc-n" id="svCnt" style="margin-top:10px">選んでいる作業：'+SU.d.svc.length+'件</p><form class="pf pf2" id="svUrl" onsubmit="return false"></form><button type="button" class="big" id="svReq">保存する</button></div>',function(){SV_HOOK=null;closePane();});
+    '<p class="note2" style="margin-top:0">分類を押して、できる作業を選んでください。新しい大カテゴリを足すときは、対応業務が確認できるページのURLを付けて審査になります。📄の作業は資格の書類が必要です。</p><div class="svgrid" id="svGrid">'+svGrid()+'</div><p class="pc-n" id="svCnt" style="margin-top:10px">選んでいる作業：'+SU.d.svc.length+'件</p><form class="pf pf2" id="svUrl" onsubmit="return false"></form><button type="button" class="big" id="svReq">保存する</button></div>',function(){SV_HOOK=null;closePane();});
   var fresh=function(){return svCatsOf(SU.d.svc).filter(function(c){return (st.cats||[]).indexOf(c)<0;});};
-  SV_HOOK=function(){urlRead($('svUrl'),urls);var f=fresh();$('svUrl').innerHTML=urlBlock(f,urls);$('svReq').textContent=f.length?'追加を申請する（審査あり）':'保存する';};SV_HOOK();
+  SV_HOOK=function(){if($('svUrl').querySelector('.uurl'))urls=urlRead($('svUrl'));var f=fresh();$('svUrl').innerHTML=urlBlock(f.length>0,urls);$('svReq').textContent=f.length?'追加を申請する（審査あり）':'保存する';};SV_HOOK();
   svBindGrid();
-  $('svReq').onclick=function(){var bt=this;if(!SU.d.svc.length)return toast('作業を1つ以上選んでください');urlRead($('svUrl'),urls);var f=fresh(),ue=urlErr(f,urls);if(ue)return toast(ue);bt.disabled=true;
+  $('svReq').onclick=function(){var bt=this;if(!SU.d.svc.length)return toast('作業を1つ以上選んでください');urls=urlRead($('svUrl'));var f=fresh(),ue=f.length?urlErr(urls):'';if(ue)return toast(ue);bt.disabled=true;
     api('vSvcReq',{svc:SU.d.svc,cats:svCatsOf(SU.d.svc),needKeys:svDocs(1),urls:urls}).then(function(j){PRO.svc=j.svc;SU=null;SV_HOOK=null;toast(j.applied?'保存しました':'大カテゴリの追加を申請しました。審査のあとで反映されます');closePane();}).catch(function(e){bt.disabled=false;fail(e);});};}
 function licPane(){var L=PRO&&PRO.lic||[];
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>資格の書類</b><span>審査が通ると、その作業の依頼に立候補できます</span></div></div><div class="arw su">'+
@@ -1394,9 +1394,16 @@ function suMark(msg){each('.ferr',pane,function(e){e.remove();});each('.bad',pan
 function suDocRow(kind,label,req,note,multi){var d=SU.d,have=d.docs[kind]||[];return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input type="file" data-doc="'+kind+'" accept="image/*,.pdf"'+(multi?' multiple':'')+'></label>'+(have.length?'<p class="pc-n" style="color:#2F6B45">✓ 提出済み：'+have.map(function(x){return esc(x.name);}).join('、')+'（選び直すと差し替えます）</p>':'')+(note?'<p class="pc-n">'+note+'</p>':'');}
 var SV_ICON={'水のトラブル':'🚰','外装工事':'🏠','リフォーム':'🔨','機器設置・修理':'🔧','解体工事':'🏗️','外構工事・エクステリア':'🧱','庭の手入れ':'🌳','ハウスクリーニング':'🧽','害虫駆除・害獣駆除':'🐜','便利屋':'📦','鍵・防犯対策':'🔑','図面・役所の手続き':'📐','耐震診断・住宅診断':'🔍','税務・法務・労務の相談':'⚖️','ドローン撮影・測量':'🚁'};
 function svCatsOf(list){return SVC.filter(function(c){return svItems(c).some(function(x){return list.indexOf(x)>=0;});}).map(function(c){return c[0];});}
-function urlBlock(cats,urls,id){return cats.length?'<div class="lab">業務を扱っていることが分かるURL <em class="rq">必須</em></div><p class="pc-n">大カテゴリごとに1つ入れてください。まずはHP、なければSNSやほかのメディアのページでも大丈夫です。</p>'+cats.map(function(c,k){return '<label>'+esc(c)+'<input class="uurl" data-cat="'+esc(c)+'" type="url" inputmode="url" placeholder="https://" value="'+esc((urls||{})[c]||'')+'"></label>';}).join(''):'';}
-function urlRead(root,urls){urls=urls||{};each('.uurl',root,function(x){urls[x.dataset.cat]=x.value.trim();});return urls;}
-function urlErr(cats,urls){for(var i=0;i<cats.length;i++){if(!/^https?:\/\/[^\s]+\.[^\s]+/.test(urls[cats[i]]||''))return '「'+cats[i]+'」を扱っていることが分かるURL（HP、なければSNSなど）を入れてください';}return '';}
+function urlArr(u){return Array.isArray(u)?u.slice():Object.keys(u||{}).map(function(k){return u[k];}).filter(function(x){return x;});}
+function urlNorm(x){x=String(x||'').replace(/[！-～]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248);}).replace(/　/g,' ').trim();if(x&&!/^https?:\/\//i.test(x)&&/^[^\s\/]+\.[^\s]+/.test(x))x='https://'+x;return x;}
+function urlRow(v){return '<div class="urow"><input class="uurl" type="url" inputmode="url" autocapitalize="off" placeholder="https://" value="'+esc(v||'')+'"><button type="button" class="udel" aria-label="この欄を消す">×</button></div>';}
+function urlBlock(show,urls){if(!show)return '';var v=urlArr(urls);if(!v.length)v=[''];
+  return '<div class="ublk"><div class="lab">対応業務が確認できるページのURL <em class="rq">必須</em></div><p class="pc-n">HP、SNS、ほかのメディアのページなど、1つ以上入れてください。複数あるときは「＋ URLを追加」で足せます。</p>'+v.map(urlRow).join('')+'<button type="button" class="uadd">＋ URLを追加</button></div>';}
+function urlRead(root){var o=[];each('.uurl',root,function(x){var t=urlNorm(x.value);if(t){x.value=t;o.push(t);}});return o;}
+function urlErr(v){if(!v.length)return '対応業務が確認できるページのURLを、1つ以上入れてください';for(var i=0;i<v.length;i++){if(!/^https?:\/\/[^\s\/]+\.[^\s]+$/i.test(v[i]))return '「'+v[i]+'」はページのアドレスの形になっていません。ブラウザの上に出ているアドレスをそのまま貼り付けてください';}return '';}
+document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;
+  if(t.classList.contains('uadd')){var rows=t.parentNode.querySelectorAll('.urow');if(rows.length>=10)return toast('URLは10件までです');t.insertAdjacentHTML('beforebegin',urlRow(''));var ins=t.parentNode.querySelectorAll('.uurl');ins[ins.length-1].focus();}
+  else if(t.classList.contains('udel')){var r=t.closest('.urow'),b=r.parentNode;if(b.querySelectorAll('.urow').length>1)r.remove();else r.querySelector('.uurl').value='';}});
 var SV_HOOK=null;
 function svItems(c){return [].concat.apply([],c[1].map(function(g){return g[1];}));}
 function svGrid(){var on=SU.d.svc;return SVC.map(function(c,ci){var n=svItems(c).filter(function(x){return on.indexOf(x)>=0;}).length;return '<button type="button" class="svb'+(n?' on':'')+'" data-ci="'+ci+'" aria-pressed="'+(n>0)+'">'+(n?'<em>✓ '+n+'</em>':'')+'<i aria-hidden="true">'+(SV_ICON[c[0]]||'🛠️')+'</i>'+c[0]+(svLocked(c[0],'')?' 📄':'')+'<small>'+svItems(c).length+'種類</small></button>';}).join('');}
@@ -1425,7 +1432,7 @@ function suBody(i){var d=SU.d;
     '<div class="lab">仕事ができる時間 <em class="rq">必須</em></div><div class="su2 sutm"><select id="u_from">'+hrs.map(function(x){return '<option'+(x===d.from?' selected':'')+'>'+x+'</option>';}).join('')+'</select><span>〜</span><select id="u_to">'+hrs.map(function(x){return '<option'+(x===d.to?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div>'+
     '<div class="lab">経験年数 <em class="rq">必須</em></div><div class="surg"><input type="range" id="u_exp" min="1" max="50" value="'+d.exp+'"><b><span id="u_expv">'+d.exp+'</span> 年</b></div>'+
     '<div class="lab">従業員数 <em class="rq">必須</em></div><div class="surg"><input type="range" id="u_emp" min="1" max="100" value="'+d.emp+'"><b><span id="u_empv">'+d.emp+'</span> 人</b></div><p class="pc-n">営業日と時間は、依頼者が現地調査の候補日を選ぶときの目安になります。</p><p class="pc-n">経験年数と従業員数は、依頼者には表示されません（運営の確認用です）。</p>';}
-  if(i===6)return '<p class="note2" style="margin-top:0">依頼者に表示する名前です。写真・自己紹介・実績などは、登録のあとマイページで入れられます。</p><form class="pf pf2" onsubmit="return false">'+suFld('u_pn','会社名・屋号（表示名）',1,d.pn||d.nm,'')+'<label>拠点の市区町村 <em class="rq">必須</em><input id="u_base" value="'+esc(d.base||d.city||'')+'" placeholder="例）松本市"></label><p class="pc-n">基本情報の住所から入れています。違っていたら直してください。</p>'+urlBlock(svCatsOf(d.svc),d.urls)+'</form>';
+  if(i===6)return '<p class="note2" style="margin-top:0">依頼者に表示する名前です。写真・自己紹介・実績などは、登録のあとマイページで入れられます。</p><form class="pf pf2" onsubmit="return false">'+suFld('u_pn','会社名・屋号（表示名）',1,d.pn||d.nm,'')+'<label>拠点の市区町村 <em class="rq">必須</em><input id="u_base" value="'+esc(d.base||d.city||'')+'" placeholder="例）松本市"></label><p class="pc-n">基本情報の住所から入れています。違っていたら直してください。</p>'+urlBlock(svCatsOf(d.svc).length>0,d.urls)+'</form>';
   if(i===7)return '<p class="note2" style="margin-top:0">仕事を受けられる市町村を選んでください。この地域の依頼が届きます。</p>'+areaPicker(d.area);
   if(i===8)return '<form class="pf pf2" onsubmit="return false"><div class="lab">損害賠償保険に入っていますか？ <em class="rq">必須</em></div>'+['入っている','入っていない'].map(function(x){return '<label class="agr"><input type="radio" name="u_ins" value="'+x+'"'+(d.ins===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+
     '<div id="insD"'+(d.ins==='入っている'?'':' hidden')+'>'+suFld('u_insc','保険会社名',1,d.insc,'')+suFld('u_insn','保険の名前',1,d.insn,'')+'</div>'+
@@ -1469,7 +1476,7 @@ function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.v
   if(i===3){d.tos=$('u_tos').checked;if(check&&!d.tos)return '利用規約とプライバシーポリシーに同意してください';}
   if(i===4){if(check&&!d.svc.length)return '分類を押して、作業を1つ以上選んでください';}
   if(i===5){d.days=Array.prototype.filter.call(pane.querySelectorAll('.sud'),function(b){return b.classList.contains('on');}).map(function(b){return +b.dataset.d;});d.from=v('u_from');d.to=v('u_to');d.exp=+v('u_exp');d.emp=+v('u_emp');if(check&&!d.days.length)return '曜日を1つ以上選んでください';if(check&&parseInt(d.from)>=parseInt(d.to))return '終わりの時間を、始まりより後にしてください';}
-  if(i===6){d.pn=v('u_pn');d.base=v('u_base');d.urls=urlRead(pane,d.urls);if(check){var ue=urlErr(svCatsOf(d.svc),d.urls);if(ue)return ue;if(!d.pn)return '会社名・屋号を入れてください';var why=hasContact(d.pn);if(why)return '「会社名・屋号」に'+why+'があります。公開の欄には書けません';}}
+  if(i===6){d.pn=v('u_pn');d.base=v('u_base');d.urls=urlRead(pane);if(check){var ue=svCatsOf(d.svc).length?urlErr(d.urls):'';if(ue)return ue;if(!d.pn)return '会社名・屋号を入れてください';var why=hasContact(d.pn);if(why)return '「会社名・屋号」に'+why+'があります。公開の欄には書けません';}}
   if(i===7){d.area=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(c){return c.checked;}).map(function(c){return c.value;});if(check&&!d.area.length)return '市町村を1つ以上選んでください';}
   if(i===8){var a=pane.querySelector('[name=u_ins]:checked'),b2=pane.querySelector('[name=u_dmg]:checked');d.ins=a?a.value:'';d.dmg=b2?b2.value:'';d.insc=v('u_insc');d.insn=v('u_insn');if(check){if(!d.ins||!d.dmg)return 'すべての質問に答えてください';if(d.ins==='入っている'&&(!d.insc||!d.insn))return '保険会社名と保険の名前を入れてください';}}
   if(i===9){d.agree=$('u_agall').checked?AGREE.map(function(x,k){return k;}):[];if(check&&!d.agree.length)return '重要事項を確認して、同意にチェックを入れてください';}
