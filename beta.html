@@ -514,7 +514,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .uh-ic{display:block;width:34px;height:34px;border-radius:50%;margin:0 auto 5px;background:#fde7df;color:#E8623F;font-weight:800;line-height:34px;font-size:14px}.uh-t.off{opacity:.55}.uh-t small{display:block;font-size:9.5px;color:#888}
 .uh-all{display:block;width:100%;margin-top:10px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px;font:inherit;font-weight:700;color:#E8623F;font-size:14px;cursor:pointer}
 .ch2{display:flex;flex-wrap:wrap;gap:6px}.cch{border:1.5px solid #E8623F;color:#E8623F;background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.cch.on{background:#E8623F;color:#fff}.cch.gy{border-color:#bbb;color:#777}.cch.off{border-color:#ccc;color:#999}.cch small{font-size:10px;font-weight:400}
-.svend{display:flex;flex-direction:column;gap:8px;margin-top:14px}.svend .big{margin:0}.kseg{display:flex;gap:8px}.kseg label{flex:1;cursor:pointer}.kseg input{position:absolute;opacity:0}.kseg span{display:block;text-align:center;background:#fff;border:1.5px solid #d9d5cc;border-radius:12px;padding:11px;font-weight:700;font-size:14px}.kseg input:checked+span{border-color:#2F6B45;background:#e9f3ec;color:#2F6B45}.ksec{font-size:12.5px;font-weight:700;color:#777;margin:16px 0 4px;border-top:1px solid #e3ddd2;padding-top:10px}.pnv{background:#fff;border-radius:10px;padding:10px 12px;font-weight:700}.pnchg{background:none;border:0;color:#E8623F;font:inherit;font-weight:700;font-size:13.5px;padding:6px 0;cursor:pointer}.pcopt{background:#faf8f4;border:1px dashed #d9d5cc;border-radius:12px;padding:10px 12px;margin:12px 0 4px}.pcopt span{display:block;font-size:12px;color:#888;margin-bottom:6px}.pcopt label{display:flex!important;align-items:center;gap:8px;font-size:14px;margin:4px 0!important}.pcopt input{width:18px!important;height:18px;margin:0;accent-color:#E8623F}.pcopt b{font-weight:600}</style>
+.svend{display:flex;flex-direction:column;gap:8px;margin-top:14px}.svend .big{margin:0}.kseg{display:flex;gap:8px}.kseg label{flex:1;cursor:pointer}.kseg input{position:absolute;opacity:0}.kseg span{display:block;text-align:center;background:#fff;border:1.5px solid #d9d5cc;border-radius:12px;padding:11px;font-weight:700;font-size:14px}.kseg input:checked+span{border-color:#2F6B45;background:#e9f3ec;color:#2F6B45}.ksec{font-size:12.5px;font-weight:700;color:#777;margin:16px 0 4px;border-top:1px solid #e3ddd2;padding-top:10px}.pnv{background:#fff;border-radius:10px;padding:10px 12px;font-weight:700}.pnchg{background:none;border:0;color:#E8623F;font:inherit;font-weight:700;font-size:13.5px;padding:6px 0;cursor:pointer}.pcopt{background:#faf8f4;border:1px dashed #d9d5cc;border-radius:12px;padding:10px 12px;margin:12px 0 4px}.pcopt span{display:block;font-size:12px;color:#888;margin-bottom:6px}.pcopt label{display:flex!important;align-items:center;gap:8px;font-size:14px;margin:4px 0!important}.pcopt input{width:18px!important;height:18px;margin:0;accent-color:#E8623F}.pcopt b{font-weight:600}body.fs1 #cl .bb{font-size:16px;line-height:1.65}body.fs2 #cl .bb{font-size:19px;line-height:1.7}body.fs1 #cl .sht,body.fs1 #cl .chs button,body.fs1 .cmp input{font-size:15.5px}body.fs2 #cl .sht,body.fs2 #cl .chs button,body.fs2 .cmp input{font-size:18px}.ph2 .fsb{margin-left:auto}.ph2 .fsb+.rch{margin-left:6px}</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=65;
+var APPVER_N=66;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -893,10 +893,14 @@ function cSay(t,me){var box=$('cl');if(!box)return;if(!me)t=String(t).replace(/\
 function cSend(v){
   C.sent=true;var rl=$('rcLine');if(rl)rl.remove();cSay(v,1);C.busy=true;var box=$('cl'),w=document.createElement('div');w.className='typing';w.textContent=charaName()+'が入力中…';box.appendChild(w);box.scrollTop=box.scrollHeight;
   var data={text:v};if(C.tid)data.threadId=C.tid;else data.opening=C.opening;
-  api('concierge',data).then(function(j){if(j.threadId){C.tid=j.threadId;concKeep(j.threadId);}w.remove();cSay(j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
+  api('concierge',data).then(function(j){if(j.threadId){C.tid=j.threadId;concKeep(j.threadId);}w.remove();var hasC=!j.sheet&&!j.askPlace&&/【[^】]{1,40}】/.test(j.reply||'');cSay(hasC?String(j.reply).replace(/【[^】]{1,40}】/g,'').replace(/[ 　]+\n/g,'\n').trim():j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();else choiceBtns(j.reply);}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
 }
 /* 場所は市町村をボタンで選ぶ（番地などを書いてしまわないように） */
 var PLACES=['松本市','塩尻市','安曇野市','大町市','山形村','朝日村','池田町','松川村','生坂村','麻績村','筑北村','木曽地域','その他の地域'];
+/* まちこの返事の「【選択肢】」をボタンにする（11/23）。押すとその言葉を送る。自分で書いてもよい */
+function choiceBtns(t){var box=$('cl');if(!box)return;var m=String(t||'').match(/【[^】]{1,40}】/g);if(!m)return;var seen=[];m=m.map(function(x){return x.slice(1,-1);}).filter(function(x){if(seen.indexOf(x)>=0)return false;seen.push(x);return true;});
+  each('.cbt',box,function(x){x.remove();});var b=document.createElement('div');b.className='chs cbt';b.innerHTML=m.map(function(x){return '<button type="button">'+esc(x)+'</button>';}).join('');box.appendChild(b);box.scrollTop=box.scrollHeight;
+  each('button',b,function(x){x.onclick=function(){if(C.busy)return;b.remove();cSend(x.textContent);};});}
 function placeBtns(){var box=$('cl');each('.cbt',box,function(x){x.remove();});var a=PLACES.slice();if(ME&&ME.area&&a.indexOf(ME.area)>0){a.splice(a.indexOf(ME.area),1);a.unshift(ME.area);}
   var b=document.createElement('div');b.className='chs cbt';b.innerHTML=a.map(function(p){return '<button type="button">'+esc(p)+'</button>';}).join('');box.appendChild(b);box.scrollTop=box.scrollHeight;
   each('button',b,function(x){x.onclick=function(){if(C.busy)return;b.remove();cSend(x.textContent);};});}
@@ -1230,7 +1234,9 @@ function inqChat(what){var d=inqBot('<p>「'+esc(what)+'」ですね。運営ス
 /* ===== まちことの会話：最近の会話はチャットの中に ===== */
 function recentPane(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>最近の会話</b><span>'+charaName()+'との相談・押すと続きから話せます</span></div></div><div class="arw"><div id="rcAllB"><p class="uh-emp">読み込み中…</p></div></div>',function(){conc('何でも気軽に相談してください');});
   loadRecent('rcAllB',0);}
-function concExtras(showLine){var h=pane.querySelector('.ph2');if(h&&!$('rcH')){var b=document.createElement('button');b.type='button';b.className='rch';b.id='rcH';b.textContent='最近の会話';b.onclick=recentPane;h.appendChild(b);}
+var FS_L=['標準','大','特大'];function fsGet(){try{return +localStorage.getItem('mchy_fs')||0;}catch(e){return 0;}}function fsApply(){var n=fsGet();document.body.classList.remove('fs1','fs2');if(n)document.body.classList.add('fs'+n);var b=$('fsB');if(b)b.textContent='文字 '+FS_L[n];}
+function fsNext(){var n=(fsGet()+1)%3;try{localStorage.setItem('mchy_fs',n);}catch(e){}fsApply();toast('文字の大きさ：'+FS_L[n]);}
+function concExtras(showLine){var h=pane.querySelector('.ph2');if(h&&!$('fsB')){var f=document.createElement('button');f.type='button';f.className='rch fsb';f.id='fsB';f.setAttribute('aria-label','チャットの文字の大きさを変える');f.onclick=fsNext;h.appendChild(f);fsApply();}if(h&&!$('rcH')){var b=document.createElement('button');b.type='button';b.className='rch';b.id='rcH';b.textContent='最近の会話';b.onclick=recentPane;h.appendChild(b);}
   if(!showLine)return;api('threads').then(function(j){var t=j.items&&j.items[0],cl=$('cl');if(!t||!cl||C.tid||C.sent)return;
     var l=document.createElement('button');l.type='button';l.className='rcline';l.id='rcLine';l.innerHTML='<span>前回の続き：</span><b>'+esc(t.title)+'</b><i>›</i>';l.onclick=function(){concResume(t.id);};cl.parentNode.insertBefore(l,cl);}).catch(function(){});}
 /* 業者ごとの進み具合（業者とのチャットの上に出す） */
