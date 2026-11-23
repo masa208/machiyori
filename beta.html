@@ -497,7 +497,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .hsr{width:100%;box-sizing:border-box;border:1.5px solid #d9d5cc;border-radius:999px;padding:9px 14px;font:inherit;font-size:13.5px}
 .wn.hlp{background:#eef2f8;color:#2B4C7E;border:1px solid #c9d4e6;border-radius:6px;padding:1px 6px}.pc.hinv{border:1.5px solid #2B4C7E}.pc.hinv .pc-h{color:#2B4C7E}
 .hbdg{display:inline-block;background:#eef2f8;color:#2B4C7E;border:1px solid #c9d4e6;border-radius:6px;font-size:11.5px;font-weight:700;padding:2px 8px;margin-bottom:6px}
-.hout{text-align:center;padding:70px 22px}.hout .ic{width:64px;height:64px;border-radius:50%;background:#eef2f8;margin:0 auto 14px;color:#2B4C7E;font-weight:800;font-size:26px;line-height:64px}.hout h3{font-size:17px}.hout p{font-size:13px;color:#555;line-height:1.7;margin:0 0 18px}#pmL{display:flex;flex-direction:column;gap:8px}#hM{display:block;width:100%;box-sizing:border-box;min-height:84px;border:1.5px solid #d9d5cc;border-radius:12px;padding:10px;font:inherit;font-size:14px;margin-top:6px}.su .lab{display:block;margin-top:14px}.fpi{position:absolute!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none}.fpw{display:flex;align-items:center;gap:10px;border:1.5px dashed #c9c3b6;border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;margin-top:6px}.fpb{flex:none;background:#2F6B45;color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:7px 14px}.fpn{font-size:13px;color:#888;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fpw.on{border-style:solid;border-color:#2F6B45}.fpw.on .fpn{color:#2F6B45;font-weight:700}.su input[type=file].fpi,input[type=file].fpi{display:block!important;position:absolute!important;width:1px!important;height:1px!important;padding:0!important;border:0!important;opacity:0!important;pointer-events:none!important}</style>
+.hout{text-align:center;padding:70px 22px}.hout .ic{width:64px;height:64px;border-radius:50%;background:#eef2f8;margin:0 auto 14px;color:#2B4C7E;font-weight:800;font-size:26px;line-height:64px}.hout h3{font-size:17px}.hout p{font-size:13px;color:#555;line-height:1.7;margin:0 0 18px}#pmL{display:flex;flex-direction:column;gap:8px}#hM{display:block;width:100%;box-sizing:border-box;min-height:84px;border:1.5px solid #d9d5cc;border-radius:12px;padding:10px;font:inherit;font-size:14px;margin-top:6px}.su .lab{display:block;margin-top:14px}.fpi{position:absolute!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none}.fpw{display:flex;align-items:center;gap:10px;border:1.5px dashed #c9c3b6;border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;margin-top:6px}.fpb{flex:none;background:#2F6B45;color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:7px 14px}.fpn{font-size:13px;color:#888;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fpw.on{border-style:solid;border-color:#2F6B45}.fpw.on .fpn{color:#2F6B45;font-weight:700}.su input[type=file].fpi,input[type=file].fpi{display:block!important;position:absolute!important;width:1px!important;height:1px!important;padding:0!important;border:0!important;opacity:0!important;pointer-events:none!important}.lgc{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:0;border-radius:14px;padding:13px 14px;margin-bottom:10px;font:inherit;cursor:pointer}.lgc .tx{flex:1;min-width:0}.lgc b{display:block;font-size:15px}.lgc small{font-size:11.5px;color:#777}.lgc .arr{color:#aaa;font-size:20px}.lblk{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px}.lbh{display:flex;justify-content:space-between;align-items:center;gap:8px}.lbh .sub{font-size:12.5px;color:#2B4C7E;font-weight:700}.lsel{display:block;width:100%;box-sizing:border-box;border:1.5px solid #d9d5cc;border-radius:10px;padding:10px;font:inherit;font-size:14px;background:#fff;margin-top:4px}.lot{margin-top:8px}.lfile{display:block;margin-top:4px}.lsel[hidden]{display:none}.lgc .lst,.lbh .lst{margin-top:0;flex:none}</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -517,7 +517,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=58;
+var APPVER_N=59;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -960,7 +960,7 @@ function postpone(){
 /* ===== 業者とのチャット ===== */
 var CH=null;
 function stopChat(){clearInterval(chatT);chatT=null;}
-if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
+if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},licPane:function(){licPane();},licCat:function(c){licCat(c);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
 function openChat(bidId,back){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
   api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
@@ -1095,7 +1095,7 @@ $('bell').onclick=function(){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>お知らせ</b></div></div><div class="arw" id="nfL"><div class="load">読み込み中…</div></div>');
   api('notifs',{markRead:true}).then(function(j){$('bellN').textContent='';var L=$('nfL');if(!L)return;
     L.innerHTML=j.items.length?'<div class="list" style="padding:0">'+j.items.map(function(n){return '<button type="button" class="nf'+(n.read?'':' un')+'" data-l="'+esc(n.link)+'">'+esc(n.text)+'<small>'+mdhm(n.createdAt)+'</small></button>';}).join('')+'</div>':'<div class="empty">お知らせはまだありません</div>';
-    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('mpost:')===0){if(MODE!=='member')setMode('member');mOpenPost(l.slice(6));}else if(l.indexOf('mdm:')===0){if(MODE!=='member')setMode('member');mOpenDM(l.slice(4));}else if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('hinv:')===0)hInvOpen(l.slice(5));else if(l.indexOf('hbid:')===0)openPro(l.slice(5));else if(l.indexOf('bid:')===0){if(MODE==='pro')openPro(l.slice(4));else openChat(l.slice(4),closePane);}};});
+    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('mpost:')===0){if(MODE!=='member')setMode('member');mOpenPost(l.slice(6));}else if(l.indexOf('mdm:')===0){if(MODE!=='member')setMode('member');mOpenDM(l.slice(4));}else if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('lic:')===0){var lc=l.slice(4);api('proHome').then(function(j){PRO=j;if(lc)licCat(lc);else licPane();}).catch(fail);}else if(l.indexOf('hinv:')===0)hInvOpen(l.slice(5));else if(l.indexOf('hbid:')===0)openPro(l.slice(5));else if(l.indexOf('bid:')===0){if(MODE==='pro')openPro(l.slice(4));else openChat(l.slice(4),closePane);}};});
   }).catch(fail);
 };
 
@@ -1301,16 +1301,47 @@ function svcPane(){var st=PRO.svc,base=(st.pending||st.list).slice(),urls=[];SU=
   svBindGrid();
   $('svReq').onclick=function(){var bt=this;if(!SU.d.svc.length)return toast('作業を1つ以上選んでください');urls=urlRead($('svUrl'));var f=fresh(),ue=f.length?urlErr(urls):'';if(ue)return toast(ue);bt.disabled=true;
     api('vSvcReq',{svc:SU.d.svc,cats:svCatsOf(SU.d.svc),needKeys:svDocs(1),urls:urls}).then(function(j){PRO.svc=j.svc;SU=null;SV_HOOK=null;toast(j.applied?'保存しました':'大カテゴリの追加を申請しました。審査のあとで反映されます');closePane();}).catch(function(e){bt.disabled=false;fail(e);});};}
-function licPane(){var L=PRO&&PRO.lic||[];
-  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>資格の書類</b><span>審査が通ると、その作業の依頼に立候補できます</span></div></div><div class="arw su">'+
-    (L.length?L.map(function(x,i){var done=x.status==='approved',pend=x.status==='pending';return '<div class="lcard"><b>'+esc(x.name)+'</b><span class="lst '+(x.optional&&x.status==='none'?'pending':x.status)+'">'+(x.optional&&x.status==='none'?'任意':(LIC_ST[x.status]||x.status))+'</span>'+(x.note?'<p class="pc-n">運営より：'+esc(x.note)+'</p>':'')+
-      (done?'':'<div class="lfl" data-lf="'+i+'"></div><label class="lfile">＋ 書類を追加する（画像かPDF。裏面など何枚でも追加できます）<input type="file" data-li="'+i+'" accept="image/*,.pdf" multiple></label><button type="button" class="big" data-ls="'+i+'">'+(pend?'出し直す':'提出する')+'</button>')+'</div>';}).join(''):'<div class="empty">出す書類はありません</div>')+
-    '<p class="pc-n">提出した書類は、運営だけが見られる場所に保存します。審査には数日かかることがあります。</p></div>');
+var KEY_LAB={elec:'電気の作業（コンセント・照明など）',gas:'ガスの作業（給湯器など）',waste:'不用品回収・遺品整理など',demo:'解体工事',design:'図面・役所の手続き',tax:'税務・法務・労務の相談',drone:'ドローン撮影・測量',insp:'住宅診断・ホームインスペクション',con:'500万円以上の工事を受けるとき（任意）'};
+var LIC_GST={none:['未提出','none'],rejected:['出し直し','rejected'],pending:['審査中','pending'],approved:['審査完了','approved'],opt:['任意','pending']};
+/* 選んだ作業から、大カテゴリごとに要る書類をまとめる（11/23） */
+function licGroups(){var L=PRO&&PRO.lic||[],sel=(PRO&&PRO.svc&&PRO.svc.list)||[],G=[],used={};
+  SVC.forEach(function(c){var ks=[];svItems(c).forEach(function(x){if(sel.indexOf(x)<0||!svLocked(c[0],x))return;SVDOC.forEach(function(m){if((m[0].test(x)||m[0].test(c[0]))&&ks.indexOf(m[2])<0)ks.push(m[2]);});});
+    var items=L.filter(function(x){return ks.indexOf(x.key)>=0;});if(!items.length)return;G.push({cat:c[0],keys:items.map(function(x){return x.key;}),items:items});items.forEach(function(x){used[x.key]=1;});});
+  var rest=L.filter(function(x){return !used[x.key];});if(rest.length)G.push({cat:'その他の書類',keys:[],items:rest,other:true});
+  G.forEach(function(g){var rq=g.items.filter(function(x){return !x.optional;}),has=function(st){return rq.some(function(x){return x.status===st;});};g.st=!rq.length?(g.items.every(function(x){return x.status==='approved';})?'approved':'opt'):has('rejected')?'rejected':has('none')?'none':has('pending')?'pending':'approved';});
+  return G;}
+function licPane(){api('proHome').then(function(j){PRO=j;licDraw();}).catch(function(){licDraw();});}
+function licDraw(){var G=licGroups();
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>資格の書類</b><span>大カテゴリごとに審査します</span></div></div><div class="arw su">'+
+    (G.length?G.map(function(g,i){var t=LIC_GST[g.st];return '<button type="button" class="lgc" data-lg="'+i+'"><span class="tx"><b>'+esc(g.cat)+'</b><small>'+esc(g.items.map(function(x){return KEY_LAB[x.key]||x.name;}).join('・'))+'</small></span><span class="lst '+t[1]+'">'+t[0]+'</span><span class="arr">›</span></button>';}).join(''):'<div class="empty">出す書類はありません</div>')+
+    '<p class="pc-n">審査が完了した大カテゴリから、その作業の依頼に立候補できます。審査には数日かかることがあります。</p></div>');
+  each('[data-lg]',pane,function(b){b.onclick=function(){licCat(G[+b.dataset.lg].cat);};});}
+function licCat(cat){var G=licGroups(),g=G.filter(function(x){return x.cat===cat;})[0];if(!g)return licPane();
+  var blk=function(x,i){var st=x.optional&&x.status==='none'?LIC_GST.opt:LIC_GST[x.status]||LIC_GST.none,shared=G.filter(function(h){return h!==g&&!h.other&&h.keys.indexOf(x.key)>=0;}).map(function(h){return h.cat;});
+    var head='<div class="lbh"><span class="sub">'+esc(KEY_LAB[x.key]||x.name)+'</span><span class="lst '+st[1]+'">'+(x.status==='approved'?'承認済み':st[0])+'</span></div>'+(shared.length?'<p class="pc-n">「'+esc(shared.join('」「'))+'」と共通の書類です</p>':'')+(x.note&&x.status==='rejected'?'<p class="warn">運営より：'+esc(x.note)+'</p>':'');
+    if(x.status==='approved')return '<div class="lblk">'+head+'<p class="pc-n" style="color:#2F6B45">'+esc(x.lname||x.name)+'</p></div>';
+    var ops=(x.opts||[]).concat(['その他']),cur=x.lname||'',isO=cur&&ops.indexOf(cur)<0;
+    return '<div class="lblk" data-k="'+i+'">'+head+(x.status==='pending'?'<p class="pc-n">審査中です（'+esc(x.lname||'')+'）。出し直すときは、書類を選んで提出してください。</p>':'')+
+      '<div class="lab">資格・許認可名 <em class="rq">必須</em></div><select class="lsel" data-ln="'+i+'"><option value="">選んでください</option>'+ops.map(function(o){return '<option'+((o===cur||(isO&&o==='その他'))?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>'+
+      '<input class="lsel lot" data-lo="'+i+'" placeholder="資格・許認可の名前を書いてください" value="'+(isO?esc(cur):'')+'"'+(isO?'':' hidden')+'>'+
+      '<div class="lfl" data-lf="'+i+'"></div><label class="lfile"><input type="file" data-li="'+i+'" accept="image/*,.pdf" multiple></label></div>';};
+  var todo=g.items.some(function(x){return x.status!=='approved';});
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(g.cat)+'</b><span>資格の書類</span></div></div><div class="arw su">'+g.items.map(blk).join('')+
+    (todo?'<p class="pc-n">名義・番号・対象業務・有効期限（記載がある場合）が分かるページを出してください。書類全体を、文字が読める状態で添付してください。裏面に記載がある場合は裏面も必要です。</p><button type="button" class="big" id="lcS" style="background:#2B4C7E">提出する</button>':'<p class="pc-n">この大カテゴリの審査は完了しています。</p>')+
+    '<p class="pc-n">提出した書類は、運営だけが見られる場所に保存します。</p></div>',licPane);
   var PICK={};var showPick=function(i){var box=pane.querySelector('[data-lf="'+i+'"]');box.innerHTML=(PICK[i]||[]).map(function(f,k){return '<div class="lfi"><span>'+esc(f.name)+'</span><button type="button" data-rm="'+i+'_'+k+'" aria-label="外す">✕</button></div>';}).join('');each('[data-rm]',box,function(b){b.onclick=function(){var a=b.dataset.rm.split('_');PICK[a[0]].splice(+a[1],1);showPick(a[0]);};});};
   each('[data-li]',pane,function(inp){inp.onchange=function(){var i=inp.dataset.li;PICK[i]=(PICK[i]||[]).concat(Array.prototype.slice.call(inp.files||[]));inp.value='';showPick(i);};});
-  each('[data-ls]',pane,function(bt){bt.onclick=function(){var i=+bt.dataset.ls,x=L[i],fs=(PICK[i]||[]).slice();if(!fs.length)return toast('書類を追加してください');
-    bt.disabled=true;var n=0;bt.textContent='送っています…';var p=Promise.all(fs.map(function(f){return suFile(f).then(function(r){return api('vDoc',{kind:'lic',mime:r.mime,b64:r.b64});}).then(function(r){n++;bt.textContent='送っています…（'+n+'/'+fs.length+'）';return {id:r.id,name:r.name};});}));
-    p.then(function(got){return api('vLicSubmit',{key:x.key,files:got});}).then(function(j){PRO.lic=j.lic;toast('書類を出しました。審査をお待ちください');licPane();}).catch(function(e){bt.disabled=false;bt.textContent='提出する';fail(e);});};});}
+  each('[data-ln]',pane,function(se){se.onchange=function(){pane.querySelector('[data-lo="'+se.dataset.ln+'"]').hidden=se.value!=='その他';};});
+  var bt=$('lcS');if(bt)bt.onclick=function(){var jobs=[],err='';
+    g.items.forEach(function(x,i){if(x.status==='approved')return;var fs=PICK[i]||[],se=pane.querySelector('[data-ln="'+i+'"]'),nm=se.value==='その他'?pane.querySelector('[data-lo="'+i+'"]').value.trim():se.value;
+      if(!fs.length){if(x.status==='none'&&!x.optional&&!err&&g.items.length===1)err='書類を追加してください';return;}if(!nm&&!err)err=(KEY_LAB[x.key]||x.name)+'の資格・許認可名を'+(se.value==='その他'?'書いて':'選んで')+'ください';jobs.push({x:x,fs:fs,nm:nm});});
+    if(err)return toast(err);if(!jobs.length)return toast('書類を追加してください');
+    var cats={};jobs.forEach(function(jb){G.forEach(function(h){if(!h.other&&h.keys.indexOf(jb.x.key)>=0)cats[h.cat]=h.keys;});jb.cats=cats;});
+    bt.disabled=true;var n=0,tot=jobs.reduce(function(a,jb){return a+jb.fs.length;},0);bt.textContent='送っています…';
+    Promise.all(jobs.map(function(jb){var c={};G.forEach(function(h){if(!h.other&&h.keys.indexOf(jb.x.key)>=0)c[h.cat]=h.keys;});
+      return Promise.all(jb.fs.map(function(f){return suFile(f).then(function(r){return api('vDoc',{kind:'lic',mime:r.mime,b64:r.b64});}).then(function(r){n++;bt.textContent='送っています…（'+n+'/'+tot+'）';return {id:r.id,name:r.name};});}))
+        .then(function(got){return api('vLicSubmit',{key:jb.x.key,lname:jb.nm,cats:c,files:got});});}))
+    .then(function(rs){PRO.lic=rs[rs.length-1].lic;toast('書類を出しました。審査をお待ちください');licCat(cat);}).catch(function(e){bt.disabled=false;bt.textContent='提出する';fail(e);});};}
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定',expired:'連絡がなく終了'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
 function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'の依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
@@ -1584,7 +1615,7 @@ function suBody(i){var d=SU.d;
     '<div class="lab">本人確認書類 <em class="rq">必須</em></div>'+ID_T.map(function(t){return '<label class="agr"><input type="radio" name="u_idt" value="'+t[0]+'"'+(d.idt===t[0]?' checked':'')+'><span>'+t[1]+'</span></label>';}).join('')+
     '<div id="idD"'+(d.idt?'':' hidden')+'>'+suDocRow('id','表面',1,'')+'<div id="idB"'+(d.idt==='my'?' hidden':'')+'>'+suDocRow('idb','裏面',1,'')+'</div><p class="warn" id="idMy"'+(d.idt==='my'?'':' hidden')+'>マイナンバーカードは表面だけを出してください。裏面には個人番号が書かれているため、出さないでください。</p></div><p class="pc-n">運営の確認にだけ使い、確認が終わったら削除します。</p>'+
     '<div id="corpD"'+(d.kind==='法人'?'':' hidden')+'>'+suFld('u_corp','法人番号',1,d.corp,'例）1234567890123','','数字13けたです')+suDocRow('reg','履歴事項全部証明書（発行から3か月以内）',1,'')+'</div>'+
-    (lks.length?'<div class="pmg"><b>📄 登録後に提出する書類</b><small>選んだ作業（'+esc(lks.slice(0,3).join('・'))+(lks.length>3?' ほか':'')+'）に必要です。登録が終わったら、マイページから出してください。</small><ul style="margin:6px 0 0;padding-left:18px;font-size:14px">'+svDocs().map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div>':'')+
+    (lks.length?'<div class="pmg"><b>初期登録後、マイページから下記の資料を提出してください。</b><ul style="margin:6px 0 0;padding-left:18px;font-size:14px">'+svDocs().map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div>':'')+
 '<p class="pc-n">写真は、文字が読める画質のまま自動で小さくして送ります（大きさの心配はいりません）。PDFは1つ8MBまでです。提出した書類は、運営だけが見られる場所に保存します。</p></form>';}
   if(i===11)return '<p class="note2" style="margin-top:0">立候補料と紹介手数料のお支払いに使うカードを登録します。カード番号はまち頼には保存されず、決済会社（Stripe）が管理します。</p><button type="button" class="big" id="u_card">'+(d.card?'✓ 登録済み（テスト版の見本）':'カードを登録する（テスト版は見本）')+'</button><p class="pc-n">テスト版ではカードの登録はしません。ボタンを押すと「登録済み」になります。登録しても、依頼者から連絡が来るまで料金はかかりません。</p>';
   return '';}
