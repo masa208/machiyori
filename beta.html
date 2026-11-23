@@ -497,7 +497,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .hsr{width:100%;box-sizing:border-box;border:1.5px solid #d9d5cc;border-radius:999px;padding:9px 14px;font:inherit;font-size:13.5px}
 .wn.hlp{background:#eef2f8;color:#2B4C7E;border:1px solid #c9d4e6;border-radius:6px;padding:1px 6px}.pc.hinv{border:1.5px solid #2B4C7E}.pc.hinv .pc-h{color:#2B4C7E}
 .hbdg{display:inline-block;background:#eef2f8;color:#2B4C7E;border:1px solid #c9d4e6;border-radius:6px;font-size:11.5px;font-weight:700;padding:2px 8px;margin-bottom:6px}
-.hout{text-align:center;padding:70px 22px}.hout .ic{width:64px;height:64px;border-radius:50%;background:#eef2f8;margin:0 auto 14px;color:#2B4C7E;font-weight:800;font-size:26px;line-height:64px}.hout h3{font-size:17px}.hout p{font-size:13px;color:#555;line-height:1.7;margin:0 0 18px}#pmL{display:flex;flex-direction:column;gap:8px}#hM{display:block;width:100%;box-sizing:border-box;min-height:84px;border:1.5px solid #d9d5cc;border-radius:12px;padding:10px;font:inherit;font-size:14px;margin-top:6px}.su .lab{display:block;margin-top:14px}</style>
+.hout{text-align:center;padding:70px 22px}.hout .ic{width:64px;height:64px;border-radius:50%;background:#eef2f8;margin:0 auto 14px;color:#2B4C7E;font-weight:800;font-size:26px;line-height:64px}.hout h3{font-size:17px}.hout p{font-size:13px;color:#555;line-height:1.7;margin:0 0 18px}#pmL{display:flex;flex-direction:column;gap:8px}#hM{display:block;width:100%;box-sizing:border-box;min-height:84px;border:1.5px solid #d9d5cc;border-radius:12px;padding:10px;font:inherit;font-size:14px;margin-top:6px}.su .lab{display:block;margin-top:14px}.fpi{position:absolute!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none}.fpw{display:flex;align-items:center;gap:10px;border:1.5px dashed #c9c3b6;border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;margin-top:6px}.fpb{flex:none;background:#2F6B45;color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:7px 14px}.fpn{font-size:13px;color:#888;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fpw.on{border-style:solid;border-color:#2F6B45}.fpw.on .fpn{color:#2F6B45;font-weight:700}.su input[type=file].fpi,input[type=file].fpi{display:block!important;position:absolute!important;width:1px!important;height:1px!important;padding:0!important;border:0!important;opacity:0!important;pointer-events:none!important}</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -517,7 +517,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=56;
+var APPVER_N=57;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1428,6 +1428,16 @@ function estForm(noSurvey){pPop(PC2.bid.id,3);var t=new Date();t.setDate(t.getDa
       if(!confirm('この内容で見積もりを送りますか？'))return '';
       proCard('est',{amt:a,memo:w,start:mdW($('e3').value),end:mdW($('e4').value),startYmd:$('e3').value,endYmd:$('e4').value,pay:$('e5').value+'・'+$('e6').value,noSurvey:!!noSurvey});});
   $('e3').onchange=function(){if(!edited||$('e4').value<$('e3').value)$('e4').value=$('e3').value;};$('e4').onchange=function(){edited=true;};}
+
+/* ファイルを選ぶ欄：ブラウザ標準の「Choose File」などを出さず、日本語のボタンにそろえる（11/23） */
+function fpEnh(inp){if(inp.dataset.fp||inp.hidden)return;inp.dataset.fp='1';inp.classList.add('fpi');
+  var w=document.createElement('span');w.className='fpw';w.innerHTML='<span class="fpb">'+(/pdf/.test(inp.accept)?'写真・PDFを選ぶ':'写真を選ぶ')+'</span><span class="fpn">まだ選んでいません</span>';
+  inp.parentNode.insertBefore(w,inp.nextSibling);
+  if(!inp.closest('label'))w.onclick=function(){inp.click();};
+  var none=inp.dataset.li!=null?'何枚でも追加できます':'まだ選んでいません';var up=function(){var n=inp.files?inp.files.length:0;w.querySelector('.fpn').textContent=n?(n===1?inp.files[0].name:n+'件を選びました'):none;w.classList.toggle('on',!!n);};up();
+  inp.addEventListener('change',up);}
+function fpScan(r){each('input[type=file]',r||document,fpEnh);}
+try{new MutationObserver(function(){fpScan();}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}
 /* 会員の応援を依頼する（11/23） */
 function hlpForm(){var pm=$('pmenu');if(pm)pm.hidden=true;api('hMembers',{bidId:PC2.bid.id}).then(function(j){var L=j.members||[];
   var row=function(m){var dis=m.st?' disabled':'';return '<label class="hm'+(m.st?' off':'')+'" data-q="'+esc((m.company+' '+m.name+' '+(m.cats||[]).join(' ')).toLowerCase())+'"><input type="checkbox" value="'+esc(m.uid)+'"'+dis+'><span class="av">'+esc((m.company||m.name||'?').charAt(0))+'</span><span class="tx"><b>'+esc(m.company||m.name)+'</b><small>'+esc(m.name)+'／'+esc((m.cats||[]).join('・'))+'</small>'+(m.st?'<em>'+(m.st==='joined'?'参加中':'返事待ち')+'</em>':'')+'</span></label>';};
@@ -1600,7 +1610,7 @@ function suBind(i){var d=SU.d;
   if(i===7)bindArea(pane);
 
   if(i===10)each('[name=u_kind]',pane,function(r){r.onchange=function(){$('corpD').hidden=r.value!=='法人';d.kind=r.value;};});
-  if(i===10)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b)b.value='';}};});
+  if(i===10)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b){b.value='';b.dispatchEvent(new Event('change'));}}};});
   if(i===11)$('u_card').onclick=function(){d.card=1;suStore();this.textContent='✓ 登録済み（テスト版の見本）';};}
 function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.value.trim():'';},need=function(ids){return ids.some(function(id){return !v(id);});};
   if(i===0){d.mln=v('u_mln');d.mfn=v('u_mfn');d.mtel=z2h(v('u_mtel')).replace(/[^0-9]/g,'');if(check&&(!d.mln||!d.mfn||!d.mtel))return 'お名前と電話番号を入れてください';}
