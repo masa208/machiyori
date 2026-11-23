@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=63;
+var APPVER_N=64;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1589,7 +1589,7 @@ function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}close
   var allSv=[].concat.apply([],SVC.map(svItems));SU.d.svc=(SU.d.svc||[]).filter(function(x){return allSv.indexOf(x)>=0;}); // 一覧が変わったときの古い名前を外す
   if(!SU.d.allc)SU.d.allc=[];
   if(!SU.i)SU.i=1; // 会員の確認の画面は使わない（会員は会員の入口で確認済み・11/22）
-  var mm=HOME&&HOME.meMember;if(mm&&!SU.d.ln){SU.d.ln=mm.ln;SU.d.fn=mm.fn;SU.d.lk=mm.lk;SU.d.fk=mm.fk;SU.d.tel=mm.tel;SU.d.nm=SU.d.nm||mm.company;}
+  var mm=HOME&&HOME.meMember;if(mm&&!SU.d.ln){SU.d.ln=mm.ln;SU.d.fn=mm.fn;SU.d.lk=mm.lk;SU.d.fk=mm.fk;SU.d.tel=mm.tel;SU.d.nm=SU.d.nm||mm.company;if(!SU.d.yago&&!SU.d.cname){SU.d.yago=mm.company;SU.d.cname=mm.company;}}
   if(!SU.d.mail&&ME&&ME.email)SU.d.mail=ME.email;if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
 function suStore(){if(SU&&SU.noStore)return;try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
 function suFld(id,label,req,val,ph,type,note){return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input id="'+id+'"'+(SU_AC[id]?' autocomplete="'+SU_AC[id]+'"':'')+(type?' type="'+type+'"':'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></label>'+(note?'<p class="pc-n">'+note+'</p>':'');}
