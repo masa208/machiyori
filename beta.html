@@ -513,7 +513,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=50;
+var APPVER_N=51;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -569,6 +569,10 @@ function charaName(){return 'まちこ';}
 function charaImg(cls){return '<img class="'+(cls||'av2')+'" src="chara.png" alt="">';}
 
 /* ===== ログイン ===== */
+/* テスト版：入口から確かめる。ログアウトし、LINEアプリの中でも自動でログインしない（11/23） */
+function noAuto(){try{return sessionStorage.getItem('mchy_noauto')==='1';}catch(e){return false;}}
+function entryTest(){try{sessionStorage.setItem('mchy_noauto','1');['mchy_had','mchy_biz','mchy_agree','machiyori_mode2'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+  var go=function(){MODE='user';logoutLocal();};if(TOKEN)api('logout').catch(function(){}).then(go);else go();}
 function logoutLocal(){TOKEN='';ME=null;HOME=null;PRO=null;MB=null;MJ=null;try{localStorage.removeItem('mchy_boot');}catch(e){}try{localStorage.removeItem(TK);}catch(e){}stopPoll();showLogin();}
 function saveLogin(j){TOKEN=j.token;ME=j.user;try{localStorage.setItem(TK,TOKEN);localStorage.setItem('mchy_had','1');}catch(e){}if(ME.callName&&ME.area&&ME.notifySet&&ME.agreedAt)setTimeout(function(){toast(ME.callName+'さん、おかえりなさい');},400);lg.hidden=true;if(history.replaceState)history.replaceState(null,'',location.pathname);afterLogin();}
 /* ===== はじめての人の入口（11/20） ===== */
@@ -634,7 +638,7 @@ function resetForm(rt){
 }
 var LIFFP=null;
 function liffReady(){if(!LIFFP)LIFFP=new Promise(function(ok,ng){if(window.liff)return ok();var sc=document.createElement('script');sc.src='https://static.line-scdn.net/liff/edge/2/sdk.js';sc.onload=function(){ok();};sc.onerror=function(){LIFFP=null;ng(new Error('LINEの読み込みに失敗しました'));};document.head.appendChild(sc);}).then(function(){return liff.init({liffId:LIFF_ID});});return LIFFP;}
-function lineLogin(){
+function lineLogin(){try{sessionStorage.removeItem('mchy_noauto');}catch(e){}
   if(isPhone()&&!inLineApp()){location.href=LIFF_URL;return;} // スマホのブラウザからはLINEアプリで開く（メール・パスワード入力を避ける）
   liffReady().then(function(){
     if(!liff.isLoggedIn()){liff.login({redirectUri:location.origin+location.pathname});return;}
@@ -656,12 +660,13 @@ function finishLine(){
 /* ===== 起動 ===== */
 function boot(){
   var q=new URLSearchParams(location.search);
+  if(q.get('entry')==='1'||/entry(?:%3D|=)1/.test(q.get('liff.state')||'')){try{history.replaceState(null,'',location.pathname);}catch(e){}entryTest();return;}
   var bz=q.get('biz')||(((q.get('liff.state')||'').match(/biz(?:%3D|=)(\d)/)||[])[1]);if(bz==='1'||bz==='2'){try{localStorage.setItem('mchy_biz',bz);}catch(e){}}
   if(q.get('agreed')==='1'||/agreed%3D1|agreed=1/.test(q.get('liff.state')||'')){try{localStorage.setItem('mchy_agree','1');}catch(e){}}
   if(q.get('reset')){resetForm(q.get('reset'));return;}
   if(TOKEN&&(q.get('liffClientId')||q.get('code')||q.get('liff.state'))){try{history.replaceState(null,'',location.pathname);}catch(e){}q=new URLSearchParams('');}
   if(q.get('liffClientId')||q.get('code')||q.get('liff.state')){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
-  if(!TOKEN&&inLineApp()){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
+  if(!TOKEN&&inLineApp()&&!noAuto()){liffReady().then(function(){if(liff.isLoggedIn())finishLine();else showLogin();}).catch(function(){showLogin();});return;}
   if(!TOKEN){showLogin();return;}
   var bc=null;try{bc=JSON.parse(localStorage.getItem('mchy_boot')||'null');}catch(e){}
   if(bc&&bc.t===TOKEN&&bc.ME&&bc.HOME){ME=bc.ME;HOME=bc.HOME;modeGuard();afterLogin();return;}
@@ -1062,7 +1067,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
     (MODE==='pro'?'<div class="sec">業者の設定</div><div class="list mset">'+[['va','対応エリア',esc(PRO?areaSum(PRO.areas):'読み込み中…')]].concat(PRO&&PRO.svc&&PRO.svc.can?[['vsv','対応サービス',PRO.svc.pending?'追加の審査中':PRO.svc.list.length+'件']]:[]).concat(PRO&&PRO.lic&&PRO.lic.length?[['lic','<i class="exm">!</i> 資格の書類',licSum(PRO.lic)||'任意の書類のみ']]:[]).map(row).join('')+'</div>':'')+
     (HOME&&HOME.test?'<div class="sec">テスト用 <small>本番では表示されません</small></div><div class="list mset tset">'+[['t1','業者登録をやり直す','申し込み・資格・会員の状態を消す'],['t2','自分の申し込みを承認する','運営の承認の代わり'],['t3','自分の資格の書類を承認する','運営の承認の代わり'],['t4','自分の大カテゴリの追加を承認する','運営の承認の代わり']].map(row).join('')+'</div>':'')+
-    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['en','入口から確かめる','ログアウトして「はじめての方」の画面へ（テスト版のみ）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="8" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
@@ -1073,7 +1078,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     if(k==='lic')licPane();
     if(k==='vsv')svcPane();
     if(k==='qa')inquiry();
-    if(k==='rs')testReset();
+    if(k==='rs')testReset();if(k==='en')entryTest();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
     if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');try{localStorage.removeItem('mchy_had');}catch(e){}logoutLocal();}).catch(fail);};}
   };});}
