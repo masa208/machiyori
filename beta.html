@@ -138,7 +138,7 @@ h2{font-size:17px;margin:0 0 10px}
 .stp{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 6px 8px;margin-bottom:8px}.stp span{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:#9aa5a0;position:relative;text-align:center;line-height:1.2}.stp i{width:12px;height:12px;border-radius:50%;background:#dfe4e1;position:relative;z-index:1}.stp span+span::before{content:"";position:absolute;top:5px;right:50%;width:100%;height:2px;background:#dfe4e1}.stp .dn i,.stp .dn::before,.stp .cur::before{background:var(--m)}.stp .cur i{background:#fff;box-shadow:0 0 0 3px var(--m)}.stp .cur{color:var(--m);font-weight:700}.stp .dn{color:var(--tx)}
 .mtg{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;margin-right:6px}.mtg.t1{background:#FCE9E2;color:#C2491F}.mtg.t2{background:#E6ECF5;color:#2B4C7E}.mtg.t3{background:#EAF3ED;color:#2F6B45}.mtg.t4{background:#F3EBDA;color:#8A6416}.mtg.t5{background:#EEF1EF;color:#5D6A63}
 .mpc2 .bl1{display:flex;align-items:center}.mpc2 .mbr{margin-left:auto}.mpc2.dn{opacity:.6}.bdg.dn{background:#EAF3ED;color:#2F6B45}
-.pf .mkd,.mkd{width:100%;padding:12px;font-size:16px;font-weight:700;border:1.5px solid #1F7A4D;border-radius:10px;background:#F2FAF5;color:#173;margin-bottom:4px}.mtm{display:flex;gap:8px;align-items:center}.mtm input{flex:1;min-width:0}.mbl{display:flex;justify-content:space-between;align-items:center}.mtp{color:#1F6FD6;background:#fff;border:1.5px solid #1F6FD6;border-radius:16px;padding:3px 12px;font:inherit;font-size:13px;font-weight:700}.mtpl{text-align:left;font-weight:400;line-height:1.6}
+.pf .mkd,.mkd{width:100%;padding:12px;font-size:16px;font-weight:700;border:1.5px solid #1F7A4D;border-radius:10px;background:#F2FAF5;color:#173;margin-bottom:4px}.mtm{display:flex;gap:8px;align-items:center}.mtm input{flex:1;min-width:0}.mtm input[type=number]{flex:0 0 110px}.mbl{display:flex;justify-content:space-between;align-items:center}.mtp{color:#1F6FD6;background:#fff;border:1.5px solid #1F6FD6;border-radius:16px;padding:3px 12px;font:inherit;font-size:13px;font-weight:700}.mtpl{text-align:left;font-weight:400;line-height:1.6}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:8px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#6E7D75;font-size:12px;margin-right:3px}
 .mhd{margin-left:auto;color:#2B4C7E;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;background:#fff;color:#23302A}.mks button[aria-pressed=true]{background:#2B4C7E;color:#fff;border-color:#2B4C7E}
@@ -595,7 +595,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=85;
+var APPVER_N=86;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1997,13 +1997,13 @@ function mJoinView(){var r=MJR||{};var msg=r.app==='pending'?'業者登録の申
   if(r.role==='member'||r.role==='vendor')msg='会員の方は、会員の確認をすると会員ページを使えます（本名・会社名・電話番号を会員の名簿と照らし合わせます）。';
   scr.innerHTML='<div class="mp mj"><h3>会員ページ</h3><p class="note2">'+msg+'</p>'+(r.role==='member'||r.role==='vendor'?'<button type="button" class="big" id="mjJ">会員の確認をする</button>':'')+'</div>';var b=$('mjJ');if(b)b.onclick=memberJoin;}
 /* 掲示板の用件（11/23）：投稿の最初に選び、用件ごとに聞く項目を変える。f＝[キー,見出し,種類(date/text/ch),必須,候補か例] */
-var MK={hand:{n:'人手がほしい',s:'応援・手元で来てほしい',i:'人',t:'t1',sh:'人手',f:[['date','作業日','date',1],['days','日数','ch',0,['1日','2〜3日','4日以上','相談']],['time','時間','time2',0],['place','場所','text',1,'例）松本市 島内'],['need','人数','ch',1,['1人','2人','3人以上']],['pay','報酬','text',0,'例）1日 15,000円'],['items','必要なもの','text',0,'例）作業着・安全靴・ヘルメット'],['cond','必要な資格・経験','ch',0,['経験者','未経験可','資格が必要']]]},
+var MK={hand:{n:'人手がほしい',s:'応援・手元で来てほしい',i:'人',t:'t1',sh:'人手',f:[['date','作業日','date2',1],['days','日数','ch',0,['1日','2〜3日','4日以上','相談']],['time','時間','time2',0],['place','場所','text',1,'例）松本市 島内'],['need','人数','num',1,'人'],['pay','報酬','text',0,'例）1日 15,000円'],['items','必要なもの','text',0,'例）作業着・安全靴・ヘルメット'],['cond','必要な資格・経験','ch',0,['経験者','未経験可','資格が必要']]]},
   job:{n:'仕事を頼みたい',s:'外注・下請け・自社でできない工事',i:'仕',t:'t2',sh:'仕事',f:[['when','時期','text',1,'例）12月中、12/5'],['place','場所','text',1,'例）松本市'],['cat','分野','text',0,'例）電気工事'],['budget','予算','text',0,'例）相談']]},
   lend:{n:'道具・機材の貸し借り',s:'足場・ユンボ・車両など',i:'貸',t:'t3',sh:'貸し借り',f:[['dir','貸したい／借りたい','ch',1,['借りたい','貸せます']],['item','物','text',1,'例）単管足場 約30m'],['period','期間','text',1,'例）12/10〜12/11'],['place','場所','text',1,'例）松本市'],['price','料金','text',0,'例）1日5,000円']]},
   ask:{n:'教えてほしい・相談',s:'材料・業者・やり方を聞きたい',i:'？',t:'t4',sh:'相談',f:[['place','場所','text',0,'例）安曇野市'],['cat','分野','text',0,'例）内装工事']]},
   info:{n:'お知らせ・共有',s:'空き日程・イベント・情報の共有',i:'知',t:'t5',sh:'お知らせ',f:[]}};
 var MKO=['hand','job','lend','ask','info'],MHAND=['hand','job','lend'];
-function mKV(p){var k=MK[p.kind]||MK.ask,I=p.info||{},a=[];k.f.forEach(function(f){var v=I[f[0]];if(!v)return;if(f[2]==='date')v=(+v.slice(5,7))+'/'+(+v.slice(8,10))+'（'+'日月火水木金土'.charAt(new Date(v+'T00:00:00+09:00').getDay())+'）';a.push('<span><em>'+esc(f[1].replace(/・.*$/,'').replace('貸したい／借りたい','')||'')+'</em>'+esc(v)+'</span>');});
+function mKV(p){var k=MK[p.kind]||MK.ask,I=p.info||{},a=[];k.f.forEach(function(f){var v=I[f[0]];if(!v)return;if(/^\d{4}-\d{2}-\d{2}/.test(v))v=v.split('〜').map(function(x){return (+x.slice(5,7))+'/'+(+x.slice(8,10))+'（'+'日月火水木金土'.charAt(new Date(x+'T00:00:00+09:00').getDay())+'）';}).join('〜');a.push('<span><em>'+esc(f[1].replace(/・.*$/,'').replace('貸したい／借りたい','')||'')+'</em>'+esc(v)+'</span>');});
   if(!a.length&&p.place)a.push('<span><em>場所</em>'+esc(p.place)+'</span>');if(!a.length&&p.budget)a.push('<span><em>予算</em>'+esc(p.budget)+'</span>');return a.length?'<div class="mkv">'+a.join('')+'</div>':'';}
 function mJST(iso){var d=new Date(new Date(iso).getTime()+9*3600e3);return d.toISOString().slice(0,10);}
 function mToday(){return mJST(new Date().toISOString());}
@@ -2045,6 +2045,8 @@ function mPostForm(kind){kind=MK[kind]?kind:'hand';var ph3=[],CH={},max=function
   var fld=function(f){var lab='<div class="lab">'+f[1]+' '+(f[3]?'<em class="rq">必須</em>':'<em class="op">任意</em>')+'</div>';
     if(f[2]==='ch')return lab+'<div class="mch" data-ch="'+f[0]+'">'+f[4].map(function(o){return '<button type="button" data-o="'+esc(o)+'">'+esc(o)+'</button>';}).join('')+'</div>';
     if(f[2]==='date')return lab+'<input type="date" id="mf_'+f[0]+'" min="'+mToday()+'">';
+    if(f[2]==='date2')return lab+'<div class="mtm"><input type="date" id="mf_'+f[0]+'_a" min="'+mToday()+'" aria-label="開始日"><span>〜</span><input type="date" id="mf_'+f[0]+'_b" min="'+mToday()+'" aria-label="終了日"></div><p class="pc-n">1日だけなら左だけ入れてください</p>';
+    if(f[2]==='num')return lab+'<div class="mtm"><input type="number" id="mf_'+f[0]+'" min="1" max="99" inputmode="numeric" placeholder="例）2"><span>'+f[4]+'</span></div>';
     if(f[2]==='time2')return lab+'<div class="mtm"><input type="time" id="mf_'+f[0]+'_a" value="08:00" aria-label="開始"><span>〜</span><input type="time" id="mf_'+f[0]+'_b" value="17:00" aria-label="終了"></div>';
     return lab+'<input id="mf_'+f[0]+'" maxlength="100" placeholder="'+esc(f[4]||'')+'">';};
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員に投稿する</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw su"><form class="pf pf2" onsubmit="return false">'+
@@ -2066,7 +2068,7 @@ function mPostForm(kind){kind=MK[kind]?kind:'hand';var ph3=[],CH={},max=function
   var th=function(){$('mth').innerHTML=ph3.map(function(u,i){return '<div class="tb"><img src="'+u+'" alt=""><button type="button" data-x="'+i+'" aria-label="外す">✕</button></div>';}).join('');each('[data-x]',$('mth'),function(b){b.onclick=function(){ph3.splice(+b.dataset.x,1);th();};});};
   $('mph').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;if(ph3.length>=3)return toast('写真は3枚までです');shrink(f).then(function(u){ph3.push(u);th();}).catch(fail);};
   $('mgo').onclick=function(){var bt=this,w=$('mfw'),useDl=pane.querySelector('[name=mdl]:checked').value==='1',dl=useDl?$('mdd').value:'',info={},miss='';
-    K.f.forEach(function(f){var v;if(f[2]==='ch')v=CH[f[0]]||'';else if(f[2]==='time2'){var x=$('mf_'+f[0]+'_a').value,y=$('mf_'+f[0]+'_b').value;v=x||y?(x?x.replace(/^0/,''):'')+'〜'+(y?y.replace(/^0/,''):''):'';}else v=$('mf_'+f[0]).value.trim();if(v)info[f[0]]=v;else if(f[3]&&!miss)miss=f[1];});
+    K.f.forEach(function(f){var v;if(f[2]==='ch')v=CH[f[0]]||'';else if(f[2]==='date2'){var da=$('mf_'+f[0]+'_a').value,db=$('mf_'+f[0]+'_b').value;if(db&&!da){da=db;db='';}if(da&&db&&db<da){var tt=da;da=db;db=tt;}v=da?da+(db&&db!==da?'〜'+db:''):'';}else if(f[2]==='num'){var nn=parseInt($('mf_'+f[0]).value,10);v=nn>0?Math.min(nn,99)+f[4]:'';}else if(f[2]==='time2'){var x=$('mf_'+f[0]+'_a').value,y=$('mf_'+f[0]+'_b').value;v=x||y?(x?x.replace(/^0/,''):'')+'〜'+(y?y.replace(/^0/,''):''):'';}else v=$('mf_'+f[0]).value.trim();if(v)info[f[0]]=v;else if(f[3]&&!miss)miss=f[1];});
     var d={kind:kind,title:$('mt').value.trim(),body:$('mb').value.trim(),info:info,place:info.place||'',dl:dl};
     var err=!d.title?'タイトルを入れてください':miss?'「'+miss+'」を入れてください':bodyReq&&!d.body?'内容を入れてください':useDl&&!dl?'期限の日付を選んでください':useDl&&(dl<mToday()||dl>max())?'期限は今日から3か月以内で選んでください':(hasContact(d.title+' '+d.body+' '+(info.items||'')+' '+(info.pay||''))?'電話番号・メールアドレスは書けません':'');
     if(err){w.hidden=false;w.textContent=err;return;}bt.disabled=true;bt.textContent='投稿しています…';var urls=[];
