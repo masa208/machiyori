@@ -583,7 +583,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=82;
+var APPVER_N=83;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -619,9 +619,10 @@ function yen(n){return Number(n||0).toLocaleString()+'円';}
 var T0=Date.now(),BOOTMS=0,LASTAPI='';
 function estLbl(x){return x&&x.estOnly?'<div class="sht-r"><span>希望</span><b>'+(x.estOnly==='svy'?'現地調査だけお願いしたい':'見積もりだけ欲しい')+'</b></div>':'';}
 document.addEventListener('change',function(e){var t=e.target;if(t&&t.checked&&(t.id==='pc_est'||t.id==='pc_svy')){var o=document.getElementById(t.id==='pc_est'?'pc_svy':'pc_est');if(o)o.checked=false;}});
+var APILOG=[]; // テスト版：直近の通信の記録（全体の秒数・サーバーの中の秒数・表を読んだ回数）
 function api(a,data){
   var b=data||{};b.a=a;b.token=TOKEN;var t1=Date.now();
-  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){LASTAPI=a+' '+((Date.now()-t1)/1000).toFixed(1)+'秒';
+  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();}).then(function(j){var tt=(Date.now()-t1)/1000,sv=j&&j._t?j._t.ms/1000:null;LASTAPI=a+' '+tt.toFixed(1)+'秒'+(sv!=null?'（サーバーの中 '+sv.toFixed(1)+'秒）':'');APILOG.unshift([new Date().toTimeString().slice(0,8),a,tt.toFixed(1),sv!=null?sv.toFixed(1):'-',j&&j._t?j._t.reads:'-']);APILOG.length=Math.min(APILOG.length,30);
     if(!j.ok&&j.error==='auth'){logoutLocal();throw new Error('ログインし直してください');}
     if(!j.ok){var er=new Error(j.error||'うまくいきませんでした');er.j=j;throw er;}
     return j;
@@ -1183,7 +1184,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
     
     (HOME&&HOME.test?'<div class="sec">テスト用 <small>本番では表示されません</small></div><div class="list mset tset">'+[['t1','業者登録をやり直す','申し込み・資格・会員の状態を消す'],['t2','自分の申し込みを承認する','運営の承認の代わり'],['t3','自分の資格の書類を承認する','運営の承認の代わり'],['t4','自分の大カテゴリの追加を承認する','運営の承認の代わり']].map(row).join('')+'</div>':'')+
-    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['en','入口から確かめる','ログアウトして「はじめての方」の画面へ（テスト版のみ）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
+    '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['al','通信の記録','直近の通信にかかった秒数（テスト版のみ）'],['en','入口から確かめる','ログアウトして「はじめての方」の画面へ（テスト版のみ）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
     if(k==='nm'){openSheet('<h3>呼ばれたい名前</h3><input class="nmi" id="nmI" value="'+esc(ME.callName||'')+'" maxlength="8" aria-label="呼ばれたい名前"><button type="button" class="big" id="nmS">保存する</button>');$('nmS').onclick=function(){var v=$('nmI').value.trim();if(v)prof({callName:v});};}
@@ -1195,6 +1196,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     if(k==='pf')profPane();
     if(k==='vsv')svcPane();
     if(k==='qa')inquiry();
+    if(k==='al')openSheet('<h3>通信の記録</h3><p class="sp s2">全体＝押してから返事が届くまで。サーバーの中＝サーバーが処理にかけた時間。差は、通信とサーバーの起動にかかった時間です。</p><div style="font-size:12.5px;line-height:1.9">'+(APILOG.length?APILOG.map(function(x){return esc(x[0])+'　'+esc(x[1])+'　全体 '+x[2]+'秒／サーバーの中 '+x[3]+'秒／表 '+x[4]+'回';}).join('<br>'):'まだ記録がありません')+'</div>','tall');
     if(k==='rs')testReset();if(k==='en')entryTest();
     if(k==='lo'){api('logout').catch(function(){}).then(function(){try{if(window.liff&&liff.isLoggedIn&&liff.isLoggedIn())liff.logout();}catch(e){}logoutLocal();});}
     if(k==='out'){openSheet('<h3>退会しますか？</h3><p class="sp s2">進行中の依頼がある間は退会できません。退会すると、もとに戻せません。</p><button type="button" class="big" id="wdB" style="background:#C8321F">退会する</button>');$('wdB').onclick=function(){api('withdraw').then(function(){closeSheet();toast('退会しました');try{localStorage.removeItem('mchy_had');}catch(e){}logoutLocal();}).catch(fail);};}
