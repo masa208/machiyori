@@ -517,7 +517,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=57;
+var APPVER_N=58;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1309,8 +1309,8 @@ function licPane(){var L=PRO&&PRO.lic||[];
   var PICK={};var showPick=function(i){var box=pane.querySelector('[data-lf="'+i+'"]');box.innerHTML=(PICK[i]||[]).map(function(f,k){return '<div class="lfi"><span>'+esc(f.name)+'</span><button type="button" data-rm="'+i+'_'+k+'" aria-label="外す">✕</button></div>';}).join('');each('[data-rm]',box,function(b){b.onclick=function(){var a=b.dataset.rm.split('_');PICK[a[0]].splice(+a[1],1);showPick(a[0]);};});};
   each('[data-li]',pane,function(inp){inp.onchange=function(){var i=inp.dataset.li;PICK[i]=(PICK[i]||[]).concat(Array.prototype.slice.call(inp.files||[]));inp.value='';showPick(i);};});
   each('[data-ls]',pane,function(bt){bt.onclick=function(){var i=+bt.dataset.ls,x=L[i],fs=(PICK[i]||[]).slice();if(!fs.length)return toast('書類を追加してください');
-    bt.disabled=true;var got=[],p=Promise.resolve(),n=0;fs.forEach(function(f){p=p.then(function(){n++;bt.textContent='送っています…（'+n+'/'+fs.length+'）';return suFile(f);}).then(function(r){return api('vDoc',{kind:'lic',mime:r.mime,b64:r.b64});}).then(function(r){got.push({id:r.id,name:r.name});});});
-    p.then(function(){return api('vLicSubmit',{key:x.key,files:got});}).then(function(j){PRO.lic=j.lic;toast('書類を出しました。審査をお待ちください');licPane();}).catch(function(e){bt.disabled=false;bt.textContent='提出する';fail(e);});};});}
+    bt.disabled=true;var n=0;bt.textContent='送っています…';var p=Promise.all(fs.map(function(f){return suFile(f).then(function(r){return api('vDoc',{kind:'lic',mime:r.mime,b64:r.b64});}).then(function(r){n++;bt.textContent='送っています…（'+n+'/'+fs.length+'）';return {id:r.id,name:r.name};});}));
+    p.then(function(got){return api('vLicSubmit',{key:x.key,files:got});}).then(function(j){PRO.lic=j.lic;toast('書類を出しました。審査をお待ちください');licPane();}).catch(function(e){bt.disabled=false;bt.textContent='提出する';fail(e);});};});}
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定',expired:'連絡がなく終了'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
 function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'の依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
@@ -1610,7 +1610,8 @@ function suBind(i){var d=SU.d;
   if(i===7)bindArea(pane);
 
   if(i===10)each('[name=u_kind]',pane,function(r){r.onchange=function(){$('corpD').hidden=r.value!=='法人';d.kind=r.value;};});
-  if(i===10)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b){b.value='';b.dispatchEvent(new Event('change'));}}};});
+  if(i===10)each('[data-doc]',pane,function(inp){inp.addEventListener('change',function(){suUp(inp);});});
+  if(i===10)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();SU.d.idt=r.value;each('[data-doc^=id]',pane,function(inp){if(inp.files.length&&!(inp.dataset.doc==='idb'&&r.value==='my'))suUp(inp);});if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b){b.value='';b.dispatchEvent(new Event('change'));}}};});
   if(i===11)$('u_card').onclick=function(){d.card=1;suStore();this.textContent='✓ 登録済み（テスト版の見本）';};}
 function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.value.trim():'';},need=function(ids){return ids.some(function(id){return !v(id);});};
   if(i===0){d.mln=v('u_mln');d.mfn=v('u_mfn');d.mtel=z2h(v('u_mtel')).replace(/[^0-9]/g,'');if(check&&(!d.mln||!d.mfn||!d.mtel))return 'お名前と電話番号を入れてください';}
@@ -1631,6 +1632,13 @@ function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.v
   if(i===11&&check&&!d.card)return 'カードを登録してください';
   suStore();return '';}
 /* 写真は長い辺2000pxのJPEGに縮めて送る。8MBを超えるときは、画質→大きさの順に少しずつ下げる（文字が読める範囲） */
+/* 書類は選んだ時点で裏で送り始める。複数は同時に送る（11/23：次へで待たせない） */
+var SUUP={};
+function suSame(u,inp,d){var fs=inp.files;return u.fs.length===fs.length&&u.fs.every(function(f,k){return f===fs[k];})&&(!/^id/.test(inp.dataset.doc)||u.idt===d.idt);}
+function suUp(inp){var k=inp.dataset.doc,d=SU.d,fs=Array.prototype.slice.call(inp.files||[]);if(!fs.length||(/^id/.test(k)&&!d.idt)){delete SUUP[k];return null;}
+  var u={fs:fs,idt:d.idt};u.p=Promise.all(fs.map(function(f){return suFile(f).then(function(x){return api('vDoc',{kind:k,idt:/^id/.test(k)?u.idt:'',mime:x.mime,b64:x.b64});}).then(function(r){return {id:r.id,name:r.name};});}))
+    .then(function(got){if(SUUP[k]===u){d.docs[k]=got;suStore();}return got;},function(e){if(SUUP[k]===u)delete SUUP[k];throw e;});
+  u.p.catch(function(){});SUUP[k]=u;return u;}
 function suIdSw(){var it=pane.querySelector('[name=u_idt]:checked');if(!it)return;$('idD').hidden=false;$('idB').hidden=it.value==='my';$('idMy').hidden=it.value!=='my';}
 var SU_MAX=7.5*1024*1024;
 function suFile(f){return new Promise(function(ok,ng){var rd=new FileReader();rd.onerror=function(){ng(new Error('ファイルを読めませんでした'));};
@@ -1638,9 +1646,9 @@ function suFile(f){return new Promise(function(ok,ng){var rd=new FileReader();rd
   rd.onload=function(){var im=new Image();im.onload=function(){var L=2000,q=.88,b64='';for(var t=0;t<8;t++){var s=Math.min(1,L/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);b64=c.toDataURL('image/jpeg',q).split(',')[1];if(b64.length*3/4<=SU_MAX)break;if(q>.7)q-=.08;else L=Math.round(L*.85);}ok({mime:'image/jpeg',b64:b64});};im.onerror=function(){ng(new Error('「'+f.name+'」を開けませんでした。写真を撮り直すか、PDFにしてください'));};im.src=rd.result;};rd.readAsDataURL(f);});}
 function suAsync(i){var d=SU.d;
   if(i===0)return api('vMember',{name:d.mln+d.mfn,tel:d.mtel}).then(function(j){d.member=j.member.name;if(!d.ln){d.ln=d.mln;d.fn=d.mfn;d.tel=d.mtel;}if(!d.nm&&j.member.company)d.nm=j.member.company;toast('会員の確認ができました');});
-  if(i===10){var jobs=[];each('input[type=file]',pane,function(inp){var k=inp.dataset.doc;if(!inp.files.length)return;if(k==='idb'&&d.idt==='my')return;var fs=Array.prototype.slice.call(inp.files);jobs.push({k:k,fs:fs});});
-    var p=Promise.resolve(),n=0;jobs.forEach(function(jb){var got=[];jb.fs.forEach(function(f){p=p.then(function(){n++;$('suN').textContent='書類を送っています…（'+n+'）';return suFile(f);}).then(function(x){return api('vDoc',{kind:jb.k,idt:/^id/.test(jb.k)?d.idt:'',mime:x.mime,b64:x.b64});}).then(function(r){got.push({id:r.id,name:r.name});});});p=p.then(function(){d.docs[jb.k]=got;suStore();});});
-    return p;}
+  if(i===10){var jobs=[];each('input[type=file]',pane,function(inp){var k=inp.dataset.doc;if(!k||!inp.files.length)return;if(k==='idb'&&d.idt==='my')return;
+      var u=SUUP[k];if(!u||!suSame(u,inp,d))u=suUp(inp);jobs.push(u.p);});
+    if(!jobs.length)return Promise.resolve();$('suN').textContent='書類を送っています…';return Promise.all(jobs).then(function(){suStore();});}
   return Promise.resolve();}
 function suSubmit(){var d=SU.d,docs=[];Object.keys(d.docs).forEach(function(k){(d.docs[k]||[]).forEach(function(x){docs.push({kind:k,id:x.id,name:x.name});});});
   var data={};Object.keys(d).forEach(function(k){if(['docs','mnext','mexp','miss','msentTo'].indexOf(k)<0)data[k]=d[k];});var need=svDocs();data.needDocs=need;data.needKeys=svDocs(1);data.cats=SVC.filter(function(c){return svItems(c).some(function(x){return d.svc.indexOf(x)>=0;});}).map(function(c){return c[0];});
