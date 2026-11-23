@@ -517,7 +517,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=54;
+var APPVER_N=55;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -960,7 +960,7 @@ function postpone(){
 /* ===== 業者とのチャット ===== */
 var CH=null;
 function stopChat(){clearInterval(chatT);chatT=null;}
-if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
+if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
 function openChat(bidId,back){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
   api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
@@ -1523,6 +1523,7 @@ function suMark(msg){each('.ferr',pane,function(e){e.remove();});each('.bad',pan
   var hit=[],put=function(el,t){if(!el||el.classList.contains('bad'))return;el.classList.add('bad');var m=document.createElement('span');m.className='ferr';m.textContent=t;var lb=el.closest('label');if(lb)lb.appendChild(m);else el.insertAdjacentElement('afterend',m);hit.push(el);el.addEventListener('input',function f(){el.classList.remove('bad');if(m.parentNode)m.remove();el.removeEventListener('input',f);});};
   if(/必須|入れてください|入力/.test(msg))each('label',pane,function(l){var rq=l.querySelector('em.rq'),i=l.querySelector('input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select');if(rq&&i&&!i.value.trim())put(i,'入力してください');});
   SU_ERR.forEach(function(e){if(e[0].test(msg))e[1].forEach(function(id){var el=$(id);if(el&&el.value.trim())put(el,msg);});});return hit[0]||null;}
+var ID_T=[['dl','運転免許証（表・裏）'],['my','マイナンバーカード（表面のみ）'],['rc','在留カード（表・裏）']];
 function suDocRow(kind,label,req,note,multi){var d=SU.d,have=d.docs[kind]||[];return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input type="file" data-doc="'+kind+'" accept="image/*,.pdf"'+(multi?' multiple':'')+'></label>'+(have.length?'<p class="pc-n" style="color:#2F6B45">✓ 提出済み：'+have.map(function(x){return esc(x.name);}).join('、')+'（選び直すと差し替えます）</p>':'')+(note?'<p class="pc-n">'+note+'</p>':'');}
 var SV_ICON={'水のトラブル':'🚰','外装工事':'🏠','リフォーム':'🔨','機器設置・修理':'🔧','解体工事':'🏗️','外構工事・エクステリア':'🧱','庭の手入れ':'🌳','ハウスクリーニング':'🧽','害虫駆除・害獣駆除':'🐜','便利屋':'📦','鍵・防犯対策':'🔑','図面・役所の手続き':'📐','耐震診断・住宅診断':'🔍','税務・法務・労務の相談':'⚖️','ドローン撮影・測量':'🚁'};
 function svCatsOf(list){return SVC.filter(function(c){return svItems(c).some(function(x){return list.indexOf(x)>=0;});}).map(function(c){return c[0];});}
@@ -1570,10 +1571,11 @@ function suBody(i){var d=SU.d;
     '<div class="lab">作業中に、過失で物を汚したり壊したりしたときの対応 <em class="rq">必須</em></div>'+['依頼者と話し合い、実費を弁償する（保険を使う場合を含む）','自社で修繕する'].map(function(x){return '<label class="agr"><input type="radio" name="u_dmg" value="'+x+'"'+(d.dmg===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+'</form>';
   if(i===9)return '<p class="note2" style="margin-top:0">下にスクロールして、すべて読んでください。</p><div class="agbox" tabindex="0">'+AGREE.map(function(t,k){return '<p><b>'+(k+1)+'.</b> '+t+'</p>';}).join('')+'</div><label class="agr obag"><input type="checkbox" id="u_agall"'+(d.agree.length===AGREE.length?' checked':'')+'><span>上の重要事項をすべて確認し、同意します</span></label>';
   if(i===10){var lks=suLocks();return '<form class="pf pf2" onsubmit="return false"><div class="lab">事業の形</div>'+['個人事業主','法人'].map(function(x){return '<label class="agr"><input type="radio" name="u_kind" value="'+x+'"'+((d.kind||'個人事業主')===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+
-    suDocRow('id','本人確認書類',1,'運転免許証・マイナンバーカード（表のみ）など。運営の確認にだけ使い、確認が終わったら削除します。')+
+    '<div class="lab">本人確認書類 <em class="rq">必須</em></div>'+ID_T.map(function(t){return '<label class="agr"><input type="radio" name="u_idt" value="'+t[0]+'"'+(d.idt===t[0]?' checked':'')+'><span>'+t[1]+'</span></label>';}).join('')+
+    '<div id="idD"'+(d.idt?'':' hidden')+'>'+suDocRow('id','表面',1,'')+'<div id="idB"'+(d.idt==='my'?' hidden':'')+'>'+suDocRow('idb','裏面',1,'')+'</div><p class="warn" id="idMy"'+(d.idt==='my'?'':' hidden')+'>マイナンバーカードは表面だけを出してください。裏面には個人番号が書かれているため、出さないでください。</p></div><p class="pc-n">運営の確認にだけ使い、確認が終わったら削除します。</p>'+
     '<div id="corpD"'+(d.kind==='法人'?'':' hidden')+'>'+suFld('u_corp','法人番号',1,d.corp,'例）1234567890123','','数字13けたです')+suDocRow('reg','履歴事項全部証明書（発行から3か月以内）',1,'')+'</div>'+
     (lks.length?'<div class="pmg"><b>📄 登録後に提出する書類</b><small>選んだ作業（'+esc(lks.slice(0,3).join('・'))+(lks.length>3?' ほか':'')+'）に必要です。登録が終わったら、マイページから出してください。</small><ul style="margin:6px 0 0;padding-left:18px;font-size:14px">'+svDocs().map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div>':'')+
-'<p class="pc-n">画像かPDFで、1つ8MBまでです。提出した書類は、運営だけが見られる場所に保存します。</p></form>';}
+'<p class="pc-n">写真は、文字が読める画質のまま自動で小さくして送ります（大きさの心配はいりません）。PDFは1つ8MBまでです。提出した書類は、運営だけが見られる場所に保存します。</p></form>';}
   if(i===11)return '<p class="note2" style="margin-top:0">立候補料と紹介手数料のお支払いに使うカードを登録します。カード番号はまち頼には保存されず、決済会社（Stripe）が管理します。</p><button type="button" class="big" id="u_card">'+(d.card?'✓ 登録済み（テスト版の見本）':'カードを登録する（テスト版は見本）')+'</button><p class="pc-n">テスト版ではカードの登録はしません。ボタンを押すと「登録済み」になります。登録しても、依頼者から連絡が来るまで料金はかかりません。</p>';
   return '';}
 /* 郵便番号→住所：まずブラウザから郵便番号検索（zipcloud）、だめならサーバー経由 */
@@ -1598,6 +1600,7 @@ function suBind(i){var d=SU.d;
   if(i===7)bindArea(pane);
 
   if(i===10)each('[name=u_kind]',pane,function(r){r.onchange=function(){$('corpD').hidden=r.value!=='法人';d.kind=r.value;};});
+  if(i===10)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b)b.value='';}};});
   if(i===11)$('u_card').onclick=function(){d.card=1;suStore();this.textContent='✓ 登録済み（テスト版の見本）';};}
 function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.value.trim():'';},need=function(ids){return ids.some(function(id){return !v(id);});};
   if(i===0){d.mln=v('u_mln');d.mfn=v('u_mfn');d.mtel=z2h(v('u_mtel')).replace(/[^0-9]/g,'');if(check&&(!d.mln||!d.mfn||!d.mtel))return 'お名前と電話番号を入れてください';}
@@ -1611,20 +1614,22 @@ function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.v
   if(i===7){d.area=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(c){return c.checked;}).map(function(c){return c.value;});if(check&&!d.area.length)return '市町村を1つ以上選んでください';}
   if(i===8){var a=pane.querySelector('[name=u_ins]:checked'),b2=pane.querySelector('[name=u_dmg]:checked');d.ins=a?a.value:'';d.dmg=b2?b2.value:'';if(check){if(!d.ins||!d.dmg)return 'すべての質問に答えてください';}}
   if(i===9){d.agree=$('u_agall').checked?AGREE.map(function(x,k){return k;}):[];if(check&&!d.agree.length)return '重要事項を確認して、同意にチェックを入れてください';}
-  if(i===10){var k2=pane.querySelector('[name=u_kind]:checked');d.kind=k2?k2.value:'個人事業主';d.corp=z2h(v('u_corp')).replace(/[\s\-ー－]/g,'');
+  if(i===10){var k2=pane.querySelector('[name=u_kind]:checked'),it=pane.querySelector('[name=u_idt]:checked');d.kind=k2?k2.value:'個人事業主';var oldT=d.idt;d.idt=it?it.value:'';if(oldT&&oldT!==d.idt){delete d.docs.id;delete d.docs.idb;}if(d.idt==='my')delete d.docs.idb;d.corp=z2h(v('u_corp')).replace(/[\s\-ー－]/g,'');
     if(check){var bad='',has=function(k){var inp=pane.querySelector('[data-doc="'+k+'"]');return (inp&&inp.files.length)||(d.docs[k]||[]).length;};
       each('input[type=file]',pane,function(inp){Array.prototype.forEach.call(inp.files||[],function(f){if(!bad&&!/^image\//.test(f.type)&&f.type!=='application/pdf')bad='「'+f.name+'」は使えない形式です（画像かPDFにしてください）';if(!bad&&f.type==='application/pdf'&&f.size>8*1024*1024)bad='「'+f.name+'」が大きすぎます（8MBまで）';});});
-      if(bad)return bad;if(!has('id'))return '本人確認書類を選んでください';if(d.kind==='法人'){if(!/^\d{13}$/.test(d.corp))return '法人番号を数字13けたで入れてください';if(!has('reg'))return '履歴事項全部証明書を選んでください';}}}
+      if(bad)return bad;if(!d.idt)return '本人確認書類の種類を選んでください';if(!has('id'))return '本人確認書類の表面を選んでください';if(d.idt!=='my'&&!has('idb'))return '本人確認書類の裏面を選んでください';if(d.kind==='法人'){if(!/^\d{13}$/.test(d.corp))return '法人番号を数字13けたで入れてください';if(!has('reg'))return '履歴事項全部証明書を選んでください';}}}
   if(i===11&&check&&!d.card)return 'カードを登録してください';
   suStore();return '';}
-/* 画像は長い辺1600pxのJPEGに縮めてから送る（通信を軽くするため） */
+/* 写真は長い辺2000pxのJPEGに縮めて送る。8MBを超えるときは、画質→大きさの順に少しずつ下げる（文字が読める範囲） */
+function suIdSw(){var it=pane.querySelector('[name=u_idt]:checked');if(!it)return;$('idD').hidden=false;$('idB').hidden=it.value==='my';$('idMy').hidden=it.value!=='my';}
+var SU_MAX=7.5*1024*1024;
 function suFile(f){return new Promise(function(ok,ng){var rd=new FileReader();rd.onerror=function(){ng(new Error('ファイルを読めませんでした'));};
   if(f.type==='application/pdf'){rd.onload=function(){ok({mime:'application/pdf',b64:String(rd.result).split(',')[1]});};rd.readAsDataURL(f);return;}
-  rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok({mime:'image/jpeg',b64:c.toDataURL('image/jpeg',.85).split(',')[1]});};im.onerror=function(){ng(new Error('「'+f.name+'」を開けませんでした。写真を撮り直すか、PDFにしてください'));};im.src=rd.result;};rd.readAsDataURL(f);});}
+  rd.onload=function(){var im=new Image();im.onload=function(){var L=2000,q=.88,b64='';for(var t=0;t<8;t++){var s=Math.min(1,L/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);b64=c.toDataURL('image/jpeg',q).split(',')[1];if(b64.length*3/4<=SU_MAX)break;if(q>.7)q-=.08;else L=Math.round(L*.85);}ok({mime:'image/jpeg',b64:b64});};im.onerror=function(){ng(new Error('「'+f.name+'」を開けませんでした。写真を撮り直すか、PDFにしてください'));};im.src=rd.result;};rd.readAsDataURL(f);});}
 function suAsync(i){var d=SU.d;
   if(i===0)return api('vMember',{name:d.mln+d.mfn,tel:d.mtel}).then(function(j){d.member=j.member.name;if(!d.ln){d.ln=d.mln;d.fn=d.mfn;d.tel=d.mtel;}if(!d.nm&&j.member.company)d.nm=j.member.company;toast('会員の確認ができました');});
-  if(i===10){var jobs=[];each('input[type=file]',pane,function(inp){var k=inp.dataset.doc;if(!inp.files.length)return;var fs=Array.prototype.slice.call(inp.files);jobs.push({k:k,fs:fs});});
-    var p=Promise.resolve(),n=0;jobs.forEach(function(jb){var got=[];jb.fs.forEach(function(f){p=p.then(function(){n++;$('suN').textContent='書類を送っています…（'+n+'）';return suFile(f);}).then(function(x){return api('vDoc',{kind:jb.k,mime:x.mime,b64:x.b64});}).then(function(r){got.push({id:r.id,name:r.name});});});p=p.then(function(){d.docs[jb.k]=got;suStore();});});
+  if(i===10){var jobs=[];each('input[type=file]',pane,function(inp){var k=inp.dataset.doc;if(!inp.files.length)return;if(k==='idb'&&d.idt==='my')return;var fs=Array.prototype.slice.call(inp.files);jobs.push({k:k,fs:fs});});
+    var p=Promise.resolve(),n=0;jobs.forEach(function(jb){var got=[];jb.fs.forEach(function(f){p=p.then(function(){n++;$('suN').textContent='書類を送っています…（'+n+'）';return suFile(f);}).then(function(x){return api('vDoc',{kind:jb.k,idt:/^id/.test(jb.k)?d.idt:'',mime:x.mime,b64:x.b64});}).then(function(r){got.push({id:r.id,name:r.name});});});p=p.then(function(){d.docs[jb.k]=got;suStore();});});
     return p;}
   return Promise.resolve();}
 function suSubmit(){var d=SU.d,docs=[];Object.keys(d.docs).forEach(function(k){(d.docs[k]||[]).forEach(function(x){docs.push({kind:k,id:x.id,name:x.name});});});
