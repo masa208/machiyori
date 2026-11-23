@@ -150,6 +150,7 @@ h2{font-size:17px;margin:0 0 10px}
 .mphs{display:flex;gap:8px;flex-wrap:wrap}.mphs .tb{width:62px;height:62px}.mphs .tb img{width:62px;height:62px;object-fit:cover;border-radius:10px}
 .mpadd{width:62px;height:62px;border:1.5px dashed #9BB;border-radius:10px;display:flex!important;align-items:center;justify-content:center;font-size:22px;margin:0!important;cursor:pointer}.mpadd[hidden]{display:none!important}
 .mpf .lab.mbl{display:flex;justify-content:space-between;align-items:center}.mpf .mtm{align-items:center}.mpf .mtm input{margin:0}.mpf .pc-n{font-size:12px}.mpf .big{background:#1F7A4D;border-radius:12px;margin-top:20px}
+.tsvl{display:block;width:100%;margin-top:10px;padding:6px;border:0;background:none;color:#2F6B45;font:inherit;font-size:15px;font-weight:700;cursor:pointer}.tsvl small{display:block;font-size:12px;color:#777;font-weight:400;margin-bottom:2px}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:8px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#6E7D75;font-size:12px;margin-right:3px}
 .mhd{margin-left:auto;color:#2B4C7E;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;background:#fff;color:#23302A}.mks button[aria-pressed=true]{background:#2B4C7E;color:#fff;border-color:#2B4C7E}
@@ -372,7 +373,7 @@ body{background:#F3F4F1;margin:0}
 .gs{background:#F6F7F5;border-radius:8px;padding:8px 10px;margin:4px 0 8px}.gs>b{font-size:12px;color:#6E7D75}.gs ul{list-style:none;margin:4px 0;padding:0}.gs li{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0;border-bottom:1px dashed #E3E6E2}.gs li:last-child{border:0}.gs li em{font-style:normal;font-weight:900;white-space:nowrap}.gs small{display:block;font-size:11px;color:#6E7D75}
 .gsr{border:1px solid #E3E6E2;border-radius:10px;padding:8px;margin-bottom:6px;background:#fff}.gsr input{font:inherit;font-size:15px;border:1px solid #D5DAD6;border-radius:8px;padding:7px;width:100%}.gsa{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px}.gsa input{flex:1;min-width:0}
 .addr{font:inherit;font-size:13px;font-weight:700;color:#2F6B45;background:#E7F1EA;border:0;border-radius:16px;padding:6px 12px;margin:0 0 10px;cursor:pointer}
-.two input{min-width:0}
+.two input{min-width:0}.two input[type=date],.mtm input[type=date],.mtm input[type=time]{-webkit-appearance:none;appearance:none;width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 .cmw{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(20,30,25,0);transition:background .2s}
 .cmw.on{background:rgba(20,30,25,.55)}
 .cmb{position:relative;width:100%;max-width:340px;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.3);transform:scale(.85);opacity:0;transition:transform .28s cubic-bezier(.3,1.5,.5,1),opacity .2s}
@@ -606,7 +607,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=91;
+var APPVER_N=92;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1140,7 +1141,7 @@ function done(b){return b.done?'<p class="pc-ok">'+esc(b.done)+'</p>':'';}
 function cardHTML(m){var x=m.body||{},id=m.id;
   if(m.type==='prop'){var du=x.dur||30;return '<div class="pc"><div class="pc-h">現地調査の提案</div>'+(x.rows?gsHTML(x.rows):'')+'<dl><dt>確認すること</dt><dd>'+esc(x.todo)+'</dd><dt>所要時間</dt><dd>約'+du+'分</dd><dt>調査費用</dt><dd>無料</dd><dt>見積もり</dt><dd>'+esc(x.estDue)+'に届きます</dd></dl>'+
     (x.done?done(x):'<div class="pc-s">ご都合のよい開始時刻を選んでください（'+du+'分ほど）</div>'+(x.slots||[]).map(function(s){var h0=+s[1].slice(0,2)+(+s[1].slice(3,5))/60,h1=+s[2].slice(0,2)+(+s[2].slice(3,5))/60,stp=du/60,bt=[];for(var h=h0;h+stp<=h1+1e-9;h+=stp)bt.push(('0'+Math.floor(h)).slice(-2)+':'+(h%1?'30':'00'));return '<div class="pc-d">'+esc(s[0])+' '+s[1]+'〜'+s[2]+'</div><div class="pc-t">'+bt.map(function(t){return '<button type="button" data-id="'+id+'" data-op="pick" data-slot="'+esc(s[0]+' '+t)+'">'+t+'</button>';}).join('')+'</div>';}).join('')+'<button type="button" class="pc-no" data-id="'+id+'">合う日時がない（候補を送る）</button>')+'</div>';}
-  if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり</div><p class="amt">'+Number(x.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(x.memo)+'</dd><dt>工期</dt><dd>'+esc(x.start)+(x.end&&x.end!==x.start?' 〜 '+esc(x.end):'（1日）')+'</dd><dt>支払い</dt><dd>'+esc(x.pay)+'</dd><dt>有効期限</dt><dd>'+esc(x.due)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">この金額で依頼すると成約します</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="no">見送る</button><button type="button" data-id="'+id+'" data-op="yes">この内容で依頼する</button></div>')+'</div>';
+  if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり</div><p class="amt">'+Number(x.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(x.memo)+'</dd>'+(x.start?'<dt>工期</dt><dd>'+esc(x.start)+(x.end&&x.end!==x.start?' 〜 '+esc(x.end):'（1日）')+'</dd>':'')+(x.span?'<dt>工期の目安</dt><dd>'+esc(x.span)+'</dd>':'')+(x.pay?'<dt>支払い</dt><dd>'+esc(x.pay)+'</dd>':'')+'<dt>有効期限</dt><dd>'+esc(x.due)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">この金額で依頼すると成約します</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="no">見送る</button><button type="button" data-id="'+id+'" data-op="yes">この内容で依頼する</button></div>')+'</div>';
   if(m.type==='chg')return '<div class="pc"><div class="pc-h">追加の作業の申請</div><p class="amt2"><s>'+yen(x.from)+'</s> → <b>'+yen(x.to)+'</b>（税込）</p><dl><dt>追加の金額</dt><dd>＋'+yen(x.ad||(x.to-x.from))+'</dd><dt>理由</dt><dd>'+esc(x.why)+'</dd></dl>'+(x.done?done(x):'<p class="pc-n">承諾すると、業者さんが追加の作業を始めます。わからない点はチャットで聞けます。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="ng">承諾しない</button><button type="button" data-id="'+id+'" data-op="ok">承諾する</button></div>')+'</div>';
   if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告</div><dl><dt>作業日</dt><dd>'+esc(x.day)+'</dd><dt>作業内容</dt><dd>'+esc(x.what)+'</dd><dt>最終金額</dt><dd><b>'+yen(x.amt)+'</b>（税込）</dd></dl>'+(x.done?done(x):'<p class="pc-n">内容を確認して、問題なければ「完了を確認する」を押してください。7日たつと自動で完了になります。</p><div class="pc-b"><button type="button" class="g" data-id="'+id+'" data-op="notyet">まだ終わっていない</button><button type="button" data-id="'+id+'" data-op="fin">完了を確認する</button></div>')+'</div>';
   if(m.type==='sch')return '<div class="pc"><div class="pc-h">初回の着工日の候補</div><p class="pc-n" style="margin-top:0">1つ選んでください。2日目以降の作業日は、チャットで相談します</p>'+(x.cands||[]).map(function(k,i){return '<label class="rdo"><input type="radio" name="sc_'+id+'" value="'+i+'"'+(x.done?' disabled':'')+'><span><b>'+esc(k.start+' '+k.time)+'</b><br>完了予定 '+esc(k.end)+'<br><em>立ち会い：'+esc(k.tachi+(k.tachiNote?'（'+k.tachiNote+'）':''))+'</em></span></label>';}).join('')+(x.msg?'<p class="pc-m">'+esc(x.msg)+'</p>':'')+
@@ -1625,7 +1626,7 @@ function drawPro(){
   var task='';
   if(HL)s='__helper';
   var eo=!!c.estOnly&&c.estOnly!=='svy';
-  if(s==='chat'&&eo)task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">「見積もりだけ」の依頼です。話を聞いて、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tNoSv">見積もり作成</button></div><button type="button" id="tProp" style="display:block;width:100%;margin-top:8px;padding:12px;border:1.5px solid #2F6B45;border-radius:10px;background:#fff;color:#2F6B45;font:inherit;font-size:15px;font-weight:700">現地調査依頼はこちら</button></div>';
+  if(s==='chat'&&eo)task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">「見積もりだけ」の依頼です。話を聞いて、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tNoSv">見積もりを作る</button></div><button type="button" id="tProp" class="tsvl"><small>現地を見ないと金額が出せないときは</small>現地調査を提案する ›</button></div>';
   else if(s==='chat')task='<div class="pc tsk"><div class="pc-h">やること：現地調査の提案</div><p class="sp s2" style="margin:0 0 8px">話を聞いて、費用の目安を出しましょう</p><div class="pc-b"><button type="button" id="tProp">提案を作る</button></div><button type="button" class="undo" id="tNoSv" style="margin-left:0">現地調査なしで見積もりを出す</button></div>';
   if(s==='fixd')task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">調査の結果をもとに、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tEst">見積もりを作る</button></div></div>';
   if(s==='won'&&!fx&&!cxOpen&&!pOpen('sch')&&!pOpen('schc'))task='<div class="pc tsk"><div class="pc-h">やること：着工日の提案</div><p class="sp s2" style="margin:0 0 8px">初回の着工日の候補を、3つまで送りましょう</p><div class="pc-b"><button type="button" id="tSch">着工日を提案する</button></div></div>';
@@ -1661,7 +1662,7 @@ function drawProMsgs(){var box=$('pmL');if(!box)return;var me=PC2.vendor.id;
     if(m.type==='text'||m.type==='img')return m.from===me?'<div class="mg me"><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="送った写真">':'')+esc(b.text||'')+'</div></div>':'<div class="mg"><span class="wn'+(b.hlp?' hlp':'')+'">'+esc(b.hlp||(m.from===PC2.bid.vendorId?'元請け':'依頼者'))+'</span><div class="bb">'+(b.img?'<img src="'+esc(b.img)+'" alt="">':'')+esc(b.text||'')+'</div></div>';
     var st=b.done?'<p class="pc-ok">'+esc(b.done)+'</p>':'';
     if(m.type==='prop')return '<div class="pc"><div class="pc-h">現地調査の提案（送信済み）</div>'+gsHTML(b.rows)+'<dl><dt>確認すること</dt><dd>'+esc(b.todo)+'</dd><dt>所要時間</dt><dd>約'+(b.dur||30)+'分</dd><dt>候補日時</dt><dd>'+(b.slots||[]).map(function(s){return esc(s[0]+' '+s[1]+'〜'+s[2]);}).join('<br>')+'</dd><dt>調査費用</dt><dd>無料</dd><dt>見積もり</dt><dd>'+esc(b.estDue)+'</dd></dl>'+(st||'<p class="pc-ok">依頼者が日時を選ぶのを待っています</p>')+'</div>';
-    if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり（送信済み）</div><p class="amt">'+Number(b.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(b.memo)+'</dd><dt>工期</dt><dd>'+esc(b.start)+(b.end&&b.end!==b.start?' 〜 '+esc(b.end):'（1日）')+'</dd><dt>支払い</dt><dd>'+esc(b.pay)+'</dd><dt>有効期限</dt><dd>'+esc(b.due)+'</dd></dl>'+(st||'<p class="pc-ok">依頼者の返事を待っています</p>')+'</div>';
+    if(m.type==='est')return '<div class="pc est"><div class="pc-h">見積もり（送信済み）</div><p class="amt">'+Number(b.amt).toLocaleString()+'<small>円（税込）</small></p><dl><dt>内容</dt><dd>'+esc(b.memo)+'</dd>'+(b.start?'<dt>工期</dt><dd>'+esc(b.start)+(b.end&&b.end!==b.start?' 〜 '+esc(b.end):'（1日）')+'</dd>':'')+(b.span?'<dt>工期の目安</dt><dd>'+esc(b.span)+'</dd>':'')+(b.pay?'<dt>支払い</dt><dd>'+esc(b.pay)+'</dd>':'')+'<dt>有効期限</dt><dd>'+esc(b.due)+'</dd></dl>'+(st||'<p class="pc-ok">依頼者の返事を待っています</p>')+'</div>';
     if(m.type==='chg')return '<div class="pc"><div class="pc-h">追加の作業の申請（'+(b.st==='ok'?'承諾されました':b.st==='ng'?'承諾されませんでした':'承諾待ち')+'）</div><p class="amt2">＋'+Number(b.ad).toLocaleString()+'円（税込）</p><dl><dt>理由</dt><dd>'+esc(b.why)+'</dd></dl>'+(b.st?'':'<p class="pc-n">承諾されるまで、追加の作業は始めないでください。</p>')+'</div>';
     if(m.type==='rep')return '<div class="pc"><div class="pc-h">完了報告（送信済み）</div><dl><dt>作業日</dt><dd>'+esc(b.day)+'</dd><dt>作業内容</dt><dd>'+esc(b.what)+'</dd><dt>最終金額</dt><dd><b>'+Number(b.amt).toLocaleString()+'円</b>（税込）</dd></dl>'+(st||'<p class="pc-ok">依頼者の確認を待っています</p><button type="button" class="undo" data-undo="'+m.id+'">報告を取り消す</button>')+'</div>';
     if(m.type==='hinv'){var S={wait:'返事を待っています（'+esc(b.due)+'まで）',join:'承認して、チャットに参加しました',no:'お断りされました',expired:'72時間たったため期限切れになりました',cancel:'取り消しました'};return '<div class="pc hinv"><div class="pc-h">会員に応援を依頼しました</div><dl><dt>会員</dt><dd>'+esc(b.toCompany||'')+'（'+esc(b.toName||'')+'）</dd><dt>内容</dt><dd>'+esc(b.msg)+'</dd></dl><p class="pc-ok">'+(S[b.st]||'')+'</p>'+(b.st==='wait'?'<button type="button" class="pc-no" data-hcx="'+m.id+'">依頼を取り消す</button>':'')+'</div>';}
@@ -1715,20 +1716,22 @@ function propForm(){var rows=1,slots=1,dur=30;
   $('gsAdd').onclick=function(){if(rows>=3)return;$('gsList').insertAdjacentHTML('beforeend',row(rows));rows++;if(rows>=3)this.hidden=true;};
   $('slAdd').onclick=function(){if(slots>=3)return;$('slList').insertAdjacentHTML('beforeend',slot(slots));slots++;if(slots>=3)this.hidden=true;};}
 /* 見積もり */
-function estForm(noSurvey){pPop(PC2.bid.id,3);var t=new Date();t.setDate(t.getDate()+7);var d=ymd(t),edited=false;
+function estForm(noSurvey){pPop(PC2.bid.id,3);var t=new Date();t.setDate(t.getDate()+7);var d=ymd(t),edited=false,c=PC2.c,EO=!!c.estOnly&&c.estOnly!=='svy'; // 見積もりだけの依頼は、日付と支払いを聞かない（11/23）
   formPane('見積もりを作る',
-    '<p class="pc-n" style="margin-top:0">ここに入れた金額と日付を、まち頼が請求や期限の管理に使います。</p>'+
+    '<p class="pc-n" style="margin-top:0">'+(EO?'見積もりだけの依頼なので、日付と支払いは入れなくても送れます。':'ここに入れた金額と日付を、まち頼が請求や期限の管理に使います。')+'</p>'+
     '<label>合計金額（税込） <em class="rq">必須</em><input type="number" id="e1" inputmode="numeric" placeholder="例：38500"></label>'+
     '<label>作業内容 <em class="rq">必須</em><textarea id="e2" rows="3" placeholder="例：水栓本体の交換と取り付け工事一式。古い水栓の処分を含みます"></textarea></label>'+
+    (EO?'<label>工期の目安 <em class="op">任意</em><input id="e7" maxlength="30" placeholder="例：1日、2〜3日"></label>':
     '<div class="two"><label>着手予定日 <em class="rq">必須</em><input type="date" id="e3" value="'+d+'"></label><label>完了予定日 <em class="rq">必須</em><input type="date" id="e4" value="'+d+'"></label></div>'+
     '<label>支払いの時期 <em class="rq">必須</em><select id="e5"><option>工事完了後に一括</option><option>着手時に一部、完了後に残り</option><option>分割</option></select></label>'+
-    '<label>支払いの方法 <em class="rq">必須</em><select id="e6"><option>銀行振込</option><option>現金</option><option>その他</option></select></label>'+
+    '<label>支払いの方法 <em class="rq">必須</em><select id="e6"><option>銀行振込</option><option>現金</option><option>その他</option></select></label>')+
     '<label>見積書（詳しい内訳） <em class="op">任意・PDFか写真</em><input type="file" accept="application/pdf,image/*"></label>'+
     '<button class="big" type="submit" style="background:#2F6B45">この内容で見積もりを送る</button>',
-    function(){var a=+$('e1').value,w=$('e2').value.trim();if(!a||!w)return '金額と作業内容を入れてください';if($('e4').value<$('e3').value)return '完了予定日は、着手予定日と同じか後にしてください';
+    function(){var a=+$('e1').value,w=$('e2').value.trim();if(!a||!w)return '金額と作業内容を入れてください';if(!EO&&$('e4').value<$('e3').value)return '完了予定日は、着手予定日と同じか後にしてください';
       if(!confirm('この内容で見積もりを送りますか？'))return '';
-      proCard('est',{amt:a,memo:w,start:mdW($('e3').value),end:mdW($('e4').value),startYmd:$('e3').value,endYmd:$('e4').value,pay:$('e5').value+'・'+$('e6').value,noSurvey:!!noSurvey});});
-  $('e3').onchange=function(){if(!edited||$('e4').value<$('e3').value)$('e4').value=$('e3').value;};$('e4').onchange=function(){edited=true;};}
+      if(EO)proCard('est',{amt:a,memo:w,span:$('e7').value.trim(),noSurvey:!!noSurvey});
+      else proCard('est',{amt:a,memo:w,start:mdW($('e3').value),end:mdW($('e4').value),startYmd:$('e3').value,endYmd:$('e4').value,pay:$('e5').value+'・'+$('e6').value,noSurvey:!!noSurvey});});
+  if(!EO){$('e3').onchange=function(){if(!edited||$('e4').value<$('e3').value)$('e4').value=$('e3').value;};$('e4').onchange=function(){edited=true;};}}
 
 /* ファイルを選ぶ欄：ブラウザ標準の「Choose File」などを出さず、日本語のボタンにそろえる（11/23） */
 function fpEnh(inp){if(inp.dataset.fp||inp.hidden)return;inp.dataset.fp='1';inp.classList.add('fpi');
