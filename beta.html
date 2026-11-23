@@ -136,6 +136,17 @@ h2{font-size:17px;margin:0 0 10px}
 .phb{font-size:12.5px;color:#fff;background:var(--m);border:1.5px solid var(--m);border-radius:16px;padding:5px 11px;cursor:pointer;font-weight:700}
 .kebab{margin-left:auto;border:0;background:none;color:#fff;font-size:22px;line-height:1;width:34px;height:30px;cursor:pointer;letter-spacing:-1px}
 .stp{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 6px 8px;margin-bottom:8px}.stp span{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:#9aa5a0;position:relative;text-align:center;line-height:1.2}.stp i{width:12px;height:12px;border-radius:50%;background:#dfe4e1;position:relative;z-index:1}.stp span+span::before{content:"";position:absolute;top:5px;right:50%;width:100%;height:2px;background:#dfe4e1}.stp .dn i,.stp .dn::before,.stp .cur::before{background:var(--m)}.stp .cur i{background:#fff;box-shadow:0 0 0 3px var(--m)}.stp .cur{color:var(--m);font-weight:700}.stp .dn{color:var(--tx)}
+.mtg{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;margin-right:6px}.mtg.t1{background:#FCE9E2;color:#C2491F}.mtg.t2{background:#E6ECF5;color:#2B4C7E}.mtg.t3{background:#EAF3ED;color:#2F6B45}.mtg.t4{background:#F3EBDA;color:#8A6416}.mtg.t5{background:#EEF1EF;color:#5D6A63}
+.mpc2 .bl1{display:flex;align-items:center}.mpc2 .mbr{margin-left:auto}.mpc2.dn{opacity:.6}.bdg.dn{background:#EAF3ED;color:#2F6B45}
+.mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:8px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#6E7D75;font-size:12px;margin-right:3px}
+.mhd{margin-left:auto;color:#2B4C7E;font-weight:700}
+.mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;background:#fff;color:#23302A}.mks button[aria-pressed=true]{background:#2B4C7E;color:#fff;border-color:#2B4C7E}
+.mkh{font-size:17px;margin:4px 2px 10px}.mky{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:#fff;border:1.5px solid #D9DFDB;border-radius:14px;padding:13px 14px;margin-bottom:9px;font:inherit;cursor:pointer}
+.mky i{width:40px;height:40px;border-radius:10px;background:#E6ECF5;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:700;color:#2B4C7E;font-size:17px;flex:none}.mky b{display:block;font-size:15.5px}.mky small{font-size:12px;color:#6E7D75}.mky em{margin-left:auto;font-style:normal;color:#B4BCB7;font-size:18px}
+.mch{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.mch button{font:inherit;font-size:14px;border:1.5px solid #CFD6D2;border-radius:16px;padding:6px 12px;background:#fff}.mch button.on{border-color:#2B4C7E;background:#E6ECF5;color:#2B4C7E;font-weight:700}
+.mhr{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:10px;margin-bottom:8px}.mhr .av{width:34px;height:34px;flex:none}.mhw{flex:1;min-width:0}.mhw b{display:block;font-size:14px}.mhw small{font-size:12px;color:#6E7D75}
+.mhc,.mho{flex:none;white-space:nowrap;font:inherit;font-size:12.5px;font-weight:700;border-radius:8px;padding:6px 9px;border:1.5px solid #2B4C7E;color:#2B4C7E;background:#fff}.mho{background:#2B4C7E;color:#fff}.mhk{flex:none;font-size:12px;font-weight:700;color:#2F6B45}
+.mhme{background:#EAF3ED;color:#2F6B45;border-radius:10px;padding:10px 12px}
 .hq button.on{background:#FFF3EC;border-color:var(--m);color:#C2491F;font-weight:700}.hq button.gr{color:#6E7D75}.hq button.pri:disabled{opacity:.45}
 .hq{flex-direction:column;align-items:stretch;padding-left:52px}.hq button,.hq .hph{text-align:left;padding:9px 14px;font-size:14.5px;border-radius:20px;font-weight:700}
 .hq .hph{display:block;cursor:pointer;color:var(--m);background:#fff;border:1.5px solid var(--m)}
@@ -583,7 +594,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=83;
+var APPVER_N=84;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1966,7 +1977,7 @@ function suSubmit(){var d=SU.d,docs=[];Object.keys(d.docs).forEach(function(k){(
 var MB=null,MJ=null,MJR=null,MW=true,MNEED=[],MF={q:'',past:false,f:'all',srt:'new'},MP=null,MD=null;
 I.board='<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';I.mem='<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.3.2 4 1.8 4.5 4.6"/>';I.dm='<path d="M4 5h16v11H9l-5 4z"/>';
 var NAV_M=[['board','掲示板'],['mem','会員'],['dm','チャット']];
-function mFab(on){var f=$('mfab');if(f)f.remove();if(!on)return;f=document.createElement('button');f.type='button';f.id='mfab';f.className='fab';f.setAttribute('aria-label','相談を投稿する');f.innerHTML='<span aria-hidden="true">＋</span><small>投稿</small>';ph.appendChild(f);f.onclick=mPostForm;}
+function mFab(on){var f=$('mfab');if(f)f.remove();if(!on)return;f=document.createElement('button');f.type='button';f.id='mfab';f.className='fab';f.setAttribute('aria-label','相談を投稿する');f.innerHTML='<span aria-hidden="true">＋</span><small>投稿</small>';ph.appendChild(f);f.onclick=function(){mPostForm();};}
 function renderMember(){mFab(false);
   if(MJ===null){scr.innerHTML=LOADING;api('mMe').then(function(j){MJ=j.member||false;MJR=j;MW=j.canWrite!==false;MNEED=j.need||[];renderMember();}).catch(function(e){showErr(e);});return;}
   if(!MJ)return mJoinView();
@@ -1984,20 +1995,29 @@ function memberJoin(){try{localStorage.removeItem('mchy_biz');}catch(e){}closeSh
 function mJoinView(){var r=MJR||{};var msg=r.app==='pending'?'業者登録の申し込みを受け付けています。運営の承認が済むと、会員ページを使えるようになります。':r.role==='vendor'?'会員ページは、会員の業者のための場所です。業者登録が済んで運営が承認すると使えるようになります。':'会員ページは、会員の業者のための場所です。業者としての登録は「はじめての方」→「仕事を受けたい」からお願いします。';
   if(r.role==='member'||r.role==='vendor')msg='会員の方は、会員の確認をすると会員ページを使えます（本名・会社名・電話番号を会員の名簿と照らし合わせます）。';
   scr.innerHTML='<div class="mp mj"><h3>会員ページ</h3><p class="note2">'+msg+'</p>'+(r.role==='member'||r.role==='vendor'?'<button type="button" class="big" id="mjJ">会員の確認をする</button>':'')+'</div>';var b=$('mjJ');if(b)b.onclick=memberJoin;}
+/* 掲示板の用件（11/23）：投稿の最初に選び、用件ごとに聞く項目を変える。f＝[キー,見出し,種類(date/text/ch),必須,候補か例] */
+var MK={hand:{n:'人手がほしい',s:'応援・手元・日当で来てほしい',i:'人',t:'t1',sh:'人手',f:[['date','作業日','date',1],['time','時間','text',0,'例）8:00〜17:00'],['days','日数','ch',1,['1日','2〜3日','4日以上','相談']],['place','場所','text',1,'例）塩尻市'],['need','人数','ch',1,['1人','2人','3人以上']],['pay','日当・単価','text',0,'例）1人 15,000円／日'],['cond','必要な資格・経験','ch',0,['経験者','未経験可','資格が必要']]]},
+  job:{n:'仕事を頼みたい',s:'外注・下請け・自社でできない工事',i:'仕',t:'t2',sh:'仕事',f:[['when','時期','text',1,'例）12月中、12/5'],['place','場所','text',1,'例）松本市'],['cat','分野','text',0,'例）電気工事'],['budget','予算','text',0,'例）相談']]},
+  lend:{n:'道具・機材の貸し借り',s:'足場・ユンボ・車両など',i:'貸',t:'t3',sh:'貸し借り',f:[['dir','貸したい／借りたい','ch',1,['借りたい','貸せます']],['item','物','text',1,'例）単管足場 約30m'],['period','期間','text',1,'例）12/10〜12/11'],['place','場所','text',1,'例）松本市'],['price','料金','text',0,'例）1日5,000円']]},
+  ask:{n:'教えてほしい・相談',s:'材料・業者・やり方を聞きたい',i:'？',t:'t4',sh:'相談',f:[['place','場所','text',0,'例）安曇野市'],['cat','分野','text',0,'例）内装工事']]},
+  info:{n:'お知らせ・共有',s:'空き日程・イベント・情報の共有',i:'知',t:'t5',sh:'お知らせ',f:[]}};
+var MKO=['hand','job','lend','ask','info'],MHAND=['hand','job','lend'];
+function mKV(p){var k=MK[p.kind]||MK.ask,I=p.info||{},a=[];k.f.forEach(function(f){var v=I[f[0]];if(!v)return;if(f[2]==='date')v=(+v.slice(5,7))+'/'+(+v.slice(8,10))+'（'+'日月火水木金土'.charAt(new Date(v+'T00:00:00+09:00').getDay())+'）';a.push('<span><em>'+esc(f[1].replace(/・.*$/,'').replace('貸したい／借りたい','')||'')+'</em>'+esc(v)+'</span>');});
+  if(!a.length&&p.place)a.push('<span><em>場所</em>'+esc(p.place)+'</span>');if(!a.length&&p.budget)a.push('<span><em>予算</em>'+esc(p.budget)+'</span>');return a.length?'<div class="mkv">'+a.join('')+'</div>':'';}
 function mJST(iso){var d=new Date(new Date(iso).getTime()+9*3600e3);return d.toISOString().slice(0,10);}
 function mToday(){return mJST(new Date().toISOString());}
 function mDays(dl){return Math.round((new Date(dl+'T00:00:00Z')-new Date(mToday()+'T00:00:00Z'))/864e5);}
-function mBadge(p){if(p.st!=='open')return '<span class="bdg end">募集終了</span>';if(!p.dl)return p.at==='past'?'<span class="bdg none">募集中・期限なし</span>':'<span class="bdg none">期限なし</span>';var n=mDays(p.dl);return n<=0?'<span class="bdg today">本日締切</span>':'<span class="bdg'+(n<=3?' soon':'')+'">残り'+n+'日</span>';}
+function mBadge(p){if(p.st==='done')return '<span class="bdg dn">決まりました</span>';if(p.st!=='open')return '<span class="bdg end">募集終了</span>';if(!p.dl)return p.at==='past'?'<span class="bdg none">募集中・期限なし</span>':'<span class="bdg none">期限なし</span>';var n=mDays(p.dl);return n<=0?'<span class="bdg today">本日締切</span>':'<span class="bdg'+(n<=3?' soon':'')+'">残り'+n+'日</span>';}
 function mLock(){return MW?'':'<div class="mlock"><b><i class="exm">!</i> 資格の書類の審査が済むと書き込めます</b><small>'+esc(MNEED.map(function(x){return x.name;}).join('、'))+'</small><button type="button" id="mlkB">資格の書類を出す</button></div>';}
 function mLockBind(){var b=$('mlkB');if(b)b.onclick=function(){if(PRO)licPane();else api('proHome').then(function(j){PRO=j;licPane();}).catch(fail);};}
-function mCard(p){return '<button type="button" class="card bp mpc" data-id="'+p.id+'"><span class="bl1">'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.slice(5).replace('-','/')+'まで</span>':'')+'</span><b>'+esc(p.title)+'</b><span class="meta"><span>'+esc(p.who)+'</span>'+(p.place?'<span>'+esc(p.place)+'</span>':'')+'<span>'+mdhm(p.createdAt).split(' ')[0]+'</span><span>コメント'+p.cmts+'</span></span></button>';}
+function mCard(p){var k=MK[p.kind]||MK.ask;return '<button type="button" class="card bp mpc mpc2'+(p.st==='done'?' dn':'')+'" data-id="'+p.id+'"><span class="bl1"><span class="mtg '+k.t+'">'+k.n+'</span><span class="mbr">'+mBadge(p)+'</span></span><b>'+esc(p.title)+'</b>'+mKV(p)+'<span class="meta"><span>'+esc(p.who)+'・'+mdhm(p.createdAt).split(' ')[0]+'</span><span>コメント'+p.cmts+'</span>'+(MHAND.indexOf(p.kind)>=0?'<span class="mhd">対応できます '+(p.hands||0)+'人</span>':'')+'</span></button>';}
 function mWords(q){return String(q||'').replace(/　/g,' ').split(' ').filter(function(x){return x;});}
-function mList(place){var q=mWords(MF.q),L=(MB&&MB.posts||[]).filter(function(p){return (place==='any'?(MF.past||p.at==='top'):p.at===place)&&(MF.f==='all'||(MF.f==='dl'?!!p.dl:!p.dl))&&q.every(function(w){return (p.title+' '+p.body+' '+p.who+' '+(p.place||'')).indexOf(w)>=0;});});
+function mList(place){var q=mWords(MF.q),L=(MB&&MB.posts||[]).filter(function(p){return (place==='any'?(MF.past||p.at==='top'):p.at===place)&&(MF.f==='all'||(p.kind||'ask')===MF.f)&&q.every(function(w){return (p.title+' '+p.body+' '+p.who+' '+(p.place||'')+' '+JSON.stringify(p.info||{})).indexOf(w)>=0;});});
   var byNew=function(a,b){return a.createdAt<b.createdAt?1:-1;};
   if(MF.srt==='dl')L.sort(function(a,b){var ea=a.st!=='open',eb=b.st!=='open';if(ea!==eb)return ea?1:-1;if(!!a.dl!==!!b.dl)return a.dl?-1:1;if(a.dl&&b.dl&&a.dl!==b.dl)return a.dl<b.dl?-1:1;return byNew(a,b);});else L.sort(byNew);return L;}
 function mCtl(withPast){return '<div class="kw kw0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" id="mq" placeholder="案件を探す（例：足場、ユンボ）" value="'+esc(MF.q)+'" aria-label="キーワード"></div>'+
   (withPast?'<label class="chk"><input type="checkbox" id="mpast"'+(MF.past?' checked':'')+'>過去の案件も含める</label>':'')+
-  '<div class="ctl"><div class="seg">'+[['all','すべて'],['dl','期限あり'],['nodl','期限なし']].map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(MF.f===x[0])+'">'+x[1]+'</button>';}).join('')+'</div><select id="msrt" aria-label="並び替え"><option value="new"'+(MF.srt==='new'?' selected':'')+'>新着順</option><option value="dl"'+(MF.srt==='dl'?' selected':'')+'>締切が近い順</option></select></div>';}
+  '<div class="mks">'+[['all','すべて']].concat(MKO.map(function(k){return [k,MK[k].sh];})).map(function(x){return '<button type="button" data-f="'+x[0]+'" aria-pressed="'+(MF.f===x[0])+'">'+x[1]+'</button>';}).join('')+'</div><div class="ctl"><select id="msrt" aria-label="並び替え"><option value="new"'+(MF.srt==='new'?' selected':'')+'>新着順</option><option value="dl"'+(MF.srt==='dl'?' selected':'')+'>締切が近い順</option></select></div>';}
 function mBindCtl(root,redraw){var q=root.querySelector('#mq');q.oninput=function(){MF.q=q.value;redraw(true);};var pc=root.querySelector('#mpast');if(pc)pc.onchange=function(){MF.past=pc.checked;redraw();};
   each('[data-f]',root,function(b){b.onclick=function(){MF.f=b.dataset.f;redraw();};});root.querySelector('#msrt').onchange=function(e){MF.srt=e.target.value;redraw();};}
 function mBoardView(){var had=!!MB;if(had)mBoardPaint();else scr.innerHTML=LOADING;mFab(MW);
@@ -2013,20 +2033,30 @@ function mBoardPaint(){var L=mList('any'),past=(MB.posts||[]).filter(function(p)
 function mPastView(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>過去の案件</b></div></div><div class="arw"><p class="adesc">投稿から1か月以上経過した期限なしの募集や、募集が終了した案件を掲載しています。</p><div id="mpc">'+mCtl(false)+'</div><div id="mpl"></div></div>');
   var draw=function(keep){var L=mList('past');$('mpl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<p class="empty">条件に合う案件はありません</p>';each('.mpc',$('mpl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id,mPastView);};});if(!keep)each('[data-f]',pane,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(pane,draw);draw();}
-function mPostForm(){var ph3=[];var max=function(){var d=new Date(Date.now()+9*3600e3);d.setUTCMonth(d.getUTCMonth()+3);return d.toISOString().slice(0,10);};
-  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員に相談する</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw su"><form class="pf pf2" onsubmit="return false">'+
-    '<label>相談タイトル <em class="rq">必須</em><input id="mt" maxlength="60" placeholder="例）足場を2日間貸してほしい"></label><label>相談内容・背景 <em class="rq">必須</em><textarea id="mb" rows="5" placeholder="何に困っていて、なぜ必要か"></textarea></label><label>どうしてほしいか <em class="op">任意</em><textarea id="mw" rows="2" placeholder="例）貸してほしい／一緒に見積もりしてほしい／相談して決めたい"></textarea></label>'+
+function mPostForm(kind){if(!kind){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員に投稿する</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw"><h3 class="mkh">どんな投稿ですか？</h3>'+MKO.map(function(k){var x=MK[k];return '<button type="button" class="mky" data-k="'+k+'"><i>'+x.i+'</i><span><b>'+x.n+'</b><small>'+x.s+'</small></span><em>›</em></button>';}).join('')+'</div>',function(){closePane();});
+    each('[data-k]',pane,function(b){b.onclick=function(){mPostForm(b.dataset.k);};});return;}
+  var K=MK[kind],ph3=[],max=function(){var d=new Date(Date.now()+9*3600e3);d.setUTCMonth(d.getUTCMonth()+3);return d.toISOString().slice(0,10);};
+  var fld=function(f){var lab='<div class="lab">'+f[1]+' '+(f[3]?'<em class="rq">必須</em>':'<em class="op">任意</em>')+'</div>';
+    if(f[2]==='ch')return lab+'<div class="mch" data-ch="'+f[0]+'">'+f[4].map(function(o){return '<button type="button" data-o="'+esc(o)+'">'+esc(o)+'</button>';}).join('')+'</div>';
+    if(f[2]==='date')return lab+'<input type="date" id="mf_'+f[0]+'" min="'+mToday()+'">';
+    return lab+'<input id="mf_'+f[0]+'" maxlength="100" placeholder="'+esc(f[4]||'')+'">';};
+  var bodyReq=kind==='ask'||kind==='info';
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+K.n+'</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw su"><form class="pf pf2" onsubmit="return false">'+
+    '<label>タイトル <em class="rq">必須</em><input id="mt" maxlength="60" placeholder="'+({hand:'例）外壁塗装の手元 2名',job:'例）給湯器交換を1件お願いしたい',lend:'例）足場を2日間貸してほしい',ask:'例）古民家の土壁、補修できる方いますか',info:'例）12月の空き日程のお知らせ'})[kind]+'"></label>'+
+    K.f.map(fld).join('')+
+    '<label>'+(bodyReq?'内容 <em class="rq">必須</em>':'くわしく <em class="op">任意</em>')+'<textarea id="mb" rows="4" placeholder="'+(kind==='hand'?'作業内容、持ち物、集合場所など':'くわしい内容')+'"></textarea></label>'+
     '<div class="lab">募集期限 <em class="rq">必須</em></div><label class="agr"><input type="radio" name="mdl" value="" checked><span>期限なし</span></label><label class="agr"><input type="radio" name="mdl" value="1"><span>期限を設定する</span></label><input type="date" id="mdd" min="'+mToday()+'" max="'+max()+'" hidden>'+
-    '<p class="pc-n">期限なしの投稿は、1か月後に「過去の案件」へ移動します。移動後も募集は続きます。期限ありの投稿は、期限まで通常一覧に掲載します（最長3か月）。</p>'+
-    '<label>場所 <em class="op">任意</em><input id="mpl2" maxlength="60" placeholder="例）松本市（必要な場合だけ）"></label><label>予算の希望 <em class="op">任意</em><input id="mbg" maxlength="60" placeholder="例）1日1万円くらい"></label>'+
+    '<p class="pc-n">期限なしの投稿は、1か月後に「過去の案件」へ移動します（募集は続きます）。期限ありの投稿は、期限まで一覧に出ます（最長3か月）。</p>'+
     '<div class="lab">写真 <em class="op">任意・3枚まで</em></div><div class="thumbs" id="mth"></div><label class="lfile">＋ 写真を追加<input type="file" id="mph" accept="image/*" hidden></label>'+
-    '<p class="pc-n">電話番号・メールアドレスは書けません。くわしいやり取りは1対1のチャットでどうぞ。</p><p class="warn" id="mfw" hidden></p><button type="button" class="big" id="mgo">投稿する</button></form></div>',function(){closePane();});
+    '<p class="pc-n">電話番号・メールアドレスは書けません。くわしいやり取りは1対1のチャットでどうぞ。</p><p class="warn" id="mfw" hidden></p><button type="button" class="big" id="mgo">投稿する</button></form></div>',function(){mPostForm();});
+  var CH={};each('[data-ch]',pane,function(g){each('button',g,function(b){b.onclick=function(){CH[g.dataset.ch]=b.dataset.o;each('button',g,function(x){x.classList.toggle('on',x===b);});};});});
   each('[name=mdl]',pane,function(r){r.onchange=function(){$('mdd').hidden=r.value!=='1'||!r.checked;};});
   var th=function(){$('mth').innerHTML=ph3.map(function(u,i){return '<div class="tb"><img src="'+u+'" alt=""><button type="button" data-x="'+i+'" aria-label="外す">✕</button></div>';}).join('');each('[data-x]',$('mth'),function(b){b.onclick=function(){ph3.splice(+b.dataset.x,1);th();};});};
   $('mph').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;if(ph3.length>=3)return toast('写真は3枚までです');shrink(f).then(function(u){ph3.push(u);th();}).catch(fail);};
-  $('mgo').onclick=function(){var bt=this,w=$('mfw'),useDl=pane.querySelector('[name=mdl]:checked').value==='1',dl=useDl?$('mdd').value:'';
-    var d={title:$('mt').value.trim(),body:$('mb').value.trim(),want:$('mw').value.trim(),place:$('mpl2').value.trim(),budget:$('mbg').value.trim(),dl:dl};
-    var err=!d.title||!d.body?'相談タイトルと、相談内容・背景を入れてください':useDl&&!dl?'期限の日付を選んでください':useDl&&(dl<mToday()||dl>max())?'期限は今日から3か月以内で選んでください':(hasContact(d.title+' '+d.body)?'電話番号・メールアドレスは書けません':'');
+  $('mgo').onclick=function(){var bt=this,w=$('mfw'),useDl=pane.querySelector('[name=mdl]:checked').value==='1',dl=useDl?$('mdd').value:'',info={},miss='';
+    K.f.forEach(function(f){var v=f[2]==='ch'?(CH[f[0]]||''):$('mf_'+f[0]).value.trim();if(v)info[f[0]]=v;else if(f[3]&&!miss)miss=f[1];});
+    var d={kind:kind,title:$('mt').value.trim(),body:$('mb').value.trim(),info:info,place:info.place||'',dl:dl};
+    var err=!d.title?'タイトルを入れてください':miss?'「'+miss+'」を入れてください':bodyReq&&!d.body?'内容を入れてください':useDl&&!dl?'期限の日付を選んでください':useDl&&(dl<mToday()||dl>max())?'期限は今日から3か月以内で選んでください':(hasContact(d.title+' '+d.body)?'電話番号・メールアドレスは書けません':'');
     if(err){w.hidden=false;w.textContent=err;return;}bt.disabled=true;bt.textContent='投稿しています…';var urls=[];
     ph3.reduce(function(p,u){return p.then(function(){return api('uploadPhoto',{dataUrl:u}).then(function(j){urls.push(j.url);});});},Promise.resolve())
       .then(function(){d.photos=urls;return api('mPost',d);}).then(function(j){toast('投稿しました');MB=null;mOpenPost(j.id,function(){closePane();});}).catch(function(e){bt.disabled=false;bt.textContent='投稿する';w.hidden=false;w.textContent=e.message;});};}
@@ -2034,10 +2064,10 @@ function mOpenPost(id,back){setPane('<div class="ph2"><button type="button" clas
   api('mPostGet',{id:id}).then(function(j){MP=j.post;MP.back=back;mPostPaint();}).catch(function(e){fail(e);closePane();});}
 function mPostPaint(){var p=MP,mn=[];
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(p.title)+'</b><span>'+esc(p.who)+'・'+mdhm(p.createdAt)+'</span></div></div><div class="arw mth">'+
-    '<div class="ppd"><div class="bl1">'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.replace(/-/g,'/')+'まで</span>':'')+'</div><p class="mtx">'+esc(p.body)+'</p>'+
-    (p.want?'<p class="mtx"><b>どうしてほしいか</b><br>'+esc(p.want)+'</p>':'')+'<dl class="dl2">'+(p.place?'<dt>場所</dt><dd>'+esc(p.place)+'</dd>':'')+(p.budget?'<dt>予算</dt><dd>'+esc(p.budget)+'</dd>':'')+'</dl>'+
+    '<div class="ppd"><div class="bl1"><span class="mtg '+(MK[p.kind]||MK.ask).t+'">'+(MK[p.kind]||MK.ask).n+'</span>'+mBadge(p)+(p.dl?'<span class="dlx">'+p.dl.replace(/-/g,'/')+'まで</span>':'')+'</div>'+mKV(p)+(p.body?'<p class="mtx">'+esc(p.body)+'</p>':'')+
+    (p.want?'<p class="mtx"><b>どうしてほしいか</b><br>'+esc(p.want)+'</p>':'')+((p.info&&Object.keys(p.info).length)?'':'<dl class="dl2">'+(p.place?'<dt>場所</dt><dd>'+esc(p.place)+'</dd>':'')+(p.budget?'<dt>予算</dt><dd>'+esc(p.budget)+'</dd>':'')+'</dl>')+
     (p.photos.length?'<div class="thumbs">'+p.photos.map(function(u){return '<div class="tb"><img src="'+esc(u)+'" alt="投稿の写真"></div>';}).join('')+'</div>':'')+
-    (!MW?'<p class="pc-n">資格の書類の審査が済むと、コメントや「対応できます」を使えます。</p>':p.mine?(p.st==='open'?'<div class="pvb"><button type="button" id="mEd">期限を変更</button><button type="button" id="mEnd">募集を終了する</button></div>':''):(p.st==='open'?'<button type="button" class="big" id="mCan">対応できます（投稿者とチャット）</button>':'<p class="pc-n">募集は終了しています。新しい問い合わせはできません。</p>'))+'</div>'+
+    (!MW?'<p class="pc-n">資格の書類の審査が済むと、コメントや「対応できます」を使えます。</p>':p.mine?mHandsBox(p):mHandBtn(p))+'</div>'+
     '<div class="sec">コメント <small>'+p.comments.length+'件</small></div><div class="msgs mcl">'+(p.comments.length?p.comments.map(function(c){return '<div class="mg'+(c.userId===ME.id?' me':'')+'"><span class="wn">'+esc(c.who)+'・'+mdhm(c.createdAt)+'</span><div class="bb">'+(c.img?'<img src="'+esc(c.img)+'" alt="">':'')+mMention(c.text)+'</div></div>';}).join(''):'<p class="empty">まだコメントはありません</p>')+'</div></div>'+
     (MW?'<form class="cmp" id="mcf"><button type="button" class="ic" id="mat">＠</button><label class="ic" aria-label="画像を追加">画像<input type="file" accept="image/*" id="mci" hidden></label><input id="mct" placeholder="コメントを書く" autocomplete="off" aria-label="コメント"><button class="sd">送信</button></form>':''),p.back);
   var ar=pane.querySelector('.arw');var send=function(d){d.id=p.id;d.mentions=mn.filter(function(x){return (d.text||'').indexOf('@'+x.name)>=0;}).map(function(x){return x.userId;});api('mComment',d).then(function(j){var bk=MP.back;MP=j.post;MP.back=bk;mPostPaint();var a=pane.querySelector('.arw');a.scrollTop=a.scrollHeight;}).catch(fail);};
@@ -2046,11 +2076,22 @@ function mPostPaint(){var p=MP,mn=[];
   $('mci').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;toast('写真を送っています…');shrink(f).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){send({img:j.url,text:''});}).catch(fail);};
   $('mat').onclick=function(){openSheet('<h3>会員を呼ぶ</h3><p class="sp s2">選んだ会員に、このコメントのお知らせが届きます。</p><div class="list">'+(p.members.length?p.members.map(function(m,i){return '<button type="button" class="card bp" data-mi="'+i+'"><b>'+esc(m.name)+'</b></button>';}).join(''):'<p class="empty">ほかの会員はまだいません</p>')+'</div>');
     each('[data-mi]',sheet,function(b){b.onclick=function(){var m=p.members[+b.dataset.mi];mn.push(m);var t=$('mct');t.value=(t.value?t.value+' ':'')+'@'+m.name+' ';closeSheet();t.focus();};});};
-  var c=$('mCan');if(c)c.onclick=function(){c.disabled=true;api('mInquire',{id:p.id}).then(function(j){toast('投稿者にメッセージを送りました');mOpenDM(j.with,function(){mOpenPost(p.id,p.back);});}).catch(function(e){c.disabled=false;fail(e);});};
-  var en=$('mEnd');if(en)en.onclick=function(){openSheet('<h3>募集を終了しますか？</h3><p class="sp s2">終了すると「過去の案件」に移り、新しい問い合わせは受け付けません。今までのやり取りは続けられます。もとには戻せません。</p><button type="button" class="big" id="mEndOk">募集を終了する</button>');$('mEndOk').onclick=function(){api('mPostEdit',{id:p.id,close:1}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('募集を終了しました');}).catch(fail);};};
+  var c=$('mCan');if(c)c.onclick=function(){openSheet('<h3>対応できます</h3><p class="sp s2">投稿者にひとこと添えて伝えます（任意）。投稿者とのチャットが開きます。</p><input class="nmi" id="mcT" maxlength="200" placeholder="例）12/5空いています"><button type="button" class="big" id="mcOk">伝える</button>');
+    $('mcOk').onclick=function(){var t=$('mcT').value.trim();if(hasContact(t))return toast('電話番号・メールアドレスは書けません');this.disabled=true;api('mInquire',{id:p.id,text:t}).then(function(j){closeSheet();MB=null;toast('投稿者に伝えました');mOpenDM(j.with,function(){mOpenPost(p.id,p.back);});}).catch(function(e){$('mcOk').disabled=false;fail(e);});};};
+  each('[data-hc]',pane,function(b){b.onclick=function(){mOpenDM(b.dataset.hc,function(){mOpenPost(p.id,p.back);});};});
+  each('[data-hok]',pane,function(b){b.onclick=function(){openSheet('<h3>'+esc(b.dataset.hw)+'さんにお願いしますか？</h3><p class="sp s2">相手にお知らせが届き、チャットに「お願いします」と送ります。'+(MHAND.indexOf(p.kind)>=0&&p.need>1?'人数（'+p.need+'人）がそろうと募集を終えます。':'募集を終えます。')+'</p><button type="button" class="big" id="hokY">お願いする</button>');
+    $('hokY').onclick=function(){this.disabled=true;api('mChoose',{id:p.id,hand:b.dataset.hok}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('お願いしました');}).catch(fail);};};});
+  var en=$('mEnd');if(en)en.onclick=function(){var hd=MHAND.indexOf(p.kind)>=0;openSheet('<h3>'+(hd?'募集を終えますか？（決まりました）':'募集を終了しますか？')+'</h3><p class="sp s2">'+(hd?'「決まりました」になり、新しい「対応できます」は受け付けません。手を挙げてくれたほかの会員にもお知らせが届きます。':'終了すると「過去の案件」に移り、新しい問い合わせは受け付けません。')+'今までのやり取りは続けられます。もとには戻せません。</p><button type="button" class="big" id="mEndOk">募集を終える</button>');$('mEndOk').onclick=function(){api('mPostEdit',{id:p.id,close:1}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('募集を終了しました');}).catch(fail);};};
   var ed=$('mEd');if(ed)ed.onclick=function(){var cr=new Date(new Date(p.createdAt).getTime()+9*3600e3);cr.setUTCMonth(cr.getUTCMonth()+3);var mx=cr.toISOString().slice(0,10);
     openSheet('<h3>期限を変更</h3><label class="agr"><input type="radio" name="edl" value=""'+(p.dl?'':' checked')+'><span>期限なし</span></label><label class="agr"><input type="radio" name="edl" value="1"'+(p.dl?' checked':'')+'><span>期限を設定する</span></label><input type="date" id="edd" class="nmi" min="'+mToday()+'" max="'+mx+'" value="'+(p.dl||'')+'"><p class="sp s2">期限は、最初に投稿した日から3か月以内（'+mx.replace(/-/g,'/')+'まで）です。</p><button type="button" class="big" id="edOk">変更する</button>');
     $('edOk').onclick=function(){var use=sheet.querySelector('[name=edl]:checked').value==='1',v=use?$('edd').value:'';if(use&&!v)return toast('日付を選んでください');api('mPostEdit',{id:p.id,setDl:1,dl:v}).then(function(j){closeSheet();var bk=MP.back;MP=j.post;MP.back=bk;MB=null;mPostPaint();toast('期限を変更しました');}).catch(fail);};};}
+/* 投稿者だけに見える「対応できます」の一覧と、ほかの会員のボタン（11/23） */
+function mHandsBox(p){var hd=MHAND.indexOf(p.kind)>=0,L=p.handList||[];
+  return (hd?'<div class="sec">対応できます（'+L.length+'人'+(p.need>1?'／募集 '+p.need+'人':'')+'） <small>投稿者だけに見えます</small></div>'+(L.length?L.map(function(h){return '<div class="mhr"><span class="av">'+esc(h.who.slice(0,1))+'</span><span class="mhw"><b>'+esc(h.who)+'</b><small>'+esc(h.text||'')+'</small></span><button type="button" class="mhc" data-hc="'+h.userId+'">チャット</button>'+(h.chosen?'<span class="mhk">お願い済み</span>':p.st==='open'?'<button type="button" class="mho" data-hok="'+h.id+'" data-hw="'+esc(h.who)+'">お願いする</button>':'')+'</div>';}).join(''):'<p class="empty">まだ手を挙げた会員はいません</p>'):'')+
+    (p.st==='open'?'<div class="pvb"><button type="button" id="mEd">期限を変更</button><button type="button" id="mEnd">'+(hd?'決まりました':'募集を終了する')+'</button></div>':'');}
+function mHandBtn(p){var hd=MHAND.indexOf(p.kind)>=0;if(p.myHand)return '<p class="pc-n mhme">'+(p.myHand.chosen?'投稿者からお願いされました。チャットで詳しく決めましょう。':'「対応できます」を伝えました。投稿者の返事を待っています。')+'</p>';
+  if(p.st!=='open')return '<p class="pc-n">'+(p.st==='done'?'この募集は決まりました。':'募集は終了しています。')+'新しい問い合わせはできません。</p>';
+  return '<button type="button" class="big" id="mCan">'+(hd?'対応できます':'対応できます（投稿者とチャット）')+'</button>';}
 function mMention(t){return esc(t||'').replace(/@([^\s　]+)/g,'<span class="mn">@$1</span>');}
 function mMembersView(){scr.innerHTML=LOADING;api('mMembers').then(function(j){var L=j.members;
   scr.innerHTML='<div class="mp"><div class="sec">会員 <small>'+L.length+'名</small></div><div class="list">'+L.map(function(m,i){return '<button type="button" class="card bp mmr" data-i="'+i+'"'+(m.me?' disabled':'')+'><span class="crow"><span class="av sm">'+esc((m.company||m.name).slice(0,1))+'</span><span class="tt"><b>'+esc(m.company||m.name)+(m.me?' <small class="mme">あなた</small>':'')+'</b><span class="mnm">'+esc(m.name)+'</span>'+(m.cats&&m.cats.length?'<span class="mcats">'+m.cats.map(function(c){return '<i>'+esc(c)+'</i>';}).join('')+'</span>':'')+'</span></span></button>';}).join('')+'</div><p class="note">会員を押すと、1対1のチャットが開きます</p></div>';
@@ -2076,7 +2117,7 @@ function lastGet(){try{return JSON.parse(localStorage.getItem(LASTK)||'null');}c
 (function(){
   function wrap(f,kind){return function(id){if(id)lastSet({k:kind,id:id});return f.apply(this,arguments);};}
   openCase=wrap(openCase,'case');openChat=wrap(openChat,'chat');openPro=wrap(openPro,'pro');mOpenPost=wrap(mOpenPost,'mpost');mOpenDM=wrap(mOpenDM,'mdm');
-  if(window.__t){window.__t.openChat=openChat;window.__t.openPro=openPro;window.__t.openCase=openCase;}
+  if(window.__t){window.__t.openChat=openChat;window.__t.openPro=openPro;window.__t.openCase=openCase;window.__t.mOpenPost=mOpenPost;}
   var cp=closePane;closePane=function(){var r=cp.apply(this,arguments);lastSet({});return r;};
   var sm=setMode;setMode=function(){var r=sm.apply(this,arguments);lastSet({});return r;};
   nav.addEventListener('click',function(){setTimeout(function(){lastSet({});},0);});
