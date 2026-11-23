@@ -151,6 +151,14 @@ h2{font-size:17px;margin:0 0 10px}
 .mpadd{width:62px;height:62px;border:1.5px dashed #9BB;border-radius:10px;display:flex!important;align-items:center;justify-content:center;font-size:22px;margin:0!important;cursor:pointer}.mpadd[hidden]{display:none!important}
 .mpf .lab.mbl{display:flex;justify-content:space-between;align-items:center}.mpf .mtm{align-items:center}.mpf .mtm input{margin:0}.mpf .pc-n{font-size:12px}.mpf .big{background:#1F7A4D;border-radius:12px;margin-top:20px}
 .tsvl{display:block;width:100%;margin-top:10px;padding:6px;border:0;background:none;color:#2F6B45;font:inherit;font-size:15px;font-weight:700;cursor:pointer}.tsvl small{display:block;font-size:12px;color:#777;font-weight:400;margin-bottom:2px}
+.suc{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}.suc button{font:inherit;font-size:14.5px;border:1.5px solid #CFD6D2;border-radius:20px;padding:8px 14px;background:#fff;color:#333;cursor:pointer}.suc button.on{background:#2F6B45;border-color:#2F6B45;color:#fff;font-weight:700}
+.inbx{background:#F4F7F5;border:1px solid #DCE5DF;border-radius:12px;padding:12px;font-size:14px;line-height:1.75;white-space:pre-line;margin-top:6px}.inbx mark{background:#FFF1C2;border-radius:3px}.intx{display:flex;justify-content:flex-end;gap:14px;margin-top:4px}.intx .lnk{color:#2F6B45;font-weight:700;background:none;border:0;font:inherit;font-size:13.5px;cursor:pointer}
+.sux .arw{background:#fff}.sux .ph2{background:#2F6B45}.sux .sustep{border-bottom:0;padding:10px 16px 6px}.sux .subar{height:5px}.sux .suh{font-size:18px;margin:6px 0 10px}
+.sux .lab{font-size:15px;font-weight:700;color:#222;margin:18px 0 6px}.sux .sudnote,.sux .pc-n{font-size:12.5px;color:#777}
+.sux .pf input,.sux .pf select,.sux .pf textarea,.sux textarea,.sux select{border:1.5px solid #CFD6D2;border-radius:10px;padding:11px 12px;font-size:16px;background:#fff}
+.sux .pf label{font-size:14px;color:#333}.sux .agr{border-radius:12px;border-color:#CFD6D2}.sux .agr:has(input:checked){border-color:#2F6B45;background:#EAF3EC}
+.sux .njbar .big{background:#2F6B45;border-radius:12px}.sux .njbar .ghost{border-radius:12px}
+.sux .kseg label span{border-radius:20px}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:8px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#6E7D75;font-size:12px;margin-right:3px}
 .mhd{margin-left:auto;color:#2B4C7E;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;background:#fff;color:#23302A}.mks button[aria-pressed=true]{background:#2B4C7E;color:#fff;border-color:#2B4C7E}
@@ -607,7 +615,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=92;
+var APPVER_N=93;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -656,8 +664,8 @@ function fail(e){toast((e&&e.message)||'通信に失敗しました。電波の�
 function openSheet(html,cls){sheet.className='sheet'+(cls?' '+cls:'');sheet.innerHTML='<div class="grab"></div>'+html;ph.classList.add('open');}
 function closeSheet(){ph.classList.remove('open');ph.scrollTop=0;}
 $('shade').onclick=closeSheet;
-function setPane(html,onBack){stopChat();pane.innerHTML=html;pane.classList.add('on');var b=pane.querySelector('.bk');if(b)b.onclick=onBack||closePane;}
-function closePane(){stopChat();pane.classList.remove('on');refresh();}
+function setPane(html,onBack){stopChat();pane.classList.remove('sux');pane.innerHTML=html;pane.classList.add('on');var b=pane.querySelector('.bk');if(b)b.onclick=onBack||closePane;}
+function closePane(){stopChat();pane.classList.remove('on','sux');refresh();}
 /* 写真を小さくしてから送る（長い辺1200px） */
 function shrink(file){return new Promise(function(ok,ng){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82));};im.onerror=ng;im.src=r.result;};r.onerror=ng;r.readAsDataURL(file);});}
 function charaName(){return 'まちこ';}
@@ -1549,18 +1557,18 @@ function profPane(){setPane('<div class="ph2"><button type="button" class="bk" a
       pane.querySelector('.arw').innerHTML='<div class="pfm"><div class="pflb">写真 <span class="op">任意</span></div><div class="pfpic">'+av+'<div><label class="pfbtn">写真を選ぶ<input type="file" accept="image/*" id="pfF" hidden></label>'+(du||ph?'<button type="button" class="undo" id="pfX">写真を外す</button>':'')+'<p class="pfh">顔写真か会社のロゴ。顔が見えると安心して選ばれやすくなります</p></div></div>'+
         '<div class="pflb">依頼者に表示する名前 <span class="rq2">必須</span></div><input id="pfN" maxlength="30" value="'+esc(P.name)+'" class="pfin"><p class="pfh">屋号・会社名など。30文字まで</p>'+
         '<div class="pflb">損害賠償保険 <span class="rq2">必須</span></div><div class="pfch pfins">'+['入っている','入っていない'].map(function(x){return '<button type="button" data-ins="'+x+'" class="'+(P.ins===x?'on':'')+'">'+x+'</button>';}).join('')+'</div><p class="pfh">「入っている」を選ぶと、依頼者に「損害賠償保険あり（申告）」と表示されます</p>'+
-        '<div class="pflb">紹介文 <span class="rq2">必須</span></div><textarea id="pfI" rows="4" maxlength="200" placeholder="例：松本市で30年、窓・サッシとリフォームを中心に請け負っています。小さな修理でもお気軽にご相談ください。">'+esc(P.intro)+'</textarea><p class="pfh">200文字まで。電話番号・メール・URLは書けません</p>'+
+        '<div class="pflb">自己紹介の文 <span class="rq2">必須</span></div><p class="pfh" style="margin-top:0">立候補したときに、依頼者へ最初に届くメッセージです（頭に「〇〇様、はじめまして。」が付きます）</p><textarea id="pfI" rows="8" maxlength="400" placeholder="例：松本市で30年、窓・サッシとリフォームを中心に請け負っています。小さな修理でもお気軽にご相談ください。">'+esc(P.intro)+'</textarea><p class="pfh">400文字まで。電話番号・メール・URLは書けません</p><button type="button" class="undo" id="pfG" style="margin-left:0">質問に答えて、自動で作り直す</button>'+
         '<div class="pflb">特徴 <span class="op">任意・いくつでも</span></div><div class="pfch">'+P.FEATS.map(function(f){return '<button type="button" class="'+(P.feats.indexOf(f)>=0?'on':'')+'" data-f="'+esc(f)+'">'+esc(f)+'</button>';}).join('')+'</div><p class="pfh">本当のことだけ選んでください。違っていた場合は、運営が外すことがあります</p>'+
         '<div class="pflb">まち頼が付ける印 <span class="op">自動</span></div><div class="pfauto">本人確認済み／資格確認済み／まち頼で完了◯件 は、書類や記録をもとに、まち頼が自動で付けます。自分では選べません。<br>今の印：'+((P.card.facts||[]).length?esc(P.card.facts.join('・')):'まだありません')+'</div></div>'+
         '<p class="err" id="pfE" hidden></p><button type="button" class="big" id="pfS" style="background:#2F6B45">保存する</button>';
       $('pfF').onchange=function(){var f=this.files[0];if(!f)return;shrink(f).then(function(d){du=d;draw();}).catch(function(){toast('写真を読み込めませんでした');});};
       var x=$('pfX');if(x)x.onclick=function(){du='';ph='';draw();};
       each('[data-f]',pane,function(b){b.onclick=function(){var f=b.dataset.f,i=P.feats.indexOf(f);if(i>=0)P.feats.splice(i,1);else P.feats.push(f);b.classList.toggle('on');};});
-      $('pfI').oninput=function(){P.intro=this.value;};$('pfN').oninput=function(){P.name=this.value;};
+      $('pfI').oninput=function(){P.intro=this.value;};$('pfG').onclick=function(){introSetup(P,function(t){P.intro=t;draw();},1);};$('pfN').oninput=function(){P.name=this.value;};
       each('[data-ins]',pane,function(b){b.onclick=function(){P.ins=b.dataset.ins;each('[data-ins]',pane,function(x){x.classList.toggle('on',x===b);});};});
       $('pfS').onclick=function(){var e=$('pfE'),btn=this;e.hidden=true;btn.disabled=true;btn.textContent='保存しています…';
         if(!P.ins){btn.disabled=false;btn.textContent='保存する';e.textContent='損害賠償保険に入っているかを選んでください';e.hidden=false;return;}
-        var d={name:$('pfN').value,ins:P.ins,intro:$('pfI').value,feats:P.feats};if(du)d.dataUrl=du;else if(!ph)d.photo='';
+        var d={name:$('pfN').value,ins:P.ins,intro:$('pfI').value,feats:P.feats,exp:P.exp||'',best:P.best||[]};if(du)d.dataUrl=du;else if(!ph)d.photo='';
         api('proProfileSave',d).then(function(){toast('プロフィールを保存しました');PRO=null;closePane();}).catch(function(x){btn.disabled=false;btn.textContent='保存する';e.textContent=(x&&x.message)||'保存できませんでした';e.hidden=false;});};};
     draw();}).catch(function(e){fail(e);closePane();});}
 function licPane(){api('proHome').then(function(j){PRO=j;licDraw();}).catch(function(){licDraw();});}
@@ -1600,14 +1608,32 @@ var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],
 function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。'+(c.estOnly?'この依頼は「'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'」なので、立候補料はかかりません。':'依頼者からメッセージが届くと、立候補料（500円）がかかります。')+'</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
   $('bidB').onclick=function(){bidMsg(c);};}
 /* 立候補するときは、最初のメッセージを書いてもらう（依頼者の一覧で、業者ごとのあいさつとして見せる・11/23） */
-function bidMsg(c){openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>最初のメッセージ</h3><p class="sp s2">依頼者が業者を選ぶときに、最初に目にする一文です。依頼内容にふれて、ひとこと書きましょう。</p>'+
-  ((c.hints||[]).length?'<div class="bmh"><b>確認するとよいこと</b><small>依頼者がまだ答えていない項目です。押すと入力欄に入ります</small><div class="pfch">'+c.hints.map(function(h){return '<button type="button" data-h="'+esc(h)+'">'+esc(h)+'</button>';}).join('')+'</div></div>':'')+
-  '<textarea id="bmT" rows="5" maxlength="400" placeholder="例：はじめまして。すきま風が入るのは、窓のどのあたりでしょうか。サッシの種類も教えていただけると、見積もりの目安をお伝えできます。" style="width:100%;font:inherit;font-size:15px;padding:12px;border:1.5px solid #CFD6D2;border-radius:10px;box-sizing:border-box"></textarea>'+
-  '<p class="err" id="bmE" hidden></p><button type="button" class="big" id="bmB" style="background:#2F6B45">この内容で立候補する</button>','tall');
-  $('shBk').onclick=function(){newCase(c);};
-  each('[data-h]',sheet,function(b){b.onclick=function(){var t=$('bmT'),h=b.dataset.h,p=t.selectionStart==null?t.value.length:t.selectionStart;t.value=t.value.slice(0,p)+h+t.value.slice(p);t.focus();var q=p+h.length;try{t.setSelectionRange(q,q);}catch(e){}b.classList.add('on');};});
-  $('bmB').onclick=function(){var t=$('bmT').value.trim(),e=$('bmE');if(t.length<10){e.textContent='10文字以上で書いてください';e.hidden=false;$('bmT').focus();return;}
-    var btn=this;btn.disabled=true;btn.textContent='送っています…';api('proBid',{caseId:c.id,text:t}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(function(x){btn.disabled=false;btn.textContent='この内容で立候補する';fail(x);});};}
+/* 立候補の一通目は、自己紹介の文を依頼者の名前つきで送る。業者は書かなくてよい（ミツモア方式・11/24）。自己紹介の文がまだなければ、先に2問で作る */
+function bidMsg(c){api('proProfile').then(function(P){if(String(P.intro||'').trim())bidMsg2(c,P);else introSetup(P,function(t){P.intro=t;bidMsg2(c,P);},0,c);}).catch(fail);}
+function bidMsg2(c,P){openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>最初のメッセージ</h3><p class="sp s2">自己紹介の文が、依頼者の名前つきで送られます。書き足さなくても立候補できます。</p>'+
+  '<div class="inbx">（依頼者のお名前）様、はじめまして。'+esc(P.intro)+'</div><div class="intx"><button type="button" class="lnk" id="bmP">自己紹介の文を直す ›</button></div>'+
+  '<div class="lab" style="margin-top:12px">ひとこと足す <em class="op">任意</em></div>'+
+  ((c.hints||[]).length?'<div class="bmh"><small>押すと入力欄に入ります</small><div class="pfch">'+c.hints.map(function(h){return '<button type="button" data-h="'+esc(h)+'">'+esc(h)+'</button>';}).join('')+'</div></div>':'')+
+  '<textarea id="bmT" rows="3" maxlength="400" placeholder="例：すきま風は、窓まわりの調整で直ることが多いです" style="width:100%;font:inherit;font-size:15px;padding:12px;border:1.5px solid #CFD6D2;border-radius:10px;box-sizing:border-box"></textarea>'+
+  '<p class="err" id="bmE" hidden></p><button type="button" class="big" id="bmB" style="background:#2F6B45">立候補する</button>','tall');
+  $('shBk').onclick=function(){newCase(c);};$('bmP').onclick=function(){closeSheet();profPane();};
+  each('[data-h]',sheet,function(b){b.onclick=function(){var t=$('bmT'),h=b.dataset.h+'について、教えていただけますか？',p=t.selectionStart==null?t.value.length:t.selectionStart;t.value=t.value.slice(0,p)+h+t.value.slice(p);t.focus();b.classList.add('on');};});
+  $('bmB').onclick=function(){var t=$('bmT').value.trim(),e=$('bmE');var wy=hasContact(t);if(wy){e.textContent=wy+'は書けません。やり取りはチャットでお願いします';e.hidden=false;return;}
+    var btn=this;btn.disabled=true;btn.textContent='送っています…';api('proBid',{caseId:c.id,intro:1,extra:t}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(function(x){btn.disabled=false;btn.textContent='立候補する';fail(x);});};}
+/* 自己紹介の文を2問で作る（登録済みの業者が最初に立候補するとき／プロフィールから作り直すとき） */
+function introSetup(P,done,fromProf,c){var st={exp:P.exp||'',best:(P.best||[]).slice()};
+  var paint=function(){var G=genIntro({pn:P.name,city:P.city,svc:P.svc,exp:st.exp,best:st.best,lics:P.lics,feats:P.feats,ins:P.ins});st.text=G.text;
+    openSheet((c?'<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button>':'')+'<h3>自己紹介の文を作ります</h3><p class="sp s2">'+(fromProf?'2つ選ぶと、文を作り直します。':'立候補したときに、依頼者へ最初に届く文です。2つ選ぶだけで作れます（最初の一度だけ）。')+'</p>'+
+      '<div class="lab">この仕事を始めて何年ですか？</div><div class="suc" data-g="exp">'+EXPR.map(function(x){return '<button type="button" class="'+(st.exp===x?'on':'')+'" data-v="'+x+'">'+x+'</button>';}).join('')+'</div>'+
+      ((P.svc||[]).length?'<div class="lab">特に得意なものは？ <em class="op">2つまで</em></div><div class="suc" data-g="best" data-max="2">'+P.svc.map(function(x){return '<button type="button" class="'+(st.best.indexOf(x)>=0?'on':'')+'" data-v="'+esc(x)+'">'+esc(x)+'</button>';}).join('')+'</div>':'')+
+      '<div class="lab">できた文</div>'+introBox(G.text,G.hl)+'<p class="sp s2">あとからマイページの「プロフィール」で自由に直せます。</p>'+
+      '<p class="err" id="isE" hidden></p><button type="button" class="big" id="isOk" style="background:#2F6B45">'+(fromProf?'この文を入れる':'この文で保存して次へ')+'</button>','tall');
+    var bk=$('shBk');if(bk)bk.onclick=function(){newCase(c);};
+    each('.suc',sheet,function(g){g.onpick=function(v){if(g.dataset.g==='exp')st.exp=v[0]||'';else st.best=v;paint();};});suChips(sheet);
+    $('isOk').onclick=function(){if(!st.exp){var e=$('isE');e.textContent='仕事を始めて何年か選んでください';e.hidden=false;return;}P.exp=st.exp;P.best=st.best;
+      if(fromProf){closeSheet();done(st.text);return;}var bt=this;bt.disabled=true;
+      api('proProfileSave',{name:P.name,ins:P.ins,intro:st.text,feats:P.feats,exp:st.exp,best:st.best}).then(function(){done(st.text);}).catch(function(x){bt.disabled=false;var e=$('isE');e.textContent=x.message;e.hidden=false;});};};
+  paint();}
 
 /* ===== Proモード：チャット ===== */
 var PC2=null;
@@ -1805,7 +1831,18 @@ var DOCN={"elec": "電気工事業者の登録証など", "gas": "液化石油�
 function svDocs(keys){var ks=[];(SU.d.svc||[]).forEach(function(x){var k=SVK[x];if(k&&ks.indexOf(k)<0)ks.push(k);});return keys?ks:ks.map(function(k){return DOCN[k]||k;});}
 function svLocked(c,x){if(x)return !!SVK[x];var C=SVC.filter(function(k){return k[0]===c;})[0];return !!C&&svItems(C).every(function(y){return !!SVK[y];});}
 var AGREE=['回答は事業者を代表するもので、虚偽があれば登録後でも利用を停止することがある','規約を守る。確定した日時を守り、遅れや欠席はチャットですぐ連絡する','トラブルは、業者が自分の責任と費用で依頼者と解決する','依頼者とのやり取りは原則アプリ内のチャットで行い、取りやめ・辞退は業者がアプリで報告する','依頼内容が変わらない限り、見積もりから増額しない。集客目的の安値は禁止','依頼者のメッセージには72時間以内に返信する','現地調査は無料で行い、移動費も請求しない','業者都合のキャンセルは原則できない。成約後に業者都合でキャンセルした場合は、見積もりと同額のキャンセル料を支払う','規約とガイドラインを確認し、違反した場合は利用を停止することがある'];
-var SU=null,SU_STEPS=[[1,'事業者の情報','会員の確認'],[1,'事業者の情報','基本情報'],[1,'事業者の情報','メールの確認'],[1,'事業者の情報','利用規約'],[2,'仕事の設定','対応サービス'],[2,'仕事の設定','営業日と経験'],[2,'仕事の設定','会社情報'],[2,'仕事の設定','対応エリア'],[3,'確認と提出','保険と補償'],[3,'確認と提出','重要事項の確認'],[3,'確認と提出','書類の提出'],[3,'確認と提出','お支払いカード']];
+/* 自己紹介の文（11/24）：登録の内容から、立候補の一通目になる文を自動で作る。AIは使わない */
+var EXPR=['5年未満','5〜10年','10〜20年','20年以上'];
+var FEATS_TX={'作業の外注なし':'作業の外注はしておりません。','土日も対応':'土日も対応いたします。','夜間も対応':'夜間のご相談にも対応いたします。','女性スタッフあり':'女性スタッフも在籍しております。','非喫煙者':'作業者は全員たばこを吸いません。','駐車場がなくても可':'駐車場がなくても伺えます。','古い家に慣れている':'古いお住まいの工事にも慣れております。','急ぎに対応':'お急ぎのご依頼にも対応いたします。'};
+function genIntro(o){var sv=(o.svc||[]).slice(0,3),best=(o.best||[]).slice(0,2),yr={'20年以上':'この道20年以上','10〜20年':'この道10年以上','5〜10年':'この道5年以上'}[o.exp]||'';
+  var hl=yr&&best.length?yr+'、特に'+best.join('と')+'を得意としております。':yr?yr+'の経験がございます。':best.length?'特に'+best.join('と')+'を得意としております。':'';
+  var l1=(o.pn||'')+'と申します。',l2=(o.city?o.city+'を拠点に、':'')+(sv.length?sv.join('・')+'などを手がけております。':'住まいの工事を手がけております。')+hl;
+  var l3=((o.lics||[]).length?o.lics.slice(0,3).join('・')+'の資格を持っております。':'')+(o.feats||[]).map(function(f){return FEATS_TX[f]||'';}).join('')+(o.ins==='入っている'?'損害賠償保険にも加入しておりますので、安心してお任せください。':'');
+  return {text:[l1,l2,l3,'気になることがあれば、お気軽にご相談ください。'].filter(function(x){return x;}).join('\n'),hl:hl};}
+function introBox(t,hl){var h=esc(t);if(hl)h=h.replace(esc(hl),'<mark>'+esc(hl)+'</mark>');return '<div class="inbx">はじめまして。'+h+'</div>';}
+function suChips(root){each('.suc',root,function(g){each('button',g,function(b){b.onclick=function(){var mx=+g.dataset.max||1,d=SU?SU.d:null;if(mx===1){each('button',g,function(x){x.classList.toggle('on',x===b);});}else{if(!b.classList.contains('on')&&g.querySelectorAll('.on').length>=mx)return toast(mx+'つまで選べます');b.classList.toggle('on');}
+  var vals=Array.prototype.map.call(g.querySelectorAll('.on'),function(x){return x.dataset.v;});if(d&&root===pane)d[g.dataset.g]=mx===1?(vals[0]||''):vals;if(g.onpick)g.onpick(vals);};});});}
+var SU=null,SU_STEPS=[[1,'事業者の情報','会員の確認'],[1,'事業者の情報','基本情報'],[1,'事業者の情報','メールの確認'],[1,'事業者の情報','利用規約'],[2,'仕事の設定','対応サービス'],[2,'仕事の設定','営業日と経験'],[2,'仕事の設定','会社情報'],[2,'仕事の設定','対応エリア'],[3,'確認と提出','保険と補償'],[3,'確認と提出','自己紹介の文'],[3,'確認と提出','重要事項の確認'],[3,'確認と提出','書類の提出'],[3,'確認と提出','お支払いカード']];
 var SU_AC={u_nm:'organization',u_zip:'postal-code',u_ad:'address-line1',u_bl:'address-line2',u_ln:'family-name',u_fn:'given-name',u_tel:'tel',u_mail:'email',u_mln:'family-name',u_mfn:'given-name',u_mtel:'tel',u_pn:'organization'};
 var SU_ERR=[[/電話番号/,['u_tel','u_mtel']],[/メールアドレス/,['u_mail']],[/郵便番号/,['u_zip']],[/ふりがな/,['u_lk','u_fk']],[/インボイス/,['u_inv2']],[/法人番号/,['u_corp']],[/会社名/,['u_pn']]];
 function suKey(){return 'mchy_su_'+(ME&&ME.id||'');}
@@ -1821,7 +1858,7 @@ function vendorSignup(){try{localStorage.removeItem('mchy_biz');}catch(e){}close
   if(!SU.d.mail&&ME&&ME.email)SU.d.mail=ME.email;if(SU.d.mailok&&SU.d.mailok!==SU.d.mail)SU.d.mailok='';suDraw();}
 function suStore(){if(SU&&SU.noStore)return;try{localStorage.setItem(suKey(),JSON.stringify({i:SU.i,d:SU.d}));}catch(e){}}
 function suFld(id,label,req,val,ph,type,note){return '<label>'+label+' <em class="'+(req?'rq':'op')+'">'+(req?'必須':'任意')+'</em><input id="'+id+'"'+(SU_AC[id]?' autocomplete="'+SU_AC[id]+'"':'')+(type?' type="'+type+'"':'')+' value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"></label>'+(note?'<p class="pc-n">'+note+'</p>':'');}
-function suDraw(){stopChat();if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase()){SU.d.mailok=SU.d.mail;SU.i=3;} // 登録に使ったメールなら確認を飛ばす（再開時も）
+function suDraw(){stopChat();pane.classList.add('sux');if(SU.i===2&&ME&&ME.email&&SU.d.mail===String(ME.email).toLowerCase()){SU.d.mailok=SU.d.mail;SU.i=3;} // 登録に使ったメールなら確認を飛ばす（再開時も）
 if(SU.tm){clearInterval(SU.tm);SU.tm=0;}var st=SU_STEPS[SU.i],inStep=SU_STEPS.filter(function(s){return s[0]===st[0];}),k=inStep.indexOf(st)+1;
   pane.innerHTML='<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>業者として登録</b><span>途中でやめても、続きから再開できます</span></div></div>'+
     '<div class="sustep"><span><em>Step '+st[0]+' / 3</em> '+st[1]+'</span><small>'+(SU_STEPS.length-1-SU.i?'あと'+(SU_STEPS.length-1-SU.i)+'画面':'これで最後です')+'</small><div class="subar"><i style="width:'+((SU.i+1)/SU_STEPS.length*100)+'%"></i></div></div>'+
@@ -1910,20 +1947,25 @@ function suBody(i){var d=SU.d;
   if(i===4)return '<p class="note2" style="margin-top:0">できる作業を選んでください。大カテゴリを押すと中の作業が出ます。いくつでも選べます。</p>'+svPickHtml();
   if(i===5){var W='日月火水木金土',hrs=[];for(var h=5;h<=22;h++)hrs.push(h+':00');return '<div class="lab">仕事をする曜日 <em class="rq">必須</em></div><p class="sudnote">緑が仕事をする日です。押すと切り替わります。</p><div class="sudays">'+W.split('').map(function(w,k){return '<button type="button" class="sud'+(d.days.indexOf(k)>=0?' on':'')+'" data-d="'+k+'" aria-pressed="'+(d.days.indexOf(k)>=0)+'">'+w+'</button>';}).join('')+'</div>'+
     '<div class="lab">仕事ができる時間 <em class="rq">必須</em></div><div class="su2 sutm"><select id="u_from">'+hrs.map(function(x){return '<option'+(x===d.from?' selected':'')+'>'+x+'</option>';}).join('')+'</select><span>〜</span><select id="u_to">'+hrs.map(function(x){return '<option'+(x===d.to?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div>'+
-    '<div class="lab">経験年数 <em class="rq">必須</em></div><div class="surg"><input type="range" id="u_exp" min="1" max="50" value="'+d.exp+'"><b><span id="u_expv">'+d.exp+'</span> 年</b></div>'+
-    '<div class="lab">従業員数 <em class="rq">必須</em></div><div class="surg"><input type="range" id="u_emp" min="1" max="100" value="'+d.emp+'"><b><span id="u_empv">'+d.emp+'</span> 人</b></div><p class="pc-n">営業日と時間は、依頼者が現地調査の候補日を選ぶときの目安になります。</p><p class="pc-n">経験年数と従業員数は、依頼者には表示されません（運営の確認用です）。</p>';}
+    '<div class="lab">この仕事を始めて何年ですか？ <em class="rq">必須</em></div><p class="sudnote">自己紹介の文に入ります</p><div class="suc" data-g="expR">'+EXPR.map(function(x){return '<button type="button" class="'+(d.expR===x?'on':'')+'" data-v="'+x+'">'+x+'</button>';}).join('')+'</div>'+
+    '<div class="lab">特に得意なものはどれですか？ <em class="op">任意</em></div><p class="sudnote">対応サービスの中から2つまで。自己紹介の文に入ります</p><div class="suc" data-g="best" data-max="2">'+(d.svc||[]).map(function(x){return '<button type="button" class="'+((d.best||[]).indexOf(x)>=0?'on':'')+'" data-v="'+esc(x)+'">'+esc(x)+'</button>';}).join('')+'</div>'+
+    '<div class="lab">従業員数 <em class="rq">必須</em></div><div class="surg"><input type="range" id="u_emp" min="1" max="100" value="'+d.emp+'"><b><span id="u_empv">'+d.emp+'</span> 人</b></div><p class="pc-n">営業日と時間は、依頼者が現地調査の候補日を選ぶときの目安になります。</p><p class="pc-n">従業員数は、依頼者には表示されません（運営の確認用です）。</p>';}
   if(i===6)return '<p class="note2" style="margin-top:0">依頼者に表示する名前です。写真・自己紹介・実績などは、登録のあとマイページで入れられます。</p><form class="pf pf2" onsubmit="return false">'+'<div class="lab">依頼者に表示する名前</div><div class="pnv" id="pnV">'+esc(d.pn||d.nm)+'</div><button type="button" class="pnchg" id="pnC"'+(d.pn&&d.pn!==d.nm?' hidden':'')+'>依頼者に表示する名前を変える</button><div id="pnE"'+(d.pn&&d.pn!==d.nm?'':' hidden')+'>'+suFld('u_pn','表示する名前',1,d.pn||d.nm,'')+'</div>'+urlBlock(svCatsOf(d.svc).length>0,d.urls)+'</form>';
   if(i===7)return '<p class="note2" style="margin-top:0">仕事を受けられる市町村を選んでください。この地域の依頼が届きます。</p>'+areaPicker(d.area);
   if(i===8)return '<form class="pf pf2" onsubmit="return false"><div class="lab">損害賠償保険に入っていますか？ <em class="rq">必須</em></div>'+['入っている','入っていない'].map(function(x){return '<label class="agr"><input type="radio" name="u_ins" value="'+x+'"'+(d.ins===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+
     '<div class="lab">作業中に、過失で物を汚したり壊したりしたときの対応 <em class="rq">必須</em></div>'+['依頼者と話し合い、実費を弁償する（保険を使う場合を含む）','自社で修繕する'].map(function(x){return '<label class="agr"><input type="radio" name="u_dmg" value="'+x+'"'+(d.dmg===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+'</form>';
-  if(i===9)return '<p class="note2" style="margin-top:0">下にスクロールして、すべて読んでください。</p><div class="agbox" tabindex="0">'+AGREE.map(function(t,k){return '<p><b>'+(k+1)+'.</b> '+t+'</p>';}).join('')+'</div><label class="agr obag"><input type="checkbox" id="u_agall"'+(d.agree.length===AGREE.length?' checked':'')+'><span>上の重要事項をすべて確認し、同意します</span></label>';
-  if(i===10){var lks=suLocks();return '<form class="pf pf2" onsubmit="return false">'+
+  if(i===9){var G=genIntro({pn:d.pn||d.nm,city:d.city,svc:d.svc,exp:d.expR,best:d.best,ins:d.ins});if(!d.introEdit)d.intro=G.text;
+    return '<p class="note2" style="margin-top:0">立候補したときに、依頼者へ最初に届くメッセージになります。登録の内容から自動で作りました。</p>'+introBox(d.intro,d.introEdit?'':G.hl)+
+      '<p class="sudnote">'+(d.introEdit?'自分で直した文です。':'黄色の部分が、経験年数と得意なものから入る文です。')+'</p><div class="intx"><button type="button" class="lnk" id="inE">文を直す ›</button>'+(d.introEdit?'<button type="button" class="lnk" id="inR">自動の文に戻す</button>':'')+'</div>'+
+      '<textarea id="u_intro" rows="9" maxlength="400" hidden>'+esc(d.intro)+'</textarea><p class="pc-n">あとからマイページの「プロフィール」でも直せます。電話番号・メール・URLは書けません。</p>';}
+  if(i===10)return '<p class="note2" style="margin-top:0">下にスクロールして、すべて読んでください。</p><div class="agbox" tabindex="0">'+AGREE.map(function(t,k){return '<p><b>'+(k+1)+'.</b> '+t+'</p>';}).join('')+'</div><label class="agr obag"><input type="checkbox" id="u_agall"'+(d.agree.length===AGREE.length?' checked':'')+'><span>上の重要事項をすべて確認し、同意します</span></label>';
+  if(i===11){var lks=suLocks();return '<form class="pf pf2" onsubmit="return false">'+
     '<div class="lab">本人確認書類 <em class="rq">必須</em></div>'+ID_T.map(function(t){return '<label class="agr"><input type="radio" name="u_idt" value="'+t[0]+'"'+(d.idt===t[0]?' checked':'')+'><span>'+t[1]+'</span></label>';}).join('')+
     '<div id="idD"'+(d.idt?'':' hidden')+'>'+suDocRow('id','表面',1,'')+'<div id="idB"'+(d.idt==='my'?' hidden':'')+'>'+suDocRow('idb','裏面',1,'')+'</div><p class="warn" id="idMy"'+(d.idt==='my'?'':' hidden')+'>マイナンバーカードは表面だけを出してください。裏面には個人番号が書かれているため、出さないでください。</p></div><p class="pc-n">運営の確認にだけ使い、確認が終わったら削除します。</p>'+
     (d.kind==='法人'?suDocRow('reg','履歴事項全部証明書（発行から3か月以内）',1,''):'')+
     (lks.length?'<div class="pmg"><b>初期登録後、マイページから下記の資料を提出してください。</b><ul style="margin:6px 0 0;padding-left:18px;font-size:14px">'+svDocs().map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul></div>':'')+
 '<p class="pc-n">写真は、文字が読める画質のまま自動で小さくして送ります（大きさの心配はいりません）。PDFは1つ8MBまでです。提出した書類は、運営だけが見られる場所に保存します。</p></form>';}
-  if(i===11)return '<p class="note2" style="margin-top:0">立候補料と紹介手数料のお支払いに使うカードを登録します。カード番号はまち頼には保存されず、決済会社（Stripe）が管理します。</p><button type="button" class="big" id="u_card">'+(d.card?'✓ 登録済み（テスト版の見本）':'カードを登録する（テスト版は見本）')+'</button><p class="pc-n">テスト版ではカードの登録はしません。ボタンを押すと「登録済み」になります。登録しても、依頼者から連絡が来るまで料金はかかりません。</p>';
+  if(i===12)return '<p class="note2" style="margin-top:0">立候補料と紹介手数料のお支払いに使うカードを登録します。カード番号はまち頼には保存されず、決済会社（Stripe）が管理します。</p><button type="button" class="big" id="u_card">'+(d.card?'✓ 登録済み（テスト版の見本）':'カードを登録する（テスト版は見本）')+'</button><p class="pc-n">テスト版ではカードの登録はしません。ボタンを押すと「登録済み」になります。登録しても、依頼者から連絡が来るまで料金はかかりません。</p>';
   return '';}
 /* 郵便番号→住所：まずブラウザから郵便番号検索（zipcloud）、だめならサーバー経由 */
 function zipLookup(z){return new Promise(function(ok,ng){var cb='zc'+Date.now(),sc=document.createElement('script'),done=false,fin=function(){done=true;try{delete window[cb];}catch(e){window[cb]=undefined;}sc.remove();};
@@ -1945,12 +1987,13 @@ function suBind(i){var d=SU.d;
     $('mlFix').onclick=function(){SU.i=1;suDraw();};}
   if(i===4)svBindGrid();
   if(i===6&&$('pnC'))$('pnC').onclick=function(){this.hidden=true;$('pnE').hidden=false;$('u_pn').focus();};
-  if(i===5){each('.sud',pane,function(b){b.onclick=function(){b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));};});$('u_exp').oninput=function(){$('u_expv').textContent=this.value;};$('u_emp').oninput=function(){$('u_empv').textContent=this.value;};}
+  if(i===5){each('.sud',pane,function(b){b.onclick=function(){b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));};});suChips(pane);$('u_emp').oninput=function(){$('u_empv').textContent=this.value;};}
   if(i===7)bindArea(pane);
+  if(i===9){$('inE').onclick=function(){this.hidden=true;$('u_intro').hidden=false;pane.querySelector('.inbx').hidden=true;$('u_intro').focus();};var r=$('inR');if(r)r.onclick=function(){d.introEdit=false;suDraw();};}
 
-  if(i===10)each('[data-doc]',pane,function(inp){inp.addEventListener('change',function(){suUp(inp);});});
-  if(i===10)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();SU.d.idt=r.value;each('[data-doc^=id]',pane,function(inp){if(inp.files.length&&!(inp.dataset.doc==='idb'&&r.value==='my'))suUp(inp);});if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b){b.value='';b.dispatchEvent(new Event('change'));}}};});
-  if(i===11)$('u_card').onclick=function(){d.card=1;suStore();this.textContent='✓ 登録済み（テスト版の見本）';};}
+  if(i===11)each('[data-doc]',pane,function(inp){inp.addEventListener('change',function(){suUp(inp);});});
+  if(i===11)each('[name=u_idt]',pane,function(r){r.onchange=function(){suIdSw();SU.d.idt=r.value;each('[data-doc^=id]',pane,function(inp){if(inp.files.length&&!(inp.dataset.doc==='idb'&&r.value==='my'))suUp(inp);});if(r.value==='my'){var b=pane.querySelector('[data-doc=idb]');if(b){b.value='';b.dispatchEvent(new Event('change'));}}};});
+  if(i===12)$('u_card').onclick=function(){d.card=1;suStore();this.textContent='✓ 登録済み（テスト版の見本）';};}
 function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.value.trim():'';},need=function(ids){return ids.some(function(id){return !v(id);});};
   if(i===0){d.mln=v('u_mln');d.mfn=v('u_mfn');d.mtel=z2h(v('u_mtel')).replace(/[^0-9]/g,'');if(check&&(!d.mln||!d.mfn||!d.mtel))return 'お名前と電話番号を入れてください';}
   if(i===1){var kr=pane.querySelector('[name=u_kind]:checked');d.kind=kr?kr.value:'個人事業主';['yago','cname','rtitle','cln','cfn','zip','pref','city','ad','bl','ln','fn','lk','fk','tel','mail','inv2'].forEach(function(k){d[k]=v('u_'+k);});d.corp=z2h(v('u_corp')).replace(/[\s\-ー－]/g,'');d.same=$('u_same').checked;
@@ -1959,16 +2002,17 @@ function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.v
   if(i===2&&check&&d.mailok!==d.mail)return 'メールに届いた6けたの番号を入れて「確認する」を押してください';
   if(i===3){d.tos=$('u_tos').checked;if(check&&!d.tos)return '利用規約とプライバシーポリシーに同意してください';}
   if(i===4){if(check&&!d.svc.length)return '分類を押して、作業を1つ以上選んでください';}
-  if(i===5){d.days=Array.prototype.filter.call(pane.querySelectorAll('.sud'),function(b){return b.classList.contains('on');}).map(function(b){return +b.dataset.d;});d.from=v('u_from');d.to=v('u_to');d.exp=+v('u_exp');d.emp=+v('u_emp');if(check&&!d.days.length)return '曜日を1つ以上選んでください';if(check&&parseInt(d.from)>=parseInt(d.to))return '終わりの時間を、始まりより後にしてください';}
+  if(i===5){d.days=Array.prototype.filter.call(pane.querySelectorAll('.sud'),function(b){return b.classList.contains('on');}).map(function(b){return +b.dataset.d;});d.from=v('u_from');d.to=v('u_to');d.emp=+v('u_emp');if(check&&!d.days.length)return '曜日を1つ以上選んでください';if(check&&!d.expR)return '仕事を始めて何年か選んでください';if(check&&parseInt(d.from)>=parseInt(d.to))return '終わりの時間を、始まりより後にしてください';}
   if(i===6){d.pn=v('u_pn')||d.nm;d.base=d.city;d.urls=urlRead(pane);if(check){var ue=svCatsOf(d.svc).length?urlErr(d.urls):'';if(ue)return ue;if(!d.pn)return '会社名・屋号を入れてください';var why=hasContact(d.pn);if(why)return '「会社名・屋号」に'+why+'があります。公開の欄には書けません';}}
   if(i===7){d.area=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(c){return c.checked;}).map(function(c){return c.value;});if(check&&!d.area.length)return '市町村を1つ以上選んでください';}
   if(i===8){var a=pane.querySelector('[name=u_ins]:checked'),b2=pane.querySelector('[name=u_dmg]:checked');d.ins=a?a.value:'';d.dmg=b2?b2.value:'';if(check){if(!d.ins||!d.dmg)return 'すべての質問に答えてください';}}
-  if(i===9){d.agree=$('u_agall').checked?AGREE.map(function(x,k){return k;}):[];if(check&&!d.agree.length)return '重要事項を確認して、同意にチェックを入れてください';}
-  if(i===10){var it=pane.querySelector('[name=u_idt]:checked');var oldT=d.idt;d.idt=it?it.value:'';if(oldT&&oldT!==d.idt){delete d.docs.id;delete d.docs.idb;}if(d.idt==='my')delete d.docs.idb;
+  if(i===9){var ta=$('u_intro');if(ta&&!ta.hidden){var tv=ta.value.trim();if(tv!==d.intro){d.intro=tv;d.introEdit=true;}}if(check){if(!d.intro)return '自己紹介の文を入れてください';if(d.intro.length>400)return '自己紹介の文は400文字までです';var wy=hasContact(d.intro);if(wy)return '自己紹介の文に'+wy+'があります。書けません';}}
+  if(i===10){d.agree=$('u_agall').checked?AGREE.map(function(x,k){return k;}):[];if(check&&!d.agree.length)return '重要事項を確認して、同意にチェックを入れてください';}
+  if(i===11){var it=pane.querySelector('[name=u_idt]:checked');var oldT=d.idt;d.idt=it?it.value:'';if(oldT&&oldT!==d.idt){delete d.docs.id;delete d.docs.idb;}if(d.idt==='my')delete d.docs.idb;
     if(check){var bad='',has=function(k){var inp=pane.querySelector('[data-doc="'+k+'"]');return (inp&&inp.files.length)||(d.docs[k]||[]).length;};
       each('input[type=file]',pane,function(inp){Array.prototype.forEach.call(inp.files||[],function(f){if(!bad&&!/^image\//.test(f.type)&&f.type!=='application/pdf')bad='「'+f.name+'」は使えない形式です（画像かPDFにしてください）';if(!bad&&f.type==='application/pdf'&&f.size>8*1024*1024)bad='「'+f.name+'」が大きすぎます（8MBまで）';});});
       if(bad)return bad;if(!d.idt)return '本人確認書類の種類を選んでください';if(!has('id'))return '本人確認書類の表面を選んでください';if(d.idt!=='my'&&!has('idb'))return '本人確認書類の裏面を選んでください';if(d.kind==='法人'&&!has('reg'))return '履歴事項全部証明書を選んでください';}}
-  if(i===11&&check&&!d.card)return 'カードを登録してください';
+  if(i===12&&check&&!d.card)return 'カードを登録してください';
   suStore();return '';}
 /* 写真は長い辺2000pxのJPEGに縮めて送る。8MBを超えるときは、画質→大きさの順に少しずつ下げる（文字が読める範囲） */
 /* 書類は選んだ時点で裏で送り始める。複数は同時に送る（11/23：次へで待たせない） */
@@ -1985,7 +2029,7 @@ function suFile(f){return new Promise(function(ok,ng){var rd=new FileReader();rd
   rd.onload=function(){var im=new Image();im.onload=function(){var L=2000,q=.88,b64='';for(var t=0;t<8;t++){var s=Math.min(1,L/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);b64=c.toDataURL('image/jpeg',q).split(',')[1];if(b64.length*3/4<=SU_MAX)break;if(q>.7)q-=.08;else L=Math.round(L*.85);}ok({mime:'image/jpeg',b64:b64});};im.onerror=function(){ng(new Error('「'+f.name+'」を開けませんでした。写真を撮り直すか、PDFにしてください'));};im.src=rd.result;};rd.readAsDataURL(f);});}
 function suAsync(i){var d=SU.d;
   if(i===0)return api('vMember',{name:d.mln+d.mfn,tel:d.mtel}).then(function(j){d.member=j.member.name;if(!d.ln){d.ln=d.mln;d.fn=d.mfn;d.tel=d.mtel;}if(!d.nm&&j.member.company)d.nm=j.member.company;toast('会員の確認ができました');});
-  if(i===10){var jobs=[];each('input[type=file]',pane,function(inp){var k=inp.dataset.doc;if(!k||!inp.files.length)return;if(k==='idb'&&d.idt==='my')return;
+  if(i===11){var jobs=[];each('input[type=file]',pane,function(inp){var k=inp.dataset.doc;if(!k||!inp.files.length)return;if(k==='idb'&&d.idt==='my')return;
       var u=SUUP[k];if(!u||!suSame(u,inp,d))u=suUp(inp);jobs.push(u.p);});
     if(!jobs.length)return Promise.resolve();$('suN').textContent='書類を送っています…';return Promise.all(jobs).then(function(){suStore();});}
   return Promise.resolve();}
@@ -2159,7 +2203,7 @@ function lastGet(){try{return JSON.parse(localStorage.getItem(LASTK)||'null');}c
 (function(){
   function wrap(f,kind){return function(id){if(id)lastSet({k:kind,id:id});return f.apply(this,arguments);};}
   openCase=wrap(openCase,'case');openChat=wrap(openChat,'chat');openPro=wrap(openPro,'pro');mOpenPost=wrap(mOpenPost,'mpost');mOpenDM=wrap(mOpenDM,'mdm');
-  if(window.__t){window.__t.openChat=openChat;window.__t.openPro=openPro;window.__t.openCase=openCase;window.__t.mOpenPost=mOpenPost;}
+  if(window.__t){window.__t.openChat=openChat;window.__t.vendorSignup=function(){vendorSignup();};window.__t.suGo=function(i){SU.i=i;suDraw();};window.__t.su=function(){return SU;};window.__t.openPro=openPro;window.__t.openCase=openCase;window.__t.mOpenPost=mOpenPost;}
   var cp=closePane;closePane=function(){var r=cp.apply(this,arguments);lastSet({});return r;};
   var sm=setMode;setMode=function(){var r=sm.apply(this,arguments);lastSet({});return r;};
   nav.addEventListener('click',function(){setTimeout(function(){lastSet({});},0);});
