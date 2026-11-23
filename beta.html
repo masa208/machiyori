@@ -139,6 +139,7 @@ h2{font-size:17px;margin:0 0 10px}
 .mtg{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;margin-right:6px}.mtg.t1{background:#FCE9E2;color:#C2491F}.mtg.t2{background:#E6ECF5;color:#2B4C7E}.mtg.t3{background:#EAF3ED;color:#2F6B45}.mtg.t4{background:#F3EBDA;color:#8A6416}.mtg.t5{background:#EEF1EF;color:#5D6A63}
 .mpc2 .bl1{display:flex;align-items:center}.mpc2 .mbr{margin-left:auto}.mpc2.dn{opacity:.6}.bdg.dn{background:#EAF3ED;color:#2F6B45}
 .pf .mkd,.mkd{width:100%;padding:12px;font-size:16px;font-weight:700;border:1.5px solid #1F7A4D;border-radius:10px;background:#F2FAF5;color:#173;margin-bottom:4px}.mtm{display:flex;gap:8px;align-items:center}.mtm input{flex:1;min-width:0}.mtm input[type=number]{flex:0 0 110px}.mbl{display:flex;justify-content:space-between;align-items:center}.mtp{color:#1F6FD6;background:#fff;border:1.5px solid #1F6FD6;border-radius:16px;padding:3px 12px;font:inherit;font-size:13px;font-weight:700}.mtpl{text-align:left;font-weight:400;line-height:1.6}
+.avp{object-fit:cover;padding:0}.mprf{text-align:center}.mprf img,.mprf .mpa{width:96px;height:96px;border-radius:50%;object-fit:cover;display:inline-flex;align-items:center;justify-content:center;font-size:36px;margin:4px auto 10px}.mprf dl{text-align:left;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:4px 6px 10px;font-size:15px}.mprf dt{color:var(--sb);font-size:13px;align-self:center}.mprf dd{margin:0;font-weight:700}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:8px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#6E7D75;font-size:12px;margin-right:3px}
 .mhd{margin-left:auto;color:#2B4C7E;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;background:#fff;color:#23302A}.mks button[aria-pressed=true]{background:#2B4C7E;color:#fff;border-color:#2B4C7E}
@@ -595,7 +596,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=87;
+var APPVER_N=88;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -2027,12 +2028,12 @@ function mBoardView(){var had=!!MB;if(had)mBoardPaint();else scr.innerHTML=LOADI
   api('mBoard').then(function(j){var same=had&&JSON.stringify(j)===JSON.stringify(MB);MB=j;if(MODE==='member'&&tab==='board'&&!pane.classList.contains('on')&&!same&&!busyForm())mBoardPaint();}).catch(function(e){if(e&&/会員ページは/.test(e.message)){MJ=false;renderMember();}else if(!had)showErr(e);});}
 function mBoardPaint(){var L=mList('any'),past=(MB.posts||[]).filter(function(p){return p.at==='past';});
   scr.innerHTML='<div class="mp mbd">'+mLock()+(MJ&&MJ.pageOnly&&!(HOME&&HOME.pro)?'<button type="button" class="mjv" id="mjV">仕事も受けたい方は<b>業者登録へ ›</b></button>':'')+mCtl(true)+'<div id="mbl"></div><button type="button" class="pbox" id="mpastB"><span><b>過去の案件</b>（'+past.length+'件）<small>投稿から1か月以上たった期限なしの募集や、募集が終了した案件</small></span><i aria-hidden="true">›</i></button>'+
-    (MB.newm&&MB.newm.length?'<div class="sec">新しく入った会員</div><div class="nmem">'+MB.newm.map(function(m){return '<button type="button" class="nm" data-u="'+m.userId+'"><span class="av">'+esc((m.company||m.name).slice(0,1))+'</span><b>'+esc(m.company||m.name)+'</b><small>'+esc(m.company?m.name:'')+'</small></button>';}).join('')+'</div>':'')+'<div style="height:80px"></div></div>';
+    (MB.newm&&MB.newm.length?'<div class="sec">新しく入った会員</div><div class="nmem">'+MB.newm.map(function(m){return '<button type="button" class="nm" data-u="'+m.userId+'">'+mAv(m)+'<b>'+esc(m.company||m.name)+'</b><small>'+esc(m.company?m.name:'')+'</small></button>';}).join('')+'</div>':'')+'<div style="height:80px"></div></div>';
   var draw=function(keep){var L=mList('any');$('mbl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<div class="none0"><p class="empty">条件に合う案件はありません</p><button type="button" class="clr" id="mclr">条件を解除する</button></div>';
     each('.mpc',$('mbl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id);};});var c=$('mclr');if(c)c.onclick=function(){MF={q:'',past:false,f:'all',srt:'new'};mBoardPaint();};
     if(!keep)each('[data-f]',scr,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(scr,draw);draw();
-  $('mpastB').onclick=mPastView;mLockBind();var mv=$('mjV');if(mv)mv.onclick=vendorSignup;each('.nm',scr,function(b){b.onclick=function(){if(b.dataset.u&&b.dataset.u!==(MB&&MB.me))mOpenDM(b.dataset.u);};});}
+  $('mpastB').onclick=mPastView;mLockBind();var mv=$('mjV');if(mv)mv.onclick=vendorSignup;each('.nm',scr,function(b){b.onclick=function(){var m=(MB.newm||[]).filter(function(x){return x.userId===b.dataset.u;})[0];if(m)mProf(m,m.userId===(MB&&MB.me));};});}
 function mPastView(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>過去の案件</b></div></div><div class="arw"><p class="adesc">投稿から1か月以上経過した期限なしの募集や、募集が終了した案件を掲載しています。</p><div id="mpc">'+mCtl(false)+'</div><div id="mpl"></div></div>');
   var draw=function(keep){var L=mList('past');$('mpl').innerHTML=L.length?'<div class="list">'+L.map(mCard).join('')+'</div>':'<p class="empty">条件に合う案件はありません</p>';each('.mpc',$('mpl'),function(b){b.onclick=function(){mOpenPost(b.dataset.id,mPastView);};});if(!keep)each('[data-f]',pane,function(b){b.setAttribute('aria-pressed',MF.f===b.dataset.f);});};
   mBindCtl(pane,draw);draw();}
@@ -2108,10 +2109,16 @@ function mHandsBox(p){var hd=MHAND.indexOf(p.kind)>=0,L=p.handList||[];
 function mHandBtn(p){var hd=MHAND.indexOf(p.kind)>=0;if(p.myHand)return '<p class="pc-n mhme">'+(p.myHand.chosen?'投稿者からお願いされました。チャットで詳しく決めましょう。':'「対応できます」を伝えました。投稿者の返事を待っています。')+'</p>';
   if(p.st!=='open')return '<p class="pc-n">'+(p.st==='done'?'この募集は決まりました。':'募集は終了しています。')+'新しい問い合わせはできません。</p>';
   return '<button type="button" class="big" id="mCan">'+(hd?'対応できます':'対応できます（投稿者とチャット）')+'</button>';}
+/* 会員の紹介（11/23）：会社名（事業名）・会員名・写真（マイページで登録）。押すとチャット */
+function mAv(m,c){return m.photo?'<img class="av'+(c?' '+c:'')+' avp" src="'+esc(m.photo)+'" alt="">':'<span class="av'+(c?' '+c:'')+'">'+esc((m.company||m.name||'？').slice(0,1))+'</span>';}
+function mProf(m,me){openSheet('<div class="mprf">'+(m.photo?'<img src="'+esc(m.photo)+'" alt="'+esc(m.name)+'さんの写真">':'<span class="av mpa">'+esc((m.company||m.name||'？').slice(0,1))+'</span>')+
+  '<dl><dt>会社名（事業名）</dt><dd>'+esc(m.company||'未登録')+'</dd><dt>会員名</dt><dd>'+esc(m.name||'')+'</dd>'+(m.cats&&m.cats.length?'<dt>分野</dt><dd>'+esc(m.cats.join('・'))+'</dd>':'')+'</dl></div>'+
+  (me?'<p class="sp s2">あなたです。写真と会社名は、Proモードのマイページ「プロフィール」で変えられます。</p>':'<button type="button" class="big" id="mpfC">チャットする</button>'));
+  var c=$('mpfC');if(c)c.onclick=function(){closeSheet();mOpenDM(m.userId);};}
 function mMention(t){return esc(t||'').replace(/@([^\s　]+)/g,'<span class="mn">@$1</span>');}
 function mMembersView(){scr.innerHTML=LOADING;api('mMembers').then(function(j){var L=j.members;
-  scr.innerHTML='<div class="mp"><div class="sec">会員 <small>'+L.length+'名</small></div><div class="list">'+L.map(function(m,i){return '<button type="button" class="card bp mmr" data-i="'+i+'"'+(m.me?' disabled':'')+'><span class="crow"><span class="av sm">'+esc((m.company||m.name).slice(0,1))+'</span><span class="tt"><b>'+esc(m.company||m.name)+(m.me?' <small class="mme">あなた</small>':'')+'</b><span class="mnm">'+esc(m.name)+'</span>'+(m.cats&&m.cats.length?'<span class="mcats">'+m.cats.map(function(c){return '<i>'+esc(c)+'</i>';}).join('')+'</span>':'')+'</span></span></button>';}).join('')+'</div><p class="note">会員を押すと、1対1のチャットが開きます</p></div>';
-  each('.mmr',scr,function(b){b.onclick=function(){var m=L[+b.dataset.i];if(!m.me)mOpenDM(m.userId);};});}).catch(function(e){if(e&&e.needJoin!==undefined||/会員ページは/.test(e&&e.message)){MJ=false;renderMember();}else showErr(e);});}
+  scr.innerHTML='<div class="mp"><div class="sec">会員 <small>'+L.length+'名</small></div><div class="list">'+L.map(function(m,i){return '<button type="button" class="card bp mmr" data-i="'+i+'"><span class="crow">'+mAv(m,'sm')+'<span class="tt"><b>'+esc(m.company||m.name)+(m.me?' <small class="mme">あなた</small>':'')+'</b><span class="mnm">'+esc(m.name)+'</span>'+(m.cats&&m.cats.length?'<span class="mcats">'+m.cats.map(function(c){return '<i>'+esc(c)+'</i>';}).join('')+'</span>':'')+'</span></span></button>';}).join('')+'</div><p class="note">会員を押すと、1対1のチャットが開きます</p></div>';
+  each('.mmr',scr,function(b){b.onclick=function(){var m=L[+b.dataset.i];mProf(m,m.me);};});}).catch(function(e){if(e&&e.needJoin!==undefined||/会員ページは/.test(e&&e.message)){MJ=false;renderMember();}else showErr(e);});}
 function mDMsView(){scr.innerHTML=LOADING;api('mDMs').then(function(j){var L=j.list;
   scr.innerHTML='<div class="mp"><div class="sec">チャット</div>'+(L.length?'<div class="list">'+L.map(function(x){return '<button type="button" class="card bp mdr" data-u="'+x.with+'"><span class="crow"><span class="av sm">'+esc(x.name.slice(0,1))+'</span><span class="tt"><b>'+esc(x.name)+'</b><span class="lm">'+esc(x.text)+'</span></span>'+(x.unread?'<span class="unr">'+x.unread+'</span>':'')+'</span></button>';}).join('')+'</div>':'<p class="empty">まだやり取りはありません。「会員」の一覧から話しかけられます。</p>')+'</div>';
   each('.mdr',scr,function(b){b.onclick=function(){mOpenDM(b.dataset.u);};});}).catch(function(e){if(e&&/会員ページは/.test(e.message)){MJ=false;renderMember();}else showErr(e);});}
