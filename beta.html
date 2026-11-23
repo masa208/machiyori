@@ -514,7 +514,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .uh-ic{display:block;width:34px;height:34px;border-radius:50%;margin:0 auto 5px;background:#fde7df;color:#E8623F;font-weight:800;line-height:34px;font-size:14px}.uh-t.off{opacity:.55}.uh-t small{display:block;font-size:9.5px;color:#888}
 .uh-all{display:block;width:100%;margin-top:10px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px;font:inherit;font-weight:700;color:#E8623F;font-size:14px;cursor:pointer}
 .ch2{display:flex;flex-wrap:wrap;gap:6px}.cch{border:1.5px solid #E8623F;color:#E8623F;background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.cch.on{background:#E8623F;color:#fff}.cch.gy{border-color:#bbb;color:#777}.cch.off{border-color:#ccc;color:#999}.cch small{font-size:10px;font-weight:400}
-.svend{display:flex;flex-direction:column;gap:8px;margin-top:14px}.svend .big{margin:0}.kseg{display:flex;gap:8px}.kseg label{flex:1;cursor:pointer}.kseg input{position:absolute;opacity:0}.kseg span{display:block;text-align:center;background:#fff;border:1.5px solid #d9d5cc;border-radius:12px;padding:11px;font-weight:700;font-size:14px}.kseg input:checked+span{border-color:#2F6B45;background:#e9f3ec;color:#2F6B45}.ksec{font-size:12.5px;font-weight:700;color:#777;margin:16px 0 4px;border-top:1px solid #e3ddd2;padding-top:10px}.pnv{background:#fff;border-radius:10px;padding:10px 12px;font-weight:700}.pnchg{background:none;border:0;color:#E8623F;font:inherit;font-weight:700;font-size:13.5px;padding:6px 0;cursor:pointer}</style>
+.svend{display:flex;flex-direction:column;gap:8px;margin-top:14px}.svend .big{margin:0}.kseg{display:flex;gap:8px}.kseg label{flex:1;cursor:pointer}.kseg input{position:absolute;opacity:0}.kseg span{display:block;text-align:center;background:#fff;border:1.5px solid #d9d5cc;border-radius:12px;padding:11px;font-weight:700;font-size:14px}.kseg input:checked+span{border-color:#2F6B45;background:#e9f3ec;color:#2F6B45}.ksec{font-size:12.5px;font-weight:700;color:#777;margin:16px 0 4px;border-top:1px solid #e3ddd2;padding-top:10px}.pnv{background:#fff;border-radius:10px;padding:10px 12px;font-weight:700}.pnchg{background:none;border:0;color:#E8623F;font:inherit;font-weight:700;font-size:13.5px;padding:6px 0;cursor:pointer}.pcopt{background:#faf8f4;border:1px dashed #d9d5cc;border-radius:12px;padding:10px 12px;margin:12px 0 4px}.pcopt span{display:block;font-size:12px;color:#888;margin-bottom:6px}.pcopt label{display:flex!important;align-items:center;gap:8px;font-size:14px;margin:4px 0!important}.pcopt input{width:18px!important;height:18px;margin:0;accent-color:#E8623F}.pcopt b{font-weight:600}</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=64;
+var APPVER_N=65;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -707,6 +707,7 @@ function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':MODE==='member'?'会員ページ':'依頼者モード';if(MODE==='pro')tab='job';if(MODE==='member')tab='board';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(bizGo,300);else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
+  if(ME.agreedAt&&ME.notifySet)concRestore();
 }
 function agreeSheet(){
   openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
@@ -874,12 +875,14 @@ function bindRecent(root,reload){each('[data-tid]',root,function(b){b.onclick=fu
     $('rnS').onclick=function(){var v=$('rnI').value.trim();if(!v)return;api('threadRename',{threadId:b.dataset.rn,title:v}).then(function(){closeSheet();toast('名前を変えました');reload();}).catch(fail);};};});}
 function loadRecent(id,limit){var box=$(id);if(!box)return;api('threads').then(function(j){var b=$(id);if(!b)return;b.innerHTML=recentHTML(j.items,limit)+(limit&&j.items.length>limit?'<button type="button" class="lnk2" id="rcAll">すべての会話を見る（'+j.items.length+'件）</button>':'');bindRecent(b,function(){loadRecent(id,limit);});var a=$('rcAll');if(a)a.onclick=recentPane;}).catch(function(){var b=$(id);if(b)b.innerHTML='<p class="uh-emp">読み込めませんでした</p>';});}
 var C={tid:null,opening:'',busy:false};
-function concPane(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button>'+charaImg('hav')+'<div class="pt"><b>'+charaName()+'</b><span id="cTitle">まち頼 コンシェルジュ</span></div></div><div class="msgs" id="cl"></div><form class="cmp" id="cf"><input id="atx" placeholder="メッセージを入力" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>');
+var CK='mchy_conc';function concKeep(tid){try{if(tid)localStorage.setItem(CK,JSON.stringify({tid:tid,at:Date.now(),u:ME&&ME.id}));else localStorage.removeItem(CK);}catch(e){}}
+function concRestore(){try{var o=JSON.parse(localStorage.getItem(CK)||'null');if(!o||!o.tid||o.u!==(ME&&ME.id)||Date.now()-o.at>12*3600e3||MODE!=='user'){if(o)localStorage.removeItem(CK);return;}setTimeout(function(){if(!pane.classList.contains('on'))concResume(o.tid);},400);}catch(e){}}
+function concPane(){setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button>'+charaImg('hav')+'<div class="pt"><b>'+charaName()+'</b><span id="cTitle">まち頼 コンシェルジュ</span></div></div><div class="msgs" id="cl"></div><form class="cmp" id="cf"><input id="atx" placeholder="メッセージを入力" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>',function(){concKeep('');closePane();});
   $('cf').onsubmit=function(e){e.preventDefault();var i=$('atx'),v=i.value.trim();if(!v||C.busy)return;i.value='';cSend(v);};}
-function concResume(tid){C={tid:tid,opening:'',busy:false};concPane();concExtras(false);var box=$('cl');box.innerHTML='<div class="typing">読み込み中…</div>';
+function concResume(tid){C={tid:tid,opening:'',busy:false};concKeep(tid);concPane();concExtras(false);var box=$('cl');box.innerHTML='<div class="typing">読み込み中…</div>';
   api('threadGet',{threadId:tid}).then(function(j){box.innerHTML='';$('cTitle').textContent=j.thread.title;var lastSheet=-1;j.items.forEach(function(m,i){if(m.sheet)lastSheet=i;});
     j.items.forEach(function(m,i){if(m.text)cSay(m.text,m.role==='user');if(m.sheet)sheetCard(m.sheet,i===lastSheet&&i===j.items.length-1);});
-    var n=document.createElement('div');n.className='sys';n.textContent='ここから続きを話せます';box.appendChild(n);box.scrollTop=box.scrollHeight;}).catch(function(e){fail(e);closePane();});}
+    var n=document.createElement('div');n.className='sys';n.textContent='前回の続きからお話しいただけます';box.appendChild(n);box.scrollTop=box.scrollHeight;}).catch(function(e){fail(e);closePane();});}
 function conc(op,firstText){
   C={tid:null,opening:op,busy:false};
   concPane();concExtras(!firstText);
@@ -890,7 +893,7 @@ function cSay(t,me){var box=$('cl');if(!box)return;if(!me)t=String(t).replace(/\
 function cSend(v){
   C.sent=true;var rl=$('rcLine');if(rl)rl.remove();cSay(v,1);C.busy=true;var box=$('cl'),w=document.createElement('div');w.className='typing';w.textContent=charaName()+'が入力中…';box.appendChild(w);box.scrollTop=box.scrollHeight;
   var data={text:v};if(C.tid)data.threadId=C.tid;else data.opening=C.opening;
-  api('concierge',data).then(function(j){if(j.threadId)C.tid=j.threadId;w.remove();cSay(j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
+  api('concierge',data).then(function(j){if(j.threadId){C.tid=j.threadId;concKeep(j.threadId);}w.remove();cSay(j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
 }
 /* 場所は市町村をボタンで選ぶ（番地などを書いてしまわないように） */
 var PLACES=['松本市','塩尻市','安曇野市','大町市','山形村','朝日村','池田町','松川村','生坂村','麻績村','筑北村','木曽地域','その他の地域'];
@@ -903,31 +906,32 @@ function sheetCard(s,btns){var box=$('cl'),d=document.createElement('div');d.cla
   box.appendChild(d);if(!btns){box.scrollTop=box.scrollHeight;return;}each('.cbt',box,function(x){x.remove();});
   // 大カテゴリの候補を複数選べる形で出す。「当てはまらない」は一覧から近いものを3つまで（11/23）
   var cand=(s.cats&&s.cats.length?s.cats:(s.bunya?[s.bunya]:[])).filter(function(c){return SVC.some(function(k){return k[0]===c;});});s.cats=cand.slice(0,1);
-  var k=document.createElement('div');k.className='mg ai2 cbt';var drawK=function(){k.innerHTML=charaImg()+'<div class="bb">どれに近いですか？（いくつでも選べます）<div class="ch2" style="margin-top:8px">'+cand.map(function(c){return '<button type="button" class="cch'+(s.cats.indexOf(c)>=0?' on':'')+'" data-k="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'<button type="button" class="cch gy" id="cNo">当てはまらない</button></div></div>';
+  var k=document.createElement('div');k.className='mg ai2 cbt';var drawK=function(){k.innerHTML=charaImg()+'<div class="bb">ご依頼に近い分野をお選びください（複数選択できます）<div class="ch2" style="margin-top:8px">'+cand.map(function(c){return '<button type="button" class="cch'+(s.cats.indexOf(c)>=0?' on':'')+'" data-k="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'<button type="button" class="cch gy" id="cNo">当てはまらない</button></div></div>';
     each('.cch[data-k]',k,function(b){b.onclick=function(){var c=b.dataset.k,i=s.cats.indexOf(c);if(i>=0){if(s.cats.length>1)s.cats.splice(i,1);}else{if(s.cats.length>=3)return toast('3つまで選べます');s.cats.push(c);}s.bunya=s.cats[0];drawK();};});
     k.querySelector('#cNo').onclick=function(){catPick(s,function(){cand=s.cats.slice();drawK();});};};drawK();box.appendChild(k);
-  var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button" id="cfix">訂正する</button><button type="button" class="pri" id="cpost">この内容で投稿する</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
-  $('cfix').onclick=function(){b.remove();$('atx').placeholder='例：場所は塩尻市です';$('atx').focus();};
+  var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button" id="cfix">内容を訂正する</button><button type="button" class="pri" id="cpost">この内容で依頼する</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
+  $('cfix').onclick=function(){b.remove();$('atx').placeholder='訂正する内容をご入力ください（例：場所は塩尻市です）';$('atx').focus();};
   $('cpost').onclick=function(){postConfirm(s);};
 }
-function catPick(s,done){var sel=[];openSheet('<h3>近い分野を選ぶ（3つまで）</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){return '<button type="button" class="cch" data-k="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'</div>';}).join('')+
-  '<p class="uh-hn">どれも近くなければ「そのほかの困りごと」を選んでください。対応できる業者に届けます。</p><button type="button" class="big" id="cpOk" disabled>これで進む</button>','tall');
+function catPick(s,done){var sel=[];openSheet('<h3>近い分野をお選びください（3つまで）</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){return '<button type="button" class="cch" data-k="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'</div>';}).join('')+
+  '<p class="uh-hn">該当する分野がない場合は「そのほかの困りごと」をお選びください。対応できる専門家にお届けします。</p><button type="button" class="big" id="cpOk" disabled>これで進む</button>','tall');
   each('.cch',sheet,function(b){b.onclick=function(){var c=b.dataset.k,i=sel.indexOf(c);if(i>=0)sel.splice(i,1);else{if(sel.length>=3)return toast('3つまで選べます');sel.push(c);}b.classList.toggle('on',i<0);$('cpOk').disabled=!sel.length;};});
   $('cpOk').onclick=function(){s.cats=sel.slice();s.bunya=sel[0];s.item='';closeSheet();done();};}
 function postConfirm(s){
   var photos=[];
-  openSheet('<h3>投稿する内容の確認</h3><p class="sp s2">この内容が、対応できる地元の専門家に届きます。お名前と詳しい住所は、現地調査が決まるまで伝わりません。</p><form class="fm" id="pcF">'+
+  openSheet('<h3>ご依頼内容の確認</h3><p class="sp s2">この内容で、対応できる地元の専門家にご依頼をお届けします。お名前とご住所の詳細は、現地調査の日程が決まるまで専門家には開示されません。</p><form class="fm" id="pcF">'+
     SK.map(function(k){return '<label for="pc_'+k[0]+'">'+k[1]+'</label>'+(k[0]==='detail'?'<textarea id="pc_'+k[0]+'" rows="3">'+esc(s[k[0]]||'')+'</textarea>':'<input id="pc_'+k[0]+'" value="'+esc(s[k[0]]||'')+'">');}).join('')+
-    '<label><input type="checkbox" id="pc_est"'+(s.estOnly&&s.estOnly!=='svy'?' checked':'')+' style="width:auto;margin-right:6px">見積もりだけ欲しい（まだ依頼するか決めていない）</label>'+'<label><input type="checkbox" id="pc_svy"'+(s.estOnly==='svy'?' checked':'')+' style="width:auto;margin-right:6px">現地調査だけお願いしたい（まず見てもらいたい）</label>'+
-    '<label>写真（3枚まで・なくても大丈夫）</label><div class="phs" id="pcPh"><label class="phadd">＋ 追加<input type="file" accept="image/*" id="pcIn" hidden></label></div>'+
-    '<p class="err" id="pcE" hidden></p><button class="big" type="submit" id="pcB">この内容で投稿する</button></form>');
+    '<div class="pcopt"><span>オプション（ご希望の場合のみ）</span><label><input type="checkbox" id="pc_est"'+(s.estOnly&&s.estOnly!=='svy'?' checked':'')+'><b>見積もりのみ希望</b></label><label><input type="checkbox" id="pc_svy"'+(s.estOnly==='svy'?' checked':'')+'><b>現地調査のみ希望</b></label></div>'+
+    '<label>現状の写真を送れます（3枚まで）</label><div class="phs" id="pcPh"><label class="phadd">＋ 追加<input type="file" accept="image/*" id="pcIn" hidden></label></div>'+
+    '<p class="err" id="pcE" hidden></p><button class="big" type="submit" id="pcB">この内容で依頼する</button></form>');
+  $('pc_est').onchange=function(){if(this.checked)$('pc_svy').checked=false;};$('pc_svy').onchange=function(){if(this.checked)$('pc_est').checked=false;};
   $('pcIn').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f||photos.length>=3)return;shrink(f).then(function(u){photos.push(u);var im=document.createElement('img');im.src=u;im.alt='添付する写真';$('pcPh').insertBefore(im,$('pcPh').lastChild);if(photos.length>=3)$('pcPh').lastChild.hidden=true;});};
   $('pcF').onsubmit=function(e){e.preventDefault();var b=$('pcB');b.disabled=true;b.textContent='送っています…';
     var data={};SK.forEach(function(k){data[k[0]]=$('pc_'+k[0]).value.trim();});data.estOnly=$('pc_svy').checked?'svy':$('pc_est').checked;if(s.cats&&s.cats.length&&data.bunya===s.bunya){data.cats=s.cats;data.item=s.item||'';}
     var urls=[];photos.reduce(function(p,u){return p.then(function(){return api('uploadPhoto',{dataUrl:u}).then(function(j){urls.push(j.url);});});},Promise.resolve())
       .then(function(){return api('postCase',{sheet:data,photos:urls});})
-      .then(function(j){closeSheet();cSay('投稿しました。専門家から返事が届いたら、ベルのお知らせでお伝えしますね。',0);toast('投稿しました');setTimeout(function(){openCase(j.caseId);},900);})
-      .catch(function(x){$('pcE').textContent=x.message;$('pcE').hidden=false;b.disabled=false;b.textContent='この内容で投稿する';});};
+      .then(function(j){concKeep('');closeSheet();cSay('ご依頼を受け付けました。専門家から返信があり次第、お知らせします。',0);toast('ご依頼を受け付けました');setTimeout(function(){openCase(j.caseId);},900);})
+      .catch(function(x){$('pcE').textContent=x.message;$('pcE').hidden=false;b.disabled=false;b.textContent='この内容で依頼する';});};
 }
 
 /* ===== 案件の画面 ===== */
@@ -1122,7 +1126,7 @@ $('bell').onclick=function(){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>お知らせ</b></div></div><div class="arw" id="nfL"><div class="load">読み込み中…</div></div>');
   api('notifs',{markRead:true}).then(function(j){$('bellN').textContent='';var L=$('nfL');if(!L)return;
     L.innerHTML=j.items.length?'<div class="list" style="padding:0">'+j.items.map(function(n){return '<button type="button" class="nf'+(n.read?'':' un')+'" data-l="'+esc(n.link)+'">'+esc(n.text)+'<small>'+mdhm(n.createdAt)+'</small></button>';}).join('')+'</div>':'<div class="empty">お知らせはまだありません</div>';
-    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('mpost:')===0){if(MODE!=='member')setMode('member');mOpenPost(l.slice(6));}else if(l.indexOf('mdm:')===0){if(MODE!=='member')setMode('member');mOpenDM(l.slice(4));}else if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('lic:')===0){var lc=l.slice(4);api('proHome').then(function(j){PRO=j;if(lc)licCat(lc);else licPane();}).catch(fail);}else if(l.indexOf('hinv:')===0)hInvOpen(l.slice(5));else if(l.indexOf('hbid:')===0)openPro(l.slice(5));else if(l.indexOf('bid:')===0){if(MODE==='pro')openPro(l.slice(4));else openChat(l.slice(4),closePane);}};});
+    each('.nf',L,function(b){b.onclick=function(){var l=b.dataset.l||'';if(l.indexOf('mpost:')===0){if(MODE!=='member')setMode('member');mOpenPost(l.slice(6));}else if(l.indexOf('mdm:')===0){if(MODE!=='member')setMode('member');mOpenDM(l.slice(4));}else if(l.indexOf('case:')===0)openCase(l.slice(5));else if(l.indexOf('pnew:')===0){var id=l.slice(5);if(MODE!=='pro')setMode('pro');jobSub='new';tab='job';api('proHome').then(function(j){PRO=j;renderNav();refresh();var c=(j.fresh||[]).filter(function(x){return x.id===id;})[0];if(c)newCase(c);else toast('この依頼は、すでに受付が終わっています');}).catch(fail);}else if(l.indexOf('lic:')===0){var lc=l.slice(4);api('proHome').then(function(j){PRO=j;if(lc)licCat(lc);else licPane();}).catch(fail);}else if(l.indexOf('hinv:')===0)hInvOpen(l.slice(5));else if(l.indexOf('hbid:')===0)openPro(l.slice(5));else if(l.indexOf('bid:')===0){if(MODE==='pro')openPro(l.slice(4));else openChat(l.slice(4),closePane);}};});
   }).catch(fail);
 };
 
@@ -1142,10 +1146,10 @@ function bindFind(root){var q=root.querySelector('#catQ'),r=root.querySelector('
   q.oninput=function(){var v=q.value.trim(),av=catAvail();if(!v){r.innerHTML='';return;}var hit=[];SVC.forEach(function(C){svItems(C).forEach(function(x){if(x.indexOf(v)>=0||C[0].indexOf(v)>=0)hit.push([x,C[0]]);});});
     hit.sort(function(a,b){return (av.indexOf(a[1])<0)-(av.indexOf(b[1])<0);});
     r.innerHTML='<p class="uh-hn">'+hit.length+'件</p>'+hit.slice(0,30).map(function(h){var off=av.indexOf(h[1])<0;return '<button type="button" class="uh-hit'+(off?' off':'')+'" data-i="'+esc(h[0])+'" data-c="'+esc(h[1])+'"><span>'+esc(h[0])+'<small>'+esc(h[1])+'</small></span>'+(off?'<em>準備中</em>':'')+'</button>';}).join('')+
-      (hit.length?(hit.some(function(h){return av.indexOf(h[1])<0;})?'<p class="uh-hn">準備中の作業も相談はできます。業者が見つかったらお知らせします。</p>':''):'<p class="uh-hn">見つかりませんでした。下の「すべての分野を見る」か、まちこに症状を話してください。</p>');
+      (hit.length?(hit.some(function(h){return av.indexOf(h[1])<0;})?'<p class="uh-hn">準備中の作業もご相談いただけます。対応できる専門家が見つかり次第、お知らせします。</p>':''):'<p class="uh-hn">該当する作業が見つかりませんでした。「すべての分野を見る」からお探しいただくか、まちこにご相談ください。</p>');
     each('.uh-hit',r,function(b){b.onclick=function(){catGo(b.dataset.c,b.dataset.i);};});};
   var al=root.querySelector('#catAll');if(al)al.onclick=catAllSheet;}
-function catAllSheet(){var av=catAvail();openSheet('<h3>すべての分野</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){var off=av.indexOf(c)<0;return '<button type="button" class="cch'+(off?' off':'')+'" data-k="'+esc(c)+'">'+esc(c)+(off?' <small>準備中</small>':'')+'</button>';}).join('')+'</div>';}).join('')+'<p class="uh-hn">準備中の分野も相談はできます。業者が見つかったらお知らせします。</p>','tall');
+function catAllSheet(){var av=catAvail();openSheet('<h3>すべての分野</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){var off=av.indexOf(c)<0;return '<button type="button" class="cch'+(off?' off':'')+'" data-k="'+esc(c)+'">'+esc(c)+(off?' <small>準備中</small>':'')+'</button>';}).join('')+'</div>';}).join('')+'<p class="uh-hn">準備中の分野もご相談いただけます。対応できる専門家が見つかり次第、お知らせします。</p>','tall');
   each('.cch',sheet,function(b){b.onclick=function(){closeSheet();catGo(b.dataset.k);};});}
 function catTiles(){return CATS.map(function(x){return '<button type="button" class="uh-t" data-k="'+x[1].replace(/<br>/g,'')+'"><b>'+x[0]+'</b>'+x[1]+'</button>';}).join('');}
 function bindCats(root){bindFind(root);each('.uh-t',root,function(x){x.onclick=function(){if(x.dataset.k==='その他はこちら'){conc('どんなことでお困りですか？');return;}catGo(x.dataset.k);};});}
