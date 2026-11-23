@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=69;
+var APPVER_N=70;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1414,7 +1414,7 @@ function licCat(cat){var G=licGroups(),g=G.filter(function(x){return x.cat===cat
     .then(function(rs){PRO.lic=rs[rs.length-1].lic;toast('書類を出しました。審査をお待ちください');licCat(cat);}).catch(function(e){bt.disabled=false;bt.textContent='提出する';fail(e);});};}
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定',expired:'連絡がなく終了'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
-function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。依頼者から最初のメッセージが届くと、立候補料（500円）がかかります'+(c.estOnly?'（'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'の依頼は無料）':'')+'。</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
+function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。'+(c.estOnly?'この依頼は「'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'」なので、立候補料はかかりません。':'依頼者からメッセージが届くと、立候補料（500円）がかかります。')+'</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
   $('bidB').onclick=function(){this.disabled=true;api('proBid',{caseId:c.id}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(fail);};}
 
 /* ===== Proモード：チャット ===== */
