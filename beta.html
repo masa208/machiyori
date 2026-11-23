@@ -595,7 +595,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=86;
+var APPVER_N=87;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1195,7 +1195,7 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     '<div class="ond"><div class="ond-h">'+charaImg('')+'<div><small>まちことの おなじみ度</small><b>'+lv[0]+'</b></div></div><div class="ond-bar"><i style="width:'+lv[1]+'%"></i></div><div class="ond-s">'+['顔見知り','話し相手','頼れる存在'].map(function(x){return '<span'+(x===lv[0]?' class="on"':'')+'>'+x+'</span>';}).join('')+'</div><p class="ond-n">話したり依頼したりすると、おなじみ度が上がります</p></div>'+
     '<div class="sec">設定</div><div class="list mset">'+[['nm','呼ばれたい名前',esc(ME.callName||'')],['ar','お住まいの市町村',esc(ME.area||'')]].map(row).join('')+'</div>'+
     
-    (HOME&&HOME.test?'<div class="sec">テスト用 <small>本番では表示されません</small></div><div class="list mset tset">'+[['t1','業者登録をやり直す','申し込み・資格・会員の状態を消す'],['t2','自分の申し込みを承認する','運営の承認の代わり'],['t3','自分の資格の書類を承認する','運営の承認の代わり'],['t4','自分の大カテゴリの追加を承認する','運営の承認の代わり']].map(row).join('')+'</div>':'')+
+    (HOME&&HOME.test?'<div class="sec">テスト用 <small>本番では表示されません</small></div><div class="list mset tset">'+[['t1','業者登録をやり直す','申し込み・資格・会員の状態を消す'],['t2','自分の申し込みを承認する','運営の承認の代わり'],['t3','自分の資格の書類を承認する','運営の承認の代わり'],['t4','自分の大カテゴリの追加を承認する','運営の承認の代わり']].concat(HOME.clean?[['tc','テスト用アカウントを整理','一度だけ使えます']]:[]).map(row).join('')+'</div>':'')+
     '<div class="sec">そのほか</div><div class="list mset">'+[['qa','運営への問い合わせ',''],['rs','テストを最初からやり直す','テスト版のみ（版 '+APPVER+'・起動 '+(BOOTMS/1000).toFixed(1)+'秒・前回の通信 '+LASTAPI+'）'],['al','通信の記録','直近の通信にかかった秒数（テスト版のみ）'],['en','入口から確かめる','ログアウトして「はじめての方」の画面へ（テスト版のみ）'],['lo','ログアウト',''],['out','退会する','']].map(row).join('')+'</div><div style="height:16px"></div></div>';
   function row(x){return '<button type="button" class="mrow" data-m="'+x[0]+'"><span>'+x[1]+'</span><small>'+x[2]+'</small><i>›</i></button>';}
   each('.mrow',scr,function(b){b.onclick=function(){var k=b.dataset.m;
@@ -1204,6 +1204,8 @@ function renderMy(){var lv=level(Number(ME.points)||0);
     if(k==='va'){if(PRO)areaPane();else api('proHome').then(function(j){PRO=j;areaPane();}).catch(fail);}
     if(/^t[1-4]$/.test(k)){var op={t1:'reset',t2:'app',t3:'lic',t4:'svc'}[k];var go=function(){api('tVendor',{op:op}).then(function(j){closeSheet();toast(j.msg);PRO=null;MB=null;MJ=null;HOME_AT=0;if(op==='reset'){try{localStorage.removeItem(suKey());}catch(e){}if(MODE!=='user')setMode('user');setTimeout(vendorSignup,300);}else{refresh();}}).catch(fail);};
       if(op==='reset'){openSheet('<h3>業者登録をやり直しますか？</h3><p class="sp s2">このアカウントの申し込み・資格の書類・大カテゴリの追加の記録を消して、業者登録を最初から始めます（テスト版だけ）。</p><button type="button" class="big" id="t1Ok">やり直す</button>');$('t1Ok').onclick=go;}else go();}
+    if(k==='tc'){openSheet('<h3>テスト用アカウントを整理</h3><p class="sp s2">このアカウントと「まさ」のアカウントだけ残し、ほかは全部「退会」扱いにします（会員の一覧から消えます。データは消しません）。ほかのスマホでログイン中のアカウントは、作り直しが必要です。一度だけ使えます。</p><div class="lab">このアカウントの名前</div><input class="nmi" id="tcN" value="滝澤雅大" maxlength="8"><button type="button" class="big" id="tcOk" style="background:#C8321F">整理する</button>');
+      $('tcOk').onclick=function(){var v=$('tcN').value.trim();if(!v)return toast('名前を入れてください');this.disabled=true;api('tClean',{name:v}).then(function(j){closeSheet();toast(j.msg);ME.callName=v;HOME.clean=false;MB=null;HOME_AT=0;refresh();}).catch(function(e){$('tcOk').disabled=false;fail(e);});};}
     if(k==='lic')licPane();
     if(k==='pf')profPane();
     if(k==='vsv')svcPane();
