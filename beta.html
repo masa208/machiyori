@@ -147,6 +147,7 @@ h2{font-size:17px;margin:0 0 10px}
 .pfpic{display:flex;gap:12px;align-items:flex-start}.pfpic .vav{width:72px;height:72px}
 .pfbtn{display:inline-block;border:1.5px solid #2F6B45;color:#2F6B45;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;margin-right:6px}
 .pfh{font-size:11.5px;color:#8A958F;line-height:1.5;margin:4px 0 0}
+.pfin{width:100%;box-sizing:border-box;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid #CFD6D2;border-radius:10px}
 .pfm textarea{width:100%;box-sizing:border-box;font:inherit;font-size:15px;line-height:1.6;padding:10px 12px;border:1.5px solid #CFD6D2;border-radius:10px}
 .pfch{display:flex;flex-wrap:wrap;gap:6px}
 .pfch button{font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;color:#4A5751;background:#fff}
@@ -176,7 +177,7 @@ h2{font-size:17px;margin:0 0 10px}
 .ctabs button{flex:1;border:0;background:none;font:inherit;font-weight:700;font-size:14px;padding:11px 0;color:#9AA5A0;border-bottom:3px solid transparent}
 .ctabs button.on{color:var(--m);border-bottom-color:var(--m)}
 
-.vfirst{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:14.5px;line-height:1.6;color:var(--tx);background:#F4F7F5;border-radius:10px;padding:10px 12px;text-align:left;white-space:normal}
+.vfirst{display:block;white-space:pre-wrap;word-break:break-word;margin-top:6px;font-size:14.5px;line-height:1.6;color:var(--tx);background:#F4F7F5;border-radius:10px;padding:10px 12px;text-align:left;white-space:normal}
 .stp span.skip{border:0;padding:0;background:none;text-decoration:none;font-size:9px;cursor:default;color:#B4BCB7}
 .todo1{display:block;width:100%;text-align:left;font:inherit;font-size:13px;color:var(--tx);background:#FFF4EC;border:1.5px solid var(--m);border-radius:12px;padding:10px 12px;margin-bottom:4px;cursor:pointer;line-height:1.55}.todo1 b{display:block;font-size:11px;color:var(--m)}.todo1.pp{cursor:default;border-color:#8A5A9E;background:#F5EEF8}.todo1.pp b{color:#8A5A9E}.t1b{display:flex;gap:6px;margin-top:6px}.t1b button{font:inherit;font-size:12px;font-weight:700;border:1px solid #8A5A9E;background:#fff;color:#8A5A9E;border-radius:14px;padding:4px 10px;cursor:pointer}
 .vc .vhd{display:flex;align-items:center;gap:6px}.vc .vhd b{font-size:14px}.vst{font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;background:#e6eae8;color:var(--sb)}.vst.hot{background:var(--m);color:#fff}.vst.ok{background:#2F6B45;color:#fff}.unr{margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#D93A2B;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}.lm{display:block;font-size:12px;color:var(--sb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.vc.off{opacity:.55}
@@ -576,7 +577,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=78;
+var APPVER_N=79;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1445,6 +1446,8 @@ function profPane(){setPane('<div class="ph2"><button type="button" class="bk" a
   api('proProfile').then(function(P){var ph=P.photo,du='';
     var draw=function(){var av=du||ph?'<img class="vav" src="'+esc(du||ph)+'" alt="">':'<span class="vav in">'+esc(String(P.name||'業').charAt(0))+'</span>';
       pane.querySelector('.arw').innerHTML='<div class="pfm"><div class="pflb">写真 <span class="op">任意</span></div><div class="pfpic">'+av+'<div><label class="pfbtn">写真を選ぶ<input type="file" accept="image/*" id="pfF" hidden></label>'+(du||ph?'<button type="button" class="undo" id="pfX">写真を外す</button>':'')+'<p class="pfh">顔写真か会社のロゴ。顔が見えると安心して選ばれやすくなります</p></div></div>'+
+        '<div class="pflb">依頼者に表示する名前 <span class="rq2">必須</span></div><input id="pfN" maxlength="30" value="'+esc(P.name)+'" class="pfin"><p class="pfh">屋号・会社名など。30文字まで</p>'+
+        '<div class="pflb">損害賠償保険 <span class="rq2">必須</span></div><div class="pfch pfins">'+['入っている','入っていない'].map(function(x){return '<button type="button" data-ins="'+x+'" class="'+(P.ins===x?'on':'')+'">'+x+'</button>';}).join('')+'</div><p class="pfh">「入っている」を選ぶと、依頼者に「損害賠償保険あり（申告）」と表示されます</p>'+
         '<div class="pflb">紹介文 <span class="rq2">必須</span></div><textarea id="pfI" rows="4" maxlength="200" placeholder="例：松本市で30年、窓・サッシとリフォームを中心に請け負っています。小さな修理でもお気軽にご相談ください。">'+esc(P.intro)+'</textarea><p class="pfh">200文字まで。電話番号・メール・URLは書けません</p>'+
         '<div class="pflb">特徴 <span class="op">任意・いくつでも</span></div><div class="pfch">'+P.FEATS.map(function(f){return '<button type="button" class="'+(P.feats.indexOf(f)>=0?'on':'')+'" data-f="'+esc(f)+'">'+esc(f)+'</button>';}).join('')+'</div><p class="pfh">本当のことだけ選んでください。違っていた場合は、運営が外すことがあります</p>'+
         '<div class="pflb">まち頼が付ける印 <span class="op">自動</span></div><div class="pfauto">本人確認済み／資格確認済み／まち頼で完了◯件 は、書類や記録をもとに、まち頼が自動で付けます。自分では選べません。<br>今の印：'+((P.card.facts||[]).length?esc(P.card.facts.join('・')):'まだありません')+'</div></div>'+
@@ -1452,9 +1455,11 @@ function profPane(){setPane('<div class="ph2"><button type="button" class="bk" a
       $('pfF').onchange=function(){var f=this.files[0];if(!f)return;shrink(f).then(function(d){du=d;draw();}).catch(function(){toast('写真を読み込めませんでした');});};
       var x=$('pfX');if(x)x.onclick=function(){du='';ph='';draw();};
       each('[data-f]',pane,function(b){b.onclick=function(){var f=b.dataset.f,i=P.feats.indexOf(f);if(i>=0)P.feats.splice(i,1);else P.feats.push(f);b.classList.toggle('on');};});
-      $('pfI').oninput=function(){P.intro=this.value;};
+      $('pfI').oninput=function(){P.intro=this.value;};$('pfN').oninput=function(){P.name=this.value;};
+      each('[data-ins]',pane,function(b){b.onclick=function(){P.ins=b.dataset.ins;each('[data-ins]',pane,function(x){x.classList.toggle('on',x===b);});};});
       $('pfS').onclick=function(){var e=$('pfE'),btn=this;e.hidden=true;btn.disabled=true;btn.textContent='保存しています…';
-        var d={intro:$('pfI').value,feats:P.feats};if(du)d.dataUrl=du;else if(!ph)d.photo='';
+        if(!P.ins){btn.disabled=false;btn.textContent='保存する';e.textContent='損害賠償保険に入っているかを選んでください';e.hidden=false;return;}
+        var d={name:$('pfN').value,ins:P.ins,intro:$('pfI').value,feats:P.feats};if(du)d.dataUrl=du;else if(!ph)d.photo='';
         api('proProfileSave',d).then(function(){toast('プロフィールを保存しました');PRO=null;closePane();}).catch(function(x){btn.disabled=false;btn.textContent='保存する';e.textContent=(x&&x.message)||'保存できませんでした';e.hidden=false;});};};
     draw();}).catch(function(e){fail(e);closePane();});}
 function licPane(){api('proHome').then(function(j){PRO=j;licDraw();}).catch(function(){licDraw();});}
