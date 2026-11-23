@@ -136,6 +136,7 @@ h2{font-size:17px;margin:0 0 10px}
 .phb{font-size:12.5px;color:#fff;background:var(--m);border:1.5px solid var(--m);border-radius:16px;padding:5px 11px;cursor:pointer;font-weight:700}
 .kebab{margin-left:auto;border:0;background:none;color:#fff;font-size:22px;line-height:1;width:34px;height:30px;cursor:pointer;letter-spacing:-1px}
 .stp{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 6px 8px;margin-bottom:8px}.stp span{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:#9aa5a0;position:relative;text-align:center;line-height:1.2}.stp i{width:12px;height:12px;border-radius:50%;background:#dfe4e1;position:relative;z-index:1}.stp span+span::before{content:"";position:absolute;top:5px;right:50%;width:100%;height:2px;background:#dfe4e1}.stp .dn i,.stp .dn::before,.stp .cur::before{background:var(--m)}.stp .cur i{background:#fff;box-shadow:0 0 0 3px var(--m)}.stp .cur{color:var(--m);font-weight:700}.stp .dn{color:var(--tx)}
+.vfirst{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:14.5px;line-height:1.6;color:var(--tx);background:#F4F7F5;border-radius:10px;padding:10px 12px;text-align:left;white-space:normal}
 .stp span.skip{border:0;padding:0;background:none;text-decoration:none;font-size:9px;cursor:default;color:#B4BCB7}
 .todo1{display:block;width:100%;text-align:left;font:inherit;font-size:13px;color:var(--tx);background:#FFF4EC;border:1.5px solid var(--m);border-radius:12px;padding:10px 12px;margin-bottom:4px;cursor:pointer;line-height:1.55}.todo1 b{display:block;font-size:11px;color:var(--m)}.todo1.pp{cursor:default;border-color:#8A5A9E;background:#F5EEF8}.todo1.pp b{color:#8A5A9E}.t1b{display:flex;gap:6px;margin-top:6px}.t1b button{font:inherit;font-size:12px;font-weight:700;border:1px solid #8A5A9E;background:#fff;color:#8A5A9E;border-radius:14px;padding:4px 10px;cursor:pointer}
 .vc .vhd{display:flex;align-items:center;gap:6px}.vc .vhd b{font-size:14px}.vst{font-size:10.5px;font-weight:700;border-radius:6px;padding:0 6px;background:#e6eae8;color:var(--sb)}.vst.hot{background:var(--m);color:#fff}.vst.ok{background:#2F6B45;color:#fff}.unr{margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#D93A2B;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}.lm{display:block;font-size:12px;color:var(--sb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.vc.off{opacity:.55}
@@ -535,7 +536,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=76;
+var APPVER_N=77;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -708,7 +709,7 @@ function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':MODE==='member'?'会員ページ':'依頼者モード';if(MODE==='pro')tab='job';if(MODE==='member')tab='board';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(bizGo,300);else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
-  if(ME.agreedAt&&ME.notifySet)concRestore();
+  if(ME.agreedAt&&ME.notifySet&&ME.callName&&ME.area&&!lastRestore())concRestore();
 }
 function agreeSheet(){
   openSheet('<h3>利用規約とプライバシーポリシー</h3><p class="sp s2">はじめにご確認ください。下にスクロールすると全文を読めます（現時点の案）。</p><div class="tosfull" style="height:46vh"><h3>利用規約</h3>'+TOS_FULL+'<h3>プライバシーポリシー</h3>'+PP_FULL+'</div><label class="agr obag"><input type="checkbox" id="agC"><span>利用規約とプライバシーポリシーに同意する</span></label><button type="button" class="big" id="agOk" disabled>同意して始める</button>','tall');
@@ -978,7 +979,7 @@ function drawCase(){
     else if(!bs.length)todo='<div class="todo1 inf"><b>専門家の返事を待っています</b>立候補があると、ベルのお知らせでお伝えします。</div>';}
   var lastTxt=function(v){var l=v.last;if(!l)return '';var t=l.type;return t==='text'?(l.body.text||''):t==='img'?'写真':t==='sys'?l.body.text:t==='prop'?'現地調査の提案が届きました':t==='est'?'見積もりが届きました':t==='chg'?'金額変更の申請が届きました':t==='rep'?'完了報告が届きました':t==='visit'?'現地調査はいかがでしたか？':'';};
   var vsH=bs.length?'<div class="list">'+bs.map(function(v){var s=VST[v.state]||['',''],vn=v.vendor||{name:'業者'};
-    return '<button type="button" class="card bp vc'+(s[1]==='off'?' off':'')+'" data-v="'+v.id+'"><span class="vhd"><b>'+esc(vn.name)+'</b><span class="vst '+s[1]+'">'+s[0]+'</span>'+(v.unread?'<span class="unr">'+v.unread+'</span>':'')+'</span><span class="meta"><span>★'+(vn.star||'-')+'（'+(vn.reviews||0)+'件）</span></span><span class="lm">'+esc(lastTxt(v))+'</span></button>';}).join('')+'</div>':'<div class="empty">まだ立候補はありません</div>';
+    return '<button type="button" class="card bp vc'+(s[1]==='off'?' off':'')+'" data-v="'+v.id+'"><span class="vhd"><b>'+esc(vn.name)+'</b><span class="vst '+s[1]+'">'+s[0]+'</span>'+(v.unread?'<span class="unr">'+v.unread+'</span>':'')+'</span><span class="meta"><span>'+(+vn.reviews?'★'+(vn.star||'-')+'（口コミ'+vn.reviews+'件）':'口コミはまだありません')+'</span></span>'+(v.first?'<span class="vfirst">'+esc(v.first)+'</span>':'<span class="lm">'+esc(lastTxt(v))+'</span>')+'</button>';}).join('')+'</div>':'<div class="empty">まだ立候補はありません</div>';
   var rows=SK.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c);
   var pics=(c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':'';
   var stt=c.status==='postponed'?'先送り中':c.status==='withdrawn'?'取り下げ':st>=5?'完了':steps[st];
@@ -1279,7 +1280,7 @@ var UPH={1:['STEP 1　投稿','📮','相談を投稿しました','地元のプ
   3:['STEP 3　現地調査','🔍','現地調査日が決まりました','当日は気になる箇所やご希望をお伝えください。調査は無料です。この時点では工事の契約は成立しません。'],
   4:['STEP 4　見積もり','📝','見積もりが届きました','作業内容・金額・工期・支払い条件をご確認ください。不明点はチャットで相談し、納得してから承認しましょう。'],
   6:['STEP 6　完了','✅','完了報告が届きました','仕上がりを確認し、問題がなければ完了確認をお願いします。気になる点は、確認前にチャットで業者へお伝えください。']};
-var PPH={7:['STEP 1　立候補','👂','まずはあいさつを送りましょう','この案件は見積もり依頼です。<br>要件がまとまったら、見積もりを送りましょう。<br>現地調査の提案も可能です。'],1:['STEP 1　立候補','👂','まずは相談内容を確認しましょう','チャットで状況を確認し、現地調査前に費用の目安を提示してください。対応方法で費用が異なる場合は、条件ごとに記載してください。',['部分補修の場合：○万円〜','交換が必要な場合：○万円〜']],
+var PPH={7:['STEP 1　立候補','👂','まずは要件を確認しましょう','この案件は見積もり依頼です。<br>要件がまとまったら、見積もりを送りましょう。<br>現地調査の提案も可能です。'],1:['STEP 1　立候補','👂','まずは相談内容を確認しましょう','チャットで状況を確認し、現地調査前に費用の目安を提示してください。対応方法で費用が異なる場合は、条件ごとに記載してください。',['部分補修の場合：○万円〜','交換が必要な場合：○万円〜']],
   2:['STEP 2　現地調査','🔍','現地調査日が決まりました','当日は現場の状態と必要な作業を確認し、依頼者に説明してください。調査後は、見積もりの提出または見送りの報告をお願いします。'],
   3:['STEP 3　見積もり','📝','見積もりを送りましょう','調査結果をもとに、作業内容・金額・着手予定日・完了予定日・支払い条件を入力してください。詳しい内訳は、普段お使いの見積書を添付できます。'],
   5:['STEP 5　工事','🛠️','工事の予定期間になりました','工事が終わったら、完了報告を送ってください。日程を変更する場合は、依頼者と相談のうえ、チャットの「＋」から申請してください。'],
@@ -1416,7 +1417,14 @@ function licCat(cat){var G=licGroups(),g=G.filter(function(x){return x.cat===cat
 function PLAB(x){return {chat:'立候補',prop:'提案の返事待ち',fixd:'現地調査',est:'見積もりの返事待ち',won:'工事',done:'完了',lost:'見送り',other:'他社で決定',expired:'連絡がなく終了'}[x.state]||x.state;}
 var SKP=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','確認したいこと']];
 function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+estLbl(c)+'</div><p class="note2">立候補すると、依頼者とチャットできます。'+(c.estOnly?'この依頼は「'+(c.estOnly==='svy'?'現地調査だけ':'見積もりだけ')+'」なので、立候補料はかかりません。':'依頼者からメッセージが届くと、立候補料（500円）がかかります。')+'</p><button type="button" class="big" id="bidB" style="background:#2F6B45">立候補する</button>');
-  $('bidB').onclick=function(){this.disabled=true;api('proBid',{caseId:c.id}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(fail);};}
+  $('bidB').onclick=function(){bidMsg(c);};}
+/* 立候補するときは、最初のメッセージを書いてもらう（依頼者の一覧で、業者ごとのあいさつとして見せる・11/23） */
+function bidMsg(c){openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>最初のメッセージ</h3><p class="sp s2">依頼者が業者を選ぶときに、最初に目にする一文です。依頼内容にふれて、ひとこと書きましょう。</p>'+
+  '<textarea id="bmT" rows="5" maxlength="400" placeholder="例：はじめまして。すきま風が入るのは、窓のどのあたりでしょうか。サッシの種類も教えていただけると、見積もりの目安をお伝えできます。" style="width:100%;font:inherit;font-size:15px;padding:12px;border:1.5px solid #CFD6D2;border-radius:10px;box-sizing:border-box"></textarea>'+
+  '<p class="err" id="bmE" hidden></p><button type="button" class="big" id="bmB" style="background:#2F6B45">この内容で立候補する</button>','tall');
+  $('shBk').onclick=function(){newCase(c);};
+  $('bmB').onclick=function(){var t=$('bmT').value.trim(),e=$('bmE');if(t.length<10){e.textContent='10文字以上で書いてください';e.hidden=false;$('bmT').focus();return;}
+    var btn=this;btn.disabled=true;btn.textContent='送っています…';api('proBid',{caseId:c.id,text:t}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(function(x){btn.disabled=false;btn.textContent='この内容で立候補する';fail(x);});};}
 
 /* ===== Proモード：チャット ===== */
 var PC2=null;
@@ -1446,7 +1454,7 @@ function drawPro(){
     function(){PC2=null;closePane();});
   chatT=setInterval(proPoll,8000);
   drawProMsgs();
-  if(s==='chat'&&!HL&&!PC2.msgs.some(function(m){return m.from===x.vendorId;})){var tx=$('ptx');if(tx)tx.placeholder='まずはあいさつを送りましょう';}
+
   var e=$('tProp');if(e)e.onclick=propForm;e=$('tEst');if(e)e.onclick=function(){estForm();};e=$('tNoSv');if(e)e.onclick=function(){estForm(true);};e=$('tRep');if(e)e.onclick=repForm;e=$('tSch');if(e)e.onclick=schForm;
   $('pInfo').onclick=function(){openSheet('<h3>依頼の内容</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+'</div>'+((c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':''));};
   var f=$('pf');if(f){f.onsubmit=function(ev){ev.preventDefault();var t=$('ptx'),v=t.value.trim();if(!v)return;t.value='';pSend({text:v});};
@@ -1904,8 +1912,26 @@ function mOpenDM(uid,back){setPane('<div class="ph2"><button type="button" class
   }).catch(function(e){fail(e);closePane();});}
 function mDMPaint(){var box=$('mdl');if(!box)return;box.innerHTML=MD.msgs.length?MD.msgs.map(function(m){return '<div class="mg'+(m.from===MD.me?' me':'')+'"><span class="wn">'+mdhm(m.createdAt)+'</span><div class="bb">'+(m.img?'<img src="'+esc(m.img)+'" alt="">':'')+esc(m.text||'')+'</div></div>';}).join(''):'<p class="empty">まだメッセージはありません</p>';box.scrollTop=box.scrollHeight;}
 
+/* ===== 閉じた画面から再開する（11/23）：最後に開いていた画面（依頼・チャット・会員ページのスレッドなど）を覚え、次に開いたとき同じ画面を出す ===== */
+var LASTK='mchy_last';
+function lastSet(o){try{o=o||{};o.m=MODE;o.tab=tab;o.u=ME&&ME.id;o.at=Date.now();localStorage.setItem(LASTK,JSON.stringify(o));}catch(e){}}
+function lastGet(){try{return JSON.parse(localStorage.getItem(LASTK)||'null');}catch(e){return null;}}
+(function(){
+  function wrap(f,kind){return function(id){if(id)lastSet({k:kind,id:id});return f.apply(this,arguments);};}
+  openCase=wrap(openCase,'case');openChat=wrap(openChat,'chat');openPro=wrap(openPro,'pro');mOpenPost=wrap(mOpenPost,'mpost');mOpenDM=wrap(mOpenDM,'mdm');
+  if(window.__t){window.__t.openChat=openChat;window.__t.openPro=openPro;window.__t.openCase=openCase;}
+  var cp=closePane;closePane=function(){var r=cp.apply(this,arguments);lastSet({});return r;};
+  var sm=setMode;setMode=function(){var r=sm.apply(this,arguments);lastSet({});return r;};
+  nav.addEventListener('click',function(){setTimeout(function(){lastSet({});},0);});
+})();
+/* 起動したときに呼ぶ：前回の画面に戻す。まちことの相談のほうが新しければ、そちらを優先 */
+function lastRestore(){var o=lastGet();if(!o||o.u!==(ME&&ME.id)||o.m!==MODE||Date.now()-o.at>24*3600e3)return false;
+  var c=null;try{c=JSON.parse(localStorage.getItem(CK)||'null');}catch(e){}if(c&&c.at>o.at)return false;
+  var NAV=MODE==='pro'?NAV_P:MODE==='member'?NAV_M:NAV_U;if(o.tab&&NAV.some(function(n){return n[0]===o.tab;})&&o.tab!=='req'){tab=o.tab;renderNav();refresh();}
+  if(!o.k)return false;var f={case:openCase,chat:openChat,pro:openPro,mpost:mOpenPost,mdm:mOpenDM}[o.k];if(!f)return false;f(o.id);return true;}
 boot();
 })();
+
 </script>
 </body>
 </html>
