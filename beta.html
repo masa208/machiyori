@@ -352,7 +352,7 @@ body{background:#F3F4F1;margin:0}
 .lg{position:absolute;inset:0;overflow-y:auto;background:#F3F4F1;z-index:20;padding:28px 20px 40px}
 .lg h1{font-size:26px;font-weight:900;color:#E8613C;margin:0;text-align:center}
 .lg .lgs{text-align:center;font-size:13px;color:#6E7D75;margin:2px 0 14px}
-.lg .lgc{display:block;height:130px;margin:0 auto 8px}
+.lg .lgimg{display:block;height:130px;width:auto;margin:0 auto 8px}
 .lgbox{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
 .btn-line.off{opacity:.45;pointer-events:none}.btn-line{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-size:15px;font-weight:700;color:#fff;background:#06C755;border:0;border-radius:12px;padding:13px;cursor:pointer}
 .btn-line small{font-size:11px;font-weight:700;background:#fff;color:#06A046;border-radius:10px;padding:1px 7px}
@@ -535,7 +535,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=75;
+var APPVER_N=76;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -630,7 +630,7 @@ function lgCode(m,pw,tc){var exp=Date.now()+600e3,next=Date.now()+60e3,tm;
 function showLogin(mode){
   if(!mode){var had=0;try{had=localStorage.getItem('mchy_had');}catch(e){}if(!had){START_BK=null;lgStart();return;}mode='login';}
   lg.hidden=false;mode=mode||'login';
-  lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgc" src="chara.png" alt="">'+
+  lg.innerHTML='<h1>まち頼</h1><p class="lgs">暮らしのそばに、頼れる地元のプロがいる</p><img class="lgimg" src="chara.png" alt="">'+
     '<div class="lgbox">'+openInLine()+lineBtn('LINEでログイン <small>おすすめ</small>')+
     '<div class="or">または メールアドレスで</div>'+
     '<div class="tabs2"><button type="button" data-m="login" aria-pressed="'+(mode==='login')+'">ログイン</button><button type="button" data-m="new" aria-pressed="'+(mode==='new')+'">はじめての方</button></div>'+
