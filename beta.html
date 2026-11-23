@@ -514,7 +514,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .uh-ic{display:block;width:34px;height:34px;border-radius:50%;margin:0 auto 5px;background:#fde7df;color:#E8623F;font-weight:800;line-height:34px;font-size:14px}.uh-t.off{opacity:.55}.uh-t small{display:block;font-size:9.5px;color:#888}
 .uh-all{display:block;width:100%;margin-top:10px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px;font:inherit;font-weight:700;color:#E8623F;font-size:14px;cursor:pointer}
 .ch2{display:flex;flex-wrap:wrap;gap:6px}.cch{border:1.5px solid #E8623F;color:#E8623F;background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.cch.on{background:#E8623F;color:#fff}.cch.gy{border-color:#bbb;color:#777}.cch.off{border-color:#ccc;color:#999}.cch small{font-size:10px;font-weight:400}
-</style>
+.svend{display:flex;flex-direction:column;gap:8px;margin-top:14px}.svend .big{margin:0}</style>
 </head>
 <body>
 <div class="phone" id="ph" data-mode="user">
@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=61;
+var APPVER_N=62;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1637,7 +1637,8 @@ function svDraw(){var box=$('svP');if(!box)return;var d=SU.d,allc=svAllc();
   if(SVV.c!==null){var C=SVC[SVV.c],its=svItems(C),all=its.every(function(x){return d.svc.indexOf(x)>=0;}),lk=its.some(function(x){return SVK[x];});
     box.innerHTML='<button type="button" class="svbk" id="svBk">‹ 大カテゴリの一覧へ</button><h3 class="svh">'+esc(C[0])+'</h3>'+
       '<label class="svall2"><span>この大カテゴリの作業を全部選ぶ<small>あとで作業が増えたときも、自動で入ります</small></span><input type="checkbox" id="svAllT"'+(all?' checked':'')+'><i class="sw"></i></label>'+
-      '<div class="svlist">'+its.map(function(x){return svRow(x);}).join('')+'</div>'+(lk?'<p class="pc-n">「書類が必要」の作業は、登録のあとで資格の書類を出し、審査が済むと依頼が届きます。</p>':'');
+      '<div class="svlist">'+its.map(function(x){return svRow(x);}).join('')+'</div>'+(lk?'<p class="pc-n">「書類が必要」の作業は、登録のあとで資格の書類を出し、審査が済むと依頼が届きます。</p>':'')+
+      '<div class="svend"><button type="button" class="ghost2" id="svBk2">選んで一覧へ戻る</button><button type="button" class="big" id="svDone">'+($('svReq')?'選び終わって保存する':'選び終わって次へ')+'</button></div>';
   }else{
     var sel=svCatsOf(d.svc);
     box.innerHTML='<input class="svq" id="svQ" type="search" placeholder="作業をさがす　例：エアコン、剪定" value="'+esc(SVV.q)+'"><div id="svR"></div>';
@@ -1652,7 +1653,7 @@ function svList(){var r=$('svR');if(!r)return;var d=SU.d,q=SVV.q.trim();
     SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div>'+g[1].map(function(c){var ci=-1;SVC.forEach(function(k,i){if(k[0]===c)ci=i;});var its=svItems(SVC[ci]),n=its.filter(function(x){return d.svc.indexOf(x)>=0;}).length,full=n===its.length;
       return '<button type="button" class="svc2'+(n?' on':'')+'" data-ci="'+ci+'"><span class="tx"><b>'+esc(c)+'</b><small>'+esc(its.slice(0,3).join('・'))+'など</small></span>'+(n?'<em class="svn">'+(full?'全部':n+'/'+its.length)+'</em>':'')+'<span class="arr">›</span></button>';}).join('');}).join('');}
 function svBindGrid(){var box=$('svP');if(!box)return;svDraw();
-  box.onclick=function(e){var b=e.target.closest('.svc2');if(b){SVV.c=+b.dataset.ci;svDraw();var cb=$('svCnt');if(cb)cb.scrollIntoView({block:'start'});return;}if(e.target.id==='svBk'){SVV.c=null;svDraw();}};
+  box.onclick=function(e){var b=e.target.closest('.svc2');if(b){SVV.c=+b.dataset.ci;svDraw();var cb=$('svCnt');if(cb)cb.scrollIntoView({block:'start'});return;}if(e.target.id==='svBk'||e.target.id==='svBk2'){SVV.c=null;svDraw();var cb=$('svCnt');if(cb)cb.scrollIntoView({block:'start'});}if(e.target.id==='svDone'){if(!SU.d.svc.length)return toast('作業を1つ以上選んでください');var nx=$('svReq')||$('suN');SVV.c=null;svDraw();if(nx)nx.click();}};
   box.onchange=function(e){var t=e.target,d=SU.d;
     if(t.id==='svAllT'){var C=SVC[SVV.c],its=svItems(C);if(t.checked){its.forEach(function(x){if(d.svc.indexOf(x)<0)d.svc.push(x);});if(d.allc.indexOf(C[0])<0)d.allc.push(C[0]);}else{d.svc=d.svc.filter(function(x){return its.indexOf(x)<0;});d.allc=d.allc.filter(function(c){return c!==C[0];});}svDraw();}
     else if(t.classList.contains('svx')){var x=t.value;if(t.checked){if(d.svc.indexOf(x)<0)d.svc.push(x);}else{d.svc=d.svc.filter(function(y){return y!==x;});var C=SVC.filter(function(k){return svItems(k).indexOf(x)>=0;})[0];if(C)d.allc=d.allc.filter(function(c){return c!==C[0];});}
