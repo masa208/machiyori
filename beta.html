@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=68;
+var APPVER_N=69;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -702,7 +702,7 @@ function bizFlag(){try{var v=localStorage.getItem('mchy_biz');return v==='2'?2:v
 /* 使えないモードにいたら依頼者モードへ（依頼者はProモード・会員ページなし・11/22） */
 function modeGuard(){var b=(MODE==='pro'&&HOME&&HOME.pro===false)||(MODE==='member'&&HOME&&!HOME.member&&!(ME&&ME.role==='member'));if(b){MODE='user';try{localStorage.setItem('machiyori_mode2','user');}catch(e){}ph.dataset.mode='user';tab='home';}return b;}
 function bizGo(){if(bizFlag()===2)memberJoin();else vendorSignup();}
-function bizWanted(){try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
+function bizWanted(){if(HOME&&HOME.test){try{localStorage.removeItem('mchy_biz');}catch(e){}return false;}try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
 function afterLogin(){
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':MODE==='member'?'会員ページ':'依頼者モード';if(MODE==='pro')tab='job';if(MODE==='member')tab='board';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(bizGo,300);else if(!ME.callName||!ME.area){welcome();}
