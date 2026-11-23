@@ -152,6 +152,8 @@ h2{font-size:17px;margin:0 0 10px}
 .pfch{display:flex;flex-wrap:wrap;gap:6px}
 .pfch button{font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;color:#4A5751;background:#fff}
 .pfch button.on{border-color:#2F6B45;background:#EAF3ED;color:#2F6B45;font-weight:700}
+.bmh{background:#F4F7F5;border-radius:10px;padding:10px 12px;margin:0 0 10px}.bmh b{display:block;font-size:13.5px}.bmh small{display:block;font-size:11.5px;color:#8A958F;margin:2px 0 8px}
+.bmh .pfch button.on{border-color:#2F6B45;background:#EAF3ED;color:#2F6B45}
 .pfauto{background:#F4F7F5;border-radius:10px;padding:10px 12px;font-size:12px;color:#5D6A63;line-height:1.6}
 .vc2{display:block;background:#fff;border-radius:14px;padding:14px;margin:0 0 10px;box-shadow:0 1px 3px rgba(0,0,0,.06);cursor:pointer;text-align:left}
 .vc2.off{opacity:.6}
@@ -577,7 +579,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=79;
+var APPVER_N=80;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1500,9 +1502,11 @@ function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.m
   $('bidB').onclick=function(){bidMsg(c);};}
 /* 立候補するときは、最初のメッセージを書いてもらう（依頼者の一覧で、業者ごとのあいさつとして見せる・11/23） */
 function bidMsg(c){openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>最初のメッセージ</h3><p class="sp s2">依頼者が業者を選ぶときに、最初に目にする一文です。依頼内容にふれて、ひとこと書きましょう。</p>'+
+  ((c.hints||[]).length?'<div class="bmh"><b>確認するとよいこと</b><small>依頼者がまだ答えていない項目です。押すと入力欄に入ります</small><div class="pfch">'+c.hints.map(function(h){return '<button type="button" data-h="'+esc(h)+'">'+esc(h)+'</button>';}).join('')+'</div></div>':'')+
   '<textarea id="bmT" rows="5" maxlength="400" placeholder="例：はじめまして。すきま風が入るのは、窓のどのあたりでしょうか。サッシの種類も教えていただけると、見積もりの目安をお伝えできます。" style="width:100%;font:inherit;font-size:15px;padding:12px;border:1.5px solid #CFD6D2;border-radius:10px;box-sizing:border-box"></textarea>'+
   '<p class="err" id="bmE" hidden></p><button type="button" class="big" id="bmB" style="background:#2F6B45">この内容で立候補する</button>','tall');
   $('shBk').onclick=function(){newCase(c);};
+  each('[data-h]',sheet,function(b){b.onclick=function(){var t=$('bmT'),h=b.dataset.h,p=t.selectionStart==null?t.value.length:t.selectionStart;t.value=t.value.slice(0,p)+h+t.value.slice(p);t.focus();var q=p+h.length;try{t.setSelectionRange(q,q);}catch(e){}b.classList.add('on');};});
   $('bmB').onclick=function(){var t=$('bmT').value.trim(),e=$('bmE');if(t.length<10){e.textContent='10文字以上で書いてください';e.hidden=false;$('bmT').focus();return;}
     var btn=this;btn.disabled=true;btn.textContent='送っています…';api('proBid',{caseId:c.id,text:t}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(function(x){btn.disabled=false;btn.textContent='この内容で立候補する';fail(x);});};}
 
