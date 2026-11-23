@@ -509,6 +509,11 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 .svsum{background:#fff;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px}.svsum>b{font-size:13.5px}.svsr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1ede6}.svsr em{font-style:normal;color:#2F6B45;font-weight:700}
 .svdocs{background:#fdf6e6;border-radius:10px;padding:9px 11px;margin-top:8px;font-size:12.5px;line-height:1.7}
 .svbar{position:sticky;top:-1px;z-index:2;background:#f6f3ee;padding:8px 0;font-size:13px;color:#555;border-bottom:1px solid #e7e2d8;margin-bottom:6px}.svbar b{color:#2F6B45}
+.uh-q{width:100%;box-sizing:border-box;border:2px solid #E8623F;border-radius:999px;padding:11px 16px;font:inherit;font-size:14px;background:#fff;margin-top:4px}.uh-q:focus{outline:0}
+.uh-hn{font-size:12px;color:#888;margin:8px 2px}.uh-hit{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px;font:inherit;font-size:13.5px;cursor:pointer}.uh-hit small{display:block;color:#999;font-size:11px}.uh-hit.off{color:#aaa}.uh-hit em{font-style:normal;font-size:11px;font-weight:700;background:#eee;color:#888;border-radius:999px;padding:2px 9px;flex:none}
+.uh-ic{display:block;width:34px;height:34px;border-radius:50%;margin:0 auto 5px;background:#fde7df;color:#E8623F;font-weight:800;line-height:34px;font-size:14px}.uh-t.off{opacity:.55}.uh-t small{display:block;font-size:9.5px;color:#888}
+.uh-all{display:block;width:100%;margin-top:10px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px;font:inherit;font-weight:700;color:#E8623F;font-size:14px;cursor:pointer}
+.ch2{display:flex;flex-wrap:wrap;gap:6px}.cch{border:1.5px solid #E8623F;color:#E8623F;background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.cch.on{background:#E8623F;color:#fff}.cch.gy{border-color:#bbb;color:#777}.cch.off{border-color:#ccc;color:#999}.cch small{font-size:10px;font-weight:400}
 </style>
 </head>
 <body>
@@ -529,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=60;
+var APPVER_N=61;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -849,7 +854,7 @@ function renderHome(){
     '<div class="uh-ask"><div class="uh-at">ほかに気になることがある</div><form class="uh-in" id="uhForm"><input id="uhIn" placeholder="例：窓からすきま風が入る" aria-label="気になっていること"><button class="uh-send" type="submit">相談する</button></form>'+
     '<div class="uh-chips">'+['床がきしむ','窓からすきま風','お風呂のカビ','庭が荒れてきた'].map(function(t){return '<button type="button" class="uh-chip">'+t+'</button>';}).join('')+'</div></div>'+
     '<div class="uh-body"><div class="uh-box"><div class="uh-sec">進行中の依頼 <small>新着順</small></div>'+(ac.length?'<div class="list">'+ac.map(caseLine).join('')+'</div>':'<p class="uh-emp">まだ依頼はありません。気になることを上から相談してみてください。</p>')+'</div>'+
-    '<div class="uh-box"><div class="uh-sec">まちの専門家に相談する</div><div class="uh-grid">'+catTiles()+'</div></div>'+qaHomeHTML()+'</div></div>';
+    '<div class="uh-box">'+catFind()+'</div>'+qaHomeHTML()+'</div></div>';
   scr.scrollTop=keep;loadWx();bindWx();$('qaMore').onclick=qaList;$('qaAskH').onclick=qaAsk;bindQA(scr);
   var b=$('uhBub');b.onclick=function(){conc(op.replace(/\|/g,''));};b.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();b.onclick();}};
   $('uhForm').onsubmit=function(e){e.preventDefault();var v=$('uhIn').value.trim();if(v)conc('どうされましたか？',v);};
@@ -895,10 +900,20 @@ function placeBtns(){var box=$('cl');each('.cbt',box,function(x){x.remove();});v
 var SK=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','専門家に確認したいこと']];
 function sheetCard(s,btns){var box=$('cl'),d=document.createElement('div');d.className='mg ai2 wide';
   d.innerHTML=charaImg()+'<div class="sht">'+SK.map(function(k){return s[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(s[k[0]])+'</b></div>':'';}).join('')+estLbl(s)+'</div>';
-  box.appendChild(d);if(!btns){box.scrollTop=box.scrollHeight;return;}each('.cbt',box,function(x){x.remove();});var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button" id="cfix">訂正する</button><button type="button" class="pri" id="cpost">この内容で投稿する</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
+  box.appendChild(d);if(!btns){box.scrollTop=box.scrollHeight;return;}each('.cbt',box,function(x){x.remove();});
+  // 大カテゴリの候補を複数選べる形で出す。「当てはまらない」は一覧から近いものを3つまで（11/23）
+  var cand=(s.cats&&s.cats.length?s.cats:(s.bunya?[s.bunya]:[])).filter(function(c){return SVC.some(function(k){return k[0]===c;});});s.cats=cand.slice(0,1);
+  var k=document.createElement('div');k.className='mg ai2 cbt';var drawK=function(){k.innerHTML=charaImg()+'<div class="bb">どれに近いですか？（いくつでも選べます）<div class="ch2" style="margin-top:8px">'+cand.map(function(c){return '<button type="button" class="cch'+(s.cats.indexOf(c)>=0?' on':'')+'" data-k="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'<button type="button" class="cch gy" id="cNo">当てはまらない</button></div></div>';
+    each('.cch[data-k]',k,function(b){b.onclick=function(){var c=b.dataset.k,i=s.cats.indexOf(c);if(i>=0){if(s.cats.length>1)s.cats.splice(i,1);}else{if(s.cats.length>=3)return toast('3つまで選べます');s.cats.push(c);}s.bunya=s.cats[0];drawK();};});
+    k.querySelector('#cNo').onclick=function(){catPick(s,function(){cand=s.cats.slice();drawK();});};};drawK();box.appendChild(k);
+  var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button" id="cfix">訂正する</button><button type="button" class="pri" id="cpost">この内容で投稿する</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
   $('cfix').onclick=function(){b.remove();$('atx').placeholder='例：場所は塩尻市です';$('atx').focus();};
   $('cpost').onclick=function(){postConfirm(s);};
 }
+function catPick(s,done){var sel=[];openSheet('<h3>近い分野を選ぶ（3つまで）</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){return '<button type="button" class="cch" data-k="'+esc(c)+'">'+esc(c)+'</button>';}).join('')+'</div>';}).join('')+
+  '<p class="uh-hn">どれも近くなければ「そのほかの困りごと」を選んでください。対応できる業者に届けます。</p><button type="button" class="big" id="cpOk" disabled>これで進む</button>','tall');
+  each('.cch',sheet,function(b){b.onclick=function(){var c=b.dataset.k,i=sel.indexOf(c);if(i>=0)sel.splice(i,1);else{if(sel.length>=3)return toast('3つまで選べます');sel.push(c);}b.classList.toggle('on',i<0);$('cpOk').disabled=!sel.length;};});
+  $('cpOk').onclick=function(){s.cats=sel.slice();s.bunya=sel[0];s.item='';closeSheet();done();};}
 function postConfirm(s){
   var photos=[];
   openSheet('<h3>投稿する内容の確認</h3><p class="sp s2">この内容が、対応できる地元の専門家に届きます。お名前と詳しい住所は、現地調査が決まるまで伝わりません。</p><form class="fm" id="pcF">'+
@@ -908,7 +923,7 @@ function postConfirm(s){
     '<p class="err" id="pcE" hidden></p><button class="big" type="submit" id="pcB">この内容で投稿する</button></form>');
   $('pcIn').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f||photos.length>=3)return;shrink(f).then(function(u){photos.push(u);var im=document.createElement('img');im.src=u;im.alt='添付する写真';$('pcPh').insertBefore(im,$('pcPh').lastChild);if(photos.length>=3)$('pcPh').lastChild.hidden=true;});};
   $('pcF').onsubmit=function(e){e.preventDefault();var b=$('pcB');b.disabled=true;b.textContent='送っています…';
-    var data={};SK.forEach(function(k){data[k[0]]=$('pc_'+k[0]).value.trim();});data.estOnly=$('pc_svy').checked?'svy':$('pc_est').checked;
+    var data={};SK.forEach(function(k){data[k[0]]=$('pc_'+k[0]).value.trim();});data.estOnly=$('pc_svy').checked?'svy':$('pc_est').checked;if(s.cats&&s.cats.length&&data.bunya===s.bunya){data.cats=s.cats;data.item=s.item||'';}
     var urls=[];photos.reduce(function(p,u){return p.then(function(){return api('uploadPhoto',{dataUrl:u}).then(function(j){urls.push(j.url);});});},Promise.resolve())
       .then(function(){return api('postCase',{sheet:data,photos:urls});})
       .then(function(j){closeSheet();cSay('投稿しました。専門家から返事が届いたら、ベルのお知らせでお伝えしますね。',0);toast('投稿しました');setTimeout(function(){openCase(j.caseId);},900);})
@@ -972,7 +987,7 @@ function postpone(){
 /* ===== 業者とのチャット ===== */
 var CH=null;
 function stopChat(){clearInterval(chatT);chatT=null;}
-if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},licPane:function(){licPane();},su:function(){return SU;},svcPane:function(){if(PRO)svcPane();else api('proHome').then(function(j){PRO=j;svcPane();});},licCat:function(c){licCat(c);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
+if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},licPane:function(){licPane();},su:function(){return SU;},sheetCard:function(s){conc('テスト');sheetCard(s,true);},svcPane:function(){if(PRO)svcPane();else api('proHome').then(function(j){PRO=j;svcPane();});},licCat:function(c){licCat(c);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
 function openChat(bidId,back){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
   api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
@@ -1114,12 +1129,30 @@ $('bell').onclick=function(){
 /* ===== 運営への問い合わせ ===== */
 var QT=['業者とのトラブル','業者から返事がない・対応してくれない','お金・キャンセルについて','アプリの使い方','機能改善の要望','登録・退会について','その他'];
 /* ===== 依頼する（下のメニューの真ん中） ===== */
+/* 依頼者のホーム：検索窓と人気のカテゴリ（11/23・home2_mock.png）。人気のカテゴリは地域で頼める分野を優先し、数字が取れるまではその中からランダム（1日ごと） */
+function catAvail(){return HOME&&HOME.avail||[];}
+function catPop(){var av=catAvail(),day=Math.floor(Date.now()/864e5),rnd=function(a){return a.map(function(c,i){var h=0;for(var k=0;k<c.length;k++)h=(h*31+c.charCodeAt(k)+day)%9973;return [h,c];}).sort(function(x,y){return x[0]-y[0];}).map(function(x){return x[1];});};
+  var a=rnd(av.slice()),rest=SVC.map(function(c){return c[0];}).filter(function(c){return av.indexOf(c)<0&&c!=='そのほかの困りごと';});return a.concat(rest).slice(0,8);}
+function catIc(c){return esc(c.charAt(0));}
+function catFind(){var av=catAvail();return '<input class="uh-q" id="catQ" type="search" placeholder="何にお困りですか？ 例：エアコン、雨漏り" aria-label="作業をさがす"><div id="catR"></div>'+
+  '<div class="uh-sec">人気のカテゴリ</div><div class="uh-grid">'+catPop().map(function(c){var off=av.indexOf(c)<0;return '<button type="button" class="uh-t'+(off?' off':'')+'" data-k="'+esc(c)+'"><b class="uh-ic">'+catIc(c)+'</b>'+esc(c)+(off?'<small>準備中</small>':'')+'</button>';}).join('')+'</div>'+
+  '<button type="button" class="uh-all" id="catAll">すべての分野を見る</button>';}
+function catGo(c,item){conc('どんなことでお困りですか？',item?item+'をお願いしたいです':c+'について相談したいです');}
+function bindFind(root){var q=root.querySelector('#catQ'),r=root.querySelector('#catR');if(!q)return;
+  q.oninput=function(){var v=q.value.trim(),av=catAvail();if(!v){r.innerHTML='';return;}var hit=[];SVC.forEach(function(C){svItems(C).forEach(function(x){if(x.indexOf(v)>=0||C[0].indexOf(v)>=0)hit.push([x,C[0]]);});});
+    hit.sort(function(a,b){return (av.indexOf(a[1])<0)-(av.indexOf(b[1])<0);});
+    r.innerHTML='<p class="uh-hn">'+hit.length+'件</p>'+hit.slice(0,30).map(function(h){var off=av.indexOf(h[1])<0;return '<button type="button" class="uh-hit'+(off?' off':'')+'" data-i="'+esc(h[0])+'" data-c="'+esc(h[1])+'"><span>'+esc(h[0])+'<small>'+esc(h[1])+'</small></span>'+(off?'<em>準備中</em>':'')+'</button>';}).join('')+
+      (hit.length?(hit.some(function(h){return av.indexOf(h[1])<0;})?'<p class="uh-hn">準備中の作業も相談はできます。業者が見つかったらお知らせします。</p>':''):'<p class="uh-hn">見つかりませんでした。下の「すべての分野を見る」か、まちこに症状を話してください。</p>');
+    each('.uh-hit',r,function(b){b.onclick=function(){catGo(b.dataset.c,b.dataset.i);};});};
+  var al=root.querySelector('#catAll');if(al)al.onclick=catAllSheet;}
+function catAllSheet(){var av=catAvail();openSheet('<h3>すべての分野</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){var off=av.indexOf(c)<0;return '<button type="button" class="cch'+(off?' off':'')+'" data-k="'+esc(c)+'">'+esc(c)+(off?' <small>準備中</small>':'')+'</button>';}).join('')+'</div>';}).join('')+'<p class="uh-hn">準備中の分野も相談はできます。業者が見つかったらお知らせします。</p>','tall');
+  each('.cch',sheet,function(b){b.onclick=function(){closeSheet();catGo(b.dataset.k);};});}
 function catTiles(){return CATS.map(function(x){return '<button type="button" class="uh-t" data-k="'+x[1].replace(/<br>/g,'')+'"><b>'+x[0]+'</b>'+x[1]+'</button>';}).join('');}
-function bindCats(root){each('.uh-t',root,function(x){x.onclick=function(){if(x.dataset.k==='その他はこちら'){conc('どんなことでお困りですか？');return;}conc('どんなことでお困りですか？',x.dataset.k+'について相談したいです');};});}
+function bindCats(root){bindFind(root);each('.uh-t',root,function(x){x.onclick=function(){if(x.dataset.k==='その他はこちら'){conc('どんなことでお困りですか？');return;}catGo(x.dataset.k);};});}
 function renderReq(){var ac=activeCases(),old=HOME.cases.filter(function(x){return ac.indexOf(x)<0;});
   scr.innerHTML='<div class="mp rqw"><button type="button" class="rqb" id="rqM">'+charaImg('rqav')+'<span><b>'+charaName()+'に相談して依頼する</b><small>何をどう頼めばいいかわからなくても大丈夫。話しながら依頼をまとめます</small></span><i>›</i></button>'+
     '<div class="rqfree"><b>現地調査は無料</b>「見てもらうだけ」でも頼めます</div>'+
-    '<div class="sec">まちの専門家に相談する</div><div class="uh-grid">'+catTiles()+'</div>'+
+    catFind()+
     '<div class="sec">進行中の依頼 <small>'+ac.length+'件</small></div>'+(ac.length?'<div class="list">'+ac.map(caseLine).join('')+'</div>':'<div class="empty">進行中の依頼はありません</div>')+
     (old.length?'<div class="sec">終わった依頼 <small>'+old.length+'件</small></div><div class="list">'+old.map(caseLine).join('')+'</div>':'')+'</div>';
   $('rqM').onclick=function(){conc('何でも気軽に相談してください');};bindCats(scr);bindCases(scr);}
