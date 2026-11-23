@@ -517,7 +517,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=53;
+var APPVER_N=54;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1567,8 +1567,7 @@ function suBody(i){var d=SU.d;
   if(i===6)return '<p class="note2" style="margin-top:0">依頼者に表示する名前です。写真・自己紹介・実績などは、登録のあとマイページで入れられます。</p><form class="pf pf2" onsubmit="return false">'+suFld('u_pn','会社名・屋号（表示名）',1,d.pn||d.nm,'')+'<label>拠点の市区町村 <em class="rq">必須</em><input id="u_base" value="'+esc(d.base||d.city||'')+'" placeholder="例）松本市"></label><p class="pc-n">基本情報の住所から入れています。違っていたら直してください。</p>'+urlBlock(svCatsOf(d.svc).length>0,d.urls)+'</form>';
   if(i===7)return '<p class="note2" style="margin-top:0">仕事を受けられる市町村を選んでください。この地域の依頼が届きます。</p>'+areaPicker(d.area);
   if(i===8)return '<form class="pf pf2" onsubmit="return false"><div class="lab">損害賠償保険に入っていますか？ <em class="rq">必須</em></div>'+['入っている','入っていない'].map(function(x){return '<label class="agr"><input type="radio" name="u_ins" value="'+x+'"'+(d.ins===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+
-    '<div id="insD"'+(d.ins==='入っている'?'':' hidden')+'>'+suFld('u_insc','保険会社名',1,d.insc,'')+suFld('u_insn','保険の名前',1,d.insn,'')+'</div>'+
-    '<div class="lab">作業中に、過失で物を汚したり壊したりしたときの対応 <em class="rq">必須</em></div>'+['依頼者と話し合い、実費を弁償する（保険を使う場合を含む）','自社で修繕する','その他'].map(function(x){return '<label class="agr"><input type="radio" name="u_dmg" value="'+x+'"'+(d.dmg===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+'</form>';
+    '<div class="lab">作業中に、過失で物を汚したり壊したりしたときの対応 <em class="rq">必須</em></div>'+['依頼者と話し合い、実費を弁償する（保険を使う場合を含む）','自社で修繕する'].map(function(x){return '<label class="agr"><input type="radio" name="u_dmg" value="'+x+'"'+(d.dmg===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+'</form>';
   if(i===9)return '<p class="note2" style="margin-top:0">下にスクロールして、すべて読んでください。</p><div class="agbox" tabindex="0">'+AGREE.map(function(t,k){return '<p><b>'+(k+1)+'.</b> '+t+'</p>';}).join('')+'</div><label class="agr obag"><input type="checkbox" id="u_agall"'+(d.agree.length===AGREE.length?' checked':'')+'><span>上の重要事項をすべて確認し、同意します</span></label>';
   if(i===10){var lks=suLocks();return '<form class="pf pf2" onsubmit="return false"><div class="lab">事業の形</div>'+['個人事業主','法人'].map(function(x){return '<label class="agr"><input type="radio" name="u_kind" value="'+x+'"'+((d.kind||'個人事業主')===x?' checked':'')+'><span>'+x+'</span></label>';}).join('')+
     suDocRow('id','本人確認書類',1,'運転免許証・マイナンバーカード（表のみ）など。運営の確認にだけ使い、確認が終わったら削除します。')+
@@ -1597,7 +1596,7 @@ function suBind(i){var d=SU.d;
   if(i===4)svBindGrid();
   if(i===5){each('.sud',pane,function(b){b.onclick=function(){b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));};});$('u_exp').oninput=function(){$('u_expv').textContent=this.value;};$('u_emp').oninput=function(){$('u_empv').textContent=this.value;};}
   if(i===7)bindArea(pane);
-  if(i===8)each('[name=u_ins]',pane,function(r){r.onchange=function(){$('insD').hidden=r.value!=='入っている';};});
+
   if(i===10)each('[name=u_kind]',pane,function(r){r.onchange=function(){$('corpD').hidden=r.value!=='法人';d.kind=r.value;};});
   if(i===11)$('u_card').onclick=function(){d.card=1;suStore();this.textContent='✓ 登録済み（テスト版の見本）';};}
 function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.value.trim():'';},need=function(ids){return ids.some(function(id){return !v(id);});};
@@ -1610,7 +1609,7 @@ function suSave(check){var d=SU.d,i=SU.i,v=function(id){var e=$(id);return e?e.v
   if(i===5){d.days=Array.prototype.filter.call(pane.querySelectorAll('.sud'),function(b){return b.classList.contains('on');}).map(function(b){return +b.dataset.d;});d.from=v('u_from');d.to=v('u_to');d.exp=+v('u_exp');d.emp=+v('u_emp');if(check&&!d.days.length)return '曜日を1つ以上選んでください';if(check&&parseInt(d.from)>=parseInt(d.to))return '終わりの時間を、始まりより後にしてください';}
   if(i===6){d.pn=v('u_pn');d.base=v('u_base');d.urls=urlRead(pane);if(check){var ue=svCatsOf(d.svc).length?urlErr(d.urls):'';if(ue)return ue;if(!d.pn)return '会社名・屋号を入れてください';var why=hasContact(d.pn);if(why)return '「会社名・屋号」に'+why+'があります。公開の欄には書けません';}}
   if(i===7){d.area=Array.prototype.filter.call(pane.querySelectorAll('.arc'),function(c){return c.checked;}).map(function(c){return c.value;});if(check&&!d.area.length)return '市町村を1つ以上選んでください';}
-  if(i===8){var a=pane.querySelector('[name=u_ins]:checked'),b2=pane.querySelector('[name=u_dmg]:checked');d.ins=a?a.value:'';d.dmg=b2?b2.value:'';d.insc=v('u_insc');d.insn=v('u_insn');if(check){if(!d.ins||!d.dmg)return 'すべての質問に答えてください';if(d.ins==='入っている'&&(!d.insc||!d.insn))return '保険会社名と保険の名前を入れてください';}}
+  if(i===8){var a=pane.querySelector('[name=u_ins]:checked'),b2=pane.querySelector('[name=u_dmg]:checked');d.ins=a?a.value:'';d.dmg=b2?b2.value:'';if(check){if(!d.ins||!d.dmg)return 'すべての質問に答えてください';}}
   if(i===9){d.agree=$('u_agall').checked?AGREE.map(function(x,k){return k;}):[];if(check&&!d.agree.length)return '重要事項を確認して、同意にチェックを入れてください';}
   if(i===10){var k2=pane.querySelector('[name=u_kind]:checked');d.kind=k2?k2.value:'個人事業主';d.corp=z2h(v('u_corp')).replace(/[\s\-ー－]/g,'');
     if(check){var bad='',has=function(k){var inp=pane.querySelector('[data-doc="'+k+'"]');return (inp&&inp.files.length)||(d.docs[k]||[]).length;};
