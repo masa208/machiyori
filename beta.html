@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=70;
+var APPVER_N=71;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1430,19 +1430,22 @@ function drawPro(){
   var x=PC2.bid,c=PC2.c,s=x.state,st=pStage(),rp=pLast('rep'),repWait=s==='won'&&rp&&!(rp.body||{}).done,closed=['lost','other','declined','expired','canceled'].indexOf(s)>=0,fx=s==='won'&&pFixed(),cxOpen=pOpen('cxa');
   var steps=['立候補','現地調査','見積もり','成約','工事','完了'];
   var HL=!!PC2.helper;
-  var nxt=HL?'協力業者として参加しています（元請け：'+esc(PC2.helper.owner||'')+'）。見積もり・報告・お支払いは元請けの業者が行います':closed?'このやり取りは終了しました':s==='chat'?'話を聞いて、現地調査の提案（費用の目安つき）を送ってください':s==='prop'?'依頼者が調査の日時を選ぶのを待っています':s==='fixd'?'現地調査をして、見積もりを送ってください':s==='est'?'依頼者の返事を待っています':s==='won'?(cxOpen?'キャンセル申請の結果を待っています':repWait?'依頼者の確認を待っています（7日で自動的に完了）':!fx?(pOpen('sch')?'依頼者が着工日を選ぶのを待っています':'着工日の候補を送ってください'):'工事が終わったら「完了報告」を送ってください'):s==='done'?'完了しました':'';
+  var nxt=HL?'協力業者として参加しています（元請け：'+esc(PC2.helper.owner||'')+'）。見積もり・報告・お支払いは元請けの業者が行います':closed?'このやり取りは終了しました':s==='chat'?(c.estOnly&&c.estOnly!=='svy'?'話を聞いて、見積もりを送ってください':'話を聞いて、現地調査の提案（費用の目安つき）を送ってください'):s==='prop'?'依頼者が調査の日時を選ぶのを待っています':s==='fixd'?'現地調査をして、見積もりを送ってください':s==='est'?'依頼者の返事を待っています':s==='won'?(cxOpen?'キャンセル申請の結果を待っています':repWait?'依頼者の確認を待っています（7日で自動的に完了）':!fx?(pOpen('sch')?'依頼者が着工日を選ぶのを待っています':'着工日の候補を送ってください'):'工事が終わったら「完了報告」を送ってください'):s==='done'?'完了しました':'';
   var task='';
   if(HL)s='__helper';
-  if(s==='chat')task='<div class="pc tsk"><div class="pc-h">やること：現地調査の提案</div><p class="sp s2" style="margin:0 0 8px">話を聞いて、費用の目安を出しましょう</p><div class="pc-b"><button type="button" id="tProp">提案を作る</button></div><button type="button" class="undo" id="tNoSv" style="margin-left:0">現地調査なしで見積もりを出す</button></div>';
+  var eo=!!c.estOnly&&c.estOnly!=='svy';
+  if(s==='chat'&&eo)task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">「見積もりだけ」の依頼です。話を聞いて、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tNoSv">見積もりを作る</button></div><button type="button" class="undo" id="tProp" style="margin-left:0">現地調査を提案する</button></div>';
+  else if(s==='chat')task='<div class="pc tsk"><div class="pc-h">やること：現地調査の提案</div><p class="sp s2" style="margin:0 0 8px">話を聞いて、費用の目安を出しましょう</p><div class="pc-b"><button type="button" id="tProp">提案を作る</button></div><button type="button" class="undo" id="tNoSv" style="margin-left:0">現地調査なしで見積もりを出す</button></div>';
   if(s==='fixd')task='<div class="pc tsk"><div class="pc-h">やること：見積もり</div><p class="sp s2" style="margin:0 0 8px">調査の結果をもとに、見積もりを送りましょう</p><div class="pc-b"><button type="button" id="tEst">見積もりを作る</button></div></div>';
   if(s==='won'&&!fx&&!cxOpen&&!pOpen('sch')&&!pOpen('schc'))task='<div class="pc tsk"><div class="pc-h">やること：着工日の提案</div><p class="sp s2" style="margin:0 0 8px">初回の着工日の候補を、3つまで送りましょう</p><div class="pc-b"><button type="button" id="tSch">着工日を提案する</button></div></div>';
   else if(s==='won'&&fx&&!repWait&&!cxOpen&&!pOpen('cxr'))task='<div class="pc tsk"><div class="pc-h">やること：完了報告</div><p class="sp s2" style="margin:0 0 8px">工事が終わったら報告してください</p><div class="pc-b"><button type="button" id="tRep">完了報告をする</button></div></div>';
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>'+esc(c.title)+'</b><span>'+esc(c.place||'')+'・依頼者</span></div><button type="button" class="kebab" id="pInfo" aria-label="依頼の内容">…</button></div>'+
-    '<div class="msgs" id="pm">'+schPin(PC2.msgs,s)+'<div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div><div class="nxt"><b>'+(HL?'あなたの立場':'次に進むには')+'</b>'+nxt+'</div><div id="pmL"></div>'+task+'</div>'+
+    '<div class="msgs" id="pm">'+schPin(PC2.msgs,s)+'<div class="stp">'+steps.map(function(t,i){var k=i<=1?(st>=1?i:0):i-0;return '<span class="'+(i<st?'dn':i===st?'cur':'')+'"><i></i>'+t+'</span>';}).join('')+'</div>'+(task&&!HL?'':'<div class="nxt"><b>'+(HL?'あなたの立場':'次に進むには')+'</b>'+nxt+'</div>')+'<div id="pmL"></div>'+task+'</div>'+
     (PC2.readonly?'<div class="lock">完了から30日たったため、このやり取りは読むだけです。</div>':closed?'<div class="lock">このやり取りは終了しています。</div>':'<div class="pmenu" id="pmenu" hidden><label class="pmi"><span>写真</span>画像を送る<input type="file" accept="image/*" id="pImg" hidden></label>'+(PC2.canInvite?'<button type="button" class="pmi" id="pHlp" style="color:#2B4C7E"><span>応援</span>会員の応援を依頼する<small>審査が済んだ会員を選んで、このチャットに招待します</small></button>':'')+(s==='won'&&!repWait?'<button type="button" class="pmi" id="pChg"><span>＋円</span>追加の作業の申請<small>作業の前に、依頼者の承諾が必要です</small></button>':'')+(s==='won'?'<button type="button" class="pmi" id="pSchM"><span>📅</span>着工日を提案（変更）<small>変えるときは、依頼者の承認が必要です</small></button>':'')+(s==='won'&&!cxOpen?'<button type="button" class="pmi" id="pCx" style="color:#c0392b"><span>✕</span>キャンセル申請</button>':'')+'</div><form class="cmp" id="pf"><button type="button" class="ic plus" id="pmB" aria-label="メニュー" aria-expanded="false">＋</button><input id="ptx" placeholder="メッセージを書く" aria-label="メッセージ" autocomplete="off"><button class="sd">送信</button></form>'),
     function(){PC2=null;closePane();});
   chatT=setInterval(proPoll,8000);
   drawProMsgs();
+  if(PC2.first&&s==='chat'&&!HL&&!PC2.msgs.some(function(m){return m.from===x.vendorId;})){var tx=$('ptx');if(tx&&!tx.value)tx.value='はじめまして、'+((PC2.vendor&&PC2.vendor.name)||'')+'です。くわしい状況を教えていただけますか？';}
   var e=$('tProp');if(e)e.onclick=propForm;e=$('tEst');if(e)e.onclick=function(){estForm();};e=$('tNoSv');if(e)e.onclick=function(){estForm(true);};e=$('tRep');if(e)e.onclick=repForm;e=$('tSch');if(e)e.onclick=schForm;
   $('pInfo').onclick=function(){openSheet('<h3>依頼の内容</h3><div class="sht">'+SKP.map(function(k){return c[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(c[k[0]])+'</b></div>':'';}).join('')+'</div>'+((c.photos||[]).length?'<div class="phs">'+c.photos.map(function(u){return '<img src="'+esc(u)+'" alt="依頼の写真">';}).join('')+'</div>':''));};
   var f=$('pf');if(f){f.onsubmit=function(ev){ev.preventDefault();var t=$('ptx'),v=t.value.trim();if(!v)return;t.value='';pSend({text:v});};
@@ -1450,7 +1453,7 @@ function drawPro(){
     e=$('pChg');if(e)e.onclick=chgForm;e=$('pHlp');if(e)e.onclick=hlpForm;e=$('pSchM');if(e)e.onclick=schForm;e=$('pCx');if(e)e.onclick=cxForm;
     $('pImg').onchange=function(ev){var fl=ev.target.files[0];ev.target.value='';if(!fl)return;toast('写真を送っています…');shrink(fl).then(function(u){return api('uploadPhoto',{dataUrl:u});}).then(function(j){pSend({img:j.url});}).catch(fail);};}
   // 段階ごとのポップアップ
-  if(s==='chat'&&!pLast('prop'))pPop(x.id,1);else if(s==='fixd')pPop(x.id,2);else if(s==='won'&&!repWait){if(seenNo('p_'+x.id+'_4'))pPop(x.id,4);else if(PC2.first)pPop(x.id,5);}
+  if(s==='chat'&&!pLast('prop')&&!(c.estOnly&&c.estOnly!=='svy'))pPop(x.id,1);else if(s==='fixd')pPop(x.id,2);else if(s==='won'&&!repWait){if(seenNo('p_'+x.id+'_4'))pPop(x.id,4);else if(PC2.first)pPop(x.id,5);}
   PC2.first=0;
 }
 function pSend(d){var l=PC2.msgs[PC2.msgs.length-1];d.bidId=PC2.bid.id;d.since=l?l.createdAt:'';api('proSend',d).then(function(j){PC2.msgs=PC2.msgs.concat(j.msgs);PC2.bid=j.bid;drawProMsgs();}).catch(fail);}
