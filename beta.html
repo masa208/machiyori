@@ -534,7 +534,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=67;
+var APPVER_N=68;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -895,8 +895,21 @@ function cSay(t,me){var box=$('cl');if(!box)return;if(!me)t=String(t).replace(/\
 function cSend(v){
   C.sent=true;var rl=$('rcLine');if(rl)rl.remove();cSay(v,1);C.busy=true;var box=$('cl'),w=document.createElement('div');w.className='typing';w.textContent=charaName()+'が入力中…';box.appendChild(w);box.scrollTop=box.scrollHeight;
   var data={text:v};if(C.tid)data.threadId=C.tid;else data.opening=C.opening;
-  api('concierge',data).then(function(j){if(j.threadId){C.tid=j.threadId;concKeep(j.threadId);}w.remove();var hasC=!j.sheet&&!j.askPlace&&/【[^】]{1,40}】/.test(j.reply||'');cSay(hasC?String(j.reply).replace(/【[^】]{1,40}】/g,'').replace(/[ 　]+\n/g,'\n').trim():j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();else choiceBtns(j.reply);}).catch(function(e){w.remove();cSay('ごめんなさい、うまく聞き取れませんでした。もう一度送ってもらえますか？',0);fail(e);}).then(function(){C.busy=false;});
+  var tm=new Promise(function(ok,ng){setTimeout(function(){ng(new Error('TIMEOUT'));},window.C_TO||45000);});
+  Promise.race([api('concierge',data),tm]).then(cShow).catch(function(e){
+    /* 応答が届かなかったとき：サーバーに返事が残っていればそれを出す。なければ送り直しのボタンを出す（11/23） */
+    var retry=function(){w.remove();cRetry(v);C.busy=false;};
+    if(!C.tid){retry();return;}
+    api('threadGet',{threadId:C.tid}).then(function(j){var it=j.items||[],l=it[it.length-1],p=it[it.length-2];
+      if(l&&l.role==='assistant'&&p&&p.role==='user'&&p.text===v){cShow({threadId:C.tid,reply:l.text,sheet:l.sheet,askPlace:false});C.busy=false;}else retry();}).catch(retry);
+  });
+  function cShow(j){if(j.threadId){C.tid=j.threadId;concKeep(j.threadId);}w.remove();var hasC=!j.sheet&&!j.askPlace&&/【[^】]{1,40}】/.test(j.reply||'');cSay(hasC?cStrip(j.reply):j.reply,0);if(j.sheet)sheetCard(j.sheet,true);else if(j.askPlace)placeBtns();else choiceBtns(j.reply);C.busy=false;}
 }
+/* 選択肢を本文から外し、「から選んでください」などの残りも消す */
+function cStrip(t){return String(t).replace(/【[^】]{1,40}】/g,'').replace(/(?:の中|下)?から(?:お)?選んで(?:ください|くださいね|いただけますか[？?]?)。?/g,'').replace(/[、。]\s*$/,'。').replace(/？。/g,'？').replace(/[ 　]+\n/g,'\n').trim();}
+/* 返事が届かなかったときの案内と、送り直しのボタン */
+function cRetry(v){cSay('通信がうまくいかず、返事をお届けできませんでした。電波のよいところで、もう一度お送りください。',0);var box=$('cl');each('.cbt',box,function(x){x.remove();});var b=document.createElement('div');b.className='chs cbt';b.innerHTML='<button type="button">もう一度送る</button>';box.appendChild(b);box.scrollTop=box.scrollHeight;
+  b.querySelector('button').onclick=function(){if(C.busy)return;b.remove();var ms=box.querySelectorAll('.mg.me');var lm=ms[ms.length-1];if(lm)lm.remove();cSend(v);};}
 /* 場所は市町村をボタンで選ぶ（番地などを書いてしまわないように） */
 var PLACES=['松本市','塩尻市','安曇野市','大町市','山形村','朝日村','池田町','松川村','生坂村','麻績村','筑北村','木曽地域','その他の地域'];
 /* まちこの返事の「【選択肢】」をボタンにする（11/23）。押すとその言葉を送る。自分で書いてもよい */
@@ -997,7 +1010,7 @@ function postpone(){
 /* ===== 業者とのチャット ===== */
 var CH=null;
 function stopChat(){clearInterval(chatT);chatT=null;}
-if(location.hostname==='app.local')window.__t={openChat:openChat,openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},licPane:function(){licPane();},su:function(){return SU;},sheetCard:function(s){conc('テスト');sheetCard(s,true);},svcPane:function(){if(PRO)svcPane();else api('proHome').then(function(j){PRO=j;svcPane();});},licCat:function(c){licCat(c);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
+if(location.hostname==='app.local')window.__t={openChat:openChat,cSend:function(t){cSend(t);},openCase:function(id){openCase(id);},hInvOpen:function(id){hInvOpen(id);},licPane:function(){licPane();},su:function(){return SU;},sheetCard:function(s){conc('テスト');sheetCard(s,true);},svcPane:function(){if(PRO)svcPane();else api('proHome').then(function(j){PRO=j;svcPane();});},licCat:function(c){licCat(c);},suFile:function(f){return suFile(f);},openPro:function(id){return openPro(id);},setMode:function(m){setMode(m);}}; // 自動テスト用（本番のURLでは何もしない）
 function openChat(bidId,back){
   setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>読み込み中…</b></div></div><div class="msgs" id="vm"></div>');
   api('getChat',{bidId:bidId}).then(function(j){CH=j;CH.back=back;drawChat();}).catch(function(e){fail(e);closePane();});
