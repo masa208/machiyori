@@ -141,6 +141,15 @@ h2{font-size:17px;margin:0 0 10px}
 .pf .mkd,.mkd{width:100%;padding:12px;font-size:16px;font-weight:700;border:1.5px solid #1F7A4D;border-radius:10px;background:#F2FAF5;color:#173;margin-bottom:4px}.mtm{display:flex;gap:8px;align-items:center}.mtm input{flex:1;min-width:0}.mtm input[type=number]{flex:0 0 110px}.mbl{display:flex;justify-content:space-between;align-items:center}.mtp{color:#1F6FD6;background:#fff;border:1.5px solid #1F6FD6;border-radius:16px;padding:3px 12px;font:inherit;font-size:13px;font-weight:700}.mtpl{text-align:left;font-weight:400;line-height:1.6}
 .avp{object-fit:cover;padding:0}.mprf{text-align:center}.mprf img,.mprf .mpa{width:96px;height:96px;border-radius:50%;object-fit:cover;display:inline-flex;align-items:center;justify-content:center;font-size:36px;margin:4px auto 10px}.mprf dl{text-align:left;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:4px 6px 10px;font-size:15px}.mprf dt{color:var(--sb);font-size:13px;align-self:center}.mprf dd{margin:0;font-weight:700}
 .prq{background:#fff;border:1px solid #DDE3DF;border-radius:12px;margin:8px 10px;padding:0 12px}.prq summary{padding:11px 0;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}.prq summary::-webkit-details-marker{display:none}.prq summary:after{content:'開く ▾';margin-left:auto;font-size:12px;color:var(--sb);font-weight:400}.prq[open] summary:after{content:'閉じる ▴'}.prq summary small{font-size:11px;background:#EAF3EC;color:#2F6B45;border-radius:6px;padding:2px 6px}.prq .sht{padding:0 0 10px;border:0;margin:0}
+.mpf{background:#fff;margin:0 -12px;padding:6px 18px 20px;min-height:100%}
+.mpf .lab{font-size:13px;font-weight:700;color:#333;margin:16px 0 6px;display:block}.mpf .lab .rq{color:#D33;background:none;font-size:11px;padding:0;margin-left:5px}
+.mpf input,.mpf select,.mpf textarea{border:1.5px solid #D9DFDB;border-radius:10px;padding:11px 12px;font-size:15px;margin-top:0}
+.mpf .mkd{border-color:#1F7A4D;background:#F2FAF5;color:#173}
+.mpf .mrw{display:flex;gap:10px}.mpf .mrw>div{flex:1;min-width:0}.mpf .mrw .mtm input[type=number]{flex:1}
+.mpf .mch button{border-radius:20px;font-size:14px;padding:6px 13px;border:1.5px solid #D9DFDB;color:#333}.mpf .mch button.on{background:#1F7A4D;border-color:#1F7A4D;color:#fff}
+.mphs{display:flex;gap:8px;flex-wrap:wrap}.mphs .tb{width:62px;height:62px}.mphs .tb img{width:62px;height:62px;object-fit:cover;border-radius:10px}
+.mpadd{width:62px;height:62px;border:1.5px dashed #9BB;border-radius:10px;display:flex!important;align-items:center;justify-content:center;font-size:22px;margin:0!important;cursor:pointer}.mpadd[hidden]{display:none!important}
+.mpf .lab.mbl{display:flex;justify-content:space-between;align-items:center}.mpf .mtm{align-items:center}.mpf .mtm input{margin:0}.mpf .pc-n{font-size:12px}.mpf .big{background:#1F7A4D;border-radius:12px;margin-top:20px}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:8px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#6E7D75;font-size:12px;margin-right:3px}
 .mhd{margin-left:auto;color:#2B4C7E;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #CFD6D2;border-radius:16px;padding:5px 11px;background:#fff;color:#23302A}.mks button[aria-pressed=true]{background:#2B4C7E;color:#fff;border-color:#2B4C7E}
@@ -597,7 +606,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=90;
+var APPVER_N=91;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -2052,30 +2061,30 @@ var MTPL={hand:['急ぎで手元を探しています。作業内容は〇〇で
 /* 投稿画面（11/23）：1枚の画面。用件はプルダウンで選び直せ、タイトル・写真・本文は残る。本文の「定型文」でひな形を入れる */
 function mPostForm(kind){kind=MK[kind]?kind:'hand';var ph3=[],CH={},max=function(){var d=new Date(Date.now()+9*3600e3);d.setUTCMonth(d.getUTCMonth()+3);return d.toISOString().slice(0,10);};
   var TT={hand:'例）外壁塗装の手元 2名',job:'例）給湯器交換を1件お願いしたい',lend:'例）足場を2日間貸してほしい',ask:'例）古民家の土壁、補修できる方いますか',info:'例）12月の空き日程のお知らせ'};
-  var fld=function(f){var lab='<div class="lab">'+f[1]+' '+(f[3]?'<em class="rq">必須</em>':'<em class="op">任意</em>')+'</div>';
+  var fld=function(f){var lab='<div class="lab">'+f[1]+(f[3]?'<em class="rq">必須</em>':'')+'</div>';
     if(f[2]==='ch')return lab+'<div class="mch" data-ch="'+f[0]+'">'+f[4].map(function(o){return '<button type="button" data-o="'+esc(o)+'">'+esc(o)+'</button>';}).join('')+'</div>';
     if(f[2]==='date')return lab+'<input type="date" id="mf_'+f[0]+'" min="'+mToday()+'">';
     if(f[2]==='date2')return lab+'<div class="mtm"><input type="date" id="mf_'+f[0]+'_a" min="'+mToday()+'" aria-label="開始日"><span>〜</span><input type="date" id="mf_'+f[0]+'_b" min="'+mToday()+'" aria-label="終了日"></div><p class="pc-n">1日だけなら左だけ入れてください</p>';
     if(f[2]==='num')return lab+'<div class="mtm"><input type="number" id="mf_'+f[0]+'" min="1" max="99" inputmode="numeric" placeholder="例）2"><span>'+f[4]+'</span></div>';
     if(f[2]==='time2')return lab+'<div class="mtm"><input type="time" id="mf_'+f[0]+'_a" value="08:00" aria-label="開始"><span>〜</span><input type="time" id="mf_'+f[0]+'_b" value="17:00" aria-label="終了"></div>';
     return lab+'<input id="mf_'+f[0]+'" maxlength="100" placeholder="'+esc(f[4]||'')+'">';};
-  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員に投稿する</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw su"><form class="pf pf2" onsubmit="return false">'+
-    '<div class="lab">用件 <em class="rq">必須</em></div><select id="mkd" class="mkd" aria-label="用件">'+MKO.map(function(k){return '<option value="'+k+'"'+(k===kind?' selected':'')+'>'+MK[k].n+'</option>';}).join('')+'</select>'+
-    '<div class="lab">写真 <em class="op">任意・3枚まで</em></div><div class="thumbs" id="mth"></div><label class="lfile">＋ 写真を追加<input type="file" id="mph" accept="image/*" hidden></label>'+
-    '<label>タイトル <em class="rq">必須</em><input id="mt" maxlength="60"></label><div id="mff"></div>'+
+  setPane('<div class="ph2"><button type="button" class="bk" aria-label="もどる">‹</button><div class="pt"><b>会員に投稿する</b><span>会員全員にお知らせが届きます</span></div></div><div class="arw su"><form class="pf pf2 mpf" onsubmit="return false">'+
+    '<div class="lab">用件<em class="rq">必須</em></div><select id="mkd" class="mkd" aria-label="用件">'+MKO.map(function(k){return '<option value="'+k+'"'+(k===kind?' selected':'')+'>'+MK[k].n+'</option>';}).join('')+'</select>'+
+    '<div class="lab">写真（あれば・3枚まで）</div><div class="mphs"><div id="mth" class="mphs"></div><label class="mpadd" id="mpadd" aria-label="写真を追加">📷<input type="file" id="mph" accept="image/*" hidden></label></div>'+
+    '<div class="lab">タイトル<em class="rq">必須</em></div><input id="mt" maxlength="60"><div id="mff"></div>'+
     '<div class="lab mbl"><span id="mbL"></span><button type="button" class="mtp" id="mtp">定型文</button></div><textarea id="mb" rows="4"></textarea>'+
-    '<div class="lab">募集期限 <em class="rq">必須</em></div><label class="agr"><input type="radio" name="mdl" value="" checked><span>期限なし</span></label><label class="agr"><input type="radio" name="mdl" value="1"><span>期限を設定する</span></label><input type="date" id="mdd" min="'+mToday()+'" max="'+max()+'" hidden>'+
+    '<div class="lab">募集期限<em class="rq">必須</em></div><label class="agr"><input type="radio" name="mdl" value="" checked><span>期限なし</span></label><label class="agr"><input type="radio" name="mdl" value="1"><span>期限を設定する</span></label><input type="date" id="mdd" min="'+mToday()+'" max="'+max()+'" hidden>'+
     '<p class="pc-n">期限なしの投稿は、1か月後に「過去の案件」へ移動します（募集は続きます）。期限ありの投稿は、期限まで一覧に出ます（最長3か月）。</p>'+
     '<p class="pc-n">電話番号・メールアドレスは書けません。くわしいやり取りは1対1のチャットでどうぞ。</p><p class="warn" id="mfw" hidden></p><button type="button" class="big" id="mgo">投稿する</button></form></div>',function(){closePane();});
   var K,bodyReq,paint=function(){K=MK[kind];bodyReq=kind==='ask'||kind==='info';CH={};$('mt').placeholder=TT[kind];
-    $('mff').innerHTML=K.f.map(fld).join('');$('mbL').innerHTML=bodyReq?'内容 <em class="rq">必須</em>':'本文 <em class="op">任意</em>';
+    var H={place:1,need:1},o='',i2=0;K.f.forEach(function(f,i){var h=kind==='hand'&&H[f[0]];if(h&&K.f[i+1]&&H[K.f[i+1][0]]){o+='<div class="mrw"><div>'+fld(f)+'</div>';}else if(h&&i>0&&H[K.f[i-1][0]]){o+='<div>'+fld(f)+'</div></div>';}else o+=fld(f);});$('mff').innerHTML=o;$('mbL').innerHTML=bodyReq?'内容<em class="rq">必須</em>':'本文';
     $('mb').placeholder=bodyReq?'くわしい内容':'くわしい内容（なくても投稿できます）';
     each('[data-ch]',$('mff'),function(g){each('button',g,function(b){b.onclick=function(){CH[g.dataset.ch]=b.dataset.o;each('button',g,function(x){x.classList.toggle('on',x===b);});};});});};
   paint();$('mkd').onchange=function(){kind=this.value;paint();};
   $('mtp').onclick=function(){openSheet('<h3>'+MK[kind].n+' の定型文</h3><p class="sp s2">押すと本文に入ります。そのあと自由に直せます。</p><div class="list">'+MTPL[kind].map(function(t,i){return '<button type="button" class="card bp mtpl" data-t="'+i+'">'+esc(t)+'</button>';}).join('')+'</div>');
     each('[data-t]',sheet,function(b){b.onclick=function(){var t=MTPL[kind][+b.dataset.t],m=$('mb');m.value=m.value.trim()?m.value.replace(/\s+$/,'')+'\n'+t:t;closeSheet();};});};
   each('[name=mdl]',pane,function(r){r.onchange=function(){$('mdd').hidden=r.value!=='1'||!r.checked;};});
-  var th=function(){$('mth').innerHTML=ph3.map(function(u,i){return '<div class="tb"><img src="'+u+'" alt=""><button type="button" data-x="'+i+'" aria-label="外す">✕</button></div>';}).join('');each('[data-x]',$('mth'),function(b){b.onclick=function(){ph3.splice(+b.dataset.x,1);th();};});};
+  var th=function(){$('mpadd').hidden=ph3.length>=3;$('mth').innerHTML=ph3.map(function(u,i){return '<div class="tb"><img src="'+u+'" alt=""><button type="button" data-x="'+i+'" aria-label="外す">✕</button></div>';}).join('');each('[data-x]',$('mth'),function(b){b.onclick=function(){ph3.splice(+b.dataset.x,1);th();};});};
   $('mph').onchange=function(e){var f=e.target.files[0];e.target.value='';if(!f)return;if(ph3.length>=3)return toast('写真は3枚までです');shrink(f).then(function(u){ph3.push(u);th();}).catch(fail);};
   $('mgo').onclick=function(){var bt=this,w=$('mfw'),useDl=pane.querySelector('[name=mdl]:checked').value==='1',dl=useDl?$('mdd').value:'',info={},miss='';
     K.f.forEach(function(f){var v;if(f[2]==='ch')v=CH[f[0]]||'';else if(f[2]==='date2'){var da=$('mf_'+f[0]+'_a').value,db=$('mf_'+f[0]+'_b').value;if(db&&!da){da=db;db='';}if(da&&db&&db<da){var tt=da;da=db;db=tt;}v=da?da+(db&&db!==da?'〜'+db:''):'';}else if(f[2]==='num'){var nn=parseInt($('mf_'+f[0]).value,10);v=nn>0?Math.min(nn,99)+f[4]:'';}else if(f[2]==='time2'){var x=$('mf_'+f[0]+'_a').value,y=$('mf_'+f[0]+'_b').value;v=x||y?(x?x.replace(/^0/,''):'')+'〜'+(y?y.replace(/^0/,''):''):'';}else v=$('mf_'+f[0]).value.trim();if(v)info[f[0]]=v;else if(f[3]&&!miss)miss=f[1];});
