@@ -615,7 +615,7 @@ input.bad,textarea.bad,select.bad{border-color:#C8321F!important;background:#FFF
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=93;
+var APPVER_N=94;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1611,15 +1611,17 @@ function newCase(c){openSheet('<h3>'+esc(c.title)+'</h3><div class="sht">'+SKP.m
 /* 立候補の一通目は、自己紹介の文を依頼者の名前つきで送る。業者は書かなくてよい（ミツモア方式・11/24）。自己紹介の文がまだなければ、先に2問で作る */
 function bidMsg(c){api('proProfile').then(function(P){if(String(P.intro||'').trim())bidMsg2(c,P);else introSetup(P,function(t){P.intro=t;bidMsg2(c,P);},0,c);}).catch(fail);}
 function bidMsg2(c,P){openSheet('<button type="button" class="shbk" id="shBk" aria-label="1つ前にもどる">‹</button><h3>最初のメッセージ</h3><p class="sp s2">自己紹介の文が、依頼者の名前つきで送られます。書き足さなくても立候補できます。</p>'+
-  '<div class="inbx">（依頼者のお名前）様、はじめまして。'+esc(P.intro)+'</div><div class="intx"><button type="button" class="lnk" id="bmP">自己紹介の文を直す ›</button></div>'+
+  '<div class="inbx" id="bmV">（依頼者のお名前）様、はじめまして。'+esc(P.intro)+'</div><div class="intx"><button type="button" class="lnk" id="bmP">文を直す ›</button></div>'+
+  '<div id="bmEd" hidden><p class="sp s2" style="margin:6px 0 4px">頭の「〇〇様、はじめまして。」は自動で付きます。</p><textarea id="bmI" rows="8" maxlength="400" style="width:100%;font:inherit;font-size:15px;padding:12px;border:1.5px solid #CFD6D2;border-radius:10px;box-sizing:border-box">'+esc(P.intro)+'</textarea><label class="agr" style="margin-top:6px"><input type="checkbox" id="bmSv"><span>次からもこの文を使う（プロフィールに保存）</span></label></div>'+
   '<div class="lab" style="margin-top:12px">ひとこと足す <em class="op">任意</em></div>'+
   ((c.hints||[]).length?'<div class="bmh"><small>押すと入力欄に入ります</small><div class="pfch">'+c.hints.map(function(h){return '<button type="button" data-h="'+esc(h)+'">'+esc(h)+'</button>';}).join('')+'</div></div>':'')+
   '<textarea id="bmT" rows="3" maxlength="400" placeholder="例：すきま風は、窓まわりの調整で直ることが多いです" style="width:100%;font:inherit;font-size:15px;padding:12px;border:1.5px solid #CFD6D2;border-radius:10px;box-sizing:border-box"></textarea>'+
   '<p class="err" id="bmE" hidden></p><button type="button" class="big" id="bmB" style="background:#2F6B45">立候補する</button>','tall');
-  $('shBk').onclick=function(){newCase(c);};$('bmP').onclick=function(){closeSheet();profPane();};
+  $('shBk').onclick=function(){newCase(c);};$('bmP').onclick=function(){this.parentNode.hidden=true;$('bmV').hidden=true;$('bmEd').hidden=false;$('bmI').focus();};
   each('[data-h]',sheet,function(b){b.onclick=function(){var t=$('bmT'),h=b.dataset.h+'について、教えていただけますか？',p=t.selectionStart==null?t.value.length:t.selectionStart;t.value=t.value.slice(0,p)+h+t.value.slice(p);t.focus();b.classList.add('on');};});
-  $('bmB').onclick=function(){var t=$('bmT').value.trim(),e=$('bmE');var wy=hasContact(t);if(wy){e.textContent=wy+'は書けません。やり取りはチャットでお願いします';e.hidden=false;return;}
-    var btn=this;btn.disabled=true;btn.textContent='送っています…';api('proBid',{caseId:c.id,intro:1,extra:t}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(function(x){btn.disabled=false;btn.textContent='立候補する';fail(x);});};}
+  $('bmB').onclick=function(){var t=$('bmT').value.trim(),e=$('bmE'),ed=!$('bmEd').hidden,it=ed?$('bmI').value.trim():'';var wy=hasContact(t+' '+it);if(wy){e.textContent=wy+'は書けません。やり取りはチャットでお願いします';e.hidden=false;return;}
+    if(ed&&!it){e.textContent='自己紹介の文を入れてください';e.hidden=false;return;}
+    var btn=this;btn.disabled=true;btn.textContent='送っています…';api('proBid',{caseId:c.id,intro:1,extra:t,introText:ed&&it!==P.intro?it:'',saveIntro:ed&&$('bmSv').checked?1:0}).then(function(j){closeSheet();jobSub='run';openPro(j.bidId);}).catch(function(x){btn.disabled=false;btn.textContent='立候補する';fail(x);});};}
 /* 自己紹介の文を2問で作る（登録済みの業者が最初に立候補するとき／プロフィールから作り直すとき） */
 function introSetup(P,done,fromProf,c){var st={exp:P.exp||'',best:(P.best||[]).slice()};
   var paint=function(){var G=genIntro({pn:P.name,city:P.city,svc:P.svc,exp:st.exp,best:st.best,lics:P.lics,feats:P.feats,ins:P.ins});st.text=G.text;
