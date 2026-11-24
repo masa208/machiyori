@@ -362,7 +362,7 @@ body{background:#F5F6F4;margin:0}
 .hd{padding-top:max(10px,env(safe-area-inset-top))}
 .nav{padding-bottom:env(safe-area-inset-bottom);height:calc(62px + env(safe-area-inset-bottom))}
 .scr{bottom:calc(62px + env(safe-area-inset-bottom))}
-.logo{background:none;border:0;padding:0;font-family:inherit;cursor:pointer}.beta{font-size:12px;font-weight:700;color:#fff;background:#66706A;border-radius:6px;padding:1px 6px;border:0;font-family:inherit;cursor:pointer;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logo{background:none;border:0;padding:0;font-family:inherit;cursor:pointer;white-space:nowrap;flex:none}.chip{white-space:nowrap;flex:none}.beta{max-width:5.2em!important;min-width:0;flex:0 1 auto;line-height:1.15;padding:2px 6px!important;text-align:center}.beta small{display:block;font-size:11px;font-weight:400;overflow:hidden;text-overflow:ellipsis}.bell,.hdq{flex:none}.beta{font-size:12px;font-weight:700;color:#fff;background:#66706A;border-radius:6px;padding:1px 6px;border:0;font-family:inherit;cursor:pointer;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bell b:empty{display:none}
 @media (prefers-reduced-motion:reduce){.sheet{transition:none}}
 @media (prefers-reduced-motion:reduce){.uh-cl{animation:none;transform:translateX(120px)}.uh-nv span{animation:none;padding-left:0}}
@@ -650,6 +650,8 @@ body{letter-spacing:.01em}
 .mpf .mch button.on{background:var(--m);border-color:var(--m)}
 .mpf .big{background:var(--m)}
 .mpost{background:var(--m);border-radius:12px;padding:13px 12px;font-size:16px}
+
+@media (max-width:380px){.logo{font-size:16px!important}.chip{font-size:12px!important;padding:5px 7px 5px 11px!important;gap:3px!important}.beta{font-size:11px!important;padding:2px 4px!important}.beta small{font-size:10px}.bell{padding:2px!important}}
 </style>
 </head>
 <body>
@@ -670,7 +672,7 @@ body{letter-spacing:.01em}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=104;
+var APPVER_N=105;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -842,7 +844,7 @@ function bizGo(){if(bizFlag()===2)memberJoin();else vendorSignup();}
 function bizWanted(){if(HOME&&HOME.test){try{localStorage.removeItem('mchy_biz');}catch(e){}return false;}try{return !!localStorage.getItem('mchy_biz')||!!(ME&&localStorage.getItem('mchy_su_'+ME.id));}catch(e){return false;}} // 業者登録の途中なら、依頼者向けの質問より先に続きを出す
 /* ログイン中のアカウント（11/24）：同じ呼び名でも見分けられるように、ログインに使ったものと番号の末尾4けた */
 function acctLine(){if(!ME)return '';var m=String(ME.email||''),at=m.indexOf('@'),mm=at>0?m.charAt(0)+'●●●'+m.slice(at):'';return (ME.provider==='line'?'LINE：'+(ME.name||'（名前なし）'):'メール：'+(mm||'—'))+'・番号 '+String(ME.id||'').slice(-4);}
-function betaPaint(){var b=$('betaB');if(!b||!ME||!(HOME&&HOME.test))return;b.textContent='テスト版・'+(ME.callName||'名前なし');b.onclick=function(){openSheet('<h3>ログイン中のアカウント</h3><div class="sht"><div class="sht-r"><span>呼び名</span><b>'+esc(ME.callName||'')+'</b></div><div class="sht-r"><span>ログイン</span><b>'+esc(acctLine())+'</b></div></div><p class="sp s2">テスト版だけの表示です。2台で試すときに、どのアカウントか確かめられます。</p>');};}
+function betaPaint(){var b=$('betaB');if(!b||!ME||!(HOME&&HOME.test))return;b.innerHTML='テスト版<small>'+esc(ME.callName||'名前なし')+'</small>';b.onclick=function(){openSheet('<h3>ログイン中のアカウント</h3><div class="sht"><div class="sht-r"><span>呼び名</span><b>'+esc(ME.callName||'')+'</b></div><div class="sht-r"><span>ログイン</span><b>'+esc(acctLine())+'</b></div></div><p class="sp s2">テスト版だけの表示です。2台で試すときに、どのアカウントか確かめられます。</p>');};}
 /* ロゴを押すと最新にする（11/24）：新しい版があれば読み込み直し、なければ今のモードの最初の画面を読み直す */
 function logoRefresh(){if(!ME)return;toast('最新の内容にしています…');try{sessionStorage.removeItem('mchy_rl');}catch(e){}verCheck();if(pane.classList.contains('on'))pane.classList.remove('on');stopChat&&stopChat();
   HOME_AT=0;PRO=null;MB=null;MJ=null;tab=MODE==='pro'?'job':MODE==='member'?'board':'home';refresh();}
@@ -1194,6 +1196,7 @@ function drawChat(){
 }
 function send(d){var l=CH.msgs[CH.msgs.length-1];d.bidId=CH.bid.id;d.since=l?l.createdAt:'';api('sendMsg',d).then(function(j){CH.msgs=CH.msgs.concat(j.msgs);CH.bid=j.bid;drawMsgs();}).catch(fail);}
 /* チャットの見た目（11/24）：日付の区切り・送った時刻・相手の顔と名前（続けて送ったときは最初だけ） */
+var CK3='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg>'; // チャットの紹介で使う印（CK2は別の関数の中だけにあった・11/24）
 var CWD='',CWP='';
 document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('#ctPf');if(t)cProf();});
 function cHM(t){var d=new Date(t);return isNaN(d)?'':d.getHours()+':'+('0'+d.getMinutes()).slice(-2);}
@@ -1212,12 +1215,12 @@ function pWrap(m,fn){var nm=m.from===PC2.bid.vendorId?'':((PC2.c&&PC2.c.cname)?P
 function cTop(){var v=CH.vendor,k=CH.card;if(!v||!k)return '';
   var hasFirst=CH.msgs.some(function(m){return m.from===CH.bid.vendorId&&m.type==='text'&&notOldHi(m);});
   return '<div class="ctop"><div class="vtop">'+(v.photo?'<img class="vav" src="'+esc(v.photo)+'" alt="">':'<span class="vav in">'+esc(String(v.name||'業').charAt(0))+'</span>')+'<div class="vnm"><b>'+esc(v.name)+'</b><span class="vrv">'+(Number(v.reviews)?'★'+esc(v.star)+'（口コミ'+esc(v.reviews)+'件）':'口コミはまだありません')+'</span></div></div>'+
-    ((k.facts||[]).length?'<div class="vfacts">'+k.facts.map(function(f){return '<span>'+CK2+esc(f)+'</span>';}).join('')+'</div>':'')+
+    ((k.facts||[]).length?'<div class="vfacts">'+k.facts.map(function(f){return '<span>'+CK3+esc(f)+'</span>';}).join('')+'</div>':'')+
     ((k.tags||[]).length?'<div class="vtags">'+k.tags.map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+'</div>':'')+
     (!hasFirst&&k.intro?'<p class="ctin">'+esc(k.intro)+'</p>':'')+'<button type="button" class="lnk ctpf" id="ctPf">プロフィールを見る ›</button></div>';}
 function cProf(){var v=CH.vendor,k=CH.card;if(!v||!k)return;
   openSheet('<div class="vtop">'+(v.photo?'<img class="vav" src="'+esc(v.photo)+'" alt="">':'<span class="vav in">'+esc(String(v.name||'業').charAt(0))+'</span>')+'<div class="vnm"><b>'+esc(v.name)+'</b><span class="vrv">'+(Number(v.reviews)?'★'+esc(v.star)+'（口コミ'+esc(v.reviews)+'件）':'口コミはまだありません')+'</span></div></div>'+
-    ((k.facts||[]).length?'<div class="vfacts">'+k.facts.map(function(f){return '<span>'+CK2+esc(f)+'</span>';}).join('')+'</div>':'')+
+    ((k.facts||[]).length?'<div class="vfacts">'+k.facts.map(function(f){return '<span>'+CK3+esc(f)+'</span>';}).join('')+'</div>':'')+
     ((k.tags||[]).concat(k.items||[]).length?'<div class="vtags">'+(k.tags||[]).concat(k.items||[]).map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+'</div>':'')+
     (k.intro?'<div class="lab" style="margin-top:14px">自己紹介</div><p class="ctin" style="margin-top:4px">'+esc(k.intro)+'</p>':'')+'<p class="vnote">緑の印は、まち頼が書類などで確かめた事実です。</p>','tall');}
 function drawMsgs(){
