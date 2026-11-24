@@ -165,6 +165,7 @@ h2{font-size:18px;margin:0 0 10px}
 .ctm{font-size:12px;color:var(--sub);flex:none;margin-bottom:2px}.cday{align-self:center;font-size:12px;color:var(--sub);margin:10px 0 2px}
 .ctop{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px;align-self:stretch}.ctin{font-size:15px;line-height:1.7;margin:10px 0 0;white-space:pre-line}.ctpf{display:block;width:fit-content;margin:10px 0 0 auto;background:none!important;border:0!important;padding:4px 0!important;color:var(--m);font:inherit;font-weight:700;font-size:14px;cursor:pointer}
 .runr{position:absolute;top:12px;right:12px}.card.bp{position:relative}.rlast{display:flex;gap:8px;justify-content:space-between;font-size:14px;color:var(--sub);margin-top:6px;border-top:1px solid var(--line);padding-top:6px}.rlast.on{color:var(--ink);font-weight:700}.rlast i{font-style:normal;font-weight:400;font-size:12px;color:var(--sub);flex:none}
+.uh-ai{display:block;width:100%;text-align:left;background:var(--ml);color:var(--m);border:1px solid var(--m);border-radius:12px;padding:12px 14px;font:inherit;font-size:16px;font-weight:700;margin:8px 0 4px;cursor:pointer}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:6px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#66706A;font-size:13px;margin-right:3px}
 .mhd{margin-left:auto;color:#2E3431;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #DCE1DD;border-radius:12px;padding:5px 11px;background:#fff;color:#2B2F2D}.mks button[aria-pressed=true]{background:#2E3431;color:#fff;border-color:#2E3431}
@@ -668,7 +669,7 @@ body{letter-spacing:.01em}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=99;
+var APPVER_N=100;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1340,7 +1341,7 @@ function catAvail(){return HOME&&HOME.avail||[];}
 function catPop(){var av=catAvail(),day=Math.floor(Date.now()/864e5),rnd=function(a){return a.map(function(c,i){var h=0;for(var k=0;k<c.length;k++)h=(h*31+c.charCodeAt(k)+day)%9973;return [h,c];}).sort(function(x,y){return x[0]-y[0];}).map(function(x){return x[1];});};
   var a=rnd(av.slice()),rest=SVC.map(function(c){return c[0];}).filter(function(c){return av.indexOf(c)<0&&c!=='そのほかの困りごと';});return a.concat(rest).slice(0,8);}
 function catIc(c){return esc(c.charAt(0));}
-function catFind(){var av=catAvail();return '<input class="uh-q" id="catQ" type="search" placeholder="何にお困りですか？ 例：エアコン、雨漏り" aria-label="作業をさがす"><div id="catR"></div>'+
+function catFind(){var av=catAvail();return '<form id="catF" onsubmit="return false"><input class="uh-q" id="catQ" type="search" enterkeyhint="send" placeholder="何にお困りですか？ 例：エアコン、雨漏り" aria-label="困っていること"></form><div id="catR"></div>'+
   '<div class="uh-sec">人気のカテゴリ</div><div class="uh-grid">'+catPop().map(function(c){var off=av.indexOf(c)<0;return '<button type="button" class="uh-t'+(off?' off':'')+'" data-k="'+esc(c)+'"><b class="uh-ic">'+catIc(c)+'</b>'+esc(c)+(off?'<small>準備中</small>':'')+'</button>';}).join('')+'</div>'+
   '<button type="button" class="uh-all" id="catAll">すべての分野を見る</button>';}
 function catGo(c,item){hStart({cat:c,item:item||''});}
@@ -1412,9 +1413,11 @@ function hClassify(v){C.cls=1;cSay(v,1);var box=$('cl'),w=document.createElement
 function bindFind(root){var q=root.querySelector('#catQ'),r=root.querySelector('#catR');if(!q)return;
   q.oninput=function(){var v=q.value.trim(),av=catAvail();if(!v){r.innerHTML='';return;}var hit=[];SVC.forEach(function(C){svItems(C).forEach(function(x){if(x.indexOf(v)>=0||C[0].indexOf(v)>=0)hit.push([x,C[0]]);});});
     hit.sort(function(a,b){return (av.indexOf(a[1])<0)-(av.indexOf(b[1])<0);});
-    r.innerHTML='<p class="uh-hn">'+hit.length+'件</p>'+hit.slice(0,30).map(function(h){var off=av.indexOf(h[1])<0;return '<button type="button" class="uh-hit'+(off?' off':'')+'" data-i="'+esc(h[0])+'" data-c="'+esc(h[1])+'"><span>'+esc(h[0])+'<small>'+esc(h[1])+'</small></span>'+(off?'<em>準備中</em>':'')+'</button>';}).join('')+
-      (hit.length?(hit.some(function(h){return av.indexOf(h[1])<0;})?'<p class="uh-hn">準備中の作業もご相談いただけます。対応できる専門家が見つかり次第、お知らせします。</p>':''):'<p class="uh-hn">該当する作業が見つかりませんでした。「すべての分野を見る」からお探しいただくか、まちこにご相談ください。</p>');
+    r.innerHTML='<button type="button" class="uh-ai" id="catAi">「'+esc(v.length>20?v.slice(0,20)+'…':v)+'」を'+esc(charaName())+'に相談する ›</button>'+(hit.length?'<p class="uh-hn">作業の名前から選ぶ（'+hit.length+'件）</p>':'')+hit.slice(0,30).map(function(h){var off=av.indexOf(h[1])<0;return '<button type="button" class="uh-hit'+(off?' off':'')+'" data-i="'+esc(h[0])+'" data-c="'+esc(h[1])+'"><span>'+esc(h[0])+'<small>'+esc(h[1])+'</small></span>'+(off?'<em>準備中</em>':'')+'</button>';}).join('')+
+      (hit.length&&hit.some(function(h){return av.indexOf(h[1])<0;})?'<p class="uh-hn">準備中の作業もご相談いただけます。対応できる専門家が見つかり次第、お知らせします。</p>':'');
+    var ai=$('catAi');if(ai)ai.onclick=function(){conc('どうされましたか？',v);};
     each('.uh-hit',r,function(b){b.onclick=function(){catGo(b.dataset.c,b.dataset.i);};});};
+  var cf=root.querySelector('#catF');if(cf)cf.onsubmit=function(e){e.preventDefault();var v=q.value.trim();if(v){q.blur();conc('どうされましたか？',v);}return false;}; // 入力して決定（Enter）を押したら、まちこのチャットを開く（11/24）
   var al=root.querySelector('#catAll');if(al)al.onclick=catAllSheet;}
 function catAllSheet(){var av=catAvail();openSheet('<h3>すべての分野</h3>'+SVGRP.map(function(g){return '<div class="svg">'+esc(g[0])+'</div><div class="ch2">'+g[1].map(function(c){var off=av.indexOf(c)<0;return '<button type="button" class="cch'+(off?' off':'')+'" data-k="'+esc(c)+'">'+esc(c)+(off?' <small>準備中</small>':'')+'</button>';}).join('')+'</div>';}).join('')+'<p class="uh-hn">準備中の分野もご相談いただけます。対応できる専門家が見つかり次第、お知らせします。</p>','tall');
   each('.cch',sheet,function(b){b.onclick=function(){closeSheet();catGo(b.dataset.k);};});}
