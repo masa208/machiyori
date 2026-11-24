@@ -362,7 +362,7 @@ body{background:#F5F6F4;margin:0}
 .hd{padding-top:max(10px,env(safe-area-inset-top))}
 .nav{padding-bottom:env(safe-area-inset-bottom);height:calc(62px + env(safe-area-inset-bottom))}
 .scr{bottom:calc(62px + env(safe-area-inset-bottom))}
-.beta{font-size:12px;font-weight:700;color:#fff;background:#66706A;border-radius:6px;padding:1px 6px;border:0;font-family:inherit;cursor:pointer;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logo{background:none;border:0;padding:0;font-family:inherit;cursor:pointer}.beta{font-size:12px;font-weight:700;color:#fff;background:#66706A;border-radius:6px;padding:1px 6px;border:0;font-family:inherit;cursor:pointer;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bell b:empty{display:none}
 @media (prefers-reduced-motion:reduce){.sheet{transition:none}}
 @media (prefers-reduced-motion:reduce){.uh-cl{animation:none;transform:translateX(120px)}.uh-nv span{animation:none;padding-left:0}}
@@ -655,7 +655,7 @@ body{letter-spacing:.01em}
 <body>
 <div class="phone" id="ph" data-mode="user">
   <div class="hd">
-    <span class="logo">まち頼</span><button class="chip" id="chip" aria-haspopup="dialog" aria-label="モードを切り替える"><span>依頼者モード</span> ▾</button><button type="button" class="beta" id="betaB">テスト版</button>
+    <button type="button" class="logo" id="logoB" aria-label="最新の内容にする">まち頼</button><button class="chip" id="chip" aria-haspopup="dialog" aria-label="モードを切り替える"><span>依頼者モード</span> ▾</button><button type="button" class="beta" id="betaB">テスト版</button>
     <span class="sp"></span>
     <button class="bell" id="qaBtn" aria-label="運営への問い合わせ"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.2a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.4M12 14.2v.1"/></svg></button>
     <button class="bell" id="bell" aria-label="お知らせ"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><b id="bellN"></b></button>
@@ -670,7 +670,7 @@ body{letter-spacing:.01em}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=103;
+var APPVER_N=104;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -843,7 +843,10 @@ function bizWanted(){if(HOME&&HOME.test){try{localStorage.removeItem('mchy_biz')
 /* ログイン中のアカウント（11/24）：同じ呼び名でも見分けられるように、ログインに使ったものと番号の末尾4けた */
 function acctLine(){if(!ME)return '';var m=String(ME.email||''),at=m.indexOf('@'),mm=at>0?m.charAt(0)+'●●●'+m.slice(at):'';return (ME.provider==='line'?'LINE：'+(ME.name||'（名前なし）'):'メール：'+(mm||'—'))+'・番号 '+String(ME.id||'').slice(-4);}
 function betaPaint(){var b=$('betaB');if(!b||!ME||!(HOME&&HOME.test))return;b.textContent='テスト版・'+(ME.callName||'名前なし');b.onclick=function(){openSheet('<h3>ログイン中のアカウント</h3><div class="sht"><div class="sht-r"><span>呼び名</span><b>'+esc(ME.callName||'')+'</b></div><div class="sht-r"><span>ログイン</span><b>'+esc(acctLine())+'</b></div></div><p class="sp s2">テスト版だけの表示です。2台で試すときに、どのアカウントか確かめられます。</p>');};}
-function afterLogin(){betaPaint();
+/* ロゴを押すと最新にする（11/24）：新しい版があれば読み込み直し、なければ今のモードの最初の画面を読み直す */
+function logoRefresh(){if(!ME)return;toast('最新の内容にしています…');try{sessionStorage.removeItem('mchy_rl');}catch(e){}verCheck();if(pane.classList.contains('on'))pane.classList.remove('on');stopChat&&stopChat();
+  HOME_AT=0;PRO=null;MB=null;MJ=null;tab=MODE==='pro'?'job':MODE==='member'?'board':'home';refresh();}
+function afterLogin(){betaPaint();var lb=$('logoB');if(lb)lb.onclick=logoRefresh;
   lg.hidden=true;ph.dataset.mode=MODE;$('chip').querySelector('span').textContent=MODE==='pro'?'Proモード':MODE==='member'?'会員ページ':'依頼者モード';if(MODE==='pro')tab='job';if(MODE==='member')tab='board';
   if(!ME.agreedAt)agreeSheet();else if(!ME.notifySet)notifSheet();else if(bizWanted())setTimeout(bizGo,300);else if(!ME.callName||!ME.area){welcome();}
   renderNav();refresh();startPoll();if(!BOOTMS)BOOTMS=Math.round(performance.now());
