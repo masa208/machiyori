@@ -166,6 +166,7 @@ h2{font-size:18px;margin:0 0 10px}
 .ctop{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px;align-self:stretch}.ctin{font-size:15px;line-height:1.7;margin:10px 0 0;white-space:pre-line}.ctpf{display:block;width:fit-content;margin:10px 0 0 auto;background:none!important;border:0!important;padding:4px 0!important;color:var(--m);font:inherit;font-weight:700;font-size:14px;cursor:pointer}
 .runr{position:absolute;top:12px;right:12px}.card.bp{position:relative}.rlast{display:flex;gap:8px;justify-content:space-between;font-size:14px;color:var(--sub);margin-top:6px;border-top:1px solid var(--line);padding-top:6px}.rlast.on{color:var(--ink);font-weight:700}.rlast i{font-style:normal;font-weight:400;font-size:12px;color:var(--sub);flex:none}
 .uh-ai{display:block;width:100%;text-align:left;background:var(--ml);color:var(--m);border:1px solid var(--m);border-radius:12px;padding:12px 14px;font:inherit;font-size:16px;font-weight:700;margin:8px 0 4px;cursor:pointer}
+.hchg{align-self:flex-start;margin:-2px 0 4px 46px}.hchg button{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;color:var(--m);font-weight:700;cursor:pointer}
 .mkv{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:13px;background:#F4F6F9;border-radius:6px;padding:7px 10px;margin:6px 0;text-align:left;font-weight:400}.mkv em{font-style:normal;color:#66706A;font-size:13px;margin-right:3px}
 .mhd{margin-left:auto;color:#2E3431;font-weight:700}
 .mks{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.mks button{flex:none;font:inherit;font-size:13px;border:1.5px solid #DCE1DD;border-radius:12px;padding:5px 11px;background:#fff;color:#2B2F2D}.mks button[aria-pressed=true]{background:#2E3431;color:#fff;border-color:#2E3431}
@@ -669,7 +670,7 @@ body{letter-spacing:.01em}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=100;
+var APPVER_N=101;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1359,7 +1360,10 @@ function hStart(o,keep){H={on:true,o:o,cat:o.cat||'',item:o.item||'',text:o.text
   else if(H.cat){var g1=HF.filter(function(g){return g.c===H.cat;});if(g1.length===1)H.g=g1[0];} // まとまりが1つだけのカテゴリは「どんなご依頼ですか？」を飛ばす
   if(keep)return hReplay(keep);hKeep(H);
   if(H.text)cSay(H.text,1);
-  cSay((H.item||H.cat?(H.item||H.cat)+'のご依頼ですね。':'ありがとうございます。')+'いくつか確認させてください。',0);hNext();}
+  cSay((H.item||H.cat?(H.item||H.cat)+'のご依頼ですね。':'ありがとうございます。')+'いくつか確認させてください。',0);
+  if(H.item||H.cat){var bx=$('cl'),cg=document.createElement('div');cg.className='hchg';cg.innerHTML='<button type="button">ちがう用件にする</button>';bx.appendChild(cg); // 用件を選びまちがえた・変えたいとき（11/24）
+    cg.firstChild.onclick=function(){hKeep(null);conc('どんなことでお困りですか？','');var b2=$('cl'),d2=document.createElement('div');d2.className='hchg';d2.innerHTML='<button type="button">分野の一覧から選ぶ</button>';b2.appendChild(d2);d2.firstChild.onclick=catAllSheet;};}
+  hNext();}
 function hQs(){var a=[],gs=H.cat?HF.filter(function(g){return g.c===H.cat;}):[];
   if(!H.item&&gs.length&&(('_g' in H.ans)||!H.g))a.push({k:'_g',t:'どんなご依頼ですか？',o:gs.map(function(g){return g.n;}).concat(['それ以外のご依頼']),nu:1});
   if(H.g&&H.g.i.length>1&&(!H.item||('_i' in H.ans)))a.push({k:'_i',t:'近い作業はどれですか？',o:H.g.i});
