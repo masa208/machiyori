@@ -350,7 +350,7 @@ h2{font-size:18px;margin:0 0 10px}
 .dnw{text-align:center;padding-top:8vh}.dni{width:68px;height:68px;border-radius:50%;background:#E8613C;color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}.dnw h3{font-size:22px;margin:6px 0}.dnw p{font-size:14px;line-height:1.8;color:#66706A;margin:6px 0 22px}
 
 /* ===== 本番用の上書き：試作の「スマホ枠」を画面いっぱいにする ===== */
-html,body{height:100%}
+html,body{height:100%}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,:root,.phone{color-scheme:light!important}
 .uh-t{color:#2B2F2D;font-family:inherit;cursor:pointer}
 .uh-box{background:#fff;border-radius:18px;padding:2px 12px 14px;margin-top:14px;box-shadow:0 5px 18px rgba(0,0,0,.06)}
@@ -652,6 +652,25 @@ body{letter-spacing:.01em}
 .mpost{background:var(--m);border-radius:12px;padding:13px 12px;font-size:16px}
 
 @media (max-width:380px){.logo{font-size:16px!important}.chip{font-size:12px!important;padding:5px 7px 5px 11px!important;gap:3px!important}.beta{font-size:11px!important;padding:2px 4px!important}.beta small{font-size:10px}.bell{padding:2px!important}}
+
+/* ===== いろいろな大きさのスマホ（11/24）：一番狭い幅320でも崩れないように。文字を大きくしたスマホも、狭い幅と同じ見え方になる ===== */
+.mks{flex-wrap:wrap;overflow:visible}
+.stp span{min-width:0;word-break:keep-all;overflow-wrap:anywhere}
+.mtm input[type=date],.mtm input[type=time]{font-size:15px;padding-left:8px;padding-right:6px}
+.crow .mg{min-width:0}.vnm{min-width:0}.vnm b{overflow-wrap:anywhere}
+@media (max-width:400px){
+  .uh-copy{font-size:16px;right:118px;white-space:normal}
+  .uh-wx{right:10px}
+  .uh-bub{left:126px;right:10px;font-size:12px;padding:14px 10px;white-space:normal}
+  .stp span{font-size:11px}.stp .cur{font-size:12px}
+}
+@media (max-width:360px){
+  .uh-copy{font-size:15px;right:112px}
+  .uh-bub{left:112px;font-size:11.5px;line-height:1.55}
+  .uh-copy{font-size:14px;right:108px}.uh-wx{width:100px;font-size:10.5px;right:8px}
+  .mtm{flex-wrap:wrap;gap:4px 6px}.mtm>input{flex:1 1 100%}.mtm>span{display:none}
+  .stp span{font-size:10.5px}
+}
 </style>
 </head>
 <body>
@@ -672,7 +691,7 @@ body{letter-spacing:.01em}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=105;
+var APPVER_N=106;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
