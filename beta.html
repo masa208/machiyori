@@ -667,7 +667,7 @@ body{letter-spacing:.01em}
 <div class="toast" id="toast" role="status"></div>
 <script>
 /* 新しい版が出ていたら自動で読み直す（ページの写しが古いまま残るのを防ぐ） */
-var APPVER_N=97;
+var APPVER_N=98;
 function verCheck(){try{fetch('ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
   if(!j||!(j.v>APPVER_N))return;var k='mchy_rl';try{if(sessionStorage.getItem(k)===String(j.v))return;sessionStorage.setItem(k,String(j.v));}catch(e){}
   var q=new URLSearchParams(location.search);q.set('v',j.v);location.replace(location.pathname+'?'+q.toString()+location.hash);
@@ -1053,8 +1053,12 @@ function choiceBtns(t){var box=$('cl');if(!box)return;var m=String(t||'').match(
 function placeBtns(){var box=$('cl');each('.cbt',box,function(x){x.remove();});var a=PLACES.slice();if(ME&&ME.area&&a.indexOf(ME.area)>0){a.splice(a.indexOf(ME.area),1);a.unshift(ME.area);}
   var b=document.createElement('div');b.className='chs cbt';b.innerHTML=a.map(function(p){return '<button type="button">'+esc(p)+'</button>';}).join('');box.appendChild(b);box.scrollTop=box.scrollHeight;
   each('button',b,function(x){x.onclick=function(){if(C.busy)return;b.remove();cSend(x.textContent);};});}
+/* 建物の種類は4つのどれか（11/24）。AIが「居間の窓」などを入れても、ここで詳しい内容へ移す */
+var BTYPES=['一戸建て','マンション・アパート','店舗・事務所','その他'];
+function bNorm(v){v=String(v||'').trim();if(!v)return '';if(BTYPES.indexOf(v)>=0)return v;if(/^(一戸建て?|戸建て?|一軒家|持ち家|木造(住宅)?)(（.*）)?$/.test(v))return '一戸建て';if(/^(マンション|アパート|集合住宅|団地|賃貸(マンション|アパート)?)(（.*）)?$/.test(v))return 'マンション・アパート';if(/^(店舗|事務所|オフィス|会社|工場|倉庫|お店)(（.*）)?$/.test(v))return '店舗・事務所';return '';}
 var SK=[['bunya','分野'],['what','依頼したいこと'],['place','場所'],['building','建物の種類'],['when','希望時期'],['detail','詳しい内容'],['ask','専門家に確認したいこと']];
-function sheetCard(s,btns){var box=$('cl'),d=document.createElement('div');d.className='mg ai2 wide';
+function sNorm(s){var bn=bNorm(s.building);if(s.building&&!bn)s.detail=(s.detail?s.detail+'\n':'')+'建物・場所：'+s.building;s.building=bn;if(/^\s*(なし|特になし|特に無し|無し|ない)\s*$/.test(s.ask||''))s.ask='';return '';}
+function sheetCard(s,btns){var box=$('cl'),d=document.createElement('div');sNorm(s);d.className='mg ai2 wide';
   d.innerHTML=charaImg()+'<div class="sht">'+SK.map(function(k){return s[k[0]]?'<div class="sht-r"><span>'+k[1]+'</span><b>'+esc(s[k[0]])+'</b></div>':'';}).join('')+estLbl(s)+'</div>';
   box.appendChild(d);if(!btns){box.scrollTop=box.scrollHeight;return;}each('.cbt',box,function(x){x.remove();});
   // 大カテゴリの候補を複数選べる形で出す。「当てはまらない」は一覧から近いものを3つまで（11/23）
@@ -1074,7 +1078,8 @@ function catPick(s,done){var sel=[];openSheet('<h3>近い分野をお選びく�
 function postConfirm(s){
   var photos=(s.photos||[]).slice(0,3);
   openSheet('<h3>ご依頼内容の確認</h3><p class="sp s2">この内容で、対応できる地元の専門家にご依頼をお届けします。お名前とご住所の詳細は、現地調査の日程が決まるまで専門家には開示されません。</p><form class="fm" id="pcF">'+
-    SK.map(function(k){return '<label for="pc_'+k[0]+'">'+k[1]+'</label>'+(k[0]==='detail'?'<textarea id="pc_'+k[0]+'" rows="3">'+esc(s[k[0]]||'')+'</textarea>':'<input id="pc_'+k[0]+'" value="'+esc(s[k[0]]||'')+'">');}).join('')+
+    sNorm(s)+
+    SK.map(function(k){if(k[0]==='building')return '<label for="pc_building">建物の種類</label><select id="pc_building"><option value="">わからない・選ばない</option>'+BTYPES.map(function(x){return '<option'+(s.building===x?' selected':'')+'>'+x+'</option>';}).join('')+'</select>';return '<label for="pc_'+k[0]+'">'+k[1]+'</label>'+(k[0]==='detail'?'<textarea id="pc_'+k[0]+'" rows="3">'+esc(s[k[0]]||'')+'</textarea>':'<input id="pc_'+k[0]+'" value="'+esc(s[k[0]]||'')+'">');}).join('')+
     '<div class="pcopt"><span>オプション（ご希望の場合のみ）</span><label><input type="checkbox" id="pc_est"'+(s.estOnly&&s.estOnly!=='svy'?' checked':'')+'><b>見積もりのみ希望</b></label><label><input type="checkbox" id="pc_svy"'+(s.estOnly==='svy'?' checked':'')+'><b>現地調査のみ希望</b></label></div>'+
     '<label>現状の写真を送れます（3枚まで）</label><div class="phs" id="pcPh"><label class="phadd">＋ 追加<input type="file" accept="image/*" id="pcIn" hidden></label></div>'+
     '<p class="err" id="pcE" hidden></p><button class="big" type="submit" id="pcB">この内容で依頼する</button></form>');
@@ -2286,7 +2291,7 @@ function lastGet(){try{return JSON.parse(localStorage.getItem(LASTK)||'null');}c
 (function(){
   function wrap(f,kind){return function(id){if(id)lastSet({k:kind,id:id});return f.apply(this,arguments);};}
   openCase=wrap(openCase,'case');openChat=wrap(openChat,'chat');openPro=wrap(openPro,'pro');mOpenPost=wrap(mOpenPost,'mpost');mOpenDM=wrap(mOpenDM,'mdm');
-  if(window.__t){window.__t.openChat=openChat;window.__t.vendorSignup=function(){vendorSignup();};window.__t.suGo=function(i){SU.i=i;suDraw();};window.__t.su=function(){return SU;};window.__t.openPro=openPro;window.__t.openCase=openCase;window.__t.mOpenPost=mOpenPost;}
+  if(window.__t){window.__t.openChat=openChat;window.__t.vendorSignup=function(){vendorSignup();};window.__t.postConfirm=function(x){postConfirm(x);};window.__t.suGo=function(i){SU.i=i;suDraw();};window.__t.su=function(){return SU;};window.__t.openPro=openPro;window.__t.openCase=openCase;window.__t.mOpenPost=mOpenPost;}
   var cp=closePane;closePane=function(){var r=cp.apply(this,arguments);lastSet({});return r;};
   var sm=setMode;setMode=function(){var r=sm.apply(this,arguments);lastSet({});return r;};
   nav.addEventListener('click',function(){setTimeout(function(){lastSet({});},0);});
